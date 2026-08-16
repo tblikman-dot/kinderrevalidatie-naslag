@@ -16,6 +16,73 @@ const DEFAULT_CATS = [
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
 ];
 
+// ===== STARTNOTITIES =====
+// Overgetypt uit eigen boek (Gage — Identification and Treatment of Gait
+// Problems in Cerebral Palsy). Boek is leidend; passages die op de foto's
+// onleesbaar waren (vinger/hoek) zijn weggelaten i.p.v. gegokt, i.p.v.
+// aangevuld met giswerk.
+const DEFAULT_NOTES = {
+  cp:
+`BRON: Gage — Identification and Treatment of Gait Problems in Cerebral Palsy (eigen exemplaar, overgetypt uit foto's)
+
+== Heuprotatie-mechanica (Fig. 11.3) ==
+Rotatie-moment-armen van de gluteus medius (anterieur vs. posterieur compartiment) nemen dramatisch toe bij toenemende heupflexie. Dit suggereert dat endorotatie-gangpatroon het gevolg kan zijn van excessieve heupflexie, die de moment-armen van de gluteale spieren richting endorotatie verschuift.
+Bij een CP-patiënt (beeldgebaseerd model) was de endorotatie-moment-arm van het anterieure compartiment van de gluteus medius tijdens het lopen ~4x groter dan die van de mediale hamstrings of adductoren.
+Grafiek A: moment-arm (cm) vs. heupflexiehoek (0–90°) — GMED anterior loopt van ~0 naar ~4,5 cm; GMED posterior van ~-4 naar ~2 cm.
+Grafiek B: moment-arm vs. % gangcyclus — GMED anterior: start ~3,5, dip naar ~1,7 rond 60%, terug naar ~3,7 bij 100%.
+
+== Tonusdifferentiatie: spasticiteit vs. dystonie vs. hyperkinetisch/choreoathetotisch ==
+- Hyperkinetisch/choreoathetotisch: massale onwillekeurige bewegingen met motor overflow — initiëren van beweging in één extremiteit leidt tot bewegingen elders. Posturing van vingers/ledematen, vooral bij pogingen tot vrijwillige activiteit.
+- Dystonie: abnormale, aanhoudende, stereotiepe verschuivingen van de algemene spiertonus/houding. Kan lijken op spasticiteit (passieve ROM ook moeilijk/beperkt), maar:
+  · Onderzoek in ruglig verandert de tonus bij spasticiteit doorgaans niet, maar onthult vaak lage tonus bij dystonie.
+  · Dystone rigiditeit voelt "plastic"/"cogwheel" aan bij passieve beweging; spasticiteit voelt aan als "clasped knife".
+  · Dystone tonus "schudt los" — bij schudden van het ledemaat normaliseert de tonus tijdelijk. Geldt niet voor spasticiteit.
+  · Spasticiteit geeft toename van de peesreflexen (DTR); dystonie niet.
+
+== Kniestrekkracht (extensor lag) ==
+Beoordeling het makkelijkst in ruglig met benen over de tafelrand. Vraag het kind de knie volledig te strekken zonder manuele weerstand; meet de hoek van het ontbrekende bereik. Kinderen met crouch-gait kunnen de knie mogelijk niet volledig actief strekken aan het einde van de ROM, maar wel goede isolatie/kracht hebben in de rest van het bereik.
+Extensor lag-meting: met de heupen in extensie, om de invloed van hamstring-tightness/-shift uit te sluiten.
+
+== Contractuurtesten (biarticulair vs. monoarticulair) ==
+- Silfverskiöld-test: gastrocsoleus-complex (triceps surae)
+- Duncan-Ely-test: monoarticulaire vasti vs. rectus femoris
+- Phelps-test: biarticulaire gracilis vs. overige (monoarticulaire) heupadductoren — patiënt in buiklig, knie geflecteerd, heup geabduceerd; als de ipsilaterale heup adduceert bij knie-extensie → gracilis-tightness bevestigd.
+Let op: dynamische contractuur kan onder algehele anesthesie verdwijnen — ROM-onderzoek moet vóór de operatie onder anesthesie herhaald worden.
+
+== Enkel/voet bij spastische diplegie/quadriplegie (Rose 1993, Delp 1995) ==
+Doorgaans is de gastrocnemius gecontraheerd en de soleus van normale lengte. Als beide spieren gecontraheerd zijn, is de gastrocnemius-contractuur groter dan die van de soleus. Onderscheid via Silfverskiöld-test (klinisch, en altijd onder anesthesie).
+Voor normale volwassen gang is 10° enkeldorsiflexie met knie-extensie nodig. Taak van de soleus: dorsiflexie afremmen tijdens mid-stance; overmatig krachtverlies bevordert crouch-gait.
+Ware lengte triceps surae meten met voet in lichte subtalaire varus-positie, met zowel geflecteerde als geëxtendeerde knie (Fig. 5.2).
+[Passage over MTP-dorsiflexie bij planovalgus-voet was op de foto deels door een vinger bedekt — hier bewust weggelaten, evt. opnieuw fotograferen.]
+
+== Hamstring shift & bekkenkanteling ==
+"Bilaterale popliteahoek": ipsilaterale heup 90° flexie, contralaterale heup flecteren tot ASIS/PSIS verticaal uitgelijnd zijn (Fig. 5.4b).
+- Popliteahoek met neutraal bekken = "ware hamstring-contractuur"
+- Popliteahoek met (aanwezige) lordose = "functionele hamstring-contractuur"
+- Verschil tussen beide = mate van "hamstring shift"
+Excessieve anteriore bekkenkanteling (vaak bij diplegische/quadriplegische CP) → hamstring shift + schijnbare knieflexiecontractuur (Hoffinger 1993, Delp 1996, Schutte 1997).
+Let op: hamstringlengte is bij crouch-gait vaak normaal of zelfs lang — chirurgische verlenging kan de heupextensoren verder verzwakken, met als gevolg méér heupflexie, anteriore bekkenkanteling en lumbale lordose.
+Delp e.a. (1996): per graad excessieve anteriore bekkenkanteling een bepaalde mate hamstring shift (precieze factor op de foto niet leesbaar). Hamstring shift >20° wijst meestal op zwakke heupextensoren.
+Ook capsulaire tightness beoordelen door de knieën volledig te extenderen.`,
+
+  ortho:
+`BRON: Gage — Identification and Treatment of Gait Problems in Cerebral Palsy (eigen exemplaar, overgetypt uit foto's)
+
+== Voetonderzoek: forefoot varus/valgus (Fig. 5.7) ==
+Normale voorvoet: vlak van de metatarsalia staat loodrecht op de as van de calcaneus.
+- Forefoot varus: vlak van de metatarsalia is gesupineerd t.o.v. de as van de calcaneus
+- Forefoot valgus: vlak van de metatarsalia is gepronaeerd t.o.v. de as van de calcaneus
+
+== Coleman block test (Fig. 5.8) ==
+Onderscheidt of varus van de hindfoot of forefoot komt.
+Uitvoering: hiel en laterale voetrand op een blok van 1 inch (of wig onder laterale voorvoet, waardoor MT I–IV kunnen proneren).
+- Rigide forefoot valgus (pronatie) + flexibele hindfoot varus → hindfoot varus verdwijnt of vermindert significant op het blok
+- Rigide hindfoot varus → blijft ondanks voorvoetpositionering
+Documenteren met AP- en laterale foto's + röntgenfoto's.
+
+Zie ook: "Cerebrale parese & spasticiteit" → Enkel/voet bij spastische diplegie/quadriplegie, en Contractuurtesten (Silfverskiöld, Duncan-Ely, Phelps).`,
+};
+
 const STORAGE_CATS = 'krnCategories';
 const STORAGE_NOTES = 'krnNotes';
 
@@ -34,6 +101,14 @@ function loadState() {
     const n = localStorage.getItem(STORAGE_NOTES);
     notes = n ? JSON.parse(n) : {};
   } catch (e) { notes = {}; }
+
+  // Startnotities eenmalig invullen — nooit iets overschrijven wat al bestaat
+  // (ook niet een bewust leeggemaakt veld: alleen bij volledig ontbrekende sleutel).
+  let seeded = false;
+  for (const id in DEFAULT_NOTES) {
+    if (!(id in notes)) { notes[id] = DEFAULT_NOTES[id]; seeded = true; }
+  }
+  if (seeded) saveNotes();
 }
 
 function saveCategories() {
