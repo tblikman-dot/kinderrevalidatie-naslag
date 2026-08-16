@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Naslag Kinderrevalidatie</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-title">Naslag Kinderrevalidatie</div>
+  <button class="add-cat-btn" id="addCatBtn" title="Nieuw aandachtsgebied toevoegen">＋</button>
+</header>
+
+<div class="layout" id="layout">
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <input type="search" id="zoek" placeholder="Zoeken…" autocomplete="off">
+    </div>
+    <div class="sidebar-list" id="catList"></div>
+  </nav>
+
+  <main class="detail" id="detail">
+    <div class="detail-empty" id="detailEmpty">
+      <p>👈 Kies links een aandachtsgebied, of voeg er zelf één toe met de ＋ knop.</p>
+      <p class="muted">Alles wat je hier typt wordt automatisch bewaard in je browser (localStorage) — alleen op dit apparaat.</p>
+    </div>
+    <div class="detail-content" id="detailContent" hidden>
+      <div class="detail-head">
+        <button class="back-btn" id="backBtn">← Terug</button>
+        <h1 id="detailTitle"></h1>
+        <button class="del-cat-btn" id="delCatBtn" title="Aandachtsgebied verwijderen">🗑️</button>
+      </div>
+      <p class="detail-scope" id="detailScope"></p>
+      <div class="detail-links" id="detailLinks"></div>
+      <label class="notes-label" for="notesArea">Eigen aantekeningen</label>
+      <textarea id="notesArea" placeholder="Typ of plak hier je eigen samenvatting, kernpunten uit richtlijnen, protocollen…"></textarea>
+      <div class="save-status" id="saveStatus"></div>
+    </div>
+  </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
