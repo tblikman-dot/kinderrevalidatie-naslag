@@ -10,6 +10,7 @@ const DEFAULT_CATS = [
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
+  { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie' },
@@ -155,6 +156,20 @@ Gebruik de "Zoek in Richtlijnendatabase"-knop bovenaan deze pagina voor de actue
 - Nieuwe pijnklachten bij verzorging/verplaatsen/aankleden
 - Afname bewegingsuitslag heup, met name abductie
 - Asymmetrische heupafwijking`,
+
+  sedatie:
+`BRON: eigen interne teamoverleg/mailwisseling, Beatrix Kinderkliniek UMCG (januari 2026) — dit is een praktijkafspraak binnen het team, geen gepubliceerde richtlijn. Namen bewust weggelaten.
+
+== Context ==
+De vraag kwam op bij de invoering van een nieuwe sedatieorder: bij het plannen van een botulinetoxine-behandeling moet vooraf al worden aangegeven of het kind onder sedatie of onder algehele narcose behandeld wordt — dus nog vóórdat het kind door het behandelteam is gezien.
+
+== Overwegingen voor sedatie vs. algehele narcose (praktijkafspraak, stand jan. 2026) ==
+- Hoeveelheid benodigde injecties: bij veel injecties eerder algehele narcose overwegen i.p.v. sedatie
+- Lastige/diepe injecties: technisch moeilijker bereikbare of diepere spieren → zelfde overweging
+- Mate van angst: een kind dat enorm angstig is, wordt gezien als reden om niet voor sedatie te kiezen
+- Moeite met inslapen op zich wordt in de discussie als minder doorslaggevend gezien ("relatief") — dit lukt in de praktijk meestal ook onder sedatie, dus niet als op zichzelf staande contra-indicatie beschouwd
+
+Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, nog in ontwikkeling (samenhangend met een nieuwe sedatieorder) — geen formele richtlijn. Gebruik de "Zoek in Richtlijnendatabase"-knop hierboven als je een gepubliceerde bron zoekt.`,
 };
 
 const STORAGE_CATS = 'krnCategories';
