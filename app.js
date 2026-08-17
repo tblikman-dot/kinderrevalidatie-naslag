@@ -4,6 +4,7 @@ const DEFAULT_CATS = [
   { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
+  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie' },
   { id: 'ontw', label: 'Ontwikkelingsstoornissen', scope: 'O.a. DCD, motorische ontwikkeling' },
   { id: 'amp', label: 'Aangeboren afwijkingen, amputatie & prothesiologie', scope: '' },
   { id: 'nah', label: 'Niet-aangeboren hersenletsel (NAH)', scope: '' },
@@ -81,6 +82,51 @@ Uitvoering: hiel en laterale voetrand op een blok van 1 inch (of wig onder later
 Documenteren met AP- en laterale foto's + röntgenfoto's.
 
 Zie ook: "Cerebrale parese & spasticiteit" → Enkel/voet bij spastische diplegie/quadriplegie, en Contractuurtesten (Silfverskiöld, Duncan-Ely, Phelps).`,
+
+  uitval:
+`BRON: algemene neuroanatomie/myotoomniveaus — geen foto uit je boek, dit is standaard leerboekkennis. Controleer bij twijfel tegen je eigen bronnen.
+
+Relevant bij: spina bifida (uitvalsniveau/motorisch niveau), dwarslaesie, overige lumbosacrale wortelaandoeningen.
+
+Motorisch niveau = laagste segment met kracht ≥3/5 (MRC-schaal).
+
+== THORACAAL (T-niveau) ==
+Geen functionele beenspieren; evt. reflexmatige heupflexie/-adductie zonder willekeurige controle.
+Prognose: doorgaans rolstoelafhankelijk.
+
+== L1–L2 ==
+- Iliopsoas (heupflexie) — L1–L2/L3
+- Adductoren (heupadductie) — L2–L3
+- Geen kniefunctie
+
+== L3 ==
+- Quadriceps femoris (knie-extensie) — L2–L4, voornamelijk L3–L4
+- Heupflexie sterk aanwezig
+- Geen heupabductie, geen enkelfunctie
+
+== L4 ==
+- Quadriceps sterk aanwezig
+- Tibialis anterior (enkeldorsiflexie) — L4–L5
+- Gluteus medius (heupabductie) — L4–S1: op dit niveau nog zwak/afwezig
+- Geen heupextensie (gluteus maximus), geen enkelplantairflexie
+
+== L5 ==
+- Tibialis anterior sterk aanwezig
+- Extensor hallucis longus (teenextensie) — L5
+- Gluteus medius (heupabductie) — nu meer volledig aanwezig
+- Hamstrings (knieflexie) — deels aanwezig
+- Zwakke heupextensie; geen enkelplantairflexie (gastrocnemius/soleus)
+
+== S1 ==
+- Gastrocnemius/soleus (enkelplantairflexie) — S1–S2
+- Gluteus maximus (heupextensie) — voornamelijk S1
+- Prognose: vaak (bijna) volledige mobiliteit
+
+== S2–S3 ==
+- Intrinsieke voetspieren, teenflexoren
+- Blaas-/darmfunctie (S2–S4) — apart te beoordelen, niet 1-op-1 met het motorisch niveau van de beenspieren
+
+Let op: het motorisch niveau is per definitie het laagste niveau met nog functionele kracht — bij spina bifida vaak asymmetrisch tussen linker- en rechterbeen, en kan geleidelijk zakken bij een tethered cord (reden voor follow-up).`,
 };
 
 const STORAGE_CATS = 'krnCategories';
