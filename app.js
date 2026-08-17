@@ -2,6 +2,7 @@
 // Dit zijn alleen categorienamen/onderwerpen, geen medische inhoud.
 const DEFAULT_CATS = [
   { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen' },
+  { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie' },
@@ -127,6 +128,26 @@ Prognose: doorgaans rolstoelafhankelijk.
 - Blaas-/darmfunctie (S2–S4) — apart te beoordelen, niet 1-op-1 met het motorisch niveau van de beenspieren
 
 Let op: het motorisch niveau is per definitie het laagste niveau met nog functionele kracht — bij spina bifida vaak asymmetrisch tussen linker- en rechterbeen, en kan geleidelijk zakken bij een tethered cord (reden voor follow-up).`,
+
+  heup:
+`BRON: eigen algemene kennis — GEEN specifiek screeningsprotocol overgenomen. Screeningsintervallen en drempelwaarden verschillen per richtlijn (bijv. Nederlandse CP-richtlijn, CPUP, AACPDM) en dat is precies het soort getal dat ik hier niet zelf invul. Vul het schema van jouw centrum/richtlijn hieronder zelf aan, of stuur een foto van je bron door zodat ik 'm kan overtypen — net als bij de andere categorieën.
+
+== Waarom heupscreening bij CP? ==
+Kinderen met CP hebben een verhoogd risico op progressieve heupsubluxatie/-luxatie door spastische spierdysbalans (met name adductoren en iliopsoas) bij een bij geboorte doorgaans normale heup. Het risico correleert sterk met het GMFCS-niveau: hoe hoger (lager mobiel) het niveau, hoe groter de kans op heupproblemen. Onbehandeld kan dit leiden tot pijn, functieverlies en een lastiger te behandelen (gefixeerde) luxatie.
+
+== Kernmaat: migratiepercentage (Reimers' index) ==
+Op een AP-bekkenfoto: het percentage van de femurkop dat lateraal van de lijn van Perkins ligt, gedeeld door de totale breedte van de femurkop × 100%.
+- Een hoger percentage, of een snelle stijging tussen twee metingen, wijst op een verhoogd risico op (sub)luxatie — reden voor nauwere follow-up of verwijzing naar de (kinder)orthopedie.
+
+== Screeningsschema ==
+[HIER ZELF INVULLEN: startleeftijd, frequentie per GMFCS-niveau, stopcriteria — vanuit het protocol dat je centrum volgt.]
+Gebruik de "Zoek in Richtlijnendatabase"-knop bovenaan deze pagina voor de actuele Nederlandse richtlijn.
+
+== Rode vlaggen voor extra alertheid ==
+- Snelle toename van het migratiepercentage tussen twee metingen
+- Nieuwe pijnklachten bij verzorging/verplaatsen/aankleden
+- Afname bewegingsuitslag heup, met name abductie
+- Asymmetrische heupafwijking`,
 };
 
 const STORAGE_CATS = 'krnCategories';
