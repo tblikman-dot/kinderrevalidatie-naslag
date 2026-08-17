@@ -1,8 +1,10 @@
 // ===== STANDAARDINDELING (aanpasbaar/uitbreidbaar) =====
 // Dit zijn alleen categorienamen/onderwerpen, geen medische inhoud.
 const DEFAULT_CATS = [
-  { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen' },
-  { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema' },
+  { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen',
+    directLink: { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' } },
+  { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema',
+    directLink: { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' } },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie' },
@@ -164,6 +166,19 @@ function loadState() {
     categories = c ? JSON.parse(c) : DEFAULT_CATS.slice();
   } catch (e) { categories = DEFAULT_CATS.slice(); }
 
+  // Nieuwe velden (bijv. directLink) op bestaande, al opgeslagen standaardcategorieën
+  // bijwerken zonder iets van de gebruiker te overschrijven (label/scope blijven zoals
+  // opgeslagen; alleen ontbrekende directLink wordt aangevuld).
+  let catsChanged = false;
+  categories.forEach(cat => {
+    const def = DEFAULT_CATS.find(d => d.id === cat.id);
+    if (def && def.directLink && !cat.directLink) {
+      cat.directLink = def.directLink;
+      catsChanged = true;
+    }
+  });
+  if (catsChanged) saveCategories();
+
   try {
     const n = localStorage.getItem(STORAGE_NOTES);
     notes = n ? JSON.parse(n) : {};
@@ -233,7 +248,11 @@ function openCategory(id) {
   document.getElementById('detailScope').textContent = cat.scope || '';
 
   const rdQuery = zoekLink(cat.label, cat.scope);
+  const directLinkHtml = cat.directLink
+    ? `<a href="${esc(cat.directLink.url)}" target="_blank" rel="noopener">${esc(cat.directLink.label)}</a>`
+    : '';
   document.getElementById('detailLinks').innerHTML = `
+    ${directLinkHtml}
     <a href="https://www.google.com/search?q=${rdQuery}+site:richtlijnendatabase.nl" target="_blank" rel="noopener">🔎 Zoek in Richtlijnendatabase</a>
     <a href="https://www.google.com/search?q=${rdQuery}+richtlijn+kinderrevalidatie" target="_blank" rel="noopener">🔎 Breder zoeken</a>
   `;
