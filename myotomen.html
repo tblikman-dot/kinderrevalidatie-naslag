@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Plaat: uitvalsniveau &amp; spierinnervatie</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .my-wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .my-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .my-terug:hover { text-decoration: underline; }
+
+  .my-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .my-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  /* --- ruggenmergstrip = niveaukiezer --- */
+  .my-kiezer-label {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .my-strip {
+    display: flex; gap: 4px;
+    margin-bottom: 6px;
+  }
+  .my-wervel {
+    flex: 1;
+    padding: 12px 2px;
+    border: 1.5px solid var(--lijn);
+    border-radius: 8px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 800;
+    color: var(--inkt); cursor: pointer;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  /* segmenten onder het uitvalsniveau: geen functie meer */
+  .my-wervel.onder {
+    background: repeating-linear-gradient(135deg, #F2F2EF 0 5px, #E9E9E5 5px 10px);
+    color: #9aa2a8;
+    border-style: dashed;
+  }
+  .my-wervel.actief {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--accent-zacht);
+  }
+  .my-strip-legenda {
+    display: flex; justify-content: space-between;
+    font-family: system-ui, sans-serif;
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* --- de plaat --- */
+  .my-plaat {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 10px 6px;
+    margin-bottom: 12px;
+  }
+  .my-plaat svg { width: 100%; height: auto; display: block; }
+  .my-plaat-titel {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; font-weight: 800;
+    text-align: center; margin-bottom: 2px;
+  }
+  .my-plaat-sub {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    text-align: center; margin-bottom: 8px;
+  }
+
+  .my-legenda {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    padding: 8px 4px 12px;
+  }
+  .my-legenda span { display: inline-flex; align-items: center; gap: 5px; }
+  .my-stip { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .my-stip.aan { background: #0f7a4a; }
+  .my-stip.zwak { background: #C99A16; }
+  .my-stip.uit { background: #fff; border: 1.5px dashed #A8AEB3; }
+
+  /* --- samenvatting bij het gekozen niveau --- */
+  .my-blok {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border-left: 5px solid var(--accent);
+  }
+  .my-blok h2 { font-size: 1.15rem; margin: 0 0 10px; }
+  .my-blok h3 {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted);
+    margin: 14px 0 6px;
+  }
+  .my-blok h3:first-of-type { margin-top: 0; }
+  .my-blok ul {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+    margin: 0; padding-left: 20px;
+  }
+  .my-blok li { margin-bottom: 4px; }
+  .my-blok p {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6; margin: 0;
+  }
+  .my-geen { color: var(--muted); }
+
+  .my-mobiliteit {
+    background: var(--accent-zacht);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  .my-mobiliteit strong { display: block; margin-bottom: 3px; }
+  .my-mobiliteit .indicatief {
+    display: block; margin-top: 6px;
+    font-size: 11.5px; color: var(--muted); font-style: italic;
+  }
+
+  /* --- overzichtstabel --- */
+  .my-sectie { margin-top: 34px; }
+  .my-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .my-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+  .my-tabel-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+  }
+  table.my-tabel {
+    border-collapse: collapse;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    min-width: 100%;
+  }
+  .my-tabel th, .my-tabel td {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--lijn);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .my-tabel thead th {
+    font-size: 11.5px; font-weight: 800;
+    color: var(--muted);
+    position: sticky; top: 0;
+    background: var(--paneel);
+  }
+  .my-tabel tbody th {
+    text-align: left; font-weight: 700;
+    padding-left: 12px; padding-right: 12px;
+    position: sticky; left: 0;
+    background: var(--paneel);
+    box-shadow: 1px 0 0 var(--lijn);
+  }
+  .my-tabel tbody th .spier {
+    display: block; font-weight: 400;
+    font-size: 11px; color: var(--muted);
+  }
+  .my-tabel td.k-aan  { color: #0f7a4a; font-weight: 800; }
+  .my-tabel td.k-zwak { color: #8A6508; font-weight: 800; }
+  .my-tabel td.k-uit  { color: #B6BBC0; }
+  .my-tabel th.kolom-actief, .my-tabel td.kolom-actief { background: var(--accent-zacht); }
+
+  .my-let-op {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+    color: #5A4A33;
+    margin-top: 14px;
+  }
+  .my-let-op ul { margin: 8px 0 0; padding-left: 20px; }
+  .my-let-op li { margin-bottom: 5px; }
+  .my-let-op li:last-child { margin-bottom: 0; }
+
+  .my-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin-top: 24px;
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze plaat werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Uitvalsniveau — plaat</div>
+</header>
+
+<div class="my-wrap">
+  <a class="my-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="my-kop">Welk niveau, welke spieren</h1>
+  <p class="my-intro">
+    Tik op een niveau: het been laat zien wat er dan werkt, wat zwak is en wat uitvalt.
+    Functie stapelt van boven naar beneden — hoe lager het motorisch niveau, hoe meer erbij komt.
+  </p>
+
+  <div class="my-kiezer-label">Motorisch niveau</div>
+  <div class="my-strip" id="myStrip"></div>
+  <div class="my-strip-legenda">
+    <span>◀ hoger niveau, meer uitval</span>
+    <span>lager niveau, meer functie ▶</span>
+  </div>
+
+  <div class="my-plaat">
+    <div class="my-plaat-titel" id="myPlaatTitel"></div>
+    <div class="my-plaat-sub" id="myPlaatSub"></div>
+    <svg viewBox="0 0 340 424" role="img" aria-labelledby="mySvgTitel">
+      <title id="mySvgTitel">Schematisch been met per gewricht de bewegingen en hun status op het gekozen niveau</title>
+
+      <!-- ledemaat -->
+      <g id="myLedemaat">
+        <rect x="146" y="52" width="48" height="24" rx="10" fill="#DDE4E7" stroke="#B9C4C9" stroke-width="1.5"/>
+        <line x1="170" y1="86" x2="170" y2="226" stroke="#C3CDD2" stroke-width="13" stroke-linecap="round"/>
+        <line x1="170" y1="226" x2="170" y2="330" stroke="#C3CDD2" stroke-width="11" stroke-linecap="round"/>
+        <line x1="170" y1="330" x2="212" y2="348" stroke="#C3CDD2" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="170" cy="86"  r="13" fill="#fff" stroke="#8FA3AB" stroke-width="2.5"/>
+        <circle cx="170" cy="226" r="11" fill="#fff" stroke="#8FA3AB" stroke-width="2.5"/>
+        <circle cx="170" cy="330" r="10" fill="#fff" stroke="#8FA3AB" stroke-width="2.5"/>
+        <text x="170" y="90"  text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#5D6E76">H</text>
+        <text x="170" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#5D6E76">K</text>
+        <text x="170" y="334" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="800" fill="#5D6E76">E</text>
+      </g>
+
+      <!-- bewegingen worden hier ingetekend -->
+      <g id="myPillen"></g>
+    </svg>
+    <div class="my-legenda">
+      <span><i class="my-stip aan"></i> werkt</span>
+      <span><i class="my-stip zwak"></i> zwak / deels</span>
+      <span><i class="my-stip uit"></i> valt uit</span>
+    </div>
+  </div>
+
+  <div class="my-blok" id="myBlok"></div>
+
+  <div class="my-sectie">
+    <h2>Alles naast elkaar</h2>
+    <p class="my-sectie-uitleg">
+      Dezelfde gegevens als tabel, om niveaus met elkaar te vergelijken. Het gekozen niveau is opgelicht.
+    </p>
+    <div class="my-tabel-scroll">
+      <table class="my-tabel" id="myTabel"></table>
+    </div>
+
+    <div class="my-let-op">
+      <strong>Bij het aflezen:</strong>
+      <ul>
+        <li>Motorisch niveau = het <strong>laagste</strong> segment met kracht ≥ 3/5 (MRC).</li>
+        <li>Bij spina bifida vaak <strong>asymmetrisch</strong> — beoordeel links en rechts apart.</li>
+        <li>Het niveau kan <strong>zakken bij een tethered cord</strong>; dat is de reden voor follow-up.</li>
+        <li>Blaas- en darmfunctie (S2–S4) loopt <strong>niet één-op-één</strong> met het motorisch niveau van de beenspieren — apart beoordelen.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="my-bron">
+    <strong>Bron:</strong> standaard neuroanatomie / myotoomniveaus — dezelfde inhoud als je aantekening bij
+    "Uitvalsniveau &amp; spierinnervatie", hier alleen als plaat. Geen boekpassage. De verwachte verplaatsing per
+    niveau is de bekende globale samenhang tussen motorisch niveau en loopvaardigheid; die is <em>indicatief</em>,
+    met grote individuele variatie. Controleer bij twijfel tegen je eigen bronnen.
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// Plaat bij "Uitvalsniveau & spierinnervatie".
+// Dezelfde inhoud als de aantekening in de app, alleen visueel: per motorisch
+// niveau welke bewegingen werken (2), zwak/deels zijn (1) of uitvallen (0).
+// ============================================================================
+
+const NIVEAUS = [
+  { id: 't',     kort: 'T',      lang: 'Thoracaal (T-niveau)' },
+  { id: 'l12',   kort: 'L1–2',   lang: 'L1–L2' },
+  { id: 'l3',    kort: 'L3',     lang: 'L3' },
+  { id: 'l4',    kort: 'L4',     lang: 'L4' },
+  { id: 'l5',    kort: 'L5',     lang: 'L5' },
+  { id: 's1',    kort: 'S1',     lang: 'S1' },
+  { id: 's23',   kort: 'S2–3',   lang: 'S2–S3' },
+];
+
+// Bewegingen met hun spier en segment; positie op de plaat.
+// zijde: L = links van het been, R = rechts, C = onder de voet.
+// Let op bij het aanpassen van de labels: ze staan in een pil van 130 breed.
+// Titel houdt ~104px over (statusteken staat rechts op dezelfde regel), de
+// ondertitel ~112px. Langere teksten lopen de pil uit.
+const BEWEGINGEN = [
+  { id: 'heupflex', beweging: 'Heupflexie',     spier: 'iliopsoas · L1–L3',     zijde: 'L', y: 46,  gewricht: [157, 86] },
+  { id: 'heupadd',  beweging: 'Heupadductie',   spier: 'adductoren · L2–L3',    zijde: 'R', y: 46,  gewricht: [183, 86] },
+  { id: 'heupabd',  beweging: 'Heupabductie',   spier: 'gl. medius · L4–S1',    zijde: 'L', y: 98,  gewricht: [157, 90] },
+  { id: 'heupext',  beweging: 'Heupextensie',   spier: 'gl. maximus · S1',      zijde: 'R', y: 98,  gewricht: [183, 90] },
+  { id: 'knieext',  beweging: 'Knie-extensie',  spier: 'quadriceps · L2–L4',    zijde: 'L', y: 194, gewricht: [159, 226] },
+  { id: 'knieflex', beweging: 'Knieflexie',     spier: 'hamstrings · L5–S1',    zijde: 'R', y: 194, gewricht: [181, 226] },
+  { id: 'dorsi',    beweging: 'Dorsiflexie',    spier: 'tib. anterior · L4–L5', zijde: 'L', y: 288, gewricht: [160, 330] },
+  { id: 'plantair', beweging: 'Plantairflexie', spier: 'gastroc/soleus · S1–S2', zijde: 'R', y: 288, gewricht: [180, 330] },
+  { id: 'tenen',    beweging: 'Teenfunctie',    spier: 'EHL L5 · intr. S2–S3',  zijde: 'C', y: 368, gewricht: [206, 350] },
+];
+
+// 2 = werkt, 1 = zwak/deels, 0 = valt uit
+const STATUS = {
+  t:   { heupflex: 0, heupadd: 0, knieext: 0, dorsi: 0, heupabd: 0, knieflex: 0, heupext: 0, plantair: 0, tenen: 0 },
+  l12: { heupflex: 2, heupadd: 2, knieext: 0, dorsi: 0, heupabd: 0, knieflex: 0, heupext: 0, plantair: 0, tenen: 0 },
+  l3:  { heupflex: 2, heupadd: 2, knieext: 2, dorsi: 0, heupabd: 0, knieflex: 0, heupext: 0, plantair: 0, tenen: 0 },
+  l4:  { heupflex: 2, heupadd: 2, knieext: 2, dorsi: 1, heupabd: 1, knieflex: 0, heupext: 0, plantair: 0, tenen: 0 },
+  l5:  { heupflex: 2, heupadd: 2, knieext: 2, dorsi: 2, heupabd: 2, knieflex: 1, heupext: 1, plantair: 0, tenen: 1 },
+  s1:  { heupflex: 2, heupadd: 2, knieext: 2, dorsi: 2, heupabd: 2, knieflex: 2, heupext: 2, plantair: 2, tenen: 1 },
+  s23: { heupflex: 2, heupadd: 2, knieext: 2, dorsi: 2, heupabd: 2, knieflex: 2, heupext: 2, plantair: 2, tenen: 2 },
+};
+
+// Wat er per niveau bij komt, en de aandachtspunten uit de aantekening.
+const DETAIL = {
+  t: {
+    nieuw: [],
+    let: ['Geen functionele beenspieren.', 'Soms reflexmatige heupflexie/-adductie — zónder willekeurige controle.'],
+    mobiliteit: 'Rolstoel voor de verplaatsing. Oefenlopen soms mogelijk met uitgebreide orthese, meestal niet functioneel.',
+  },
+  l12: {
+    nieuw: ['Iliopsoas — heupflexie (L1–L2/L3)', 'Adductoren — heupadductie (L2–L3)'],
+    let: ['Geen kniefunctie.'],
+    mobiliteit: 'Rolstoel voor functionele verplaatsing; oefenlopen met uitgebreide orthese.',
+  },
+  l3: {
+    nieuw: ['Quadriceps femoris — knie-extensie (L2–L4, vnl. L3–L4)'],
+    let: ['Heupflexie sterk aanwezig.', 'Geen heupabductie, geen enkelfunctie.'],
+    mobiliteit: 'Lopen binnenshuis met knie-enkel-voetorthese en loophulpmiddel; rolstoel voor grotere afstanden.',
+  },
+  l4: {
+    nieuw: ['Tibialis anterior — enkeldorsiflexie (L4–L5)'],
+    let: ['Quadriceps sterk aanwezig.', 'Gluteus medius (heupabductie, L4–S1) op dit niveau nog zwak of afwezig.', 'Geen heupextensie (gluteus maximus), geen plantairflexie.'],
+    mobiliteit: 'Lopen met enkel-voetorthese, vaak met loophulpmiddel; binnenshuis tot beperkt buitenshuis.',
+  },
+  l5: {
+    nieuw: ['Extensor hallucis longus — teenextensie (L5)', 'Gluteus medius nu meer volledig aanwezig', 'Hamstrings — knieflexie, deels aanwezig'],
+    let: ['Tibialis anterior sterk aanwezig.', 'Zwakke heupextensie.', 'Nog geen plantairflexie (gastrocnemius/soleus).'],
+    mobiliteit: 'Meestal lopend met enkel-voetorthese, vaak zonder hulpmiddel. Let op waggel-/Trendelenburggang door zwakke abductie en extensie.',
+  },
+  s1: {
+    nieuw: ['Gastrocnemius/soleus — plantairflexie (S1–S2)', 'Gluteus maximus — heupextensie (vnl. S1)'],
+    let: ['Afzetkracht kan nog verminderd zijn.'],
+    mobiliteit: 'Vaak (bijna) volledige mobiliteit.',
+  },
+  s23: {
+    nieuw: ['Intrinsieke voetspieren en teenflexoren'],
+    let: ['Blaas- en darmfunctie (S2–S4) apart beoordelen — loopt niet één-op-één met het motorisch niveau van de beenspieren.'],
+    mobiliteit: 'Normale loopfunctie; aandacht voor voetdeformiteit en blaas-/darmfunctie.',
+  },
+};
+
+const KLEUR = {
+  2: { vul: '#E3F3EA', rand: '#0f7a4a', tekst: '#0B5C38', sub: '#3C7F60', streep: 'none',  teken: '●' },
+  1: { vul: '#FBF3DC', rand: '#C99A16', tekst: '#7A5A07', sub: '#93762B', streep: 'none',  teken: '◐' },
+  0: { vul: '#F5F5F2', rand: '#B6BBC0', tekst: '#9AA1A7', sub: '#AFB5BA', streep: '4 3',   teken: '○' },
+};
+
+const SLEUTEL = 'krnMyotoomNiveau';
+let huidig = 'l4';
+
+function laadKeuze() {
+  try {
+    const opgeslagen = localStorage.getItem(SLEUTEL);
+    if (opgeslagen && NIVEAUS.some(n => n.id === opgeslagen)) huidig = opgeslagen;
+  } catch (e) { /* privémodus, standaardniveau is prima */ }
+}
+function bewaarKeuze() {
+  try { localStorage.setItem(SLEUTEL, huidig); } catch (e) { /* niets aan te doen */ }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ---- ruggenmergstrip ----
+function tekenStrip() {
+  const index = NIVEAUS.findIndex(n => n.id === huidig);
+  document.getElementById('myStrip').innerHTML = NIVEAUS.map((n, i) => {
+    const klas = 'my-wervel'
+      + (n.id === huidig ? ' actief' : '')
+      + (i > index ? ' onder' : '');
+    return `<button type="button" class="${klas}" data-niveau="${n.id}">${esc(n.kort)}</button>`;
+  }).join('');
+}
+
+// ---- de plaat ----
+const PIL_B = 130, PIL_H = 42;
+
+function pilHtml(b, status) {
+  const k = KLEUR[status];
+  let x;
+  if (b.zijde === 'L') x = 4;
+  else if (b.zijde === 'R') x = 206;
+  else x = 105;
+
+  const midY = b.y + PIL_H / 2;
+  // verbindingslijntje van de pil naar het gewricht
+  const vanX = b.zijde === 'L' ? x + PIL_B : (b.zijde === 'R' ? x : x + PIL_B / 2);
+  const vanY = b.zijde === 'C' ? b.y : midY;
+
+  return `
+    <line x1="${vanX}" y1="${vanY}" x2="${b.gewricht[0]}" y2="${b.gewricht[1]}"
+          stroke="${k.rand}" stroke-width="1.2" opacity="0.45"/>
+    <rect x="${x}" y="${b.y}" width="${PIL_B}" height="${PIL_H}" rx="9"
+          fill="${k.vul}" stroke="${k.rand}" stroke-width="1.6" stroke-dasharray="${k.streep}"/>
+    <text x="${x + 10}" y="${b.y + 18}" font-family="system-ui, sans-serif"
+          font-size="12" font-weight="700" fill="${k.tekst}">${esc(b.beweging)}</text>
+    <text x="${x + 10}" y="${b.y + 32}" font-family="system-ui, sans-serif"
+          font-size="9.5" fill="${k.sub}">${esc(b.spier)}</text>
+    <text x="${x + PIL_B - 9}" y="${b.y + 19}" text-anchor="end"
+          font-family="system-ui, sans-serif" font-size="13" fill="${k.rand}">${k.teken}</text>
+  `;
+}
+
+function tekenPlaat() {
+  const niveau = NIVEAUS.find(n => n.id === huidig);
+  const status = STATUS[huidig];
+  document.getElementById('myPlaatTitel').textContent = 'Motorisch niveau ' + niveau.lang;
+
+  const aantal = BEWEGINGEN.filter(b => status[b.id] === 2).length;
+  const zwak = BEWEGINGEN.filter(b => status[b.id] === 1).length;
+  document.getElementById('myPlaatSub').textContent =
+    aantal + ' van de ' + BEWEGINGEN.length + ' bewegingen werkt' + (zwak ? ', ' + zwak + ' zwak of deels' : '');
+
+  document.getElementById('myPillen').innerHTML =
+    BEWEGINGEN.map(b => pilHtml(b, status[b.id])).join('');
+}
+
+// ---- samenvatting ----
+function tekenBlok() {
+  const niveau = NIVEAUS.find(n => n.id === huidig);
+  const d = DETAIL[huidig];
+
+  const nieuw = d.nieuw.length
+    ? '<ul>' + d.nieuw.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    : '<p class="my-geen">Op dit niveau komt er nog geen functionele beenspier bij.</p>';
+
+  document.getElementById('myBlok').innerHTML = `
+    <h2>${esc(niveau.lang)}</h2>
+    <h3>Komt hier bij</h3>
+    ${nieuw}
+    <h3>Let op</h3>
+    <ul>${d.let.map(x => '<li>' + esc(x) + '</li>').join('')}</ul>
+    <div class="my-mobiliteit">
+      <strong>Verwachte verplaatsing</strong>
+      ${esc(d.mobiliteit)}
+      <span class="indicatief">Indicatief — grote individuele variatie.</span>
+    </div>
+  `;
+}
+
+// ---- overzichtstabel ----
+function tekenTabel() {
+  const koppen = NIVEAUS.map(n =>
+    `<th class="${n.id === huidig ? 'kolom-actief' : ''}">${esc(n.kort)}</th>`
+  ).join('');
+
+  const rijen = BEWEGINGEN.map(b => {
+    const cellen = NIVEAUS.map(n => {
+      const s = STATUS[n.id][b.id];
+      const klas = (s === 2 ? 'k-aan' : s === 1 ? 'k-zwak' : 'k-uit')
+        + (n.id === huidig ? ' kolom-actief' : '');
+      return `<td class="${klas}">${KLEUR[s].teken}</td>`;
+    }).join('');
+    return `<tr><th>${esc(b.beweging)}<span class="spier">${esc(b.spier)}</span></th>${cellen}</tr>`;
+  }).join('');
+
+  document.getElementById('myTabel').innerHTML =
+    `<thead><tr><th>Beweging</th>${koppen}</tr></thead><tbody>${rijen}</tbody>`;
+}
+
+function teken() {
+  tekenStrip();
+  tekenPlaat();
+  tekenBlok();
+  tekenTabel();
+}
+
+document.getElementById('myStrip').addEventListener('click', e => {
+  const knop = e.target.closest('.my-wervel');
+  if (!knop || knop.dataset.niveau === huidig) return;
+  huidig = knop.dataset.niveau;
+  bewaarKeuze();
+  teken();
+});
+
+laadKeuze();
+teken();
+
+// service worker: plaat blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

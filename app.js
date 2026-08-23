@@ -17,7 +17,10 @@ const DEFAULT_CATS = [
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
-  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie' },
+  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Motorische niveaus (myotomen) — spina bifida, dwarslaesie',
+    directLinks: [
+      { label: '🦵 Plaat: welk niveau, welke spieren', url: 'myotomen.html' },
+    ] },
   { id: 'ontw', label: 'Ontwikkelingsstoornissen', scope: 'O.a. DCD, motorische ontwikkeling' },
   { id: 'amp', label: 'Aangeboren afwijkingen, amputatie & prothesiologie', scope: '' },
   { id: 'nah', label: 'Niet-aangeboren hersenletsel (NAH)', scope: '' },
