@@ -174,6 +174,169 @@ De vraag kwam op bij de invoering van een nieuwe sedatieorder: bij het plannen v
 Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, nog in ontwikkeling (samenhangend met een nieuwe sedatieorder) — geen formele richtlijn. Gebruik de "Zoek in Richtlijnendatabase"-knop hierboven als je een gepubliceerde bron zoekt.`,
 };
 
+
+// ===== EXTRA INHOUDSBLOKKEN =====
+// Blokken die ik later toevoeg aan een bestaand onderwerp. Elk blok heeft een
+// eigen id; toegepaste ids worden onthouden, zodat een blok precies één keer
+// wordt aangevuld en je eigen aanpassingen nooit worden overschreven.
+const EXTRA_BLOKKEN = [
+  {
+    id: 'ob-cp-heup-1',
+    cat: 'heup',
+    html: `<h3>Spastische heup bij CP — evaluatie &amp; beleid</h3>
+<div class="bron">BRON: Orthobullets, onderwerp CP-heup (overgetypt uit schermafbeeldingen). Amerikaanse bron — kan afwijken van de Nederlandse richtlijn; die blijft leidend. Passages die op de schermafbeelding waren afgesneden zijn weggelaten, niet aangevuld.</div>
+
+<p><strong>Presentatie — symptomen</strong></p>
+<ul>
+<li>Heup- en/of liespijn</li>
+<li>Moeite met zitten</li>
+<li>Moeite met perineale verzorging/hygi&euml;ne</li>
+</ul>
+
+<p><strong>Lichamelijk onderzoek</strong></p>
+<ul>
+<li>Op zichzelf een onbetrouwbare diagnostische beoordeling</li>
+<li>Verminderde heup-ROM</li>
+<li>Pijn bij heupbeweging</li>
+<li>Loopproblemen door lever arm dysfunction</li>
+</ul>
+
+<p><strong>Beeldvorming — r&ouml;ntgen</strong></p>
+<ul>
+<li>AP en frog lateral (indien mogelijk)</li>
+<li>Heupabductie &lt; 45&deg; met parti&euml;le ontbloting van de femurkop op de r&ouml;ntgenfoto = "at risk"-heup</li>
+</ul>
+
+<p><strong>Reimers migratie-index</strong></p>
+<ul>
+<li>Percentage van de femurkop zonder acetabulaire bedekking</li>
+<li>Meest accurate methode om heupstabiliteit vast te stellen en te vervolgen</li>
+<li>&lt; 33% = at risk</li>
+<li>&gt; 33% = gesubluxeerde heup</li>
+</ul>
+
+<p><strong>CT</strong></p>
+<ul>
+<li>Meer van nut voor operatieplanning dan voor diagnostiek</li>
+<li>3D-reconstructie helpt bij het plannen van acetabulaire correctie</li>
+<li>CT-scanogram bruikbaar om femorale versie te meten bij een geplande derotatie-osteotomie</li>
+</ul>
+
+<p><strong>Niet-operatief</strong></p>
+<ul>
+<li>Observatie bij milde gevallen</li>
+<li>[Passage over fysiotherapie was op de schermafbeelding afgesneden]</li>
+</ul>
+
+<div class="tabel-titel">Beleid per stadium</div>
+<div class="tabel-scroll"><table>
+<tr><th>Stadium</th><th>Kenmerken</th><th>Behandeling</th></tr>
+<tr><td>Hip at risk</td><td>Heupabductie &lt; 45&deg; met parti&euml;le ontbloting van de femurkop op r&ouml;ntgen; Reimers-index &lt; 33%</td><td>Botox A in spastische spieren (leeftijd &lt; 3) om operatie uit te stellen. Poging tot voorkomen van luxatie met adductorenrelease, psoasrelease, hamstringverlenging (leeftijd 3&ndash;4). Vermijd obturatorius-neurectomie</td></tr>
+<tr><td>Hip subluxation</td><td>Reimers-index &gt; 33%; onderbroken Shenton-lijn</td><td>Adductorentenotomie als abductie beperkt is. Bij persisterende subluxatie: proximale femorale varus-derotatie-osteotomie (leeftijd 5&ndash;6). Bekkenosteotomie als er acetabulaire insufficiëntie is</td></tr>
+<tr><td>Spastic dislocation</td><td>Volledig geluxeerde heup; Reimers-index &gt; 100%</td><td>Open repositie met varus-derotatie-osteotomie, plus femorale verkorting en bekkenosteotomie&euml;n</td></tr>
+<tr><td>Windswept hips</td><td>Abductie van de ene heup met adductie van de contralaterale heup</td><td>Brace op de geadduceerde heup, met of zonder tenotomie, en opheffen van de abductiecontractuur van de geabduceerde heup</td></tr>
+</table></div>
+
+<div class="tabel-titel">Spastische heupdysplasie vs. DDH</div>
+<div class="tabel-scroll"><table>
+<tr><th>Factor</th><th>Spastisch</th><th>Ontwikkelings- (DDH)</th></tr>
+<tr><td>Bevindingen bij geboorte</td><td>Heup meestal normaal</td><td>Heup meestal afwijkend</td></tr>
+<tr><td>Leeftijd met risico</td><td>Meestal normaal in 1e levensjaar; herkend na 2 jaar</td><td>Meestal herkend in 1e levensjaar</td></tr>
+<tr><td>Detectie</td><td>R&ouml;ntgen in de meeste gevallen nodig</td><td>Lichamelijk onderzoek in de meeste gevallen</td></tr>
+<tr><td>Etiologie</td><td>Spastische spieren duwen de femurkop uit een normaal acetabulum; bekkenobliquiteit</td><td>Mechanische factoren (stuit), ligamentaire laxiteit, abnormale acetabulaire groei</td></tr>
+<tr><td>Progressie in de kindertijd</td><td>Progressieve subluxatie komt vaak voor</td><td>Progressieve subluxatie zeldzaam</td></tr>
+<tr><td>Natuurlijk beloop</td><td>Pijn bij veel gesubluxeerde/geluxeerde heupen in 2e of 3e decennium</td><td>Pijn bij veel gesubluxeerde heupen in 4e of 5e decennium</td></tr>
+<tr><td>Acetabulaire deficiëntie</td><td>Meestal posterosuperieur</td><td>Meestal anterieur</td></tr>
+<tr><td>Vroege maatregelen</td><td>Spierverlenging</td><td>Pavlik-bandage of gesloten repositie</td></tr>
+<tr><td>Gemist of gefaald</td><td>Heuposteotomie&euml;n, vaak zonder open repositie</td><td>Gesloten of open repositie, vaak zonder osteotomie (v&oacute;&oacute;r 18 maanden)</td></tr>
+<tr><td>Salvage</td><td>Castle resectie-interpositie-artroplastiek</td><td>Meestal totale heupartroplastiek</td></tr>
+</table></div>`
+  },
+  {
+    id: 'ob-cp-ok-1',
+    cat: 'ortho-ok',
+    html: `<h3>Spastische heup bij CP — operatieve opties</h3>
+<div class="bron">BRON: Orthobullets, onderwerp CP-heup (overgetypt uit schermafbeeldingen). Amerikaanse bron — kan afwijken van de Nederlandse richtlijn; die blijft leidend. Afgesneden passages zijn weggelaten, niet aangevuld. Zie ook "Heupscreening bij CP" voor evaluatie en de beleidstabel.</div>
+
+<p><strong>Weke delen</strong></p>
+<ul>
+<li>Heupadductoren- en psoasrelease met abductiebrace
+<ul>
+<li>Indicaties: kinderen &lt; 6 jaar met Reimers-index &gt; 25/33&ndash;60% en beperkte abductie (overweeg bij "at risk"-heupen)</li>
+<li>Elk bewijs van progressieve subluxatie bij &lt; 8 jaar</li>
+<li>Kan ook als aanvulling op botingrepen worden gebruikt</li>
+<li>Doelen: heupsubluxatie en -luxatie voorkomen; comfortabel zitten behouden</li>
+</ul>
+</li>
+</ul>
+
+<p><strong>Reconstructief</strong></p>
+<ul>
+<li>Proximale femorale osteotomie met shelf-vormende (Dega) osteotomie en weke-delenrelease
+<ul>
+<li>Indicaties: kinderen &gt; 4 jaar of Reimers-index &gt; 60%</li>
+<li>Bij een ernstig dysplastische CP-heup het beste alle pathologie in &eacute;&eacute;n stadium behandelen</li>
+</ul>
+</li>
+</ul>
+
+<p><strong>Salvage</strong></p>
+<ul>
+<li>Valgus support osteotomie (femurkopresectie + valgiserende subtrochant&egrave;re femorale osteotomie, bijv. McHale-techniek)
+<ul>
+<li>Indicatie: salvage-techniek bij symptomatische, chronisch geluxeerde heupen bij CP</li>
+</ul>
+</li>
+<li>Castle resectie-interpositie-artroplastiek
+<ul>
+<li>Indicaties: chronisch geluxeerde heupen, vooral bij volwassen CP-populatie; niet kunnen lopen, wel staan om te transfereren (GMFCS 5)</li>
+</ul>
+</li>
+<li>Totale heupartroplastiek
+<ul>
+<li>Indicaties: lopende pati&euml;nten en rolstoelgebruikers die kunnen staan om te transfereren</li>
+<li>Resultaat: 85% 10-jaarsoverleving bij CP-pati&euml;nten</li>
+</ul>
+</li>
+<li>Heuparthrodese
+<ul>
+<li>Indicaties: jonge pati&euml;nten; lopende pati&euml;nten en rolstoelgebruikers die kunnen staan om te transfereren</li>
+</ul>
+</li>
+<li>Girdlestone-procedure
+<ul>
+<li>Wordt niet meer uitgevoerd: veroorzaakt steevast pijn</li>
+<li>Oorzaak: gebrek aan weke-deleninterpositie tussen doorgenomen femur en acetabulum leidt tot proximale femorale migratie</li>
+</ul>
+</li>
+</ul>`
+  },
+];
+
+const STORAGE_BLOKKEN = 'krnToegepasteBlokken';
+
+function pasExtraBlokkenToe() {
+  let toegepast = [];
+  try {
+    const t = localStorage.getItem(STORAGE_BLOKKEN);
+    toegepast = t ? JSON.parse(t) : [];
+  } catch (e) { toegepast = []; }
+
+  let veranderd = false;
+  EXTRA_BLOKKEN.forEach(blok => {
+    if (toegepast.includes(blok.id)) return;
+    const bestaand = notes[blok.cat] || '';
+    notes[blok.cat] = bestaand ? (bestaand + blok.html) : blok.html;
+    toegepast.push(blok.id);
+    veranderd = true;
+  });
+
+  if (veranderd) {
+    saveNotes();
+    try { localStorage.setItem(STORAGE_BLOKKEN, JSON.stringify(toegepast)); } catch (e) {}
+  }
+}
+
 const STORAGE_CATS = 'krnCategories';
 const STORAGE_NOTES = 'krnNotes';
 const STORAGE_VIDEOS = 'krnVideos';
@@ -259,6 +422,8 @@ function loadState() {
     }
   }
   if (seeded) saveNotes();
+
+  pasExtraBlokkenToe();
 }
 
 function saveCategories() {

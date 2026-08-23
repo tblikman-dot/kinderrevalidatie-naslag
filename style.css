@@ -308,6 +308,53 @@ body {
 }
 #notesArea a { color: var(--accent); }
 
+/* tabellen in de aantekeningen */
+#notesArea .tabel-scroll {
+  overflow-x: auto;
+  margin: 10px 0 18px;
+  -webkit-overflow-scrolling: touch;
+}
+#notesArea table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 460px;          /* op een telefoon horizontaal scrollen i.p.v. samengeperst */
+  font-family: system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+#notesArea th,
+#notesArea td {
+  border: 1px solid var(--lijn);
+  padding: 7px 9px;
+  text-align: left;
+  vertical-align: top;
+}
+#notesArea th {
+  background: var(--accent-zacht);
+  font-weight: 700;
+  color: var(--accent);
+}
+#notesArea td:first-child { font-weight: 600; }
+#notesArea tr:nth-child(even) td { background: #FBFBF9; }
+#notesArea .tabel-titel {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 5px;
+}
+#notesArea .bron {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  background: #F3F3F0;
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin-bottom: 14px;
+}
+
 .save-status {
   font-family: system-ui, sans-serif;
   font-size: 12px;
