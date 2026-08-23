@@ -271,6 +271,35 @@ body {
   border: 0;
 }
 
+/* afbeeldingen & links */
+.link-item { margin-bottom: 18px; }
+.link-thumb { display: block; }
+.link-thumb img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  background: #F3F3F0;
+  border: 1px solid var(--lijn);
+  border-radius: 12px;
+}
+.link-fallback {
+  display: block;
+  padding: 12px 14px;
+  background: var(--accent-zacht);
+  border-radius: 12px;
+  font-family: system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+.link-fallback:hover { text-decoration: underline; }
+/* moet zwaarder wegen dan de display:block hierboven, anders doet [hidden] niets */
+.link-thumb[hidden], .link-fallback[hidden] { display: none; }
+.link-fallback .link-url { font-weight: 400; opacity: 0.85; }
+
 .video-leeg {
   font-family: system-ui, sans-serif;
   font-size: 13px;

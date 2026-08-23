@@ -23,6 +23,7 @@ const DEFAULT_CATS = [
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
   { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom' },
+  { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal' },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
 ];
@@ -176,10 +177,12 @@ Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, 
 const STORAGE_CATS = 'krnCategories';
 const STORAGE_NOTES = 'krnNotes';
 const STORAGE_VIDEOS = 'krnVideos';
+const STORAGE_LINKS = 'krnLinks';
 
 let categories = [];
 let notes = {};
 let videos = {};        // { catId: [ {yt, titel, ts} ] }
+let links = {};         // { catId: [ {url, titel, ts} ] }
 let activeId = null;
 let saveTimer = null;
 
@@ -234,6 +237,11 @@ function loadState() {
     videos = v ? JSON.parse(v) : {};
   } catch (e) { videos = {}; }
 
+  try {
+    const l = localStorage.getItem(STORAGE_LINKS);
+    links = l ? JSON.parse(l) : {};
+  } catch (e) { links = {}; }
+
   // Startnotities eenmalig invullen — nooit iets overschrijven wat al bestaat
   // (ook niet een bewust leeggemaakt veld: alleen bij volledig ontbrekende sleutel).
   let seeded = false;
@@ -251,6 +259,9 @@ function saveNotes() {
 }
 function saveVideos() {
   localStorage.setItem(STORAGE_VIDEOS, JSON.stringify(videos));
+}
+function saveLinks() {
+  localStorage.setItem(STORAGE_LINKS, JSON.stringify(links));
 }
 
 // ===== ONDERWIJSVIDEO'S =====
@@ -327,6 +338,93 @@ function addVideo() {
   saveVideos();
   renderVideos();
   toast('✅ Video toegevoegd');
+}
+
+// ===== AFBEELDINGEN & LINKS =====
+// Een URL wordt eerst als afbeelding geprobeerd; lukt dat niet (webpagina,
+// Google Foto's-album, hotlink geblokkeerd), dan valt hij terug op een link.
+function isVeiligeUrl(s) {
+  try {
+    const u = new URL(s.trim());
+    return (u.protocol === 'https:' || u.protocol === 'http:') ? u.href : null;
+  } catch (e) { return null; }
+}
+
+function renderLinks() {
+  const el = document.getElementById('linkLijst');
+  const list = (activeId && links[activeId]) ? links[activeId] : [];
+
+  if (!list.length) {
+    el.innerHTML = '<div class="video-leeg">Nog geen afbeelding of link bij dit onderwerp.</div>';
+    return;
+  }
+
+  el.innerHTML = list.map((l, i) => `
+    <div class="link-item">
+      <div class="video-item-head">
+        <div class="video-item-titel">${esc(l.titel)}</div>
+        <button class="video-item-del" data-idx="${i}" title="Uit lijst verwijderen">✕</button>
+      </div>
+      <a href="${esc(l.url)}" target="_blank" rel="noopener" class="link-thumb" data-idx="${i}">
+        <img src="${esc(l.url)}" alt="${esc(l.titel)}" loading="lazy">
+      </a>
+      <a href="${esc(l.url)}" target="_blank" rel="noopener" class="link-fallback" data-idx="${i}" hidden>
+        🔗 <span class="link-url">${esc(l.url)}</span>
+      </a>
+    </div>
+  `).join('');
+
+  // afbeelding niet te laden -> toon in plaats daarvan de link
+  el.querySelectorAll('.link-thumb img').forEach(img => {
+    img.addEventListener('error', () => {
+      const idx = img.closest('.link-thumb').dataset.idx;
+      img.closest('.link-thumb').hidden = true;
+      const fb = el.querySelector(`.link-fallback[data-idx="${idx}"]`);
+      if (fb) fb.hidden = false;
+    });
+  });
+
+  el.querySelectorAll('.video-item-del').forEach(btn => {
+    btn.addEventListener('click', () => deleteLink(parseInt(btn.dataset.idx, 10)));
+  });
+}
+
+function addLink() {
+  if (!activeId) return;
+  const urlEl = document.getElementById('linkUrl');
+  const titelEl = document.getElementById('linkTitel');
+  const errEl = document.getElementById('linkError');
+
+  const url = isVeiligeUrl(urlEl.value);
+  if (!url) {
+    errEl.textContent = '⚠️ Dat lijkt geen geldige link. Plak een adres dat begint met https://';
+    errEl.classList.add('show');
+    return;
+  }
+  errEl.classList.remove('show');
+
+  if (!links[activeId]) links[activeId] = [];
+  links[activeId].push({
+    url: url,
+    titel: titelEl.value.trim() || 'Zonder titel',
+    ts: Date.now()
+  });
+  urlEl.value = ''; titelEl.value = '';
+  saveLinks();
+  renderLinks();
+  toast('✅ Link toegevoegd');
+}
+
+function deleteLink(idx) {
+  if (!activeId || !links[activeId]) return;
+  const l = links[activeId][idx];
+  if (!l) return;
+  if (!confirm('"' + l.titel + '" uit de lijst verwijderen?')) return;
+  links[activeId].splice(idx, 1);
+  if (!links[activeId].length) delete links[activeId];
+  saveLinks();
+  renderLinks();
+  toast('🗑️ Verwijderd');
 }
 
 function deleteVideo(idx) {
@@ -408,6 +506,11 @@ function openCategory(id) {
   document.getElementById('videoError').classList.remove('show');
   renderVideos();
 
+  document.getElementById('linkUrl').value = '';
+  document.getElementById('linkTitel').value = '';
+  document.getElementById('linkError').classList.remove('show');
+  renderLinks();
+
   renderList(document.getElementById('zoek').value);
   document.getElementById('layout').classList.add('detail-active');
   document.getElementById('detail').scrollTop = 0;
@@ -451,13 +554,15 @@ function deleteCategory() {
   if (!activeId) return;
   const cat = categories.find(c => c.id === activeId);
   if (!cat) return;
-  if (!confirm(`"${cat.label}" en de bijbehorende aantekeningen en video's verwijderen?`)) return;
+  if (!confirm(`"${cat.label}" en alle bijbehorende aantekeningen, video's en links verwijderen?`)) return;
   categories = categories.filter(c => c.id !== activeId);
   delete notes[activeId];
   delete videos[activeId];
+  delete links[activeId];
   saveCategories();
   saveNotes();
   saveVideos();
+  saveLinks();
   closeDetail();
   renderList(document.getElementById('zoek').value);
   toast('🗑️ Verwijderd');
@@ -485,4 +590,11 @@ document.getElementById('videoUrl').addEventListener('keydown', e => {
 });
 document.getElementById('videoTitel').addEventListener('keydown', e => {
   if (e.key === 'Enter') addVideo();
+});
+document.getElementById('linkAddBtn').addEventListener('click', addLink);
+document.getElementById('linkUrl').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('linkTitel').focus();
+});
+document.getElementById('linkTitel').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addLink();
 });

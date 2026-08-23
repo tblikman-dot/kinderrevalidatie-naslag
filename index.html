@@ -57,13 +57,27 @@
           <div class="video-error" id="videoError"></div>
         </div>
 
-        <div class="video-hint">
-          <strong>Voor je een video toevoegt — twee dingen:</strong>
-          <ul>
-            <li><strong>Staat er een patiënt in beeld?</strong> Dan hoort de video niet hier, maar in het EPD of het beeldsysteem van je vakgroep. Onderwijsdoel maakt daarvoor geen verschil: een kind is op video vrijwel altijd identificeerbaar.</li>
-            <li><strong>Zet de video op YouTube als "Verborgen", niet "Privé".</strong> Privé-video's kunnen hier niet afspelen. Let op: "Verborgen" is geen beveiliging — iedereen met de link kan kijken, en deze site is openbaar (alleen niet-vindbaar via zoekmachines).</li>
-          </ul>
+      </div>
+
+      <div class="video-section">
+        <div class="notes-label">Afbeeldingen &amp; links</div>
+        <div id="linkLijst"></div>
+
+        <div class="video-add">
+          <input type="text" id="linkUrl" placeholder="Link naar afbeelding of webpagina…" autocomplete="off">
+          <input type="text" id="linkTitel" placeholder="Titel (bijv. Röntgen migratiepercentage)" autocomplete="off">
+          <button id="linkAddBtn">Link toevoegen</button>
+          <div class="video-error" id="linkError"></div>
         </div>
+      </div>
+
+      <div class="video-hint">
+        <strong>Voordat je beeldmateriaal toevoegt:</strong>
+        <ul>
+          <li><strong>Staat er een patiënt in beeld?</strong> Dan hoort het niet hier, maar in het EPD of het beeldsysteem van je vakgroep — dat geldt net zo goed voor een röntgenfoto als voor video. Onderwijsdoel maakt daarvoor geen verschil, en deze site is openbaar (alleen niet-vindbaar via zoekmachines).</li>
+          <li><strong>Video's: zet ze op YouTube als "Verborgen", niet "Privé".</strong> Privé-video's kunnen hier niet afspelen. "Verborgen" is geen beveiliging — iedereen met de link kan kijken.</li>
+          <li><strong>Afbeeldingen:</strong> een directe link naar een plaatje (eindigend op .jpg, .png, …) wordt hier getoond. Een gewone webpagina of een Google Foto's-album kan niet worden ingesloten en wordt automatisch een klikbare link.</li>
+        </ul>
       </div>
     </div>
   </main>
