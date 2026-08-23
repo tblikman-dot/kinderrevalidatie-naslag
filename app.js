@@ -563,16 +563,117 @@ function renderList(filter) {
     return;
   }
 
+  // Slepen kan alleen in de volledige lijst: bij een actief zoekfilter zie je
+  // maar een deel, en dan zou "naar boven slepen" een onvoorspelbare plek geven.
+  const kanSlepen = !f;
+
   el.innerHTML = items.map(c => `
-    <button class="cat-item${c.id === activeId ? ' active' : ''}" data-id="${c.id}">
-      ${esc(c.label)}
-      ${c.scope ? `<span class="scope">${esc(c.scope)}</span>` : ''}
-    </button>
+    <div class="cat-item${c.id === activeId ? ' active' : ''}" data-id="${c.id}" role="button" tabindex="0">
+      ${kanSlepen ? '<span class="cat-grip" title="Sleep omhoog of omlaag om te verplaatsen">⠿</span>' : ''}
+      <span class="cat-text">${esc(c.label)}${c.scope ? `<span class="scope">${esc(c.scope)}</span>` : ''}</span>
+    </div>
   `).join('');
 
-  el.querySelectorAll('.cat-item').forEach(btn => {
-    btn.addEventListener('click', () => openCategory(btn.dataset.id));
+  el.querySelectorAll('.cat-item').forEach(rij => {
+    rij.addEventListener('click', () => {
+      if (netGesleept) return;          // niet openen na afloop van een sleep
+      openCategory(rij.dataset.id);
+    });
+    rij.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCategory(rij.dataset.id); }
+    });
   });
+
+  if (kanSlepen) {
+    el.querySelectorAll('.cat-grip').forEach(grip => {
+      grip.addEventListener('pointerdown', e => startSlepen(e, grip.closest('.cat-item')));
+    });
+  }
+}
+
+// ===== VOLGORDE AANPASSEN DOOR SLEPEN =====
+// Pointer events i.p.v. HTML5 drag-and-drop: dat laatste werkt niet op touch,
+// en deze app wordt vooral op de telefoon gebruikt.
+let sleepState = null;
+let netGesleept = false;
+let autoScrollTimer = null;
+
+function startSlepen(e, rij) {
+  if (!rij || e.button > 0) return;
+  e.preventDefault();
+
+  sleepState = { rij: rij, pointerId: e.pointerId, verplaatst: false };
+  rij.classList.add('slepend');
+  try { rij.setPointerCapture(e.pointerId); } catch (err) {}
+
+  document.addEventListener('pointermove', tijdensSlepen);
+  document.addEventListener('pointerup', stopSlepen);
+  document.addEventListener('pointercancel', stopSlepen);
+}
+
+function tijdensSlepen(e) {
+  if (!sleepState) return;
+  e.preventDefault();
+  sleepState.verplaatst = true;
+
+  const lijst = document.getElementById('catList');
+  const y = e.clientY;
+
+  // bepaal achter welk item de gesleepte rij hoort
+  const andere = [...lijst.querySelectorAll('.cat-item:not(.slepend)')];
+  let erachter = null;
+  for (const it of andere) {
+    const r = it.getBoundingClientRect();
+    if (y > r.top + r.height / 2) erachter = it;
+  }
+  if (erachter) erachter.after(sleepState.rij);
+  else lijst.prepend(sleepState.rij);
+
+  autoScroll(y);
+}
+
+// meescrollen als je bij de rand van de lijst komt
+function autoScroll(y) {
+  const kolom = document.getElementById('sidebar');
+  const r = kolom.getBoundingClientRect();
+  const rand = 60;
+  let stap = 0;
+  if (y < r.top + rand) stap = -8;
+  else if (y > r.bottom - rand) stap = 8;
+
+  clearInterval(autoScrollTimer);
+  if (stap) autoScrollTimer = setInterval(() => { kolom.scrollTop += stap; }, 16);
+}
+
+function stopSlepen(e) {
+  if (!sleepState) return;
+  clearInterval(autoScrollTimer);
+  document.removeEventListener('pointermove', tijdensSlepen);
+  document.removeEventListener('pointerup', stopSlepen);
+  document.removeEventListener('pointercancel', stopSlepen);
+
+  const rij = sleepState.rij;
+  const wasVerplaatst = sleepState.verplaatst;
+  rij.classList.remove('slepend');
+  try { rij.releasePointerCapture(sleepState.pointerId); } catch (err) {}
+  sleepState = null;
+
+  if (!wasVerplaatst) return;
+
+  // nieuwe volgorde uit de DOM overnemen
+  const nieuweVolgorde = [...document.querySelectorAll('#catList .cat-item')]
+    .map(el => categories.find(c => c.id === el.dataset.id))
+    .filter(Boolean);
+
+  if (nieuweVolgorde.length === categories.length) {
+    categories = nieuweVolgorde;
+    saveCategories();
+    toast('↕️ Volgorde opgeslagen');
+  }
+
+  // voorkom dat de klik na het loslaten de categorie opent
+  netGesleept = true;
+  setTimeout(() => { netGesleept = false; }, 50);
 }
 
 function openCategory(id) {

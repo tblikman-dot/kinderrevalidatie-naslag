@@ -84,7 +84,9 @@ body {
 
 .sidebar-list { padding: 6px; }
 .cat-item {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   width: 100%;
   text-align: left;
   padding: 12px 12px;
@@ -99,12 +101,37 @@ body {
 }
 .cat-item:hover { background: var(--accent-zacht); }
 .cat-item.active { background: var(--accent); color: #fff; }
+.cat-item .cat-text { flex: 1; min-width: 0; }
 .cat-item .scope {
   display: block;
   font-weight: 400;
   font-size: 12px;
   opacity: 0.75;
   margin-top: 2px;
+}
+
+/* greepje om te slepen */
+.cat-grip {
+  flex-shrink: 0;
+  color: #C3C7C4;
+  font-size: 15px;
+  line-height: 1.3;
+  cursor: grab;
+  padding: 0 2px;
+  touch-action: none;          /* anders scrollt de pagina mee op de telefoon */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cat-grip:active { cursor: grabbing; }
+.cat-item:hover .cat-grip { color: var(--accent); }
+.cat-item.active .cat-grip { color: rgba(255,255,255,0.65); }
+
+.cat-item.slepend {
+  opacity: 0.9;
+  background: var(--paneel);
+  box-shadow: 0 6px 18px rgba(19,48,63,0.18);
+  position: relative;
+  z-index: 10;
 }
 .cat-empty {
   padding: 20px 14px;
