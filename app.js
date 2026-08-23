@@ -1068,6 +1068,186 @@ function toast(msg) {
 }
 
 // ===== INIT =====
+// ===== BACK-UP: EXPORTEREN, TERUGZETTEN, DELEN =====
+// Alles staat in localStorage van één browser. Zonder export is dat één
+// gewiste browsergeschiedenis van kwijt zijn, en kan een collega er niets mee.
+const BACKUP_VERSIE = 1;
+
+function verzamelBackup() {
+  return {
+    soort: 'kinderrevalidatie-naslag',
+    versie: BACKUP_VERSIE,
+    gemaaktOp: new Date().toISOString(),
+    categorieen: categories,
+    aantekeningen: notes,
+    videos: videos,
+    links: links,
+    toegepasteBlokken: (() => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_BLOKKEN) || '[]'); }
+      catch (e) { return []; }
+    })(),
+  };
+}
+
+function backupStatistiek() {
+  const aantalNotities = Object.values(notes).filter(n => platteTekst(n).trim()).length;
+  const aantalVideos = Object.values(videos).reduce((t, v) => t + v.length, 0);
+  const aantalLinks = Object.values(links).reduce((t, l) => t + l.length, 0);
+  return `In deze browser: ${categories.length} aandachtsgebieden, ${aantalNotities} met aantekeningen, ${aantalVideos} video's, ${aantalLinks} afbeeldingen/links.`;
+}
+
+function exporteerBackup() {
+  const data = JSON.stringify(verzamelBackup(), null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const d = new Date();
+  const datum = d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `naslag-kinderrevalidatie-${datum}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('⤓ Back-up opgeslagen');
+}
+
+function leesBackup(bestand, klaar) {
+  const lezer = new FileReader();
+  lezer.onload = () => {
+    let data;
+    try { data = JSON.parse(lezer.result); }
+    catch (e) { return klaar(null, 'Dit bestand is geen geldige back-up (kon het niet lezen).'); }
+
+    if (!data || data.soort !== 'kinderrevalidatie-naslag' || !Array.isArray(data.categorieen)) {
+      return klaar(null, 'Dit lijkt geen back-up van deze app te zijn.');
+    }
+    if (data.versie > BACKUP_VERSIE) {
+      return klaar(null, 'Deze back-up komt uit een nieuwere versie van de app dan deze. Werk de app eerst bij.');
+    }
+    klaar(data, null);
+  };
+  lezer.onerror = () => klaar(null, 'Het bestand kon niet worden gelezen.');
+  lezer.readAsText(bestand);
+}
+
+// Samenvoegen: nooit iets van jezelf overschrijven.
+function voegBackupSamen(data) {
+  let nieuweCats = 0, nieuweNotities = 0, nieuweVideos = 0, nieuweLinks = 0;
+
+  const bestaandeIds = new Set(categories.map(c => c.id));
+  (data.categorieen || []).forEach(c => {
+    if (!bestaandeIds.has(c.id)) { categories.push(c); bestaandeIds.add(c.id); nieuweCats++; }
+  });
+
+  Object.entries(data.aantekeningen || {}).forEach(([id, tekst]) => {
+    const huidig = platteTekst(notes[id] || '').trim();
+    if (!huidig && platteTekst(tekst).trim()) { notes[id] = tekst; nieuweNotities++; }
+  });
+
+  Object.entries(data.videos || {}).forEach(([id, lijst]) => {
+    if (!videos[id]) videos[id] = [];
+    const aanwezig = new Set(videos[id].map(v => v.yt));
+    lijst.forEach(v => { if (!aanwezig.has(v.yt)) { videos[id].push(v); aanwezig.add(v.yt); nieuweVideos++; } });
+    if (!videos[id].length) delete videos[id];
+  });
+
+  Object.entries(data.links || {}).forEach(([id, lijst]) => {
+    if (!links[id]) links[id] = [];
+    const aanwezig = new Set(links[id].map(l => l.url));
+    lijst.forEach(l => { if (!aanwezig.has(l.url)) { links[id].push(l); aanwezig.add(l.url); nieuweLinks++; } });
+    if (!links[id].length) delete links[id];
+  });
+
+  saveCategories(); saveNotes(); saveVideos(); saveLinks();
+  return { nieuweCats, nieuweNotities, nieuweVideos, nieuweLinks };
+}
+
+function vervangDoorBackup(data) {
+  categories = data.categorieen || [];
+  notes = data.aantekeningen || {};
+  videos = data.videos || {};
+  links = data.links || {};
+  saveCategories(); saveNotes(); saveVideos(); saveLinks();
+  try { localStorage.setItem(STORAGE_BLOKKEN, JSON.stringify(data.toegepasteBlokken || [])); } catch (e) {}
+}
+
+function toonBackupScherm(open) {
+  const ov = document.getElementById('backupOverlay');
+  ov.hidden = !open;
+  if (open) {
+    document.getElementById('backupStat').textContent = backupStatistiek();
+    document.getElementById('importResultaat').innerHTML = '';
+    document.getElementById('importInput').value = '';
+  }
+}
+
+function naImport(bericht) {
+  activeId = null;
+  closeDetail();
+  renderList(document.getElementById('zoek').value);
+  document.getElementById('importResultaat').innerHTML =
+    `<div class="import-kaart">✅ ${esc(bericht)}</div>`;
+  document.getElementById('backupStat').textContent = backupStatistiek();
+}
+
+document.getElementById('backupBtn').addEventListener('click', () => toonBackupScherm(true));
+document.getElementById('backupSluit').addEventListener('click', () => toonBackupScherm(false));
+document.getElementById('backupOverlay').addEventListener('click', e => {
+  if (e.target.id === 'backupOverlay') toonBackupScherm(false);
+});
+document.getElementById('exportBtn').addEventListener('click', exporteerBackup);
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importInput').click());
+
+document.getElementById('importInput').addEventListener('change', e => {
+  const bestand = e.target.files && e.target.files[0];
+  if (!bestand) return;
+  const vak = document.getElementById('importResultaat');
+
+  leesBackup(bestand, (data, fout) => {
+    if (fout) { vak.innerHTML = `<div class="import-kaart fout">⚠️ ${esc(fout)}</div>`; return; }
+
+    const aantalNotities = Object.values(data.aantekeningen || {}).filter(n => platteTekst(n).trim()).length;
+    const aantalVideos = Object.values(data.videos || {}).reduce((t, v) => t + v.length, 0);
+    const aantalLinks = Object.values(data.links || {}).reduce((t, l) => t + l.length, 0);
+    const datum = data.gemaaktOp ? new Date(data.gemaaktOp).toLocaleDateString('nl-NL',
+      { day: 'numeric', month: 'long', year: 'numeric' }) : 'onbekend';
+
+    vak.innerHTML = `
+      <div class="import-kaart">
+        <strong>Back-up van ${esc(datum)}</strong>
+        <ul>
+          <li>${(data.categorieen || []).length} aandachtsgebieden</li>
+          <li>${aantalNotities} met aantekeningen</li>
+          <li>${aantalVideos} video's, ${aantalLinks} afbeeldingen/links</li>
+        </ul>
+        Wat wil je ermee?
+        <div class="import-keuzes">
+          <button class="modal-knop primair" id="doeSamenvoegen">Samenvoegen</button>
+          <button class="modal-knop gevaar" id="doeVervangen">Alles vervangen</button>
+        </div>
+        <div class="modal-uitleg" style="margin:10px 0 0;">
+          <strong>Samenvoegen</strong> vult alleen aan wat je nog niet hebt en laat je eigen tekst staan.
+          <strong>Alles vervangen</strong> gooit weg wat er nu in deze browser staat.
+        </div>
+      </div>`;
+
+    document.getElementById('doeSamenvoegen').addEventListener('click', () => {
+      const r = voegBackupSamen(data);
+      naImport(`Samengevoegd: ${r.nieuweCats} nieuwe aandachtsgebieden, ${r.nieuweNotities} aantekeningen, ${r.nieuweVideos} video's, ${r.nieuweLinks} links toegevoegd. Je eigen tekst is ongewijzigd gebleven.`);
+    });
+
+    document.getElementById('doeVervangen').addEventListener('click', () => {
+      if (!confirm('Alles in deze browser vervangen door de back-up?\n\nJe huidige aantekeningen, video\'s en links gaan hierbij verloren. Maak eerst een back-up als je ze wilt bewaren.')) return;
+      vervangDoorBackup(data);
+      naImport('Alles vervangen door de back-up.');
+    });
+  });
+});
+
 loadState();
 renderList('');
 

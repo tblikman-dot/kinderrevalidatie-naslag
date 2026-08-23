@@ -17,8 +17,48 @@
 
 <header class="topbar">
   <div class="topbar-title">Naslag Kinderrevalidatie</div>
+  <button class="add-cat-btn" id="backupBtn" title="Back-up maken of terugzetten">⤓</button>
   <button class="add-cat-btn" id="addCatBtn" title="Nieuw aandachtsgebied toevoegen">＋</button>
 </header>
+
+<div class="modal-overlay" id="backupOverlay" hidden>
+  <div class="modal">
+    <div class="modal-kop">
+      <h2>Back-up &amp; delen</h2>
+      <button class="modal-sluit" id="backupSluit" title="Sluiten">✕</button>
+    </div>
+
+    <div class="modal-inhoud">
+      <p class="modal-waarschuwing">
+        Alles wat je in deze app maakt staat <strong>alleen in deze browser</strong>. Wis je je
+        browsergegevens of stap je over op een ander apparaat, dan is het weg. Maak dus af en toe
+        een back-up.
+      </p>
+
+      <div class="modal-blok">
+        <h3>Back-up maken</h3>
+        <p class="modal-uitleg">
+          Zet alles — aandachtsgebieden, aantekeningen, video's, links en de volgorde —
+          in één bestand. Bewaar dat ergens veilig, of stuur het naar een collega zodat die
+          dezelfde inhoud krijgt.
+        </p>
+        <div class="modal-stat" id="backupStat"></div>
+        <button class="modal-knop primair" id="exportBtn">⤓ Bestand opslaan</button>
+      </div>
+
+      <div class="modal-blok">
+        <h3>Back-up terugzetten</h3>
+        <p class="modal-uitleg">
+          Kies een eerder opgeslagen bestand. Je kiest daarna zelf of je het samenvoegt met wat er
+          nu staat, of alles vervangt.
+        </p>
+        <input type="file" id="importInput" accept="application/json,.json" hidden>
+        <button class="modal-knop" id="importBtn">⤒ Bestand kiezen…</button>
+        <div id="importResultaat"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="layout" id="layout">
 
