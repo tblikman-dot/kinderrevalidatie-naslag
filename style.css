@@ -102,6 +102,19 @@ body {
 .cat-item:hover { background: var(--accent-zacht); }
 .cat-item.active { background: var(--accent); color: #fff; }
 .cat-item .cat-text { flex: 1; min-width: 0; }
+.cat-item .treffer {
+  display: block;
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: #FFF3A3;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: #5A4A33;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.cat-item.active .treffer { background: rgba(255,255,255,0.22); color: #fff; }
 .cat-item .scope {
   display: block;
   font-weight: 400;

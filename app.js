@@ -547,15 +547,56 @@ function zoekLink(label, extra) {
   return q;
 }
 
+// ===== ZOEKEN =====
+// Zoekt in de titel, de omschrijving, je aantekeningen, én in de titels van
+// video's en links — een video als "Gans-osteotomie" moet gewoon vindbaar zijn.
+// Accenten worden genegeerd, zodat "Silfverskiold" ook "Silfverskiöld" vindt.
+function normaliseer(s) {
+  return String(s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function fragmentRond(tekst, term, lengte = 60) {
+  const pos = normaliseer(tekst).indexOf(term);
+  if (pos === -1) return tekst.slice(0, lengte);
+  const start = Math.max(0, pos - Math.floor(lengte / 3));
+  const stuk = tekst.slice(start, start + lengte).replace(/\s+/g, ' ').trim();
+  return (start > 0 ? '…' : '') + stuk + (start + lengte < tekst.length ? '…' : '');
+}
+
+function zoekTreffer(cat, filter) {
+  if (!filter) return { raak: true };
+  const f = normaliseer(filter);
+
+  if (normaliseer(cat.label).includes(f)) return { raak: true };
+  if (normaliseer(cat.scope).includes(f)) return { raak: true };
+
+  const video = (videos[cat.id] || []).find(v => normaliseer(v.titel).includes(f));
+  if (video) return { raak: true, hint: '🎬 ' + video.titel };
+
+  const link = (links[cat.id] || [])
+    .find(l => normaliseer(l.titel).includes(f) || normaliseer(l.url).includes(f));
+  if (link) return { raak: true, hint: '🔗 ' + link.titel };
+
+  const tekst = platteTekst(notes[cat.id] || '');
+  if (normaliseer(tekst).includes(f)) {
+    return { raak: true, hint: '📝 ' + fragmentRond(tekst, f) };
+  }
+
+  return { raak: false };
+}
+
 // ===== RENDER =====
 function renderList(filter) {
   const el = document.getElementById('catList');
   const f = (filter || '').toLowerCase().trim();
 
+  const treffers = new Map();
   const items = categories.filter(c => {
-    if (!f) return true;
-    const n = platteTekst(notes[c.id] || '').toLowerCase();
-    return c.label.toLowerCase().includes(f) || (c.scope || '').toLowerCase().includes(f) || n.includes(f);
+    const t = zoekTreffer(c, f);
+    if (t.raak && t.hint) treffers.set(c.id, t.hint);
+    return t.raak;
   });
 
   if (!items.length) {
@@ -570,7 +611,9 @@ function renderList(filter) {
   el.innerHTML = items.map(c => `
     <div class="cat-item${c.id === activeId ? ' active' : ''}" data-id="${c.id}" role="button" tabindex="0">
       ${kanSlepen ? '<span class="cat-grip" title="Sleep omhoog of omlaag om te verplaatsen">⠿</span>' : ''}
-      <span class="cat-text">${esc(c.label)}${c.scope ? `<span class="scope">${esc(c.scope)}</span>` : ''}</span>
+      <span class="cat-text">${esc(c.label)}${c.scope ? `<span class="scope">${esc(c.scope)}</span>` : ''}${
+        treffers.has(c.id) ? `<span class="treffer">${esc(treffers.get(c.id))}</span>` : ''
+      }</span>
     </div>
   `).join('');
 
