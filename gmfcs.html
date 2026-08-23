@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>GMFCS per leeftijdsband</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .gm-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .gm-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .gm-terug:hover { text-decoration: underline; }
+
+  .gm-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .gm-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .gm-bronmelding {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 20px;
+  }
+  .gm-bronmelding a { color: #7a5c14; }
+
+  /* --- keuzebalken --- */
+  .gm-schakel {
+    display: flex; gap: 6px;
+    background: #EFEFEB;
+    padding: 4px; border-radius: 11px;
+    margin-bottom: 14px;
+  }
+  .gm-schakel button {
+    flex: 1;
+    padding: 9px 10px;
+    border: none; border-radius: 8px;
+    background: transparent;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    line-height: 1.3;
+  }
+  .gm-schakel button.actief { background: var(--paneel); color: var(--inkt); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+  .gm-kiezer-label {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); margin-bottom: 7px;
+  }
+  .gm-tabs {
+    display: flex; flex-wrap: wrap; gap: 7px;
+    margin-bottom: 22px;
+  }
+  .gm-tab {
+    padding: 9px 14px;
+    border: 1.5px solid var(--lijn); border-radius: 50px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+    white-space: nowrap;
+  }
+  .gm-tab:hover { border-color: var(--accent); }
+  .gm-tab.actief { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* --- niveaukaarten --- */
+  .gm-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border-left: 5px solid var(--n-kleur, var(--accent));
+  }
+  .gm-kaart-kop {
+    display: flex; align-items: baseline; gap: 10px;
+    flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .gm-niveau {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.7px;
+    padding: 4px 11px; border-radius: 50px;
+    background: var(--n-zacht, var(--accent-zacht));
+    color: var(--n-kleur, var(--accent));
+    white-space: nowrap;
+  }
+  .gm-kern {
+    font-size: 1.02rem; font-weight: 700;
+    line-height: 1.35; margin: 0;
+    flex: 1; min-width: 180px;
+  }
+  .gm-kaart ul {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+    margin: 0; padding-left: 20px;
+  }
+  .gm-kaart li { margin-bottom: 5px; }
+  .gm-kaart li:last-child { margin-bottom: 0; }
+
+  /* kleur per niveau: van "loopt overal" naar "wordt vervoerd" */
+  .n1 { --n-kleur: #0f7a4a; --n-zacht: #E3F3EA; }
+  .n2 { --n-kleur: #3F7A2E; --n-zacht: #E9F2E4; }
+  .n3 { --n-kleur: #8A6508; --n-zacht: #FBF3DC; }
+  .n4 { --n-kleur: #A85A20; --n-zacht: #FAEDE2; }
+  .n5 { --n-kleur: #B3441E; --n-zacht: #FBEAE5; }
+
+  /* bandlabel in de "per niveau"-weergave */
+  .gm-band {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--muted); margin-bottom: 8px;
+  }
+
+  /* --- onderdelen onderaan --- */
+  .gm-sectie { margin-top: 34px; }
+  .gm-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .gm-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .gm-verschil {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .gm-verschil-kop {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 800;
+    color: var(--accent); margin-bottom: 5px;
+    letter-spacing: 0.3px;
+  }
+  .gm-verschil p {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+    margin: 0;
+  }
+
+  .gm-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .gm-lijst li { margin-bottom: 8px; }
+  .gm-lijst li:last-child { margin-bottom: 0; }
+
+  .gm-links { display: flex; flex-direction: column; gap: 8px; }
+  .gm-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none;
+    line-height: 1.4;
+  }
+  .gm-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .gm-link .sub {
+    display: block; font-weight: 400;
+    font-size: 12.5px; color: var(--muted);
+    margin-top: 3px;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door; externe links niet.</div>
+
+<header class="topbar">
+  <div class="topbar-title">GMFCS per leeftijdsband</div>
+</header>
+
+<div class="gm-wrap">
+  <a class="gm-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="gm-kop">GMFCS — wat hoort bij welke leeftijd</h1>
+  <p class="gm-intro">
+    De vijf GMFCS-niveaus betekenen op elke leeftijd iets anders: "niveau II" bij een peuter
+    van drie beschrijft ander gedrag dan bij een jongere van vijftien. Hier staan de vijf
+    leeftijdsbanden naast elkaar, zodat je snel de juiste omschrijving pakt.
+  </p>
+
+  <div class="gm-bronmelding">
+    <strong>Let op — dit is een samenvatting in eigen woorden.</strong> De officiële
+    GMFCS-E&amp;R-omschrijvingen (Palisano e.a., herzien en uitgebreid 2007) zijn auteursrechtelijk
+    beschermd en staan hier dus niet letterlijk. Gebruik voor de definitieve formulering,
+    het scoreformulier en de geautoriseerde Nederlandse vertaling altijd de bron van CanChild:
+    <a href="https://canchild.ca/en/resources/42-gross-motor-function-classification-system-expanded-revised-gmfcs-e-r" target="_blank" rel="noopener">canchild.ca — GMFCS-E&amp;R</a>.
+  </div>
+
+  <div class="gm-schakel" id="gmSchakel">
+    <button type="button" data-modus="leeftijd" class="actief">Per leeftijd</button>
+    <button type="button" data-modus="niveau">Per niveau</button>
+  </div>
+
+  <div class="gm-kiezer-label" id="gmKiezerLabel">Leeftijd</div>
+  <div class="gm-tabs" id="gmTabs"></div>
+
+  <div id="gmInhoud"></div>
+
+  <div class="gm-sectie">
+    <h2>Verschillen tussen de niveaus</h2>
+    <p class="gm-sectie-uitleg">
+      Bij twijfel tussen twee niveaus is dit meestal het kantelpunt.
+    </p>
+    <div id="gmVerschillen"></div>
+  </div>
+
+  <div class="gm-sectie">
+    <h2>Waar let je op bij het indelen</h2>
+    <p class="gm-sectie-uitleg">
+      Uitgangspunten die bepalen of je het goede niveau te pakken hebt.
+    </p>
+    <ul class="gm-lijst" id="gmUitgangspunten"></ul>
+  </div>
+
+  <div class="gm-sectie">
+    <h2>Waar je het voor gebruikt</h2>
+    <p class="gm-sectie-uitleg">
+      Het niveau stuurt beleid — vooral bij de heupen.
+    </p>
+    <div class="gm-links">
+      <a class="gm-link" href="beslisboom-heup.html">
+        🌳 Beslisboom: heup beoordelen bij CP
+        <span class="sub">Klik voor klik langs de criteria uit de Nederlandse richtlijn</span>
+      </a>
+      <a class="gm-link" href="https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html" target="_blank" rel="noopener">
+        📎 Screeningsschema heupluxatie (FMS-bijlage)
+        <span class="sub">Screeningsfrequentie hangt af van het GMFCS-niveau</span>
+      </a>
+      <a class="gm-link" href="https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen" target="_blank" rel="noopener">
+        📘 FMS-richtlijn: Cerebrale parese bij kinderen
+        <span class="sub">Leidende Nederlandse bron</span>
+      </a>
+      <a class="gm-link" href="https://canchild.ca/en/resources/42-gross-motor-function-classification-system-expanded-revised-gmfcs-e-r" target="_blank" rel="noopener">
+        🔗 CanChild — officiële GMFCS-E&amp;R
+        <span class="sub">Originele omschrijvingen, vertalingen en scoreformulier</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// GMFCS-E&R, samengevat in eigen woorden per leeftijdsband.
+// De officiële omschrijvingen (Palisano e.a. 1997, herzien/uitgebreid 2007,
+// CanChild) zijn auteursrechtelijk beschermd en staan hier bewust NIET
+// letterlijk. Dit is een naslagsamenvatting; de bron blijft leidend.
+// ============================================================================
+
+const BANDEN = [
+  { id: 'v2',    kort: '< 2 jaar',    lang: 'Voor de tweede verjaardag' },
+  { id: '2-4',   kort: '2–4 jaar',    lang: 'Tussen de tweede en vierde verjaardag' },
+  { id: '4-6',   kort: '4–6 jaar',    lang: 'Tussen de vierde en zesde verjaardag' },
+  { id: '6-12',  kort: '6–12 jaar',   lang: 'Tussen de zesde en twaalfde verjaardag' },
+  { id: '12-18', kort: '12–18 jaar',  lang: 'Tussen de twaalfde en achttiende verjaardag' },
+];
+
+const NIVEAUS = [
+  { id: 1, romein: 'I',   klasse: 'n1' },
+  { id: 2, romein: 'II',  klasse: 'n2' },
+  { id: 3, romein: 'III', klasse: 'n3' },
+  { id: 4, romein: 'IV',  klasse: 'n4' },
+  { id: 5, romein: 'V',   klasse: 'n5' },
+];
+
+const DATA = {
+  'v2': {
+    1: { kern: 'Komt tot staan en gaat lopen',
+         punten: [
+           'Zit op de grond met beide handen vrij om met speelgoed te spelen.',
+           'Kruipt op handen en knieën.',
+           'Trekt zich op aan meubels en loopt eraan langs.',
+           'Gaat ergens tussen 18 en 24 maanden zelfstandig lopen, zonder hulpmiddel.',
+         ] },
+    2: { kern: 'Zit, maar de balans kost moeite',
+         punten: [
+           'Zit op de grond, maar heeft de handen soms nodig om de balans te houden.',
+           'Verplaatst zich buikschuivend of kruipend op handen en knieën.',
+           'Trekt zich mogelijk op tot staan en loopt langs meubels.',
+         ] },
+    3: { kern: 'Zit met steun in de lage rug',
+         punten: [
+           'Kan op de grond zitten als de lage rug ondersteund wordt.',
+           'Rolt om en schuift vooruit op de buik.',
+         ] },
+    4: { kern: 'Hoofdcontrole aanwezig, rompsteun nodig',
+         punten: [
+           'Heeft hoofdcontrole, maar rompsteun nodig om op de grond te zitten.',
+           'Rolt van buik naar rug, soms ook van rug naar buik.',
+         ] },
+    5: { kern: 'Houdingen tegen de zwaartekracht in lukken niet',
+         punten: [
+           'Lichamelijke beperkingen begrenzen de willekeurige bewegingscontrole.',
+           'Kan hoofd en romp niet tegen de zwaartekracht in houden, niet in buiklig en niet in zit.',
+           'Heeft hulp van een volwassene nodig om te rollen.',
+         ] },
+  },
+
+  '2-4': {
+    1: { kern: 'Lopen is de manier van verplaatsen',
+         punten: [
+           'Zit op de grond met beide handen vrij om iets te doen.',
+           'Komt zonder hulp van een volwassene in en uit zit en tot staan.',
+           'Loopt, en dat is de voorkeursmanier van verplaatsen — zonder hulpmiddel.',
+         ] },
+    2: { kern: 'Loopt, maar balans met vrije handen is lastig',
+         punten: [
+           'Zit op de grond, maar de balans houden met beide handen vrij is lastig.',
+           'Komt zonder hulp van een volwassene in en uit zit.',
+           'Trekt zich op tot staan aan een stabiel oppervlak.',
+           'Kruipt op handen en knieën met wisselende benen, loopt langs meubels, of loopt met een loophulpmiddel — dat zijn de gangbare manieren.',
+         ] },
+    3: { kern: 'Verplaatst zich vooral over de grond',
+         punten: [
+           'Zit op de grond, vaak in W-zit, en heeft soms hulp nodig om in zit te komen.',
+           'Verplaatst zich vooral buikschuivend of kruipend, vaak zonder wisselende beenbeweging.',
+           'Trekt zich soms op tot staan aan een stabiel oppervlak en loopt een klein stukje langs meubels.',
+           'Loopt binnen soms korte stukjes met een loophulpmiddel, waarbij een volwassene helpt sturen en draaien.',
+         ] },
+    4: { kern: 'Zit als het kind neergezet wordt',
+         punten: [
+           'Zit op de grond wanneer het neergezet wordt, maar kan houding en balans niet vasthouden zonder de handen als steun.',
+           'Heeft vaak aangepaste voorzieningen nodig om te zitten en te staan.',
+           'Verplaatst zich alleen over korte afstand binnen een ruimte: rollen, buikschuiven of kruipen zonder wisselende beenbeweging.',
+         ] },
+    5: { kern: 'Wordt vervoerd',
+         punten: [
+           'Beperkingen in alle motorische functies; hoofd en romp tegen de zwaartekracht in houden lukt niet.',
+           'Aangepaste zit- en stavoorzieningen compenseren de beperkingen niet volledig.',
+           'Geen zelfstandige manier van verplaatsen; wordt vervoerd.',
+           'Een enkel kind komt tot zelfstandige verplaatsing met een sterk aangepaste elektrische rolstoel.',
+         ] },
+  },
+
+  '4-6': {
+    1: { kern: 'Loopt binnen en buiten, rennen komt op gang',
+         punten: [
+           'Gaat zonder handsteun in en uit een stoel.',
+           'Komt vanaf de grond en vanuit een stoel tot staan zonder ergens op te steunen.',
+           'Loopt binnen en buiten en gaat de trap op.',
+           'Rennen en springen beginnen te lukken.',
+         ] },
+    2: { kern: 'Loopt zonder hulpmiddel, maar rent en springt niet',
+         punten: [
+           'Zit op een stoel met beide handen vrij.',
+           'Komt vanaf de grond en vanuit een stoel tot staan, maar duwt of trekt zich daarbij vaak op aan een stabiel oppervlak.',
+           'Loopt binnen zonder loophulpmiddel, en buiten korte afstanden over vlakke ondergrond.',
+           'Gaat de trap op met een leuning; rennen en springen lukken niet.',
+         ] },
+    3: { kern: 'Loopt met een loophulpmiddel op vlakke ondergrond',
+         punten: [
+           'Zit op een gewone stoel, maar heeft soms bekken- of rompsteun nodig om de handen goed te kunnen gebruiken.',
+           'Komt in en uit de stoel door zich op te duwen of op te trekken aan een stabiel oppervlak.',
+           'Loopt met een loophulpmiddel op vlakke ondergrond; trap op met hulp van een volwassene.',
+           'Wordt vaak vervoerd bij lange afstanden of buiten op oneffen terrein.',
+         ] },
+    4: { kern: 'Aangepaste zitvoorziening; hooguit korte stukjes met een looprek',
+         punten: [
+           'Zit op een stoel, maar heeft aangepaste zitvoorziening nodig voor rompcontrole en handgebruik.',
+           'Komt in en uit de stoel met hulp van een volwassene of door zich op te duwen aan een stabiel oppervlak.',
+           'Loopt hooguit korte stukjes met een looprek en toezicht; draaien en balans op oneffen ondergrond zijn lastig.',
+           'Wordt buitenshuis vervoerd; komt mogelijk tot zelfstandige verplaatsing met een elektrische rolstoel.',
+         ] },
+    5: { kern: 'Wordt vervoerd',
+         punten: [
+           'Beperkingen in alle motorische functies; hoofd en romp tegen de zwaartekracht in houden lukt niet.',
+           'Aangepaste zit- en stavoorzieningen compenseren de beperkingen niet volledig.',
+           'Geen zelfstandige manier van verplaatsen; wordt vervoerd.',
+           'Een enkel kind komt tot zelfstandige verplaatsing met een sterk aangepaste elektrische rolstoel.',
+         ] },
+  },
+
+  '6-12': {
+    1: { kern: 'Loopt overal, ook trap zonder leuning',
+         punten: [
+           'Loopt thuis, op school, buiten en in de gemeenschap.',
+           'Gaat de trap op zonder leuning te gebruiken.',
+           'Rent en springt, maar snelheid, balans en coördinatie zijn beperkt.',
+         ] },
+    2: { kern: 'Loopt in de meeste situaties, met beperkingen',
+         punten: [
+           'Loopt in de meeste omgevingen.',
+           'Lange afstanden, oneffen terrein, hellingen, drukte en krappe ruimtes zijn lastig.',
+           'Gaat de trap op met een leuning, of met hulp als er geen leuning is.',
+           'Gebruikt over lange afstand soms wielen of een loophulpmiddel.',
+           'Rennen en springen lukken nauwelijks.',
+         ] },
+    3: { kern: 'Loopt binnen met een loophulpmiddel',
+         punten: [
+           'Loopt binnen in de meeste situaties met een loophulpmiddel.',
+           'Heeft in zit soms een gordel nodig voor bekkenstand en balans.',
+           'Opstaan uit zit en vanaf de grond vraagt hulp van iemand of een steunpunt.',
+           'Gebruikt over lange afstand een vorm van wielen: soms zelf een handbewogen rolstoel voortbewegen, soms geduwd worden.',
+         ] },
+    4: { kern: 'Fysieke hulp of elektrische mobiliteit',
+         punten: [
+           'Verplaatst zich in de meeste situaties met fysieke hulp van een ander, of met elektrische mobiliteit.',
+           'Heeft aangepaste zitvoorziening nodig voor romp- en bekkencontrole, en fysieke hulp bij de meeste transfers.',
+           'Verplaatst zich thuis over de grond (rollen, buikschuiven, kruipen), loopt korte stukjes met fysieke hulp, of gebruikt elektrische mobiliteit.',
+         ] },
+    5: { kern: 'Wordt overal in een handbewogen rolstoel vervoerd',
+         punten: [
+           'Wordt in alle situaties in een handbewogen rolstoel vervoerd.',
+           'Beperkt in het tegen de zwaartekracht in houden van hoofd en romp, en in het aansturen van armen en benen.',
+           'Hulpmiddelen verbeteren hoofdstand, zitten, staan en verplaatsen, maar heffen de beperkingen niet op.',
+           'Transfers vragen volledige fysieke hulp.',
+         ] },
+  },
+
+  '12-18': {
+    1: { kern: 'Loopt overal, ook stoepranden en trap',
+         punten: [
+           'Loopt thuis, op school, buiten en in de gemeenschap.',
+           'Gaat stoepranden en trap op zonder fysieke hulp en zonder leuning.',
+           'Rent en springt, maar snelheid, balans en coördinatie zijn beperkt.',
+         ] },
+    2: { kern: 'Loopt in de meeste situaties; omgeving bepaalt mee',
+         punten: [
+           'Loopt in de meeste omgevingen; omgevingsfactoren en eigen voorkeur bepalen mee hoe de verplaatsing eruitziet.',
+           'Gebruikt op school of werk soms een loophulpmiddel voor de veiligheid.',
+           'Gebruikt buiten en in de gemeenschap over lange afstand wielen.',
+           'Gaat de trap op met een leuning of met fysieke hulp; rennen en springen lukken nauwelijks.',
+         ] },
+    3: { kern: 'Loopt met een loophulpmiddel, kiest per situatie',
+         punten: [
+           'Kan lopen met een loophulpmiddel.',
+           'Kiest, anders dan leeftijdsgenoten, per situatie een andere manier van verplaatsen — afhankelijk van eigen kunnen en de omgeving.',
+           'Heeft in zit soms een gordel nodig voor bekkenstand en balans.',
+           'Transfers vragen fysieke hulp of een steunpunt.',
+           'Gebruikt over lange afstand een vorm van wielen; trap met leuning onder toezicht of met fysieke hulp.',
+         ] },
+    4: { kern: 'Gebruikt in de meeste situaties wielen',
+         punten: [
+           'Gebruikt in de meeste omgevingen wielen (zelf of geduwd, of elektrisch).',
+           'Heeft aangepaste zitvoorziening nodig voor bekken- en rompcontrole.',
+           'Transfers vragen fysieke hulp van één of twee personen; neemt bij een statransfer soms zelf gewicht op de benen.',
+           'Loopt binnen hooguit korte stukjes met fysieke hulp, of met een lichaamsondersteunend looprek dat daarop is ingesteld.',
+         ] },
+    5: { kern: 'Wordt overal in een handbewogen rolstoel vervoerd',
+         punten: [
+           'Wordt in alle situaties in een handbewogen rolstoel vervoerd.',
+           'Beperkt in het tegen de zwaartekracht in houden van hoofd en romp, en in het aansturen van armen en benen.',
+           'Transfers vragen volledige fysieke hulp.',
+           'Een enkeling komt tot zelfstandige verplaatsing met een sterk aangepaste elektrische rolstoel.',
+         ] },
+  },
+};
+
+const VERSCHILLEN = [
+  { kop: 'I versus II',
+    tekst: 'Beide lopen zelfstandig, maar bij II gaat het minder makkelijk. II heeft bij het leren lopen vaak nog een loophulpmiddel nodig, gebruikt buiten over lange afstand soms wielen, houdt op de trap de leuning vast en komt niet tot rennen en springen.' },
+  { kop: 'II versus III',
+    tekst: 'Het verschil zit in het hulpmiddel. Vanaf ongeveer het vierde jaar loopt II zonder loophulpmiddel, terwijl III er een nodig heeft om binnen te kunnen lopen.' },
+  { kop: 'III versus IV',
+    tekst: 'Het verschil zit in zitten én verplaatsen. III zit zelfstandig, verplaatst zich zelfstandig over de grond en loopt met een loophulpmiddel. IV functioneert wel in zit, maar meestal met steun, en de zelfstandige verplaatsing is sterk beperkt: vaker vervoerd worden of elektrische mobiliteit.' },
+  { kop: 'IV versus V',
+    tekst: 'V mist ook de basale houdingscontrole tegen de zwaartekracht in. Zelfstandige verplaatsing is er alleen als het lukt een elektrische rolstoel te leren bedienen.' },
+];
+
+const UITGANGSPUNTEN = [
+  '<strong>Je classificeert wat het kind gewóón doet</strong> — thuis, op school en in de gemeenschap — niet wat het op zijn best kan in de behandelkamer of onder begeleiding van een therapeut.',
+  '<strong>De nadruk ligt op zitten, transfers en verplaatsen.</strong> Andere vaardigheden wegen niet mee bij het bepalen van het niveau.',
+  '<strong>Kies de band die het geheel het best beschrijft</strong>, niet de band waarin één losse vaardigheid toevallig past.',
+  '<strong>Onder de 2 jaar: reken met de gecorrigeerde leeftijd</strong> bij prematuriteit. Op deze leeftijd is de indeling ook het minst betrouwbaar — hercontroleer bij twijfel.',
+  '<strong>Het niveau is bedoeld om stabiel te zijn</strong> over de jaren heen. Verandert het toch, ga dan na of het de eerste indeling was die niet klopte, of dat er echt iets veranderd is (bijvoorbeeld na chirurgie of bij toenemende pijn).',
+  '<strong>GMFCS gaat alleen over grove motoriek.</strong> Handfunctie classificeer je apart met MACS, communicatie met CFCS, eten en drinken met EDACS.',
+  '<strong>Hulpmiddelen tellen mee, niet tegen.</strong> Een kind dat met een looprek loopt, wordt ingedeeld inclusief dat looprek — het hulpmiddel maakt onderdeel uit van hoe het kind zich verplaatst.',
+];
+
+// ===== weergave =====
+const SLEUTEL = 'krnGmfcsKeuze';
+let modus = 'leeftijd';
+let keuze = '6-12';
+
+function laadKeuze() {
+  try {
+    const raw = localStorage.getItem(SLEUTEL);
+    if (!raw) return;
+    const opgeslagen = JSON.parse(raw);
+    if (opgeslagen.modus === 'leeftijd' || opgeslagen.modus === 'niveau') modus = opgeslagen.modus;
+    if (opgeslagen.keuze !== undefined && opgeslagen.keuze !== null) keuze = opgeslagen.keuze;
+  } catch (e) { /* geen opgeslagen keuze, prima */ }
+
+  // veiligheidsnet: hoort de bewaarde keuze wel bij de bewaarde modus?
+  if (modus === 'leeftijd' && !BANDEN.some(b => b.id === keuze)) keuze = '6-12';
+  if (modus === 'niveau' && !NIVEAUS.some(n => n.id === Number(keuze))) keuze = 1;
+  if (modus === 'niveau') keuze = Number(keuze);
+}
+
+function bewaarKeuze() {
+  try { localStorage.setItem(SLEUTEL, JSON.stringify({ modus, keuze })); } catch (e) { /* privémodus */ }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// De badge toont steeds wát er in deze weergave varieert: kijk je per leeftijd,
+// dan is dat het niveau; kijk je per niveau, dan is dat de leeftijdsband.
+function kaartHtml(niveau, blok, badge) {
+  const punten = blok.punten.map(p => '<li>' + esc(p) + '</li>').join('');
+  return '<div class="gm-kaart ' + niveau.klasse + '">' +
+    '<div class="gm-kaart-kop">' +
+      '<span class="gm-niveau">' + esc(badge) + '</span>' +
+      '<p class="gm-kern">' + esc(blok.kern) + '</p>' +
+    '</div>' +
+    '<ul>' + punten + '</ul>' +
+  '</div>';
+}
+
+function tekenTabs() {
+  const tabs = document.getElementById('gmTabs');
+  const label = document.getElementById('gmKiezerLabel');
+
+  if (modus === 'leeftijd') {
+    label.textContent = 'Leeftijd';
+    tabs.innerHTML = BANDEN.map(b =>
+      '<button type="button" class="gm-tab' + (b.id === keuze ? ' actief' : '') + '" data-keuze="' + b.id + '">' + b.kort + '</button>'
+    ).join('');
+  } else {
+    label.textContent = 'Niveau';
+    tabs.innerHTML = NIVEAUS.map(n =>
+      '<button type="button" class="gm-tab' + (n.id === keuze ? ' actief' : '') + '" data-keuze="' + n.id + '">GMFCS ' + n.romein + '</button>'
+    ).join('');
+  }
+}
+
+function tekenInhoud() {
+  const doel = document.getElementById('gmInhoud');
+
+  if (modus === 'leeftijd') {
+    const band = BANDEN.find(b => b.id === keuze);
+    const kaarten = NIVEAUS.map(n => kaartHtml(n, DATA[band.id][n.id], 'GMFCS ' + n.romein)).join('');
+    doel.innerHTML =
+      '<div class="gm-band">' + esc(band.lang) + '</div>' + kaarten;
+  } else {
+    const niveau = NIVEAUS.find(n => n.id === keuze);
+    const kaarten = BANDEN.map(b => kaartHtml(niveau, DATA[b.id][niveau.id], b.kort)).join('');
+    doel.innerHTML =
+      '<div class="gm-band">GMFCS ' + niveau.romein + ' — door de jaren heen</div>' + kaarten;
+  }
+}
+
+function teken() {
+  tekenTabs();
+  tekenInhoud();
+  document.querySelectorAll('#gmSchakel button').forEach(b => {
+    b.classList.toggle('actief', b.dataset.modus === modus);
+  });
+}
+
+document.getElementById('gmSchakel').addEventListener('click', e => {
+  const knop = e.target.closest('button');
+  if (!knop || knop.dataset.modus === modus) return;
+  modus = knop.dataset.modus;
+  keuze = (modus === 'leeftijd') ? '6-12' : 1;
+  bewaarKeuze();
+  teken();
+});
+
+document.getElementById('gmTabs').addEventListener('click', e => {
+  const knop = e.target.closest('.gm-tab');
+  if (!knop) return;
+  keuze = (modus === 'leeftijd') ? knop.dataset.keuze : Number(knop.dataset.keuze);
+  bewaarKeuze();
+  teken();
+});
+
+document.getElementById('gmVerschillen').innerHTML = VERSCHILLEN.map(v =>
+  '<div class="gm-verschil"><div class="gm-verschil-kop">' + esc(v.kop) + '</div><p>' + esc(v.tekst) + '</p></div>'
+).join('');
+
+document.getElementById('gmUitgangspunten').innerHTML = UITGANGSPUNTEN.map(u => '<li>' + u + '</li>').join('');
+
+laadKeuze();
+teken();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

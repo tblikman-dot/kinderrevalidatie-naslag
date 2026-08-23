@@ -3,11 +3,13 @@
 const DEFAULT_CATS = [
   { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen',
     directLinks: [
+      { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema',
     directLinks: [
       { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html' },
+      { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
@@ -978,7 +980,14 @@ function openCategory(id) {
 
   const rdQuery = zoekLink(cat.label, cat.scope);
   const directLinksHtml = (cat.directLinks || [])
-    .map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`)
+    .map(l => {
+      // Eigen pagina's (beslisboom, GMFCS) in hetzelfde venster openen: anders
+      // stapt de app op het startscherm uit naar de browser. Externe bronnen
+      // wél in een nieuw tabblad, zodat je je plek in de app niet kwijtraakt.
+      const extern = /^https?:/i.test(l.url);
+      const attr = extern ? ' target="_blank" rel="noopener"' : '';
+      return `<a href="${esc(l.url)}"${attr}>${esc(l.label)}</a>`;
+    })
     .join('');
   document.getElementById('detailLinks').innerHTML = `
     ${directLinksHtml}
