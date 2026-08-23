@@ -10,6 +10,7 @@ const DEFAULT_CATS = [
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
+  { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Techniek, spierlokalisatie, onderwijsvideo\'s' },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
@@ -174,9 +175,11 @@ Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, 
 
 const STORAGE_CATS = 'krnCategories';
 const STORAGE_NOTES = 'krnNotes';
+const STORAGE_VIDEOS = 'krnVideos';
 
 let categories = [];
 let notes = {};
+let videos = {};        // { catId: [ {yt, titel, ts} ] }
 let activeId = null;
 let saveTimer = null;
 
@@ -192,6 +195,25 @@ function loadState() {
   // categorieën (geen match in DEFAULT_CATS) blijven onaangeroerd. Label/scope die de
   // gebruiker eventueel zelf aanpaste, blijven ook staan — alleen directLinks wordt gesynct.
   let catsChanged = false;
+
+  // Categorieën die ik later in de code toevoeg moeten ook verschijnen bij wie de app
+  // al eerder opende (die heeft een opgeslagen lijst in localStorage, en die won het
+  // voorheen altijd van de code — nieuwe onderwerpen bleven dan onzichtbaar).
+  // Nieuwe standaardcategorieën worden ingevoegd op hun plek uit DEFAULT_CATS;
+  // zelf toegevoegde categorieën blijven staan waar ze staan.
+  const aanwezig = new Set(categories.map(c => c.id));
+  DEFAULT_CATS.forEach((def, defIdx) => {
+    if (aanwezig.has(def.id)) return;
+    // zoek de voorganger uit DEFAULT_CATS die de gebruiker wél heeft, en plaats erachter
+    let pos = categories.length;
+    for (let i = defIdx - 1; i >= 0; i--) {
+      const idx = categories.findIndex(c => c.id === DEFAULT_CATS[i].id);
+      if (idx !== -1) { pos = idx + 1; break; }
+    }
+    categories.splice(pos, 0, Object.assign({}, def));
+    catsChanged = true;
+  });
+
   categories.forEach(cat => {
     const def = DEFAULT_CATS.find(d => d.id === cat.id);
     if (def && def.directLinks) {
@@ -207,6 +229,11 @@ function loadState() {
     notes = n ? JSON.parse(n) : {};
   } catch (e) { notes = {}; }
 
+  try {
+    const v = localStorage.getItem(STORAGE_VIDEOS);
+    videos = v ? JSON.parse(v) : {};
+  } catch (e) { videos = {}; }
+
   // Startnotities eenmalig invullen — nooit iets overschrijven wat al bestaat
   // (ook niet een bewust leeggemaakt veld: alleen bij volledig ontbrekende sleutel).
   let seeded = false;
@@ -221,6 +248,97 @@ function saveCategories() {
 }
 function saveNotes() {
   localStorage.setItem(STORAGE_NOTES, JSON.stringify(notes));
+}
+function saveVideos() {
+  localStorage.setItem(STORAGE_VIDEOS, JSON.stringify(videos));
+}
+
+// ===== ONDERWIJSVIDEO'S =====
+// Ondersteunt: youtube.com/watch?v=, youtu.be/, /embed/, /shorts/, /live/, of een kale video-id.
+function parseYouTubeId(input) {
+  const s = (input || '').trim();
+  if (!s) return null;
+  if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
+  const patterns = [
+    /[?&]v=([A-Za-z0-9_-]{11})/,
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    /\/embed\/([A-Za-z0-9_-]{11})/,
+    /\/shorts\/([A-Za-z0-9_-]{11})/,
+    /\/live\/([A-Za-z0-9_-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = s.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function renderVideos() {
+  const el = document.getElementById('videoLijst');
+  const list = (activeId && videos[activeId]) ? videos[activeId] : [];
+
+  if (!list.length) {
+    el.innerHTML = '<div class="video-leeg">Nog geen video bij dit onderwerp.</div>';
+    return;
+  }
+
+  el.innerHTML = list.map((v, i) => `
+    <div class="video-item">
+      <div class="video-item-head">
+        <div class="video-item-titel">${esc(v.titel)}</div>
+        <button class="video-item-del" data-idx="${i}" title="Uit lijst verwijderen">✕</button>
+      </div>
+      <div class="video-frame">
+        <iframe src="https://www.youtube-nocookie.com/embed/${esc(v.yt)}"
+                title="${esc(v.titel)}"
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.video-item-del').forEach(btn => {
+    btn.addEventListener('click', () => deleteVideo(parseInt(btn.dataset.idx, 10)));
+  });
+}
+
+function addVideo() {
+  if (!activeId) return;
+  const urlEl = document.getElementById('videoUrl');
+  const titelEl = document.getElementById('videoTitel');
+  const errEl = document.getElementById('videoError');
+
+  const yt = parseYouTubeId(urlEl.value);
+  if (!yt) {
+    errEl.textContent = '⚠️ Dat lijkt geen geldige YouTube-link. Gebruik de link uit "Delen" op YouTube.';
+    errEl.classList.add('show');
+    return;
+  }
+  errEl.classList.remove('show');
+
+  if (!videos[activeId]) videos[activeId] = [];
+  videos[activeId].push({
+    yt: yt,
+    titel: titelEl.value.trim() || 'Zonder titel',
+    ts: Date.now()
+  });
+  urlEl.value = ''; titelEl.value = '';
+  saveVideos();
+  renderVideos();
+  toast('✅ Video toegevoegd');
+}
+
+function deleteVideo(idx) {
+  if (!activeId || !videos[activeId]) return;
+  const v = videos[activeId][idx];
+  if (!v) return;
+  if (!confirm('"' + v.titel + '" uit de lijst verwijderen?\n\n(De video zelf blijft op YouTube staan.)')) return;
+  videos[activeId].splice(idx, 1);
+  if (!videos[activeId].length) delete videos[activeId];
+  saveVideos();
+  renderVideos();
+  toast('🗑️ Verwijderd');
 }
 
 function esc(s) {
@@ -283,6 +401,13 @@ function openCategory(id) {
   const area = document.getElementById('notesArea');
   area.value = notes[id] || '';
 
+  // videoveld leegmaken bij wisselen van onderwerp, zodat een half ingevulde
+  // link niet per ongeluk bij de verkeerde categorie belandt
+  document.getElementById('videoUrl').value = '';
+  document.getElementById('videoTitel').value = '';
+  document.getElementById('videoError').classList.remove('show');
+  renderVideos();
+
   renderList(document.getElementById('zoek').value);
   document.getElementById('layout').classList.add('detail-active');
   document.getElementById('detail').scrollTop = 0;
@@ -326,11 +451,13 @@ function deleteCategory() {
   if (!activeId) return;
   const cat = categories.find(c => c.id === activeId);
   if (!cat) return;
-  if (!confirm(`"${cat.label}" en de bijbehorende aantekeningen verwijderen?`)) return;
+  if (!confirm(`"${cat.label}" en de bijbehorende aantekeningen en video's verwijderen?`)) return;
   categories = categories.filter(c => c.id !== activeId);
   delete notes[activeId];
+  delete videos[activeId];
   saveCategories();
   saveNotes();
+  saveVideos();
   closeDetail();
   renderList(document.getElementById('zoek').value);
   toast('🗑️ Verwijderd');
@@ -352,3 +479,10 @@ document.getElementById('notesArea').addEventListener('input', scheduleSave);
 document.getElementById('addCatBtn').addEventListener('click', addCategory);
 document.getElementById('delCatBtn').addEventListener('click', deleteCategory);
 document.getElementById('backBtn').addEventListener('click', closeDetail);
+document.getElementById('videoAddBtn').addEventListener('click', addVideo);
+document.getElementById('videoUrl').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('videoTitel').focus();
+});
+document.getElementById('videoTitel').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addVideo();
+});

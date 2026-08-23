@@ -45,6 +45,26 @@
       <label class="notes-label" for="notesArea">Eigen aantekeningen</label>
       <textarea id="notesArea" placeholder="Typ of plak hier je eigen samenvatting, kernpunten uit richtlijnen, protocollen…"></textarea>
       <div class="save-status" id="saveStatus"></div>
+
+      <div class="video-section">
+        <div class="notes-label">Onderwijsvideo's</div>
+        <div id="videoLijst"></div>
+
+        <div class="video-add">
+          <input type="text" id="videoUrl" placeholder="YouTube-link plakken…" autocomplete="off">
+          <input type="text" id="videoTitel" placeholder="Titel (bijv. Silfverskiöld-test)" autocomplete="off">
+          <button id="videoAddBtn">Video toevoegen</button>
+          <div class="video-error" id="videoError"></div>
+        </div>
+
+        <div class="video-hint">
+          <strong>Voor je een video toevoegt — twee dingen:</strong>
+          <ul>
+            <li><strong>Staat er een patiënt in beeld?</strong> Dan hoort de video niet hier, maar in het EPD of het beeldsysteem van je vakgroep. Onderwijsdoel maakt daarvoor geen verschil: een kind is op video vrijwel altijd identificeerbaar.</li>
+            <li><strong>Zet de video op YouTube als "Verborgen", niet "Privé".</strong> Privé-video's kunnen hier niet afspelen. Let op: "Verborgen" is geen beveiliging — iedereen met de link kan kijken, en deze site is openbaar (alleen niet-vindbaar via zoekmachines).</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </main>
 
