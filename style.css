@@ -652,3 +652,176 @@ body {
   line-height: 1.4;
 }
 body.is-offline .offline-balk { display: block; }
+
+/* ===== FOTO'S VAN BOEKPAGINA'S ===== */
+.foto-uitleg {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: -4px 0 10px;
+}
+
+.foto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.foto-tegel {
+  margin: 0;
+  background: var(--paneel);
+  border: 1px solid var(--lijn);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.foto-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: #EFEFEB;
+  cursor: pointer;
+  aspect-ratio: 3 / 4;
+}
+.foto-open img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.foto-tegel figcaption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px 7px 10px;
+  font-family: system-ui, sans-serif;
+  font-size: 12.5px;
+}
+.foto-titel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+}
+.foto-titel:hover { text-decoration: underline dotted; }
+
+.foto-del {
+  flex: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+.foto-del:hover { color: var(--danger); }
+
+.foto-bezig {
+  display: none;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 8px;
+}
+.foto-bezig.show { display: block; }
+
+.foto-status {
+  font-family: system-ui, sans-serif;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ---- foto groot bekijken ---- */
+body.viewer-open { overflow: hidden; }
+
+.foto-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #12171A;
+  display: flex;
+  flex-direction: column;
+}
+.foto-viewer[hidden] { display: none; }
+
+.foto-viewer-balk {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.35);
+}
+.foto-viewer-balk span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.foto-viewer-balk button {
+  flex: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 16px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* passend in beeld; na een tik op ware grootte, met scrollen */
+.foto-viewer > img {
+  flex: 1;
+  min-height: 0;
+  object-fit: contain;
+  width: 100%;
+  cursor: zoom-in;
+}
+/* tik = twee keer zo groot als het scherm breed is: kleine lettertjes op een
+   boekpagina worden dan echt leesbaar, en je pant er met je vinger overheen */
+.foto-viewer > img.ingezoomd {
+  flex: none;
+  object-fit: contain;
+  width: 200%;
+  height: auto;
+  max-width: none;
+  cursor: zoom-out;
+}
+.foto-viewer.zoomt { overflow: auto; }
+
+.foto-viewer-hint {
+  flex: none;
+  text-align: center;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: system-ui, sans-serif;
+  font-size: 11.5px;
+}
+
+/* keuzevakje in het back-upscherm */
+.modal-keuze {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 10px 0 12px;
+  font-family: system-ui, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.modal-keuze[hidden] { display: none; }
+.modal-keuze input { margin-top: 2px; flex: none; }
+.modal-keuze em { color: var(--muted); font-style: normal; }

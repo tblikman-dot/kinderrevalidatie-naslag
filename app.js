@@ -831,6 +831,11 @@ function zoekTreffer(cat, filter) {
     .find(l => normaliseer(l.titel).includes(f) || normaliseer(l.url).includes(f));
   if (link) return { raak: true, hint: '🔗 ' + link.titel };
 
+  if (typeof fotosVan === 'function') {
+    const foto = fotosVan(cat.id).find(x => normaliseer(x.titel).includes(f));
+    if (foto) return { raak: true, hint: '📷 ' + foto.titel };
+  }
+
   const tekst = platteTekst(notes[cat.id] || '');
   if (normaliseer(tekst).includes(f)) {
     return { raak: true, hint: '📝 ' + fragmentRond(tekst, f) };
@@ -1015,6 +1020,10 @@ function openCategory(id) {
   document.getElementById('linkError').classList.remove('show');
   renderLinks();
 
+  // fotos.js wordt na dit bestand geladen; bij de eerste render kan hij er nog
+  // niet zijn, daarom de check.
+  if (typeof renderFotos === 'function') renderFotos();
+
   renderList(document.getElementById('zoek').value);
   document.getElementById('layout').classList.add('detail-active');
   document.getElementById('detail').scrollTop = 0;
@@ -1083,7 +1092,7 @@ function toast(msg) {
 // ===== BACK-UP: EXPORTEREN, TERUGZETTEN, DELEN =====
 // Alles staat in localStorage van één browser. Zonder export is dat één
 // gewiste browsergeschiedenis van kwijt zijn, en kan een collega er niets mee.
-const BACKUP_VERSIE = 1;
+const BACKUP_VERSIE = 2;
 
 function verzamelBackup() {
   return {
@@ -1105,11 +1114,34 @@ function backupStatistiek() {
   const aantalNotities = Object.values(notes).filter(n => platteTekst(n).trim()).length;
   const aantalVideos = Object.values(videos).reduce((t, v) => t + v.length, 0);
   const aantalLinks = Object.values(links).reduce((t, l) => t + l.length, 0);
-  return `In deze browser: ${categories.length} aandachtsgebieden, ${aantalNotities} met aantekeningen, ${aantalVideos} video's, ${aantalLinks} afbeeldingen/links.`;
+  const aantalFotos = (typeof window.aantalFotos === 'function') ? window.aantalFotos() : 0;
+  const fotoDeel = aantalFotos ? `, ${aantalFotos} eigen foto's` : '';
+  return `In deze browser: ${categories.length} aandachtsgebieden, ${aantalNotities} met aantekeningen, ${aantalVideos} video's, ${aantalLinks} afbeeldingen/links${fotoDeel}.`;
 }
 
 function exporteerBackup() {
-  const data = JSON.stringify(verzamelBackup(), null, 2);
+  const vink = document.getElementById('fotoBackupVink');
+  const metFotos = vink && vink.checked && typeof fotosVoorBackup === 'function';
+  const knop = document.getElementById('exportBtn');
+
+  if (!metFotos) return schrijfBackupBestand(verzamelBackup());
+
+  // Foto's inlezen duurt even; zolang de knop blokkeren zodat er niet twee
+  // exports tegelijk lopen.
+  knop.disabled = true;
+  knop.textContent = 'Foto\'s inpakken…';
+  fotosVoorBackup()
+    .then(fotos => {
+      const data = verzamelBackup();
+      data.fotos = fotos;
+      schrijfBackupBestand(data);
+    })
+    .catch(() => toast('⚠️ De foto\'s konden niet worden ingepakt'))
+    .then(() => { knop.disabled = false; knop.textContent = '⤓ Bestand opslaan'; });
+}
+
+function schrijfBackupBestand(inhoud) {
+  const data = JSON.stringify(inhoud, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const d = new Date();
@@ -1194,7 +1226,33 @@ function toonBackupScherm(open) {
     document.getElementById('backupStat').textContent = backupStatistiek();
     document.getElementById('importResultaat').innerHTML = '';
     document.getElementById('importInput').value = '';
+
+    // Keuze om foto's mee te nemen alleen tonen als er foto's zijn; met de
+    // omvang erbij, want dat is het verschil tussen een bestand van kilobytes
+    // en een van tientallen megabytes.
+    const keuze = document.getElementById('fotoBackupKeuze');
+    const heeftFotos = typeof aantalFotos === 'function' && aantalFotos() > 0;
+    keuze.hidden = !heeftFotos;
+    if (heeftFotos) {
+      document.getElementById('fotoBackupOmvang').textContent =
+        '(+ ongeveer ' + leesbareOmvang(Math.round(fotoBytesTotaal() * 1.37)) + ')';
+    }
   }
+}
+
+// Foto's uit een back-up terugzetten duurt merkbaar langer dan de rest, dus
+// eerst de tekst melden en de foto's daarna bijwerken in dezelfde melding.
+function metFotosTerug(data, bericht, staart) {
+  const heeftFotos = Array.isArray(data.fotos) && data.fotos.length;
+  if (!heeftFotos || typeof zetFotosTerug !== 'function') return naImport(bericht);
+
+  naImport(bericht + ` Bezig met ${data.fotos.length} foto's…`);
+  zetFotosTerug(data.fotos)
+    .then(aantal => {
+      naImport(bericht + staart(aantal));
+      if (typeof renderFotos === 'function') renderFotos();
+    })
+    .catch(() => naImport(bericht + ' De foto\'s konden niet worden teruggezet.'));
 }
 
 function naImport(bericht) {
@@ -1235,6 +1293,7 @@ document.getElementById('importInput').addEventListener('change', e => {
           <li>${(data.categorieen || []).length} aandachtsgebieden</li>
           <li>${aantalNotities} met aantekeningen</li>
           <li>${aantalVideos} video's, ${aantalLinks} afbeeldingen/links</li>
+          ${(data.fotos || []).length ? `<li>${data.fotos.length} eigen foto's</li>` : ''}
         </ul>
         Wat wil je ermee?
         <div class="import-keuzes">
@@ -1249,13 +1308,17 @@ document.getElementById('importInput').addEventListener('change', e => {
 
     document.getElementById('doeSamenvoegen').addEventListener('click', () => {
       const r = voegBackupSamen(data);
-      naImport(`Samengevoegd: ${r.nieuweCats} nieuwe aandachtsgebieden, ${r.nieuweNotities} aantekeningen, ${r.nieuweVideos} video's, ${r.nieuweLinks} links toegevoegd. Je eigen tekst is ongewijzigd gebleven.`);
+      const basis = `Samengevoegd: ${r.nieuweCats} nieuwe aandachtsgebieden, ${r.nieuweNotities} aantekeningen, ${r.nieuweVideos} video's, ${r.nieuweLinks} links toegevoegd. Je eigen tekst is ongewijzigd gebleven.`;
+      metFotosTerug(data, basis, aantal => ` En ${aantal} foto's.`);
     });
 
     document.getElementById('doeVervangen').addEventListener('click', () => {
-      if (!confirm('Alles in deze browser vervangen door de back-up?\n\nJe huidige aantekeningen, video\'s en links gaan hierbij verloren. Maak eerst een back-up als je ze wilt bewaren.')) return;
+      if (!confirm('Alles in deze browser vervangen door de back-up?\n\nJe huidige aantekeningen, video\'s, links en foto\'s gaan hierbij verloren. Maak eerst een back-up als je ze wilt bewaren.')) return;
       vervangDoorBackup(data);
-      naImport('Alles vervangen door de back-up.');
+      const doorgaan = () => metFotosTerug(data, 'Alles vervangen door de back-up.', aantal => ` ${aantal} foto's teruggezet.`);
+      // Foto's horen bij "alles vervangen" ook echt vervangen te worden.
+      if (typeof wisAlleFotos === 'function') wisAlleFotos().then(doorgaan, doorgaan);
+      else doorgaan();
     });
   });
 });

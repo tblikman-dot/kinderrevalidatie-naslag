@@ -45,6 +45,10 @@
           dezelfde inhoud krijgt.
         </p>
         <div class="modal-stat" id="backupStat"></div>
+        <label class="modal-keuze" id="fotoBackupKeuze" hidden>
+          <input type="checkbox" id="fotoBackupVink">
+          <span>Foto's meenemen <em id="fotoBackupOmvang"></em></span>
+        </label>
         <button class="modal-knop primair" id="exportBtn">⤓ Bestand opslaan</button>
       </div>
 
@@ -123,12 +127,28 @@
         </div>
       </div>
 
+      <div class="video-section">
+        <div class="notes-label">Foto's van boekpagina's</div>
+        <div class="foto-uitleg">
+          Blijven op dit apparaat — ze worden nergens heen gestuurd en komen dus niet op de site te staan.
+        </div>
+        <div id="fotoLijst"></div>
+
+        <div class="video-add">
+          <input type="file" id="fotoInput" accept="image/*" multiple hidden>
+          <button id="fotoAddBtn">📷 Foto maken of kiezen</button>
+          <div class="foto-bezig" id="fotoBezig"></div>
+          <div class="foto-status" id="fotoStatus"></div>
+        </div>
+      </div>
+
       <div class="video-hint">
         <strong>Voordat je beeldmateriaal toevoegt:</strong>
         <ul>
           <li><strong>Staat er een patiënt in beeld?</strong> Dan hoort het niet hier, maar in het EPD of het beeldsysteem van je vakgroep — dat geldt net zo goed voor een röntgenfoto als voor video. Onderwijsdoel maakt daarvoor geen verschil, en deze site is openbaar (alleen niet-vindbaar via zoekmachines).</li>
           <li><strong>Video's: zet ze op YouTube als "Verborgen", niet "Privé".</strong> Privé-video's kunnen hier niet afspelen. "Verborgen" is geen beveiliging — iedereen met de link kan kijken.</li>
           <li><strong>Afbeeldingen:</strong> een directe link naar een plaatje (eindigend op .jpg, .png, …) wordt hier getoond. Een gewone webpagina of een Google Foto's-album kan niet worden ingesloten en wordt automatisch een klikbare link.</li>
+          <li><strong>Foto's van boekpagina's</strong> blijven wél op je eigen toestel: die worden niet verstuurd en niet gepubliceerd. Een pagina uit je eigen boek fotograferen om zelf na te slaan kan daarmee; verspreiden onder collega's is iets anders — dat is publiceren van andermans werk.</li>
         </ul>
       </div>
     </div>
@@ -136,9 +156,19 @@
 
 </div>
 
+<div class="foto-viewer" id="fotoViewer" hidden>
+  <div class="foto-viewer-balk">
+    <span id="fotoViewerTitel"></span>
+    <button id="fotoViewerSluit" title="Sluiten">✕</button>
+  </div>
+  <img id="fotoViewerImg" alt="">
+  <div class="foto-viewer-hint">Tik op de foto om in of uit te zoomen</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
+<script src="fotos.js"></script>
 <script>
 // service worker: app blijft werken zonder internet
 if ('serviceWorker' in navigator) {
