@@ -42,8 +42,17 @@
       </div>
       <p class="detail-scope" id="detailScope"></p>
       <div class="detail-links" id="detailLinks"></div>
-      <label class="notes-label" for="notesArea">Eigen aantekeningen</label>
-      <textarea id="notesArea" placeholder="Typ of plak hier je eigen samenvatting, kernpunten uit richtlijnen, protocollen…"></textarea>
+      <div class="notes-label">Eigen aantekeningen</div>
+      <div class="notes-toolbar" id="notesToolbar">
+        <button type="button" data-cmd="kop" title="Kop">Kop</button>
+        <button type="button" data-cmd="bold" title="Vet (Ctrl+B)"><strong>B</strong></button>
+        <button type="button" data-cmd="italic" title="Cursief (Ctrl+I)"><em>I</em></button>
+        <button type="button" data-cmd="mark" title="Markeren"><span class="tb-mark">Markeren</span></button>
+        <button type="button" data-cmd="ul" title="Opsomming">• Lijst</button>
+        <button type="button" data-cmd="clear" title="Opmaak weghalen">✕ Opmaak</button>
+      </div>
+      <div id="notesArea" contenteditable="true" spellcheck="true"
+           data-placeholder="Typ of plak hier je eigen samenvatting, kernpunten uit richtlijnen, protocollen…"></div>
       <div class="save-status" id="saveStatus"></div>
 
       <div class="video-section">

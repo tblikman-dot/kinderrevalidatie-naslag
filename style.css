@@ -195,21 +195,72 @@ body {
   color: var(--muted);
   margin-bottom: 6px;
 }
+.notes-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.notes-toolbar button {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  padding: 7px 12px;
+  border: 1.5px solid var(--lijn);
+  border-radius: 9px;
+  background: var(--paneel);
+  color: var(--inkt);
+  cursor: pointer;
+  line-height: 1;
+}
+.notes-toolbar button:hover { background: var(--accent-zacht); border-color: var(--accent); }
+.notes-toolbar button:active { transform: scale(0.95); }
+.notes-toolbar .tb-mark { background: #FFF3A3; padding: 1px 4px; border-radius: 3px; }
+
 #notesArea {
   width: 100%;
   min-height: 50vh;
-  padding: 16px;
+  padding: 16px 18px;
   border: 1.5px solid var(--lijn);
   border-radius: 12px;
   font-family: 'Georgia', serif;
   font-size: 15.5px;
   line-height: 1.7;
   color: var(--inkt);
-  resize: vertical;
   outline: none;
   background: var(--paneel);
+  overflow-wrap: break-word;
 }
 #notesArea:focus { border-color: var(--accent); }
+#notesArea:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+/* opmaak binnen de aantekeningen */
+#notesArea h3 {
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 22px 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--lijn);
+}
+#notesArea h3:first-child { margin-top: 0; }
+#notesArea p { margin: 0 0 10px; }
+#notesArea ul, #notesArea ol { margin: 0 0 12px; padding-left: 24px; }
+#notesArea li { margin-bottom: 4px; }
+#notesArea strong, #notesArea b { font-weight: 700; color: #06222e; }
+#notesArea mark {
+  background: #FFF3A3;
+  color: inherit;
+  padding: 1px 2px;
+  border-radius: 3px;
+}
+#notesArea a { color: var(--accent); }
 
 .save-status {
   font-family: system-ui, sans-serif;

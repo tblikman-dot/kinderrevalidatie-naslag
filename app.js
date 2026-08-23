@@ -248,6 +248,16 @@ function loadState() {
   for (const id in DEFAULT_NOTES) {
     if (!(id in notes)) { notes[id] = DEFAULT_NOTES[id]; seeded = true; }
   }
+
+  // Aantekeningen die nog platte tekst zijn omzetten naar opgemaakte tekst.
+  // Gebeurt eenmalig; wat al HTML is blijft ongemoeid.
+  for (const id in notes) {
+    const n = notes[id];
+    if (typeof n === 'string' && n.trim() && !lijktOpHtml(n)) {
+      notes[id] = platteTekstNaarHtml(n);
+      seeded = true;
+    }
+  }
   if (seeded) saveNotes();
 }
 
@@ -257,6 +267,95 @@ function saveCategories() {
 function saveNotes() {
   localStorage.setItem(STORAGE_NOTES, JSON.stringify(notes));
 }
+// ===== OPGEMAAKTE AANTEKENINGEN =====
+// Aantekeningen worden als HTML bewaard. Oudere notities (en de startnotities
+// uit het boek) zijn platte tekst; die worden eenmalig omgezet, waarbij
+// "== Kop ==" een echte kop wordt en "- " regels een opsomming.
+function lijktOpHtml(s) {
+  return /<(p|h[1-6]|ul|ol|li|br|strong|b|em|i|mark|div|span)\b[^>]*>/i.test(s);
+}
+
+function platteTekstNaarHtml(txt) {
+  const regels = String(txt).replace(/\r\n/g, '\n').split('\n');
+  const uit = [];
+  let inLijst = false;
+
+  const sluitLijst = () => { if (inLijst) { uit.push('</ul>'); inLijst = false; } };
+
+  regels.forEach(regel => {
+    const r = regel.trim();
+
+    if (!r) { sluitLijst(); return; }
+
+    const kop = r.match(/^==\s*(.+?)\s*==$/);
+    if (kop) { sluitLijst(); uit.push('<h3>' + esc(kop[1]) + '</h3>'); return; }
+
+    const item = r.match(/^[-·•]\s+(.*)$/);
+    if (item) {
+      if (!inLijst) { uit.push('<ul>'); inLijst = true; }
+      uit.push('<li>' + esc(item[1]) + '</li>');
+      return;
+    }
+
+    sluitLijst();
+    uit.push('<p>' + esc(r) + '</p>');
+  });
+
+  sluitLijst();
+  return uit.join('');
+}
+
+function platteTekst(html) {
+  if (!lijktOpHtml(html)) return String(html);
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent || '';
+}
+
+function opmaakKnop(cmd) {
+  const area = document.getElementById('notesArea');
+  area.focus();
+  try { document.execCommand('styleWithCSS', false, false); } catch (e) {}
+
+  switch (cmd) {
+    case 'kop': {
+      // al een kop? dan terug naar gewone alinea
+      const inKop = !!(window.getSelection().anchorNode &&
+        window.getSelection().anchorNode.parentElement &&
+        window.getSelection().anchorNode.parentElement.closest('h3'));
+      document.execCommand('formatBlock', false, inKop ? 'p' : 'h3');
+      break;
+    }
+    case 'bold':   document.execCommand('bold'); break;
+    case 'italic': document.execCommand('italic'); break;
+    case 'ul':     document.execCommand('insertUnorderedList'); break;
+    case 'mark': {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed) { toast('Selecteer eerst wat tekst'); return; }
+      // bestaande markering weghalen, anders markeren
+      const al = sel.anchorNode && sel.anchorNode.parentElement &&
+                 sel.anchorNode.parentElement.closest('mark');
+      if (al) {
+        const ouder = al.parentNode;
+        while (al.firstChild) ouder.insertBefore(al.firstChild, al);
+        ouder.removeChild(al);
+      } else {
+        const bereik = sel.getRangeAt(0);
+        const m = document.createElement('mark');
+        try { bereik.surroundContents(m); }
+        catch (e) { m.appendChild(bereik.extractContents()); bereik.insertNode(m); }
+      }
+      sel.removeAllRanges();
+      break;
+    }
+    case 'clear':
+      document.execCommand('removeFormat');
+      document.execCommand('formatBlock', false, 'p');
+      break;
+  }
+  scheduleSave();
+}
+
 function saveVideos() {
   localStorage.setItem(STORAGE_VIDEOS, JSON.stringify(videos));
 }
@@ -455,7 +554,7 @@ function renderList(filter) {
 
   const items = categories.filter(c => {
     if (!f) return true;
-    const n = (notes[c.id] || '').toLowerCase();
+    const n = platteTekst(notes[c.id] || '').toLowerCase();
     return c.label.toLowerCase().includes(f) || (c.scope || '').toLowerCase().includes(f) || n.includes(f);
   });
 
@@ -497,7 +596,7 @@ function openCategory(id) {
   `;
 
   const area = document.getElementById('notesArea');
-  area.value = notes[id] || '';
+  area.innerHTML = notes[id] || '';
 
   // videoveld leegmaken bij wisselen van onderwerp, zodat een half ingevulde
   // link niet per ongeluk bij de verkeerde categorie belandt
@@ -530,7 +629,7 @@ function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     if (!activeId) return;
-    notes[activeId] = document.getElementById('notesArea').value;
+    notes[activeId] = document.getElementById('notesArea').innerHTML;
     saveNotes();
     status.textContent = '✓ Opgeslagen';
     renderList(document.getElementById('zoek').value);
@@ -581,6 +680,21 @@ renderList('');
 
 document.getElementById('zoek').addEventListener('input', e => renderList(e.target.value));
 document.getElementById('notesArea').addEventListener('input', scheduleSave);
+
+// toolbar: mousedown i.p.v. click, anders raakt de selectie kwijt bij het aanklikken
+document.getElementById('notesToolbar').addEventListener('mousedown', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  e.preventDefault();
+  opmaakKnop(btn.dataset.cmd);
+});
+
+// plakken zonder meegekomen opmaak van websites/Word
+document.getElementById('notesArea').addEventListener('paste', e => {
+  e.preventDefault();
+  const tekst = (e.clipboardData || window.clipboardData).getData('text/plain');
+  document.execCommand('insertText', false, tekst);
+});
 document.getElementById('addCatBtn').addEventListener('click', addCategory);
 document.getElementById('delCatBtn').addEventListener('click', deleteCategory);
 document.getElementById('backBtn').addEventListener('click', closeDetail);
