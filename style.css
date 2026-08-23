@@ -242,10 +242,15 @@ body {
 .notes-toolbar button:hover { background: var(--accent-zacht); border-color: var(--accent); }
 .notes-toolbar button:active { transform: scale(0.95); }
 .notes-toolbar .tb-mark { background: #FFF3A3; padding: 1px 4px; border-radius: 3px; }
+.notes-toolbar .tb-uitklap { margin-left: auto; color: var(--muted); }
 
 #notesArea {
   width: 100%;
-  min-height: 50vh;
+  /* klein als er niets staat, groeit mee met de tekst, maar niet eindeloos —
+     anders verdwijnen de video- en afbeeldingsblokken onder de vouw */
+  min-height: 84px;
+  max-height: 45vh;
+  overflow-y: auto;
   padding: 16px 18px;
   border: 1.5px solid var(--lijn);
   border-radius: 12px;
@@ -258,6 +263,7 @@ body {
   overflow-wrap: break-word;
 }
 #notesArea:focus { border-color: var(--accent); }
+#notesArea.uitgeklapt { max-height: none; overflow-y: visible; }
 #notesArea:empty::before {
   content: attr(data-placeholder);
   color: var(--muted);

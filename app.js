@@ -698,6 +698,8 @@ function openCategory(id) {
 
   const area = document.getElementById('notesArea');
   area.innerHTML = notes[id] || '';
+  clearTimeout(saveTimer);
+  document.getElementById('saveStatus').textContent = '';
 
   // videoveld leegmaken bij wisselen van onderwerp, zodat een half ingevulde
   // link niet per ongeluk bij de verkeerde categorie belandt
@@ -785,7 +787,7 @@ document.getElementById('notesArea').addEventListener('input', scheduleSave);
 // toolbar: mousedown i.p.v. click, anders raakt de selectie kwijt bij het aanklikken
 document.getElementById('notesToolbar').addEventListener('mousedown', e => {
   const btn = e.target.closest('button');
-  if (!btn) return;
+  if (!btn || !btn.dataset.cmd) return;   // bijv. de uitklapknop: geen opmaakknop
   e.preventDefault();
   opmaakKnop(btn.dataset.cmd);
 });
@@ -799,6 +801,31 @@ document.getElementById('notesArea').addEventListener('paste', e => {
 document.getElementById('addCatBtn').addEventListener('click', addCategory);
 document.getElementById('delCatBtn').addEventListener('click', deleteCategory);
 document.getElementById('backBtn').addEventListener('click', closeDetail);
+// notitieveld groter/kleiner; keuze onthouden
+const STORAGE_UITKLAP = 'krnNotesUitgeklapt';
+
+function pasUitklapToe() {
+  const area = document.getElementById('notesArea');
+  const btn = document.getElementById('uitklapBtn');
+  const uit = area.classList.contains('uitgeklapt');
+  btn.textContent = uit ? '⤡ Kleiner' : '⤢ Groter';
+  btn.title = uit ? 'Notitieveld weer inkorten' : 'Hele notitie in één keer tonen';
+}
+
+document.getElementById('uitklapBtn').addEventListener('click', () => {
+  const area = document.getElementById('notesArea');
+  area.classList.toggle('uitgeklapt');
+  try { localStorage.setItem(STORAGE_UITKLAP, area.classList.contains('uitgeklapt') ? '1' : '0'); } catch (e) {}
+  pasUitklapToe();
+});
+
+try {
+  if (localStorage.getItem(STORAGE_UITKLAP) === '1') {
+    document.getElementById('notesArea').classList.add('uitgeklapt');
+  }
+} catch (e) {}
+pasUitklapToe();
+
 document.getElementById('videoAddBtn').addEventListener('click', addVideo);
 document.getElementById('videoUrl').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('videoTitel').focus();
