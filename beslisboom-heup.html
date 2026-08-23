@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Beslisboom heup bij CP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .bb-wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .bb-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .bb-terug:hover { text-decoration: underline; }
+
+  .bb-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .bb-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .bb-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #5A4A33;
+    margin: 14px 0 20px;
+  }
+
+  .bb-voortgang {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .bb-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .bb-vraag { font-size: 1.12rem; font-weight: 700; line-height: 1.4; margin: 0 0 4px; }
+  .bb-hint {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+
+  .bb-opties { display: flex; flex-direction: column; gap: 9px; }
+  .bb-optie {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border: 1.5px solid var(--lijn);
+    border-radius: 12px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--inkt);
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  .bb-optie:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .bb-optie:active { transform: scale(0.99); }
+  .bb-optie .sub {
+    display: block;
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* uitkomst */
+  .bb-uitkomst { border-left: 5px solid var(--accent); }
+  .bb-uitkomst.indicatie { border-left-color: #B3441E; }
+  .bb-uitkomst.vervolgen { border-left-color: #0f7a4a; }
+  .bb-uitkomst.overleg   { border-left-color: #B8860B; }
+
+  .bb-badge {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    margin-bottom: 10px;
+  }
+  .bb-uitkomst.indicatie .bb-badge { background: #FBEAE5; color: #B3441E; }
+  .bb-uitkomst.vervolgen .bb-badge { background: #E3F3EA; color: #0f7a4a; }
+  .bb-uitkomst.overleg   .bb-badge { background: #FBF3DC; color: #8A6508; }
+
+  .bb-uitkomst h2 { font-size: 1.2rem; margin: 0 0 10px; }
+  .bb-uitkomst-tekst { font-family: system-ui, sans-serif; font-size: 14.5px; line-height: 1.65; }
+  .bb-uitkomst-tekst ul { margin: 8px 0 12px; padding-left: 22px; }
+  .bb-uitkomst-tekst li { margin-bottom: 5px; }
+  .bb-uitkomst-tekst p { margin: 0 0 10px; }
+
+  .bb-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-top: 14px;
+    line-height: 1.55;
+  }
+
+  .bb-pad {
+    margin-top: 18px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .bb-pad-titel { font-weight: 700; margin-bottom: 6px; color: var(--inkt); }
+  .bb-pad ol { margin: 0; padding-left: 20px; }
+  .bb-pad li { margin-bottom: 3px; }
+
+  .bb-knoppen { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .bb-knop {
+    padding: 11px 18px;
+    border-radius: 11px;
+    border: 1.5px solid var(--lijn);
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--inkt);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .bb-knop:hover { border-color: var(--accent); }
+  .bb-knop.primair { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-title">Beslisboom heup bij CP</div>
+</header>
+
+<div class="bb-wrap">
+  <a class="bb-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="bb-kop">Heuplateralisatie bij spastische CP</h1>
+  <p class="bb-intro">
+    Loopt klik voor klik langs de criteria uit de Nederlandse richtlijn, en laat zien
+    welke overweging daarbij hoort. Dit is een hulpmiddel bij het naslaan van de
+    criteria — de richtlijn schrijft voor dat de indicatie in een multidisciplinair
+    team wordt gesteld.
+  </p>
+  <div class="bb-waarschuwing">
+    <strong>Vul hier geen patiëntgegevens in.</strong> Deze pagina bewaart niets: alles verdwijnt
+    zodra je hem sluit of opnieuw begint. Er wordt niets verstuurd of opgeslagen.
+  </div>
+
+  <div id="bbInhoud"></div>
+</div>
+
+<script>
+// ===== BESLISBOOM =====
+// Criteria uit: Richtlijnendatabase (FMS), richtlijn Cerebrale parese bij kinderen,
+// module "Chirurgie bij heup(sub)luxatie" (30-04-2018, geldigheid beoordeeld 09-08-2024).
+const BRON = 'Richtlijn Cerebrale parese bij kinderen, module "Chirurgie bij heup(sub)luxatie" (FMS, 30-04-2018; geldigheid beoordeeld 09-08-2024).';
+
+const BOOM = {
+  start: {
+    vraag: 'Waarvoor beoordeel je deze heup?',
+    opties: [
+      { label: 'Screening / vervolgen van heuplateralisatie', sub: 'Asymptomatisch of toenemende lateralisatie', naar: 'gmfcs' },
+      { label: 'Bestaande heupluxatie met pijnklachten', sub: 'Symptomatische, al geluxeerde heup', naar: 'pijn' },
+    ]
+  },
+
+  gmfcs: {
+    vraag: 'Wat is het GMFCS-niveau?',
+    hint: 'Verandert de afkapwaarden niet — wordt gebruikt om de relevante context bij de uitkomst te tonen.',
+    opties: [
+      { label: 'GMFCS I–III', sub: 'Lopend', naar: 'eerder', bewaar: 'gmfcs13' },
+      { label: 'GMFCS IV–V', sub: 'Niet-lopend', naar: 'eerder', bewaar: 'gmfcs45' },
+    ]
+  },
+
+  eerder: {
+    vraag: 'Is er al eerder heupchirurgie verricht?',
+    opties: [
+      { label: 'Nee, nog geen heupchirurgie', naar: 'mp' },
+      { label: 'Ja, eerdere preventieve weke delen chirurgie', sub: 'Adductoren- en/of psoastenotomie', naar: 'recidief' },
+      { label: 'Ja, eerdere ossale heupchirurgie', naar: 'u_ossaal_eerder' },
+    ]
+  },
+
+  mp: {
+    vraag: 'Wat is het migratiepercentage (MP) op de recentste X-bekken AP?',
+    hint: 'Percentage van de femurkop zonder acetabulaire bedekking (Reimers).',
+    opties: [
+      { label: 'MP < 33%', naar: 'u_vervolgen' },
+      { label: 'MP 33–40%', naar: 'toename' },
+      { label: 'MP ≥ 40%', naar: 'u_indicatie_eerste' },
+    ]
+  },
+
+  toename: {
+    vraag: 'Is er een tweede X-bekken AP met ten minste 6 maanden interval, waarop toename van de lateralisatie zichtbaar is?',
+    hint: 'De richtlijn vraagt bij MP 33–40% om aangetoonde toename over minimaal 2 opnames met 6 maanden interval.',
+    opties: [
+      { label: 'Ja, aangetoonde toename', sub: 'MP 33–40% op de recentste opname', naar: 'u_indicatie_toename' },
+      { label: 'Nee, of nog geen tweede opname', naar: 'u_herhaal_opname' },
+    ]
+  },
+
+  recidief: {
+    vraag: 'Is er na de weke delen chirurgie recidief of verdere progressie van heuplateralisatie?',
+    opties: [
+      { label: 'Ja, MP > 40%', naar: 'u_herhaalde_chirurgie' },
+      { label: 'Wel toename, maar MP ≤ 40%', naar: 'u_herhaal_opname' },
+      { label: 'Nee, stabiel', naar: 'u_vervolgen' },
+    ]
+  },
+
+  pijn: {
+    vraag: 'Is de pijn persisterend en niet behandelbaar met conservatieve maatregelen?',
+    opties: [
+      { label: 'Ja, persisterend ondanks behandeling', naar: 'u_palliatief' },
+      { label: 'Nee, of nog niet uitbehandeld', naar: 'u_eerst_conservatief' },
+    ]
+  },
+
+  // ===== UITKOMSTEN =====
+  u_indicatie_eerste: {
+    uitkomst: true, type: 'indicatie', badge: 'Indicatie preventieve chirurgie',
+    titel: 'MP ≥ 40% op de eerste X-bekken',
+    tekst: `<p>De richtlijn noemt dit een indicatie voor preventieve chirurgie ter voorkoming van heupluxatie.</p>
+      <p><strong>Eerste keuze:</strong> weke delen procedure — adductorentenotomie met psoastenotomie.
+      Bij bilateraal aangedane kinderen altijd bilateraal, bij unilateraal aangedane kinderen unilateraal.</p>
+      <p><strong>Postoperatief:</strong> bij voorkeur een afneembare orthese, géén gipsbehandeling.</p>`
+  },
+
+  u_indicatie_toename: {
+    uitkomst: true, type: 'indicatie', badge: 'Indicatie preventieve chirurgie',
+    titel: 'MP 33–40% met aangetoonde toename',
+    tekst: `<p>Toename over ten minste 2 X-bekken AP met 6 maanden interval, met MP 33–40% op de recentste opname:
+      de richtlijn noemt dit een indicatie voor preventieve chirurgie.</p>
+      <p><strong>Eerste keuze:</strong> weke delen procedure — adductorentenotomie met psoastenotomie.
+      Bij bilateraal aangedane kinderen altijd bilateraal, bij unilateraal aangedane kinderen unilateraal.</p>
+      <p><strong>Postoperatief:</strong> bij voorkeur een afneembare orthese, géén gipsbehandeling.</p>`
+  },
+
+  u_herhaalde_chirurgie: {
+    uitkomst: true, type: 'indicatie', badge: 'Overweeg herhaalde chirurgie',
+    titel: 'Recidief of progressie na weke delen chirurgie (MP > 40%)',
+    tekst: `<p>De richtlijn adviseert herhaalde preventieve chirurgie te overwegen bij recidief heuplateralisatie
+      of verdere progressie na preventieve weke delen chirurgie.</p>
+      <p><strong>De herhaalde operatie bestaat uit ossale heupchirurgie</strong>, al dan niet in combinatie met
+      weke delen chirurgie. De aard van de ingreep wordt vooral bepaald door de ervaring van het
+      betreffende multidisciplinaire team.</p>`
+  },
+
+  u_palliatief: {
+    uitkomst: true, type: 'indicatie', badge: 'Palliatieve chirurgie',
+    titel: 'Niet-behandelbare persisterende pijn bij heupluxatie',
+    tekst: `<p>De richtlijn adviseert palliatieve heupchirurgie te verrichten bij niet-behandelbare
+      persisterende pijn gerelateerd aan heupluxatie.</p>
+      <p><strong>Let op bij de voorlichting:</strong> de uitkomsten van palliatieve chirurgie bij symptomatische
+      heupluxaties zijn duidelijk ongunstiger dan van preventieve chirurgie — 20 tot 50% van de verzorgers
+      was niet tevreden met het resultaat.</p>`
+  },
+
+  u_vervolgen: {
+    uitkomst: true, type: 'vervolgen', badge: 'Vervolgen',
+    titel: 'Geen operatie-indicatie op basis van deze criteria',
+    tekst: `<p>Er is op dit moment geen indicatie voor preventieve chirurgie volgens de aangehouden criteria.</p>
+      <p>Blijf vervolgen volgens het screenings- en interventieschema van de richtlijn — de screeningsfrequentie
+      hangt af van het GMFCS-niveau en de leeftijd.</p>`
+  },
+
+  u_herhaal_opname: {
+    uitkomst: true, type: 'vervolgen', badge: 'Herhaal beeldvorming',
+    titel: 'Nog onvoldoende gegevens om toename aan te tonen',
+    tekst: `<p>Bij MP 33–40% vraagt de richtlijn om aangetoonde toename over ten minste 2 X-bekken AP met
+      6 maanden interval. Zonder die tweede opname is dat criterium niet te toetsen.</p>
+      <p>Plan een herhaalde X-bekken AP conform het screeningsschema en beoordeel opnieuw.</p>`
+  },
+
+  u_ossaal_eerder: {
+    uitkomst: true, type: 'overleg', badge: 'Individueel MDO',
+    titel: 'Al eerdere ossale heupchirurgie',
+    tekst: `<p>Voor deze situatie geeft de geraadpleegde richtlijnmodule geen apart afkapcriterium.
+      Dit valt buiten wat deze beslisboom kan afleiden.</p>
+      <p>Beoordeel individueel in het multidisciplinaire team, met de operateur die de eerdere ingreep
+      verrichtte en op geleide van klachten, functie en het beloop van het migratiepercentage.</p>`
+  },
+
+  u_eerst_conservatief: {
+    uitkomst: true, type: 'overleg', badge: 'Eerst conservatief',
+    titel: 'Pijn nog niet uitbehandeld',
+    tekst: `<p>De richtlijn reserveert palliatieve heupchirurgie voor <em>niet-behandelbare</em> persisterende pijn
+      gerelateerd aan heupluxatie.</p>
+      <p>Ga eerst na of de pijnbehandeling is geoptimaliseerd en of de pijn daadwerkelijk vanuit de heup komt,
+      voordat palliatieve chirurgie wordt overwogen.</p>`
+  },
+};
+
+const CONTEXT = {
+  gmfcs13: 'GMFCS I–III (lopend): aannemelijk dat mobiliteit (zitten, staan, lopen) beter behouden blijft tot in de volwassenheid dan met een heupluxatie. Bij ossale chirurgie is het succespercentage in deze groep hoger.',
+  gmfcs45: 'GMFCS IV–V (niet-lopend): zitten, staan en verplaatsen met hulpmiddelen blijven beter behouden in de volwassenheid. Deze groep heeft vaker een indicatie voor preventieve ossale operaties, met een hoger complicatierisico (ossaal gemiddeld 22% vs. weke delen ~6%).',
+};
+
+let pad = [];        // [{knooppunt, vraag, antwoord}]
+let bewaard = [];    // context-sleutels
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toon(id) {
+  const n = BOOM[id];
+  const el = document.getElementById('bbInhoud');
+
+  if (n.uitkomst) {
+    const context = bewaard.map(k => CONTEXT[k]).filter(Boolean);
+    el.innerHTML = `
+      <div class="bb-kaart bb-uitkomst ${n.type}">
+        <span class="bb-badge">${esc(n.badge)}</span>
+        <h2>${esc(n.titel)}</h2>
+        <div class="bb-uitkomst-tekst">${n.tekst}</div>
+        ${context.length ? `<div class="bb-uitkomst-tekst"><p><strong>Context bij dit GMFCS-niveau</strong></p><ul>${
+          context.map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>` : ''}
+        <div class="bb-uitkomst-tekst"><p><strong>De richtlijn vraagt daarnaast om:</strong></p>
+          <ul>
+            <li>Indicatiestelling in een multidisciplinair team, met een (kinder)orthopeed met ervaring in de operatieve behandeling van spastische kinderen en een ervaren kinderrevalidatiearts.</li>
+            <li>Besluitvorming in nauw overleg met ouders/verzorgers, na voorlichting over voor- en nadelen en met expliciete aandacht voor het risico op chirurgische complicaties.</li>
+          </ul>
+        </div>
+        <div class="bb-bron">BRON: ${esc(BRON)}<br>Deze uitkomst volgt alleen uit de vragen die je hierboven beantwoordde — hij vervangt geen individuele beoordeling.</div>
+      </div>
+      ${padHtml()}
+      <div class="bb-knoppen">
+        <button class="bb-knop" onclick="terug()">← Vorige vraag</button>
+        <button class="bb-knop primair" onclick="opnieuw()">Opnieuw beginnen</button>
+        <a class="bb-knop" href="https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen" target="_blank" rel="noopener">Richtlijn openen ↗</a>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="bb-voortgang">Vraag ${pad.length + 1}</div>
+    <div class="bb-kaart">
+      <p class="bb-vraag">${esc(n.vraag)}</p>
+      ${n.hint ? `<p class="bb-hint">${esc(n.hint)}</p>` : ''}
+      <div class="bb-opties">
+        ${n.opties.map((o, i) => `
+          <button class="bb-optie" data-i="${i}">
+            ${esc(o.label)}
+            ${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}
+          </button>`).join('')}
+      </div>
+    </div>
+    ${padHtml()}
+    ${pad.length ? '<div class="bb-knoppen"><button class="bb-knop" onclick="terug()">← Vorige vraag</button><button class="bb-knop" onclick="opnieuw()">Opnieuw beginnen</button></div>' : ''}`;
+
+  el.querySelectorAll('.bb-optie').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const o = n.opties[parseInt(btn.dataset.i, 10)];
+      pad.push({ knooppunt: id, vraag: n.vraag, antwoord: o.label, bewaar: o.bewaar || null });
+      if (o.bewaar) bewaard.push(o.bewaar);
+      toon(o.naar);
+    });
+  });
+}
+
+function padHtml() {
+  if (!pad.length) return '';
+  return `<div class="bb-pad">
+    <div class="bb-pad-titel">Jouw antwoorden</div>
+    <ol>${pad.map(p => `<li>${esc(p.vraag)} <strong>${esc(p.antwoord)}</strong></li>`).join('')}</ol>
+  </div>`;
+}
+
+function terug() {
+  const vorige = pad.pop();
+  if (!vorige) return;
+  if (vorige.bewaar) bewaard = bewaard.filter(k => k !== vorige.bewaar);
+  toon(vorige.knooppunt);
+}
+
+function opnieuw() {
+  pad = [];
+  bewaard = [];
+  toon('start');
+}
+
+toon('start');
+</script>
+
+</body>
+</html>
