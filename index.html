@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="offline-balk">Geen internet — je aantekeningen werken gewoon; video's en externe links niet.</div>
 
 <header class="topbar">
   <div class="topbar-title">Naslag Kinderrevalidatie</div>
@@ -137,5 +138,20 @@
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
+<script>
+// service worker: app blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+// zichtbaar maken dat je offline bent — verklaart waarom video's en externe links niets doen
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
 </body>
 </html>
