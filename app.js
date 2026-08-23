@@ -23,7 +23,10 @@ const DEFAULT_CATS = [
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
   { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom' },
-  { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal' },
+  { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal',
+    directLinks: [
+      { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
+    ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
 ];
@@ -311,6 +314,73 @@ const EXTRA_BLOKKEN = [
 </li>
 </ul>`
   },
+  {
+    id: 'nl-heup-1',
+    cat: 'heup',
+    verwijderPlaceholder: 'HIER ZELF INVULLEN',
+    html: `<h3>NL-richtlijn: indicatie chirurgie bij heup(sub)luxatie</h3>
+<div class="bron">BRON: Richtlijnendatabase (FMS), richtlijn Cerebrale parese bij kinderen, module "Chirurgie bij heup(sub)luxatie". Publicatiedatum 30-04-2018, beoordeeld op geldigheid 09-08-2024. <strong>Dit is de leidende Nederlandse richtlijn</strong> — waar de Orthobullets-getallen hieronder afwijken, gaat deze v&oacute;&oacute;r.</div>
+
+<p><strong>Uitgangsvraag:</strong> wanneer is orthopedische chirurgie ge&iuml;ndiceerd bij een symptomatische of asymptomatische heuplateralisatie?</p>
+
+<p><strong>Aanbeveling — wanneer preventieve chirurgie</strong><br>
+Verricht preventieve chirurgie ter voorkoming van heupluxatie bij kinderen met een spastische cerebrale parese met een symptomatische of asymptomatische toename van heuplateralisatie waarbij:</p>
+<ul>
+<li>op ten minste <strong>2 X-bekken AP-opnames met een interval van 6 maanden</strong> een migratiepercentage (MP) <strong>tussen 33&ndash;40%</strong> waarneembaar is op de recentste X-bekken, <strong>&oacute;f</strong></li>
+<li>een <strong>eerste X-bekken een MP &ge; 40%</strong> vertoont.</li>
+</ul>
+<p>Het screenings- en interventieschema zelf staat in de bijlage van de richtlijn — zie de knop "Screeningsschema heupluxatie" bovenaan dit onderwerp.</p>
+
+<p><strong>Herhaalde chirurgie</strong><br>
+Overweeg herhaalde preventieve chirurgie als er na preventieve weke delen chirurgie recidief heuplateralisatie of verdere progressie optreedt (<strong>MP &gt; 40%</strong>). De herhaalde operatie bestaat uit ossale heupchirurgie, al dan niet in combinatie met weke delen chirurgie.</p>`
+  },
+  {
+    id: 'nl-ok-1',
+    cat: 'ortho-ok',
+    html: `<h3>NL-richtlijn: chirurgie bij heup(sub)luxatie — beleid &amp; uitkomsten</h3>
+<div class="bron">BRON: Richtlijnendatabase (FMS), richtlijn Cerebrale parese bij kinderen, module "Chirurgie bij heup(sub)luxatie" (30-04-2018, geldigheid beoordeeld 09-08-2024). <strong>Leidend boven de Orthobullets-tekst hierboven.</strong> Indicatiecriteria (MP-grenzen) staan bij het onderwerp "Heupscreening bij CP".</p></div>
+
+<p><strong>Keuze van de ingreep</strong></p>
+<ul>
+<li>Eerste keuze preventieve chirurgie: <strong>weke delen procedure</strong> (adductorentenotomie met psoastenotomie). Bij bilateraal aangedane kinderen altijd bilateraal; bij unilateraal aangedane kinderen unilateraal.</li>
+<li>Postoperatief bij voorkeur een <strong>afneembare orthese</strong>; g&eacute;&eacute;n gipsbehandeling.</li>
+<li>Herhaalde preventieve operatie: ossale heupchirurgie, al dan niet gecombineerd met weke delen chirurgie.</li>
+<li><strong>Palliatieve</strong> heupchirurgie bij niet-behandelbare persisterende pijn gerelateerd aan heupluxatie.</li>
+<li>De aard van de ingreep wordt vooral bepaald door de ervaring van het betreffende multidisciplinaire team.</li>
+</ul>
+
+<p><strong>Organisatie van zorg</strong></p>
+<ul>
+<li>Stel de indicatie in een <strong>multidisciplinair team</strong>: (kinder)orthopeed met ervaring in operatieve behandeling van spastische kinderen, ervaren kinderrevalidatiearts, kinderarts en/of kinderneuroloog, kinderfysiotherapeut, (kinder)ergotherapeut, (kinder)logopedist, maatschappelijk werker, kinderpsycholoog en/of orthopedagoog.</li>
+<li>Neem de behandelbeslissing in nauw overleg met ouders/verzorgers, na adequate voorlichting over voor- en nadelen, met expliciete aandacht voor het risico op chirurgische complicaties.</li>
+<li>Opereer met een chirurgisch team met voldoende ervaring, in een setting met ervaring in optimale postoperatieve verzorging van kinderen met ernstige meervoudige beperkingen.</li>
+</ul>
+
+<p><strong>Voordelen van preventieve chirurgie</strong></p>
+<ul>
+<li>GMFCS I&ndash;III: aannemelijk dat functioneren in het domein mobiliteit (zitten, staan, lopen) beter is dan met een heupluxatie, en langer behouden blijft tot in de volwassenheid.</li>
+<li>GMFCS IV&ndash;V: zitten, staan en verplaatsen met hulpmiddelen (3-wielfiets, trippelstoel) blijven beter behouden in de volwassenheid.</li>
+<li>Een heupluxatie geeft verhoogd risico op pijnklachten vanuit de geluxeerde heup (grootte van het risico onduidelijk) en vergroot mogelijk de kans op scoliose.</li>
+<li>Geen noodzaak voor individuele zitaanpassingen als goede heupanatomie en -functie behouden blijven.</li>
+</ul>
+
+<p><strong>Nadelen / risico's</strong></p>
+<ul>
+<li>Complicatierisico: <strong>weke delen ~6%</strong>, <strong>ossaal gemiddeld 22%</strong>. Ernstig aangedane kinderen (GMFCS IV&ndash;V) hebben vaker indicatie voor preventieve ossale operaties.</li>
+<li>Volwassenen met een heupluxatie <em>ondanks</em> preventieve chirurgie hebben het hoogste risico op pijnklachten (Boldingh, 2005).</li>
+<li>Effecten op pijn, dagelijks functioneren, benodigde hulp bij verzorging, kwaliteit van leven en pati&euml;nt-/oudertevredenheid zijn <strong>niet bekend</strong>.</li>
+</ul>
+
+<div class="tabel-titel">Behandelsucces en complicaties</div>
+<div class="tabel-scroll"><table>
+<tr><th>Ingreep</th><th>Succes</th><th>Complicaties / opmerking</th></tr>
+<tr><td>Preventieve weke delen chirurgie</td><td>86% (MP &lt; 15) bij preoperatief MP 30&ndash;50% (Bowen, 2006)</td><td>8% complicaties die heroperatie noodzakelijk maakten</td></tr>
+<tr><td>Preventieve ossale chirurgie (femurosteotomie)</td><td>50&ndash;75%; bij lopende kinderen (GMFCS I&ndash;III) hoger</td><td>Overall complicatiepercentage 22%; onduidelijk of dit interfereert met functies en activiteiten</td></tr>
+<tr><td>Palliatieve chirurgie bij symptomatische heupluxatie</td><td>Veel ongunstiger</td><td>20&ndash;50% van de verzorgers niet tevreden met het resultaat</td></tr>
+</table></div>
+
+<p><strong>Kanttekening bij de literatuur:</strong> de beschreven populaties verschillen sterk in leeftijd ten tijde van de operatie en follow-upduur. De systematische literatuuranalyse bevat studies over een veel oudere groep dan het Zweedse registercohort (H&auml;gglund, 2014); waarschijnlijk zijn de resultaten van preventieve chirurgie in dat cohort gunstiger dan uit de literatuuranalyse blijkt. In het CP-UP-register moest 12&ndash;15% van de pati&euml;nten geopereerd worden, waarvan 60% alleen weke delen chirurgie en 40% een combinatie met ossale chirurgie, bij een gemiddelde leeftijd van 5 jaar.</p>`
+  },
 ];
 
 const STORAGE_BLOKKEN = 'krnToegepasteBlokken';
@@ -325,7 +395,18 @@ function pasExtraBlokkenToe() {
   let veranderd = false;
   EXTRA_BLOKKEN.forEach(blok => {
     if (toegepast.includes(blok.id)) return;
-    const bestaand = notes[blok.cat] || '';
+    let bestaand = notes[blok.cat] || '';
+
+    // een eerdere "nog zelf invullen"-alinea weghalen zodra dit blok het antwoord bevat
+    if (blok.verwijderPlaceholder && bestaand.includes(blok.verwijderPlaceholder)) {
+      const d = document.createElement('div');
+      d.innerHTML = bestaand;
+      d.querySelectorAll('p, li').forEach(el => {
+        if (el.textContent.includes(blok.verwijderPlaceholder)) el.remove();
+      });
+      bestaand = d.innerHTML;
+    }
+
     notes[blok.cat] = bestaand ? (bestaand + blok.html) : blok.html;
     toegepast.push(blok.id);
     veranderd = true;
