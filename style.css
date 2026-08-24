@@ -687,7 +687,9 @@ body.is-offline .offline-balk { display: block; }
 }
 .foto-open img {
   width: 100%; height: 100%;
-  object-fit: cover;
+  /* contain, niet cover: je moet in één oogopslag zien of een pagina scheef
+     ligt, en dan helpt bijsnijden niet */
+  object-fit: contain;
   display: block;
 }
 
@@ -825,3 +827,13 @@ body.viewer-open { overflow: hidden; }
 .modal-keuze[hidden] { display: none; }
 .modal-keuze input { margin-top: 2px; flex: none; }
 .modal-keuze em { color: var(--muted); font-style: normal; }
+
+/* draaiknoppen in de balk boven een schermvullende foto */
+#fotoDraaiLinks, #fotoDraaiRechts {
+  font-size: 19px;
+  font-weight: 700;
+}
+#fotoDraaiLinks:disabled, #fotoDraaiRechts:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

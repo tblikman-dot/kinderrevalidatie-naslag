@@ -159,6 +159,72 @@ function tekenOpMaat(bron, maxZijde, kwaliteit) {
   });
 }
 
+// Draaien in stappen van een kwartslag. Bij 90 en 270 wisselen breedte en
+// hoogte om, dus het doekje krijgt de omgekeerde maten en de foto wordt
+// gedraaid in het midden neergezet.
+function tekenGedraaid(bron, graden, maxZijde, kwaliteit) {
+  const kwart = ((graden % 360) + 360) % 360;
+  const kantelt = (kwart === 90 || kwart === 270);
+
+  let breedte = kantelt ? bron.height : bron.width;
+  let hoogte = kantelt ? bron.width : bron.height;
+  const schaal = Math.min(1, maxZijde / Math.max(breedte, hoogte));
+  breedte = Math.max(1, Math.round(breedte * schaal));
+  hoogte = Math.max(1, Math.round(hoogte * schaal));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = breedte; canvas.height = hoogte;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.translate(breedte / 2, hoogte / 2);
+  ctx.rotate(kwart * Math.PI / 180);
+
+  // maten van de foto zelf, dus vóór het kantelen
+  const fotoB = kantelt ? hoogte : breedte;
+  const fotoH = kantelt ? breedte : hoogte;
+  ctx.drawImage(bron, -fotoB / 2, -fotoH / 2, fotoB, fotoH);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      blob => blob ? resolve({ blob, breedte, hoogte }) : reject(new Error('De foto kon niet worden gedraaid.')),
+      'image/jpeg', kwaliteit
+    );
+  });
+}
+
+// Het draaien wordt echt in de foto vastgelegd — niet alleen in beeld gekanteld.
+// Zo staat hij overal goed: in het overzicht, schermvullend én in de back-up.
+// Een kwartslag is pixelzuiver; alleen het opnieuw opslaan als JPEG kost iets,
+// daarom een hogere kwaliteit dan bij het eerste verkleinen.
+const KWALITEIT_DRAAI = 0.92;
+
+function draaiFoto(catId, id, graden) {
+  return haalFoto(id).then(record => {
+    if (!record) return null;
+    return laadAfbeelding(record.blob).then(bron =>
+      Promise.all([
+        tekenGedraaid(bron, graden, MAX_ZIJDE, KWALITEIT_DRAAI),
+        tekenGedraaid(bron, graden, MAX_THUMB, KWALITEIT_THUMB),
+      ]).then(([groot, klein]) => {
+        if (bron.close) bron.close();
+        record.blob = groot.blob;
+        record.thumb = klein.blob;
+        record.breedte = groot.breedte;
+        record.hoogte = groot.hoogte;
+        record.bytes = groot.blob.size + klein.blob.size;
+        return fotoTransactie('readwrite')
+          .then(store => alsBelofte(store.put(record)))
+          .then(() => {
+            const rij = (fotoIndex[catId] || []).find(f => f.id === id);
+            if (rij) { rij.bytes = record.bytes; bewaarFotoIndex(); }
+            return record;
+          });
+      })
+    );
+  });
+}
+
 function verwerkFoto(catId, bestand, titel) {
   return laadAfbeelding(bestand).then(bron =>
     Promise.all([
@@ -301,6 +367,7 @@ function vraagHernoemFoto(id) {
 
 // ---------- groot bekijken ----------
 let viewerUrl = null;
+let viewerId = null;      // welke foto er nu schermvullend openstaat
 
 function toonFotoGroot(id) {
   const overlay = document.getElementById('fotoViewer');
@@ -310,25 +377,52 @@ function toonFotoGroot(id) {
 
   haalFoto(id).then(record => {
     if (!record) return;
-    if (viewerUrl) URL.revokeObjectURL(viewerUrl);
-    viewerUrl = URL.createObjectURL(record.blob);
-    img.src = viewerUrl;
-    img.className = '';                    // begin altijd passend in beeld
-    overlay.classList.remove('zoomt');
-    overlay.scrollTop = 0; overlay.scrollLeft = 0;
-    titel.textContent = record.titel;
+    viewerId = id;
+    toonInViewer(record);
     overlay.hidden = false;
     document.body.classList.add('viewer-open');
   }).catch(() => toast('⚠️ Deze foto kon niet worden geopend'));
+}
+
+function toonInViewer(record) {
+  const overlay = document.getElementById('fotoViewer');
+  const img = document.getElementById('fotoViewerImg');
+  if (viewerUrl) URL.revokeObjectURL(viewerUrl);
+  viewerUrl = URL.createObjectURL(record.blob);
+  img.src = viewerUrl;
+  img.className = '';                    // begin altijd passend in beeld
+  overlay.classList.remove('zoomt');
+  overlay.scrollTop = 0; overlay.scrollLeft = 0;
+  document.getElementById('fotoViewerTitel').textContent = record.titel;
+}
+
+function draaiHuidige(graden) {
+  if (viewerId === null || !activeId) return;
+  const knoppen = [document.getElementById('fotoDraaiLinks'),
+                   document.getElementById('fotoDraaiRechts')];
+  knoppen.forEach(k => k.disabled = true);
+
+  draaiFoto(activeId, viewerId, graden)
+    .then(record => {
+      if (record) {
+        toonInViewer(record);
+        renderFotos();          // ook het miniatuur eronder bijwerken
+      }
+    })
+    .catch(() => toast('⚠️ Draaien lukte niet'))
+    .then(() => knoppen.forEach(k => k.disabled = false));
 }
 
 function sluitFotoGroot() {
   const overlay = document.getElementById('fotoViewer');
   if (!overlay) return;
   overlay.hidden = true;
+  overlay.classList.remove('zoomt');
   document.body.classList.remove('viewer-open');
   const img = document.getElementById('fotoViewerImg');
   img.removeAttribute('src');
+  img.className = '';
+  viewerId = null;
   if (viewerUrl) { URL.revokeObjectURL(viewerUrl); viewerUrl = null; }
 }
 
@@ -347,11 +441,19 @@ function kiesFotos(bestanden) {
   status.textContent = `Bezig… (0 van ${lijst.length})`;
   status.classList.add('show');
 
+  // Zelf getypte titel gaat voor de bestandsnaam. Kies je meerdere foto's bij
+  // één titel, dan worden ze genummerd — anders heten ze allemaal hetzelfde.
+  const titelVeld = document.getElementById('fotoTitel');
+  const eigenTitel = titelVeld.value.trim();
+
   // Eén voor één: tegelijk verkleinen kost op een telefoon te veel geheugen.
   const catId = activeId;
-  lijst.reduce((keten, bestand) => keten.then(() => {
+  lijst.reduce((keten, bestand, i) => keten.then(() => {
     const naam = bestand.name ? bestand.name.replace(/\.[^.]+$/, '') : '';
-    return verwerkFoto(catId, bestand, naam || 'Boekpagina')
+    const titel = eigenTitel
+      ? (lijst.length > 1 ? `${eigenTitel} (${i + 1})` : eigenTitel)
+      : (naam || 'Boekpagina');
+    return verwerkFoto(catId, bestand, titel)
       .then(() => { klaar++; })
       .catch(fout => {
         mislukt++;
@@ -364,6 +466,7 @@ function kiesFotos(bestanden) {
   }), Promise.resolve()).then(() => {
     status.classList.remove('show');
     status.textContent = '';
+    titelVeld.value = '';
     if (activeId === catId) renderFotos();
     renderList(document.getElementById('zoek').value);
     if (klaar) toast(`✅ ${klaar} foto${klaar === 1 ? '' : "'s"} toegevoegd`);
@@ -462,6 +565,8 @@ document.getElementById('fotoInput').addEventListener('change', e => {
   kiesFotos(e.target.files);
   e.target.value = '';       // dezelfde foto twee keer kunnen kiezen
 });
+document.getElementById('fotoDraaiLinks').addEventListener('click', () => draaiHuidige(-90));
+document.getElementById('fotoDraaiRechts').addEventListener('click', () => draaiHuidige(90));
 document.getElementById('fotoViewerSluit').addEventListener('click', sluitFotoGroot);
 document.getElementById('fotoViewer').addEventListener('click', e => {
   if (e.target.id === 'fotoViewer') sluitFotoGroot();

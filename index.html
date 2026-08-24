@@ -135,6 +135,7 @@
         <div id="fotoLijst"></div>
 
         <div class="video-add">
+          <input type="text" id="fotoTitel" placeholder="Titel (bijv. Gage — hamstring shift)" autocomplete="off">
           <input type="file" id="fotoInput" accept="image/*" multiple hidden>
           <button id="fotoAddBtn">📷 Foto maken of kiezen</button>
           <div class="foto-bezig" id="fotoBezig"></div>
@@ -159,10 +160,12 @@
 <div class="foto-viewer" id="fotoViewer" hidden>
   <div class="foto-viewer-balk">
     <span id="fotoViewerTitel"></span>
+    <button id="fotoDraaiLinks" title="Kwartslag naar links draaien">↺</button>
+    <button id="fotoDraaiRechts" title="Kwartslag naar rechts draaien">↻</button>
     <button id="fotoViewerSluit" title="Sluiten">✕</button>
   </div>
   <img id="fotoViewerImg" alt="">
-  <div class="foto-viewer-hint">Tik op de foto om in of uit te zoomen</div>
+  <div class="foto-viewer-hint">Tik op de foto om in of uit te zoomen · ↺ ↻ draait hem een kwartslag</div>
 </div>
 
 <div class="toast" id="toast"></div>

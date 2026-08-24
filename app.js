@@ -29,6 +29,7 @@ const DEFAULT_CATS = [
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
   { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom' },
+  { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS' },
   { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal',
     directLinks: [
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
@@ -1022,6 +1023,8 @@ function openCategory(id) {
 
   // fotos.js wordt na dit bestand geladen; bij de eerste render kan hij er nog
   // niet zijn, daarom de check.
+  const fotoTitelVeld = document.getElementById('fotoTitel');
+  if (fotoTitelVeld) fotoTitelVeld.value = '';
   if (typeof renderFotos === 'function') renderFotos();
 
   renderList(document.getElementById('zoek').value);
