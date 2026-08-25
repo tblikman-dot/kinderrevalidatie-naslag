@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Perifere zenuwen — verloop &amp; innervatie</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .zn-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .zn-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .zn-terug:hover { text-decoration: underline; }
+
+  .zn-kop { font-size: 1.45rem; margin: 0 0 2px; }
+  .zn-wortels {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin: 0 0 8px;
+  }
+  .zn-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  /* --- laesieniveau kiezen --- */
+  .zn-kiezer-label {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .zn-niveaus { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+  .zn-niveau {
+    padding: 9px 14px;
+    border: 1.5px solid var(--lijn); border-radius: 50px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+    line-height: 1.25; text-align: left;
+  }
+  .zn-niveau:hover { border-color: var(--accent); }
+  .zn-niveau.actief { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .zn-niveau .zn-plek {
+    display: block; font-weight: 400; font-size: 11px;
+    color: var(--muted); margin-top: 1px;
+  }
+  .zn-niveau.actief .zn-plek { color: rgba(255,255,255,0.75); }
+
+  /* --- het verloop --- */
+  .zn-verloop {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 4px 16px 16px;
+    margin-bottom: 12px;
+  }
+
+  .zn-deel {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--muted);
+    margin: 18px 0 6px; padding-left: 26px;
+  }
+
+  .zn-stam { position: relative; padding-left: 26px; }
+  /* de zenuwstam zelf */
+  .zn-stam::before {
+    content: ''; position: absolute;
+    left: 7px; top: 4px; bottom: 4px; width: 3px;
+    background: #C3CDD2; border-radius: 2px;
+  }
+
+  .zn-tak {
+    position: relative;
+    padding: 9px 0 9px 4px;
+    border-bottom: 1px solid #F0F0EC;
+  }
+  .zn-tak:last-child { border-bottom: none; }
+  /* het aftakkingspunt */
+  .zn-tak::before {
+    content: ''; position: absolute;
+    left: -23px; top: 16px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--paneel);
+    border: 2.5px solid #8FA3AB;
+  }
+  .zn-tak.uit::before { border-color: #B3441E; background: #FBEAE5; }
+  .zn-tak.gespaard::before { border-color: #0f7a4a; background: #E3F3EA; }
+
+  .zn-naam {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    line-height: 1.35;
+  }
+  .zn-tak.uit .zn-naam { color: #8E3617; }
+  .zn-tak.gespaard .zn-naam { color: #0B5C38; }
+
+  .zn-merk {
+    display: inline-block;
+    font-size: 10.5px; font-weight: 800;
+    letter-spacing: 0.4px;
+    padding: 2px 7px; border-radius: 50px;
+    margin-left: 6px; vertical-align: 1px;
+  }
+  .zn-merk.uitval { background: #FBEAE5; color: #B3441E; }
+  .zn-merk.blijft { background: #E3F3EA; color: #0f7a4a; }
+  .zn-merk.deels  { background: #FBF3DC; color: #8A6508; }
+  .zn-merk.sens   { background: #EDE7F6; color: #5B3E8E; }
+
+  .zn-regel {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.5; margin-top: 2px;
+  }
+  .zn-wortel {
+    font-weight: 700; color: var(--accent);
+  }
+  .zn-test {
+    display: block; margin-top: 3px;
+    font-size: 12.5px; color: #5D6E76;
+  }
+  .zn-test b { color: var(--inkt); font-weight: 700; }
+
+  /* markering waar het gekozen letsel zit */
+  .zn-laesie {
+    position: relative;
+    margin: 4px 0 4px 26px;
+    padding: 8px 12px;
+    background: #FBEAE5;
+    border-left: 3px solid #B3441E;
+    border-radius: 0 8px 8px 0;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: #8E3617;
+  }
+
+  /* --- uitleg bij het gekozen niveau --- */
+  .zn-blok {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border-left: 5px solid var(--accent);
+  }
+  .zn-blok h2 { font-size: 1.15rem; margin: 0 0 3px; }
+  .zn-blok .zn-plaats {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted); margin: 0 0 12px;
+  }
+  .zn-blok h3 {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted);
+    margin: 14px 0 6px;
+  }
+  .zn-blok ul {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+    margin: 0; padding-left: 20px;
+  }
+  .zn-blok li { margin-bottom: 4px; }
+  .zn-blok p {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6; margin: 0;
+  }
+
+  .zn-sleutel {
+    background: var(--accent-zacht);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  .zn-sleutel strong { display: block; margin-bottom: 3px; }
+
+  /* --- tabel --- */
+  .zn-sectie { margin-top: 34px; }
+  .zn-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .zn-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+  .zn-tabel-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+  }
+  table.zn-tabel {
+    border-collapse: collapse;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    min-width: 100%;
+  }
+  .zn-tabel th, .zn-tabel td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--lijn);
+    text-align: left;
+    vertical-align: top;
+  }
+  .zn-tabel thead th {
+    font-size: 11px; font-weight: 800;
+    color: var(--muted); white-space: nowrap;
+  }
+  .zn-tabel td.zn-w { font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .zn-tabel td.zn-s { font-weight: 700; }
+
+  .zn-let-op {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+    color: #5A4A33;
+    margin-top: 14px;
+  }
+  .zn-let-op ul { margin: 8px 0 0; padding-left: 20px; }
+  .zn-let-op li { margin-bottom: 5px; }
+  .zn-let-op li:last-child { margin-bottom: 0; }
+
+  .zn-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 10px 13px;
+    margin-top: 24px;
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — dit schema werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Perifere zenuwen</div>
+</header>
+
+<div class="zn-wrap">
+  <a class="zn-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="zn-kop">Nervus medianus</h1>
+  <p class="zn-wortels">C6–T1 · uit de mediale én laterale fasciculus van de plexus brachialis</p>
+  <p class="zn-intro">
+    De takken staan in de volgorde waarin ze van de zenuw afgaan. Kies een hoogte:
+    alles distaal daarvan valt uit, alles proximaal blijft gespaard. Precies die grens
+    vertelt je waar het letsel zit.
+  </p>
+
+  <div class="zn-kiezer-label">Waar zit het letsel?</div>
+  <div class="zn-niveaus" id="znNiveaus"></div>
+
+  <div class="zn-blok" id="znBlok"></div>
+
+  <div class="zn-verloop" id="znVerloop"></div>
+
+  <div class="zn-sectie">
+    <h2>Alle spieren op een rij</h2>
+    <p class="zn-sectie-uitleg">
+      Met de wortel erbij, zodat je een zenuwletsel van een radiculopathie kunt onderscheiden.
+    </p>
+    <div class="zn-tabel-scroll">
+      <table class="zn-tabel" id="znTabel"></table>
+    </div>
+
+    <div class="zn-let-op">
+      <strong>Bij het gebruiken:</strong>
+      <ul>
+        <li><strong>Wortelniveaus verschillen licht per bron.</strong> Gebruik ze om richting te bepalen, niet als harde afkap.</li>
+        <li><strong>Palmaris longus ontbreekt bij een deel van de mensen</strong> aan één of beide kanten. Afwezigheid zegt op zichzelf dus niets — vergelijk met de andere arm.</li>
+        <li><strong>Denk aan anatomische varianten.</strong> Een Martin-Gruber-anastomose (takje van de mediane naar de ulnaire zenuw in de onderarm) kan het beeld in de hand vertroebelen.</li>
+        <li><strong>Radiculopathie of zenuwletsel?</strong> Bij een wortel volgt de uitval het myotoom over meerdere zenuwen heen — bij C8–T1 dus óók ulnair geïnnerveerde intrinsieken — en het gevoelsverlies volgt een dermatoom tot proximaal in de arm.</li>
+        <li>Dit schema staat naast, niet in plaats van, aanvullend onderzoek zoals EMG en echografie.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="zn-bron">
+    <strong>Bron:</strong> standaard perifere neuroanatomie, geordend naar het schema van de nervus
+    medianus uit je eigen boek. De tekening is niet overgenomen; dit is een eigen opzet in dezelfde
+    volgorde van aftakkingen. De aanduiding <em>deels</em> volgt de conventie uit dat schema: die
+    spier krijgt een deel van zijn innervatie van een andere perifere zenuw. Controleer bij twijfel
+    tegen je eigen bronnen.
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// NERVUS MEDIANUS — verloop en innervatie
+//
+// De takken staan op volgorde van proximaal naar distaal (veld "orde"). Een
+// letsel op een bepaalde hoogte raakt alles vanaf die orde; de takken die
+// eerder afgingen blijven gespaard. Dat is precies de klinische redenering.
+//
+// Uitzondering is de n. interosseus anterior: dat is een zijtak, geen hoogte
+// in de hoofdstam. Zo'n letsel raakt alleen de takken van díé zijtak, daarom
+// kan een niveau ook een expliciete lijst "alleen" hebben.
+// ============================================================================
+
+const DELEN = [
+  { id: 'bovenarm', naam: 'Bovenarm' },
+  { id: 'onderarm', naam: 'Onderarm — directe takken' },
+  { id: 'ain',      naam: 'N. interosseus anterior (zuiver motorisch)' },
+  { id: 'pols',     naam: 'Ter hoogte van de pols' },
+  { id: 'hand',     naam: 'Hand — na de carpale tunnel' },
+];
+
+const TAKKEN = [
+  { orde: 0, deel: 'bovenarm', naam: 'Geen motorische takken in de bovenarm',
+    info: 'De zenuw loopt mee met de a. brachialis en geeft in de bovenarm niets af.',
+    stil: true },
+
+  { orde: 1, deel: 'onderarm', naam: 'Pronator teres', wortel: 'C6–C7',
+    functie: 'pronatie onderarm',
+    test: 'Proneren tegen weerstand met <b>gestrekte</b> elleboog — zo doet de pronator quadratus niet mee.' },
+  { orde: 2, deel: 'onderarm', naam: 'Flexor carpi radialis', wortel: 'C6–C7',
+    functie: 'polsflexie, radiaal',
+    test: 'Pols buigen richting duimzijde tegen weerstand; pees is goed voelbaar.' },
+  { orde: 3, deel: 'onderarm', naam: 'Palmaris longus', wortel: 'C7–T1',
+    functie: 'polsflexie (zwak)',
+    test: 'Duim en pink tegen elkaar en pols licht buigen. Let op: ontbreekt bij een deel van de mensen.' },
+  { orde: 4, deel: 'onderarm', naam: 'Flexor digitorum superficialis', wortel: 'C7–T1',
+    functie: 'PIP-flexie dig II–V',
+    test: 'Eén vinger laten buigen in de PIP terwijl de andere vingers gestrekt worden gehouden.' },
+
+  { orde: 5, deel: 'ain', naam: 'Flexor digitorum profundus II–III', wortel: 'C8–T1',
+    functie: 'DIP-flexie wijs- en middelvinger', deels: 'dig IV–V gaan via de n. ulnaris',
+    test: 'DIP van de wijsvinger buigen terwijl je het middenkootje vasthoudt.' },
+  { orde: 6, deel: 'ain', naam: 'Flexor pollicis longus', wortel: 'C7–C8',
+    functie: 'IP-flexie duim',
+    test: 'Topkootje van de duim buigen terwijl je het grondkootje fixeert.' },
+  { orde: 7, deel: 'ain', naam: 'Pronator quadratus', wortel: 'C7–T1',
+    functie: 'pronatie onderarm',
+    test: 'Proneren met <b>maximaal gebogen</b> elleboog — dat schakelt de pronator teres grotendeels uit.' },
+
+  { orde: 8, deel: 'pols', naam: 'Ramus palmaris', sensibel: true,
+    functie: 'gevoel over de thenar en het aangrenzende handpalmgedeelte',
+    info: 'Gaat <b>over</b> het retinaculum heen, niet erdoorheen. Daarom blijft de huid over de thenar gespaard bij een carpaletunnelsyndroom — een van de nuttigste onderscheidende bevindingen.' },
+
+  { orde: 9,  deel: 'hand', naam: 'Abductor pollicis brevis', wortel: 'C8–T1',
+    functie: 'abductie duim, loodrecht uit het handvlak',
+    test: 'Duim recht omhoog uit de handpalm laten heffen tegen weerstand. <b>De sleutelspier bij CTS.</b>' },
+  { orde: 10, deel: 'hand', naam: 'Opponens pollicis', wortel: 'C8–T1',
+    functie: 'oppositie duim',
+    test: 'Duimtop naar de basis van de pink brengen tegen weerstand.' },
+  { orde: 11, deel: 'hand', naam: 'Flexor pollicis brevis', wortel: 'C8–T1',
+    functie: 'flexie MCP duim', deels: 'alleen het oppervlakkige hoofd; het diepe hoofd gaat via de n. ulnaris',
+    test: 'Lastig los te testen door de dubbele innervatie — laat het oordeel bij APB en opponens.' },
+  { orde: 12, deel: 'hand', naam: 'Lumbricalis I en II', wortel: 'C8–T1',
+    functie: 'MCP-flexie met gestrekte IP-gewrichten, dig II–III',
+    test: 'Klinisch nauwelijks te isoleren; in de praktijk zelden doorslaggevend.' },
+  { orde: 13, deel: 'hand', naam: 'Digitale sensibele takken', sensibel: true,
+    functie: 'palmair dig I–III en de radiale helft van dig IV, plus de dorsale toppen daarvan',
+    info: 'Dit is het gebied dat tintelt bij een carpaletunnelsyndroom.' },
+];
+
+const NIVEAUS = [
+  { id: 'geen', knop: 'Overzicht', plek: 'geen letsel',
+    titel: 'Nervus medianus — volledig verloop', plaats: 'Alle takken, van proximaal naar distaal.',
+    uitleg: 'Kies hierboven een hoogte om te zien wat er dan uitvalt en wat gespaard blijft.' },
+
+  { id: 'elleboog', vanaf: 1, knop: 'Elleboog', plek: 'hoog, proximaal van de pronator teres',
+    titel: 'Hoog medianusletsel', plaats: 'Ter hoogte van de elleboog, vóór de tak naar de pronator teres.',
+    oorzaak: 'Supracondylaire fractuur, luxatie, compressie onder de lacertus fibrosus, doorsnijding.',
+    kenmerk: 'Alles valt uit, inclusief de pronator teres én de gevoelstakken.',
+    beeld: [
+      'Bij vuistvorming blijven wijs- en middelvinger gestrekt — de "zwurhand".',
+      'Pronatie is zwak of afwezig in beide teststanden.',
+      'Gevoelsverlies over het hele mediane gebied, <strong>inclusief de huid over de thenar</strong>.',
+    ],
+    sleutel: 'Doof gevoel óver de thenar hoort bij een letsel proximaal van de pols. Bij een carpaletunnelsyndroom is dat gebied juist gespaard.' },
+
+  { id: 'pronator', vanaf: 2, knop: 'Pronator teres-loge', plek: 'distaal van de tak naar de PT',
+    titel: 'Beklemming in de pronatorloge', plaats: 'Tussen de twee koppen van de pronator teres, distaal van de tak naar die spier.',
+    oorzaak: 'Beklemming bij repeterende pronatie; ook onder de lacertus fibrosus of de boog van de FDS.',
+    kenmerk: 'Als enige mediane spier blijft de pronator teres gespaard — die kreeg zijn tak al eerder.',
+    beeld: [
+      'Pronatiekracht kan nog goed zijn, terwijl duim- en vingerflexie zwak is.',
+      'Gevoelsverlies mediaan, inclusief de thenarhuid.',
+      'Vaak pijn in de proximale onderarm, verergerend bij pronatie tegen weerstand.',
+    ],
+    sleutel: 'Zwakke FPL en FDP II bij een goede pronator teres, mét sensibele klachten: denk aan de pronatorloge, niet aan de carpale tunnel.' },
+
+  { id: 'ain', alleen: [5, 6, 7], knop: 'N. interosseus anterior', plek: 'zijtak, zuiver motorisch',
+    titel: 'AIN-syndroom (Kiloh-Nevin)', plaats: 'De zuiver motorische zijtak in de onderarm. Geen huidtakken.',
+    oorzaak: 'Beklemming, of een neuralgische amyotrofie die zich als AIN-uitval presenteert.',
+    kenmerk: 'Zuiver motorisch: drie spieren uit, géén gevoelsverlies.',
+    beeld: [
+      'Geen rondje kunnen maken met duim en wijsvinger: het wordt een <strong>driehoek</strong>, doordat de eindkootjes gestrekt blijven.',
+      'Flexor pollicis longus, flexor digitorum profundus II–III en pronator quadratus zijn zwak.',
+      'Het gevoel is volledig normaal — dat sluit een letsel in de hoofdstam vrijwel uit.',
+    ],
+    sleutel: 'Motorische uitval zónder enige sensibele afwijking wijst op de AIN. Denk bij acuut begin met veel pijn vooraf aan neuralgische amyotrofie.' },
+
+  { id: 'carpaal', vanaf: 9, knop: 'Carpale tunnel', plek: 'onder het flexor retinaculum',
+    titel: 'Carpaletunnelsyndroom', plaats: 'Onder het flexor retinaculum, distaal van de ramus palmaris.',
+    oorzaak: 'De bekendste beklemming. Bij kinderen zeldzaam — denk dan aan mucopolysacharidose, een stapelingsziekte of een trauma in de voorgeschiedenis.',
+    kenmerk: 'Onderarmspieren zijn normaal. Alleen de thenar, de lumbricalen I–II en het gevoel in de vingers doen mee.',
+    beeld: [
+      'Tintelingen in dig I–III en de radiale helft van dig IV, klassiek \'s nachts.',
+      'Zwakte en later atrofie van de abductor pollicis brevis.',
+      '<strong>De huid over de thenar blijft gespaard</strong> — de ramus palmaris gaat over het retinaculum heen.',
+      'Provocatie: teken van Tinel over de tunnel, test van Phalen, carpale compressietest.',
+    ],
+    sleutel: 'Normale FPL en pronatie, maar een zwakke abductor pollicis brevis en een gespaarde thenarhuid: dat wijst naar de tunnel en niet hoger.' },
+];
+
+// ---- weergave ----
+const SLEUTEL = 'krnZenuwNiveau';
+let huidig = 'geen';
+
+function laadKeuze() {
+  try {
+    const bewaard = localStorage.getItem(SLEUTEL);
+    if (bewaard && NIVEAUS.some(n => n.id === bewaard)) huidig = bewaard;
+  } catch (e) { /* privémodus */ }
+}
+function bewaarKeuze() {
+  try { localStorage.setItem(SLEUTEL, huidig); } catch (e) { /* niets aan te doen */ }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Valt deze tak uit bij het gekozen niveau?
+function raaktUit(tak, niveau) {
+  if (!niveau || niveau.id === 'geen' || tak.stil) return false;
+  if (niveau.alleen) return niveau.alleen.indexOf(tak.orde) !== -1;
+  return tak.orde >= niveau.vanaf;
+}
+
+function tekenNiveaus() {
+  document.getElementById('znNiveaus').innerHTML = NIVEAUS.map(n =>
+    `<button type="button" class="zn-niveau${n.id === huidig ? ' actief' : ''}" data-id="${n.id}">
+       ${esc(n.knop)}<span class="zn-plek">${esc(n.plek)}</span>
+     </button>`
+  ).join('');
+}
+
+function tekenVerloop() {
+  const niveau = NIVEAUS.find(n => n.id === huidig);
+  const toonStand = niveau && niveau.id !== 'geen';
+  let html = '';
+
+  DELEN.forEach(deel => {
+    const takken = TAKKEN.filter(t => t.deel === deel.id);
+    if (!takken.length) return;
+
+    html += `<div class="zn-deel">${esc(deel.naam)}</div>`;
+
+    // markering waar het gekozen letsel zit: net vóór de eerste tak die uitvalt
+    html += '<div class="zn-stam">';
+    takken.forEach(tak => {
+      const uit = raaktUit(tak, niveau);
+      const klas = !toonStand || tak.stil ? '' : (uit ? ' uit' : ' gespaard');
+
+      let merk = '';
+      if (toonStand && !tak.stil) {
+        merk = uit
+          ? '<span class="zn-merk uitval">valt uit</span>'
+          : '<span class="zn-merk blijft">blijft</span>';
+      }
+      if (tak.sensibel) merk += '<span class="zn-merk sens">gevoel</span>';
+      if (tak.deels) merk += '<span class="zn-merk deels">deels</span>';
+
+      const wortel = tak.wortel ? `<span class="zn-wortel">${esc(tak.wortel)}</span> · ` : '';
+      const deelsRegel = tak.deels ? `<span class="zn-test">Deels: ${tak.deels}</span>` : '';
+      const testRegel = tak.test ? `<span class="zn-test">Testen: ${tak.test}</span>` : '';
+      const infoRegel = tak.info ? `<span class="zn-test">${tak.info}</span>` : '';
+
+      html += `
+        <div class="zn-tak${klas}">
+          <div class="zn-naam">${esc(tak.naam)}${merk}</div>
+          ${tak.functie ? `<div class="zn-regel">${wortel}${esc(tak.functie)}</div>` : ''}
+          ${deelsRegel}${testRegel}${infoRegel}
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  document.getElementById('znVerloop').innerHTML = html;
+}
+
+function tekenBlok() {
+  const n = NIVEAUS.find(x => x.id === huidig);
+  const doel = document.getElementById('znBlok');
+
+  if (n.id === 'geen') {
+    doel.innerHTML = `
+      <h2>${esc(n.titel)}</h2>
+      <p class="zn-plaats">${esc(n.plaats)}</p>
+      <p>${esc(n.uitleg)}</p>`;
+    return;
+  }
+
+  const uitval = TAKKEN.filter(t => !t.stil && raaktUit(t, n));
+  const gespaard = TAKKEN.filter(t => !t.stil && !raaktUit(t, n));
+  const noem = lijst => lijst.length
+    ? lijst.map(t => esc(t.naam)).join(' · ')
+    : 'niets';
+
+  doel.innerHTML = `
+    <h2>${esc(n.titel)}</h2>
+    <p class="zn-plaats">${esc(n.plaats)}</p>
+
+    <h3>Wat je ziet</h3>
+    <ul>${n.beeld.map(b => `<li>${b}</li>`).join('')}</ul>
+
+    <h3>Valt uit</h3>
+    <p>${noem(uitval)}</p>
+
+    <h3>Blijft gespaard</h3>
+    <p>${noem(gespaard)}</p>
+
+    <h3>Veelvoorkomende oorzaak</h3>
+    <p>${esc(n.oorzaak)}</p>
+
+    <div class="zn-sleutel">
+      <strong>Onderscheidend</strong>
+      ${esc(n.sleutel)}
+    </div>`;
+}
+
+function tekenTabel() {
+  const rijen = TAKKEN.filter(t => !t.stil && !t.sensibel).map(t => `
+    <tr>
+      <td class="zn-s">${esc(t.naam)}</td>
+      <td class="zn-w">${esc(t.wortel || '—')}</td>
+      <td>${esc(DELEN.find(d => d.id === t.deel).naam.replace(' — directe takken', '').replace(' (zuiver motorisch)', ''))}</td>
+      <td>${esc(t.functie)}</td>
+    </tr>`).join('');
+
+  document.getElementById('znTabel').innerHTML = `
+    <thead><tr><th>Spier</th><th>Wortel</th><th>Via</th><th>Functie</th></tr></thead>
+    <tbody>${rijen}</tbody>`;
+}
+
+function teken() {
+  tekenNiveaus();
+  tekenBlok();
+  tekenVerloop();
+}
+
+document.getElementById('znNiveaus').addEventListener('click', e => {
+  const knop = e.target.closest('.zn-niveau');
+  if (!knop || knop.dataset.id === huidig) return;
+  huidig = knop.dataset.id;
+  bewaarKeuze();
+  teken();
+});
+
+laadKeuze();
+teken();
+tekenTabel();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
