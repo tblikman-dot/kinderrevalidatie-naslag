@@ -38,10 +38,11 @@ const DEFAULT_CATS = [
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
-  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen bij spina bifida/dwarslaesie én perifere zenuwen (n. medianus)',
+  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen (medianus/ulnaris) en herstel na zenuwletsel',
     directLinks: [
       { label: '🦵 Plaat: welk niveau, welke spieren', url: 'myotomen.html' },
-      { label: '🖐️ N. medianus — verloop & innervatie', url: 'zenuwen.html' },
+      { label: '🖐️ Perifere zenuwen — medianus & ulnaris', url: 'zenuwen.html' },
+      { label: '⏱️ Herstel na zenuwletsel — rekenhulp', url: 'zenuwherstel.html' },
     ] },
   { id: 'ontw', label: 'Ontwikkelingsstoornissen', scope: 'O.a. DCD, motorische ontwikkeling' },
   { id: 'amp', label: 'Aangeboren afwijkingen, amputatie & prothesiologie', scope: '' },

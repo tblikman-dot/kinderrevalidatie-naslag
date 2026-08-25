@@ -250,6 +250,50 @@
     margin-top: 24px;
     line-height: 1.55;
   }
+
+  /* --- welke zenuw --- */
+  .zn-schakel {
+    display: flex; gap: 6px;
+    background: #EFEFEB;
+    padding: 4px; border-radius: 11px;
+    margin-bottom: 16px;
+  }
+  .zn-schakel button {
+    flex: 1;
+    padding: 10px 8px;
+    border: none; border-radius: 8px;
+    background: transparent;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    line-height: 1.25;
+  }
+  .zn-schakel button.actief {
+    background: var(--paneel); color: var(--inkt);
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .zn-schakel .zn-wrt {
+    display: block; font-weight: 400; font-size: 10.5px;
+    color: var(--muted); margin-top: 1px;
+  }
+
+  .zn-vervolg {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px;
+    margin-top: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none;
+    line-height: 1.4;
+  }
+  .zn-vervolg:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .zn-vervolg .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
 </style>
 </head>
 <body>
@@ -262,8 +306,10 @@
 <div class="zn-wrap">
   <a class="zn-terug" href="index.html">← Terug naar naslagwerk</a>
 
-  <h1 class="zn-kop">Nervus medianus</h1>
-  <p class="zn-wortels">C6–T1 · uit de mediale én laterale fasciculus van de plexus brachialis</p>
+  <div class="zn-schakel" id="znZenuwKiezer"></div>
+
+  <h1 class="zn-kop" id="znKop"></h1>
+  <p class="zn-wortels" id="znWortels"></p>
   <p class="zn-intro">
     De takken staan in de volgorde waarin ze van de zenuw afgaan. Kies een hoogte:
     alles distaal daarvan valt uit, alles proximaal blijft gespaard. Precies die grens
@@ -286,160 +332,291 @@
       <table class="zn-tabel" id="znTabel"></table>
     </div>
 
-    <div class="zn-let-op">
+    <div class="zn-let-op" id="znLetOpVast">
       <strong>Bij het gebruiken:</strong>
+      <ul id="znLetOpEigen"></ul>
       <ul>
         <li><strong>Wortelniveaus verschillen licht per bron.</strong> Gebruik ze om richting te bepalen, niet als harde afkap.</li>
-        <li><strong>Palmaris longus ontbreekt bij een deel van de mensen</strong> aan één of beide kanten. Afwezigheid zegt op zichzelf dus niets — vergelijk met de andere arm.</li>
-        <li><strong>Denk aan anatomische varianten.</strong> Een Martin-Gruber-anastomose (takje van de mediane naar de ulnaire zenuw in de onderarm) kan het beeld in de hand vertroebelen.</li>
-        <li><strong>Radiculopathie of zenuwletsel?</strong> Bij een wortel volgt de uitval het myotoom over meerdere zenuwen heen — bij C8–T1 dus óók ulnair geïnnerveerde intrinsieken — en het gevoelsverlies volgt een dermatoom tot proximaal in de arm.</li>
+        <li><strong>Radiculopathie of zenuwletsel?</strong> Bij een wortel volgt de uitval het myotoom over meerdere zenuwen heen — bij C8–T1 dus zowel mediaan als ulnair geïnnerveerde intrinsieken — en het gevoelsverlies volgt een dermatoom tot proximaal in de arm.</li>
         <li>Dit schema staat naast, niet in plaats van, aanvullend onderzoek zoals EMG en echografie.</li>
       </ul>
     </div>
   </div>
 
+  <a class="zn-vervolg" href="zenuwherstel.html">
+    ⏱️ Hoelang duurt het herstel?
+    <span class="sub">Rekenhulp: van laesie naar spier, op basis van de regeneratiesnelheid</span>
+  </a>
+
   <div class="zn-bron">
-    <strong>Bron:</strong> standaard perifere neuroanatomie, geordend naar het schema van de nervus
-    medianus uit je eigen boek. De tekening is niet overgenomen; dit is een eigen opzet in dezelfde
-    volgorde van aftakkingen. De aanduiding <em>deels</em> volgt de conventie uit dat schema: die
-    spier krijgt een deel van zijn innervatie van een andere perifere zenuw. Controleer bij twijfel
-    tegen je eigen bronnen.
+    <strong>Bron:</strong> standaard perifere neuroanatomie, geordend naar de schema's van de
+    n. medianus en de n. ulnaris uit je eigen boek. De tekeningen zijn niet overgenomen; dit is een
+    eigen opzet die dezelfde volgorde van aftakkingen aanhoudt. De aanduiding <em>deels</em> volgt de
+    conventie uit die schema's: die spier krijgt een deel van zijn innervatie van een andere perifere
+    zenuw. Controleer bij twijfel tegen je eigen bronnen.
   </div>
 </div>
 
 <script>
-// ============================================================================
-// NERVUS MEDIANUS — verloop en innervatie
+// Twee zenuwen, dezelfde opbouw. Per zenuw: de delen van het verloop, de takken
+// op volgorde van proximaal naar distaal (veld "orde"), en de laesieniveaus.
 //
-// De takken staan op volgorde van proximaal naar distaal (veld "orde"). Een
-// letsel op een bepaalde hoogte raakt alles vanaf die orde; de takken die
-// eerder afgingen blijven gespaard. Dat is precies de klinische redenering.
+// Een letsel op een bepaalde hoogte raakt alles vanaf die orde; wat eerder
+// aftakte blijft gespaard. Dat is precies de klinische redenering.
 //
-// Uitzondering is de n. interosseus anterior: dat is een zijtak, geen hoogte
-// in de hoofdstam. Zo'n letsel raakt alleen de takken van díé zijtak, daarom
-// kan een niveau ook een expliciete lijst "alleen" hebben.
-// ============================================================================
+// Uitzondering zijn de zuivere zijtakken (n. interosseus anterior, ramus
+// profundus n. ulnaris): dat zijn geen hoogtes in de hoofdstam, dus die raken
+// alleen hun eigen takken. Zo'n niveau heeft daarom een expliciete lijst
+// "alleen" in plaats van een "vanaf".
 
-const DELEN = [
-  { id: 'bovenarm', naam: 'Bovenarm' },
-  { id: 'onderarm', naam: 'Onderarm — directe takken' },
-  { id: 'ain',      naam: 'N. interosseus anterior (zuiver motorisch)' },
-  { id: 'pols',     naam: 'Ter hoogte van de pols' },
-  { id: 'hand',     naam: 'Hand — na de carpale tunnel' },
-];
+const ZENUWEN = {
 
-const TAKKEN = [
-  { orde: 0, deel: 'bovenarm', naam: 'Geen motorische takken in de bovenarm',
-    info: 'De zenuw loopt mee met de a. brachialis en geeft in de bovenarm niets af.',
-    stil: true },
+  // ==========================================================================
+  medianus: {
+    knop: 'N. medianus',
+    kort: 'C6–T1',
+    naam: 'Nervus medianus',
+    wortels: 'C6–T1 · uit de mediale én laterale fasciculus van de plexus brachialis',
 
-  { orde: 1, deel: 'onderarm', naam: 'Pronator teres', wortel: 'C6–C7',
-    functie: 'pronatie onderarm',
-    test: 'Proneren tegen weerstand met <b>gestrekte</b> elleboog — zo doet de pronator quadratus niet mee.' },
-  { orde: 2, deel: 'onderarm', naam: 'Flexor carpi radialis', wortel: 'C6–C7',
-    functie: 'polsflexie, radiaal',
-    test: 'Pols buigen richting duimzijde tegen weerstand; pees is goed voelbaar.' },
-  { orde: 3, deel: 'onderarm', naam: 'Palmaris longus', wortel: 'C7–T1',
-    functie: 'polsflexie (zwak)',
-    test: 'Duim en pink tegen elkaar en pols licht buigen. Let op: ontbreekt bij een deel van de mensen.' },
-  { orde: 4, deel: 'onderarm', naam: 'Flexor digitorum superficialis', wortel: 'C7–T1',
-    functie: 'PIP-flexie dig II–V',
-    test: 'Eén vinger laten buigen in de PIP terwijl de andere vingers gestrekt worden gehouden.' },
-
-  { orde: 5, deel: 'ain', naam: 'Flexor digitorum profundus II–III', wortel: 'C8–T1',
-    functie: 'DIP-flexie wijs- en middelvinger', deels: 'dig IV–V gaan via de n. ulnaris',
-    test: 'DIP van de wijsvinger buigen terwijl je het middenkootje vasthoudt.' },
-  { orde: 6, deel: 'ain', naam: 'Flexor pollicis longus', wortel: 'C7–C8',
-    functie: 'IP-flexie duim',
-    test: 'Topkootje van de duim buigen terwijl je het grondkootje fixeert.' },
-  { orde: 7, deel: 'ain', naam: 'Pronator quadratus', wortel: 'C7–T1',
-    functie: 'pronatie onderarm',
-    test: 'Proneren met <b>maximaal gebogen</b> elleboog — dat schakelt de pronator teres grotendeels uit.' },
-
-  { orde: 8, deel: 'pols', naam: 'Ramus palmaris', sensibel: true,
-    functie: 'gevoel over de thenar en het aangrenzende handpalmgedeelte',
-    info: 'Gaat <b>over</b> het retinaculum heen, niet erdoorheen. Daarom blijft de huid over de thenar gespaard bij een carpaletunnelsyndroom — een van de nuttigste onderscheidende bevindingen.' },
-
-  { orde: 9,  deel: 'hand', naam: 'Abductor pollicis brevis', wortel: 'C8–T1',
-    functie: 'abductie duim, loodrecht uit het handvlak',
-    test: 'Duim recht omhoog uit de handpalm laten heffen tegen weerstand. <b>De sleutelspier bij CTS.</b>' },
-  { orde: 10, deel: 'hand', naam: 'Opponens pollicis', wortel: 'C8–T1',
-    functie: 'oppositie duim',
-    test: 'Duimtop naar de basis van de pink brengen tegen weerstand.' },
-  { orde: 11, deel: 'hand', naam: 'Flexor pollicis brevis', wortel: 'C8–T1',
-    functie: 'flexie MCP duim', deels: 'alleen het oppervlakkige hoofd; het diepe hoofd gaat via de n. ulnaris',
-    test: 'Lastig los te testen door de dubbele innervatie — laat het oordeel bij APB en opponens.' },
-  { orde: 12, deel: 'hand', naam: 'Lumbricalis I en II', wortel: 'C8–T1',
-    functie: 'MCP-flexie met gestrekte IP-gewrichten, dig II–III',
-    test: 'Klinisch nauwelijks te isoleren; in de praktijk zelden doorslaggevend.' },
-  { orde: 13, deel: 'hand', naam: 'Digitale sensibele takken', sensibel: true,
-    functie: 'palmair dig I–III en de radiale helft van dig IV, plus de dorsale toppen daarvan',
-    info: 'Dit is het gebied dat tintelt bij een carpaletunnelsyndroom.' },
-];
-
-const NIVEAUS = [
-  { id: 'geen', knop: 'Overzicht', plek: 'geen letsel',
-    titel: 'Nervus medianus — volledig verloop', plaats: 'Alle takken, van proximaal naar distaal.',
-    uitleg: 'Kies hierboven een hoogte om te zien wat er dan uitvalt en wat gespaard blijft.' },
-
-  { id: 'elleboog', vanaf: 1, knop: 'Elleboog', plek: 'hoog, proximaal van de pronator teres',
-    titel: 'Hoog medianusletsel', plaats: 'Ter hoogte van de elleboog, vóór de tak naar de pronator teres.',
-    oorzaak: 'Supracondylaire fractuur, luxatie, compressie onder de lacertus fibrosus, doorsnijding.',
-    kenmerk: 'Alles valt uit, inclusief de pronator teres én de gevoelstakken.',
-    beeld: [
-      'Bij vuistvorming blijven wijs- en middelvinger gestrekt — de "zwurhand".',
-      'Pronatie is zwak of afwezig in beide teststanden.',
-      'Gevoelsverlies over het hele mediane gebied, <strong>inclusief de huid over de thenar</strong>.',
+    delen: [
+      { id: 'bovenarm', naam: 'Bovenarm' },
+      { id: 'onderarm', naam: 'Onderarm — directe takken' },
+      { id: 'ain',      naam: 'N. interosseus anterior (zuiver motorisch)' },
+      { id: 'pols',     naam: 'Ter hoogte van de pols' },
+      { id: 'hand',     naam: 'Hand — na de carpale tunnel' },
     ],
-    sleutel: 'Doof gevoel óver de thenar hoort bij een letsel proximaal van de pols. Bij een carpaletunnelsyndroom is dat gebied juist gespaard.' },
 
-  { id: 'pronator', vanaf: 2, knop: 'Pronator teres-loge', plek: 'distaal van de tak naar de PT',
-    titel: 'Beklemming in de pronatorloge', plaats: 'Tussen de twee koppen van de pronator teres, distaal van de tak naar die spier.',
-    oorzaak: 'Beklemming bij repeterende pronatie; ook onder de lacertus fibrosus of de boog van de FDS.',
-    kenmerk: 'Als enige mediane spier blijft de pronator teres gespaard — die kreeg zijn tak al eerder.',
-    beeld: [
-      'Pronatiekracht kan nog goed zijn, terwijl duim- en vingerflexie zwak is.',
-      'Gevoelsverlies mediaan, inclusief de thenarhuid.',
-      'Vaak pijn in de proximale onderarm, verergerend bij pronatie tegen weerstand.',
-    ],
-    sleutel: 'Zwakke FPL en FDP II bij een goede pronator teres, mét sensibele klachten: denk aan de pronatorloge, niet aan de carpale tunnel.' },
+    takken: [
+      { orde: 0, deel: 'bovenarm', naam: 'Geen motorische takken in de bovenarm',
+        info: 'De zenuw loopt mee met de a. brachialis en geeft in de bovenarm niets af.',
+        stil: true },
 
-  { id: 'ain', alleen: [5, 6, 7], knop: 'N. interosseus anterior', plek: 'zijtak, zuiver motorisch',
-    titel: 'AIN-syndroom (Kiloh-Nevin)', plaats: 'De zuiver motorische zijtak in de onderarm. Geen huidtakken.',
-    oorzaak: 'Beklemming, of een neuralgische amyotrofie die zich als AIN-uitval presenteert.',
-    kenmerk: 'Zuiver motorisch: drie spieren uit, géén gevoelsverlies.',
-    beeld: [
-      'Geen rondje kunnen maken met duim en wijsvinger: het wordt een <strong>driehoek</strong>, doordat de eindkootjes gestrekt blijven.',
-      'Flexor pollicis longus, flexor digitorum profundus II–III en pronator quadratus zijn zwak.',
-      'Het gevoel is volledig normaal — dat sluit een letsel in de hoofdstam vrijwel uit.',
-    ],
-    sleutel: 'Motorische uitval zónder enige sensibele afwijking wijst op de AIN. Denk bij acuut begin met veel pijn vooraf aan neuralgische amyotrofie.' },
+      { orde: 1, deel: 'onderarm', naam: 'Pronator teres', wortel: 'C6–C7',
+        functie: 'pronatie onderarm',
+        test: 'Proneren tegen weerstand met <b>gestrekte</b> elleboog — zo doet de pronator quadratus niet mee.' },
+      { orde: 2, deel: 'onderarm', naam: 'Flexor carpi radialis', wortel: 'C6–C7',
+        functie: 'polsflexie, radiaal',
+        test: 'Pols buigen richting duimzijde tegen weerstand; pees is goed voelbaar.' },
+      { orde: 3, deel: 'onderarm', naam: 'Palmaris longus', wortel: 'C7–T1',
+        functie: 'polsflexie (zwak)',
+        test: 'Duim en pink tegen elkaar en pols licht buigen. Let op: ontbreekt bij een deel van de mensen.' },
+      { orde: 4, deel: 'onderarm', naam: 'Flexor digitorum superficialis', wortel: 'C7–T1',
+        functie: 'PIP-flexie dig II–V',
+        test: 'Eén vinger laten buigen in de PIP terwijl de andere vingers gestrekt worden gehouden.' },
 
-  { id: 'carpaal', vanaf: 9, knop: 'Carpale tunnel', plek: 'onder het flexor retinaculum',
-    titel: 'Carpaletunnelsyndroom', plaats: 'Onder het flexor retinaculum, distaal van de ramus palmaris.',
-    oorzaak: 'De bekendste beklemming. Bij kinderen zeldzaam — denk dan aan mucopolysacharidose, een stapelingsziekte of een trauma in de voorgeschiedenis.',
-    kenmerk: 'Onderarmspieren zijn normaal. Alleen de thenar, de lumbricalen I–II en het gevoel in de vingers doen mee.',
-    beeld: [
-      'Tintelingen in dig I–III en de radiale helft van dig IV, klassiek \'s nachts.',
-      'Zwakte en later atrofie van de abductor pollicis brevis.',
-      '<strong>De huid over de thenar blijft gespaard</strong> — de ramus palmaris gaat over het retinaculum heen.',
-      'Provocatie: teken van Tinel over de tunnel, test van Phalen, carpale compressietest.',
+      { orde: 5, deel: 'ain', naam: 'Flexor digitorum profundus II–III', wortel: 'C8–T1',
+        functie: 'DIP-flexie wijs- en middelvinger', deels: 'dig IV–V gaan via de n. ulnaris',
+        test: 'DIP van de wijsvinger buigen terwijl je het middenkootje vasthoudt.' },
+      { orde: 6, deel: 'ain', naam: 'Flexor pollicis longus', wortel: 'C7–C8',
+        functie: 'IP-flexie duim',
+        test: 'Topkootje van de duim buigen terwijl je het grondkootje fixeert.' },
+      { orde: 7, deel: 'ain', naam: 'Pronator quadratus', wortel: 'C7–T1',
+        functie: 'pronatie onderarm',
+        test: 'Proneren met <b>maximaal gebogen</b> elleboog — dat schakelt de pronator teres grotendeels uit.' },
+
+      { orde: 8, deel: 'pols', naam: 'Ramus palmaris', sensibel: true,
+        functie: 'gevoel over de thenar en het aangrenzende handpalmgedeelte',
+        info: 'Gaat <b>over</b> het retinaculum heen, niet erdoorheen. Daarom blijft de huid over de thenar gespaard bij een carpaletunnelsyndroom — een van de nuttigste onderscheidende bevindingen.' },
+
+      { orde: 9,  deel: 'hand', naam: 'Abductor pollicis brevis', wortel: 'C8–T1',
+        functie: 'abductie duim, loodrecht uit het handvlak',
+        test: 'Duim recht omhoog uit de handpalm laten heffen tegen weerstand. <b>De sleutelspier bij CTS.</b>' },
+      { orde: 10, deel: 'hand', naam: 'Opponens pollicis', wortel: 'C8–T1',
+        functie: 'oppositie duim',
+        test: 'Duimtop naar de basis van de pink brengen tegen weerstand.' },
+      { orde: 11, deel: 'hand', naam: 'Flexor pollicis brevis', wortel: 'C8–T1',
+        functie: 'flexie MCP duim', deels: 'alleen het oppervlakkige hoofd; het diepe hoofd gaat via de n. ulnaris',
+        test: 'Lastig los te testen door de dubbele innervatie — laat het oordeel bij APB en opponens.' },
+      { orde: 12, deel: 'hand', naam: 'Lumbricalis I en II', wortel: 'C8–T1',
+        functie: 'MCP-flexie met gestrekte IP-gewrichten, dig II–III',
+        test: 'Klinisch nauwelijks te isoleren; in de praktijk zelden doorslaggevend.' },
+      { orde: 13, deel: 'hand', naam: 'Digitale sensibele takken', sensibel: true,
+        functie: 'palmair dig I–III en de radiale helft van dig IV, plus de dorsale toppen daarvan',
+        info: 'Dit is het gebied dat tintelt bij een carpaletunnelsyndroom.' },
     ],
-    sleutel: 'Normale FPL en pronatie, maar een zwakke abductor pollicis brevis en een gespaarde thenarhuid: dat wijst naar de tunnel en niet hoger.' },
-];
+
+    niveaus: [
+      { id: 'geen', knop: 'Overzicht', plek: 'geen letsel',
+        titel: 'Nervus medianus — volledig verloop', plaats: 'Alle takken, van proximaal naar distaal.',
+        uitleg: 'Kies hierboven een hoogte om te zien wat er dan uitvalt en wat gespaard blijft.' },
+
+      { id: 'elleboog', vanaf: 1, knop: 'Elleboog', plek: 'hoog, proximaal van de pronator teres',
+        titel: 'Hoog medianusletsel', plaats: 'Ter hoogte van de elleboog, vóór de tak naar de pronator teres.',
+        oorzaak: 'Supracondylaire fractuur, luxatie, compressie onder de lacertus fibrosus, doorsnijding.',
+        beeld: [
+          'Bij vuistvorming blijven wijs- en middelvinger gestrekt — de "zwurhand".',
+          'Pronatie is zwak of afwezig in beide teststanden.',
+          'Gevoelsverlies over het hele mediane gebied, <strong>inclusief de huid over de thenar</strong>.',
+        ],
+        sleutel: 'Doof gevoel óver de thenar hoort bij een letsel proximaal van de pols. Bij een carpaletunnelsyndroom is dat gebied juist gespaard.' },
+
+      { id: 'pronator', vanaf: 2, knop: 'Pronator teres-loge', plek: 'distaal van de tak naar de PT',
+        titel: 'Beklemming in de pronatorloge', plaats: 'Tussen de twee koppen van de pronator teres, distaal van de tak naar die spier.',
+        oorzaak: 'Beklemming bij repeterende pronatie; ook onder de lacertus fibrosus of de boog van de FDS.',
+        beeld: [
+          'Pronatiekracht kan nog goed zijn, terwijl duim- en vingerflexie zwak is.',
+          'Gevoelsverlies mediaan, inclusief de thenarhuid.',
+          'Vaak pijn in de proximale onderarm, verergerend bij pronatie tegen weerstand.',
+        ],
+        sleutel: 'Zwakke FPL en FDP II bij een goede pronator teres, mét sensibele klachten: denk aan de pronatorloge, niet aan de carpale tunnel.' },
+
+      { id: 'ain', alleen: [5, 6, 7], knop: 'N. interosseus anterior', plek: 'zijtak, zuiver motorisch',
+        titel: 'AIN-syndroom (Kiloh-Nevin)', plaats: 'De zuiver motorische zijtak in de onderarm. Geen huidtakken.',
+        oorzaak: 'Beklemming, of een neuralgische amyotrofie die zich als AIN-uitval presenteert.',
+        beeld: [
+          'Geen rondje kunnen maken met duim en wijsvinger: het wordt een <strong>driehoek</strong>, doordat de eindkootjes gestrekt blijven.',
+          'Flexor pollicis longus, flexor digitorum profundus II–III en pronator quadratus zijn zwak.',
+          'Het gevoel is volledig normaal — dat sluit een letsel in de hoofdstam vrijwel uit.',
+        ],
+        sleutel: 'Motorische uitval zónder enige sensibele afwijking wijst op de AIN. Denk bij acuut begin met veel pijn vooraf aan neuralgische amyotrofie.' },
+
+      { id: 'carpaal', vanaf: 9, knop: 'Carpale tunnel', plek: 'onder het flexor retinaculum',
+        titel: 'Carpaletunnelsyndroom', plaats: 'Onder het flexor retinaculum, distaal van de ramus palmaris.',
+        oorzaak: 'De bekendste beklemming. Bij kinderen zeldzaam — denk dan aan mucopolysacharidose, een stapelingsziekte of een trauma in de voorgeschiedenis.',
+        beeld: [
+          'Tintelingen in dig I–III en de radiale helft van dig IV, klassiek \'s nachts.',
+          'Zwakte en later atrofie van de abductor pollicis brevis.',
+          '<strong>De huid over de thenar blijft gespaard</strong> — de ramus palmaris gaat over het retinaculum heen.',
+          'Provocatie: teken van Tinel over de tunnel, test van Phalen, carpale compressietest.',
+        ],
+        sleutel: 'Normale FPL en pronatie, maar een zwakke abductor pollicis brevis en een gespaarde thenarhuid: dat wijst naar de tunnel en niet hoger.' },
+    ],
+
+    letop: [
+      '<strong>Palmaris longus ontbreekt bij een deel van de mensen</strong> aan één of beide kanten. Afwezigheid zegt op zichzelf dus niets — vergelijk met de andere arm.',
+      '<strong>Denk aan anatomische varianten.</strong> Een Martin-Gruber-anastomose (takje van de mediane naar de ulnaire zenuw in de onderarm) kan het beeld in de hand vertroebelen.',
+    ],
+  },
+
+  // ==========================================================================
+  ulnaris: {
+    knop: 'N. ulnaris',
+    kort: 'C8–T1',
+    naam: 'Nervus ulnaris',
+    wortels: 'C8–T1 (soms C7) · uit de mediale fasciculus van de plexus brachialis',
+
+    delen: [
+      { id: 'bovenarm', naam: 'Bovenarm' },
+      { id: 'onderarm', naam: 'Onderarm — na de cubitale tunnel' },
+      { id: 'huid',     naam: 'Huidtakken vóór de pols' },
+      { id: 'guyon',    naam: 'Loge van Guyon — oppervlakkige tak' },
+      { id: 'diep',     naam: 'Ramus profundus (diepe motorische tak)' },
+    ],
+
+    takken: [
+      { orde: 0, deel: 'bovenarm', naam: 'Geen motorische takken in de bovenarm',
+        info: 'De zenuw loopt achter de mediale epicondyl door de sulcus, en daarna de cubitale tunnel in tussen de twee koppen van de flexor carpi ulnaris.',
+        stil: true },
+
+      { orde: 1, deel: 'onderarm', naam: 'Flexor carpi ulnaris', wortel: 'C7–T1',
+        functie: 'polsflexie, ulnair',
+        test: 'Pols buigen richting pink tegen weerstand; de pees is voelbaar net proximaal van het os pisiforme.' },
+      { orde: 2, deel: 'onderarm', naam: 'Flexor digitorum profundus IV–V', wortel: 'C8–T1',
+        functie: 'DIP-flexie ring- en pinkvinger', deels: 'dig II–III gaan via de n. interosseus anterior',
+        test: 'DIP van de pink buigen terwijl je het middenkootje vasthoudt.' },
+
+      { orde: 3, deel: 'huid', naam: 'Ramus cutaneus palmaris', sensibel: true,
+        functie: 'gevoel over de hypothenar',
+        info: 'Ontspringt in de onderarm en loopt <b>over</b> de loge van Guyon heen. Blijft daarom gespaard bij een letsel in die loge.' },
+      { orde: 4, deel: 'huid', naam: 'Ramus dorsalis', sensibel: true,
+        functie: 'gevoel over de ulnaire helft van de handrug en dorsaal dig V en de ulnaire helft van dig IV',
+        info: 'Ontspringt enkele centimeters proximaal van de pols. <b>Een doof gevoel op de handrug hoort dus bij een letsel op elleboog- of onderarmniveau, niet bij de pols.</b>' },
+
+      { orde: 5, deel: 'guyon', naam: 'Palmaris brevis', wortel: 'C8–T1',
+        functie: 'rimpelt de huid van de hypothenar',
+        test: 'Klinisch weinig bruikbaar; wordt niet als krachtmeting gebruikt.' },
+      { orde: 6, deel: 'guyon', naam: 'Oppervlakkige sensibele takken', sensibel: true,
+        functie: 'palmair dig V en de ulnaire helft van dig IV',
+        info: 'Dit is het gebied dat doof of tintelend is bij een letsel in de loge van Guyon.' },
+
+      { orde: 7,  deel: 'diep', naam: 'Abductor digiti minimi', wortel: 'C8–T1',
+        functie: 'abductie pink',
+        test: 'Pink naar buiten spreiden tegen weerstand.' },
+      { orde: 8,  deel: 'diep', naam: 'Opponens digiti minimi', wortel: 'C8–T1',
+        functie: 'oppositie pink',
+        test: 'Pink naar de duim toe brengen, hypothenar bolt op.' },
+      { orde: 9,  deel: 'diep', naam: 'Flexor digiti minimi brevis', wortel: 'C8–T1',
+        functie: 'flexie MCP pink',
+        test: 'Grondkootje van de pink buigen tegen weerstand.' },
+      { orde: 10, deel: 'diep', naam: 'Interossei (dorsaal en palmair)', wortel: 'C8–T1',
+        functie: 'spreiden en sluiten van de vingers',
+        test: 'Wijsvinger abduceren tegen weerstand; papier tussen de vingers laten vasthouden. <b>Atrofie in de eerste webruimte valt vaak het eerst op.</b>' },
+      { orde: 11, deel: 'diep', naam: 'Lumbricalis III en IV', wortel: 'C8–T1',
+        functie: 'MCP-flexie met gestrekte IP-gewrichten, dig IV–V', deels: 'lumbricalis I–II gaan via de n. medianus',
+        test: 'Uitval hiervan geeft samen met de interossei de klauwstand van ring- en pinkvinger.' },
+      { orde: 12, deel: 'diep', naam: 'Adductor pollicis', wortel: 'C8–T1',
+        functie: 'adductie duim',
+        test: '<b>Teken van Froment:</b> papier vasthouden tussen duim en wijsvinger. Bij zwakte buigt het topkootje van de duim om het met de FPL te compenseren.' },
+      { orde: 13, deel: 'diep', naam: 'Flexor pollicis brevis (caput profundum)', wortel: 'C8–T1',
+        functie: 'flexie MCP duim', deels: 'het oppervlakkige hoofd gaat via de n. medianus',
+        test: 'Niet los te testen door de dubbele innervatie.' },
+    ],
+
+    niveaus: [
+      { id: 'geen', knop: 'Overzicht', plek: 'geen letsel',
+        titel: 'Nervus ulnaris — volledig verloop', plaats: 'Alle takken, van proximaal naar distaal.',
+        uitleg: 'Kies hierboven een hoogte om te zien wat er dan uitvalt en wat gespaard blijft.' },
+
+      { id: 'elleboog', vanaf: 1, knop: 'Cubitale tunnel', plek: 'elleboog, achter de mediale epicondyl',
+        titel: 'Ulnarisletsel ter hoogte van de elleboog', plaats: 'In de sulcus achter de mediale epicondyl of in de cubitale tunnel tussen de twee koppen van de FCU.',
+        oorzaak: 'De op één na meest voorkomende beklemming van de bovenste extremiteit. Verder: langdurige elleboogflexie, druk, en laat na een fractuur ("tardieve ulnarisparese").',
+        beeld: [
+          'Doof gevoel over de <strong>hele</strong> ulnaire hand: palmair én op de handrug.',
+          'Zwakke flexor carpi ulnaris en DIP-flexie van ring- en pink.',
+          'Klauwstand van ring- en pinkvinger, maar <strong>minder uitgesproken</strong> dan bij een letsel aan de pols.',
+          'Teken van Froment en teken van Wartenberg positief.',
+        ],
+        sleutel: 'De <strong>ulnaire paradox</strong>: hoe hóger het letsel, hoe mínder klauw. De FDP IV–V is dan namelijk óók zwak, dus die trekt de eindkootjes niet meer krom. Een indrukwekkende klauw pleit dus juist voor een letsel aan de pols.' },
+
+      { id: 'guyon', vanaf: 5, knop: 'Loge van Guyon', plek: 'pols, distaal van de huidtakken',
+        titel: 'Beklemming in de loge van Guyon', plaats: 'Aan de pols, distaal van de ramus cutaneus palmaris en de ramus dorsalis.',
+        oorzaak: 'Druk op de handpalm (fietsen, krukken), ganglion, haakje van het os hamatum, trombose van de a. ulnaris.',
+        beeld: [
+          '<strong>De handrug voelt normaal aan</strong> — de ramus dorsalis takte al proximaal af.',
+          'Flexor carpi ulnaris en de DIP-flexie van ring- en pink zijn normaal.',
+          'Uitgesproken klauwstand van ring- en pinkvinger.',
+          'Zwakke intrinsieken: spreiden en sluiten van de vingers, teken van Froment.',
+        ],
+        sleutel: 'Normale sensibiliteit op de handrug bij ulnaire uitval in de hand betekent: het letsel zit aan de pols of distaler, niet bij de elleboog.' },
+
+      { id: 'diep', alleen: [7, 8, 9, 10, 11, 12, 13], knop: 'Diepe motorische tak', plek: 'zijtak, zuiver motorisch',
+        titel: 'Letsel van de ramus profundus', plaats: 'De zuiver motorische diepe tak in de handpalm.',
+        oorzaak: 'Ganglion, druk op de handpalm, haakje van het os hamatum.',
+        beeld: [
+          'Zuiver motorisch: <strong>het gevoel is overal normaal</strong>, ook aan de pinkzijde.',
+          'Zwakke intrinsieken met klauwstand en een positief teken van Froment.',
+          'Blijft de hypothenar sparend, dan zit het letsel nog verder distaal in de handpalm.',
+        ],
+        sleutel: 'Intrinsieke uitval zónder enig gevoelsverlies wijst op de diepe tak. Vergelijk met een C8–T1-radiculopathie, waarbij óók de mediaan geïnnerveerde thenar meedoet.' },
+    ],
+
+    letop: [
+      '<strong>De ulnaire paradox</strong> is het handigste onderscheid: een uitgesproken klauw hoort bij een <em>distaal</em> letsel, een milde klauw bij een letsel bij de elleboog.',
+      '<strong>De ramus dorsalis is je hoogtemeter.</strong> Doof op de handrug = elleboog of onderarm. Normaal op de handrug = pols of distaler.',
+      '<strong>Denk aan anatomische varianten.</strong> Bij een Martin-Gruber-anastomose worden ulnaire handspieren deels door de n. medianus aangestuurd, waardoor de uitval milder lijkt dan verwacht.',
+    ],
+  },
+};
 
 // ---- weergave ----
-const SLEUTEL = 'krnZenuwNiveau';
+const SLEUTEL = 'krnZenuwKeuze';
+let zenuwId = 'medianus';
 let huidig = 'geen';
+
+function zenuw() { return ZENUWEN[zenuwId]; }
 
 function laadKeuze() {
   try {
-    const bewaard = localStorage.getItem(SLEUTEL);
-    if (bewaard && NIVEAUS.some(n => n.id === bewaard)) huidig = bewaard;
-  } catch (e) { /* privémodus */ }
+    const rauw = localStorage.getItem(SLEUTEL);
+    if (!rauw) return;
+    const bewaard = JSON.parse(rauw);
+    if (bewaard.zenuw && ZENUWEN[bewaard.zenuw]) zenuwId = bewaard.zenuw;
+    if (bewaard.niveau && zenuw().niveaus.some(n => n.id === bewaard.niveau)) huidig = bewaard.niveau;
+  } catch (e) { /* privémodus of oude opslagvorm: standaardwaarden zijn prima */ }
 }
 function bewaarKeuze() {
-  try { localStorage.setItem(SLEUTEL, huidig); } catch (e) { /* niets aan te doen */ }
+  try { localStorage.setItem(SLEUTEL, JSON.stringify({ zenuw: zenuwId, niveau: huidig })); }
+  catch (e) { /* niets aan te doen */ }
 }
 
 function esc(s) {
@@ -453,8 +630,18 @@ function raaktUit(tak, niveau) {
   return tak.orde >= niveau.vanaf;
 }
 
+function tekenZenuwKiezer() {
+  document.getElementById('znZenuwKiezer').innerHTML = Object.keys(ZENUWEN).map(id =>
+    `<button type="button" class="${id === zenuwId ? 'actief' : ''}" data-zenuw="${id}">
+       ${esc(ZENUWEN[id].knop)}<span class="zn-wrt">${esc(ZENUWEN[id].kort)}</span>
+     </button>`
+  ).join('');
+  document.getElementById('znKop').textContent = zenuw().naam;
+  document.getElementById('znWortels').textContent = zenuw().wortels;
+}
+
 function tekenNiveaus() {
-  document.getElementById('znNiveaus').innerHTML = NIVEAUS.map(n =>
+  document.getElementById('znNiveaus').innerHTML = zenuw().niveaus.map(n =>
     `<button type="button" class="zn-niveau${n.id === huidig ? ' actief' : ''}" data-id="${n.id}">
        ${esc(n.knop)}<span class="zn-plek">${esc(n.plek)}</span>
      </button>`
@@ -462,18 +649,17 @@ function tekenNiveaus() {
 }
 
 function tekenVerloop() {
-  const niveau = NIVEAUS.find(n => n.id === huidig);
+  const niveau = zenuw().niveaus.find(n => n.id === huidig);
   const toonStand = niveau && niveau.id !== 'geen';
   let html = '';
 
-  DELEN.forEach(deel => {
-    const takken = TAKKEN.filter(t => t.deel === deel.id);
+  zenuw().delen.forEach(deel => {
+    const takken = zenuw().takken.filter(t => t.deel === deel.id);
     if (!takken.length) return;
 
     html += `<div class="zn-deel">${esc(deel.naam)}</div>`;
-
-    // markering waar het gekozen letsel zit: net vóór de eerste tak die uitvalt
     html += '<div class="zn-stam">';
+
     takken.forEach(tak => {
       const uit = raaktUit(tak, niveau);
       const klas = !toonStand || tak.stil ? '' : (uit ? ' uit' : ' gespaard');
@@ -506,7 +692,7 @@ function tekenVerloop() {
 }
 
 function tekenBlok() {
-  const n = NIVEAUS.find(x => x.id === huidig);
+  const n = zenuw().niveaus.find(x => x.id === huidig);
   const doel = document.getElementById('znBlok');
 
   if (n.id === 'geen') {
@@ -517,8 +703,8 @@ function tekenBlok() {
     return;
   }
 
-  const uitval = TAKKEN.filter(t => !t.stil && raaktUit(t, n));
-  const gespaard = TAKKEN.filter(t => !t.stil && !raaktUit(t, n));
+  const uitval = zenuw().takken.filter(t => !t.stil && raaktUit(t, n));
+  const gespaard = zenuw().takken.filter(t => !t.stil && !raaktUit(t, n));
   const noem = lijst => lijst.length
     ? lijst.map(t => esc(t.naam)).join(' · ')
     : 'niets';
@@ -541,16 +727,20 @@ function tekenBlok() {
 
     <div class="zn-sleutel">
       <strong>Onderscheidend</strong>
-      ${esc(n.sleutel)}
+      ${n.sleutel}
     </div>`;
 }
 
 function tekenTabel() {
-  const rijen = TAKKEN.filter(t => !t.stil && !t.sensibel).map(t => `
+  const rijen = zenuw().takken.filter(t => !t.stil && !t.sensibel).map(t => `
     <tr>
       <td class="zn-s">${esc(t.naam)}</td>
       <td class="zn-w">${esc(t.wortel || '—')}</td>
-      <td>${esc(DELEN.find(d => d.id === t.deel).naam.replace(' — directe takken', '').replace(' (zuiver motorisch)', ''))}</td>
+      <td>${esc(zenuw().delen.find(d => d.id === t.deel).naam
+            .replace(' — directe takken', '')
+            .replace(' — na de cubitale tunnel', '')
+            .replace(' (zuiver motorisch)', '')
+            .replace(' — oppervlakkige tak', ''))}</td>
       <td>${esc(t.functie)}</td>
     </tr>`).join('');
 
@@ -559,11 +749,32 @@ function tekenTabel() {
     <tbody>${rijen}</tbody>`;
 }
 
+// De algemene waarschuwingen staan vast in de HTML; de zenuwspecifieke komen
+// uit de gegevens en worden er bovenaan bij gezet.
+function tekenLetOp() {
+  const vast = document.getElementById('znLetOpVast');
+  const eigen = zenuw().letop.map(x => `<li>${x}</li>`).join('');
+  document.getElementById('znLetOpEigen').innerHTML = eigen;
+  if (vast) vast.hidden = false;
+}
+
 function teken() {
+  tekenZenuwKiezer();
   tekenNiveaus();
   tekenBlok();
   tekenVerloop();
+  tekenTabel();
+  tekenLetOp();
 }
+
+document.getElementById('znZenuwKiezer').addEventListener('click', e => {
+  const knop = e.target.closest('button');
+  if (!knop || knop.dataset.zenuw === zenuwId) return;
+  zenuwId = knop.dataset.zenuw;
+  huidig = 'geen';          // niveaus verschillen per zenuw, dus opnieuw beginnen
+  bewaarKeuze();
+  teken();
+});
 
 document.getElementById('znNiveaus').addEventListener('click', e => {
   const knop = e.target.closest('.zn-niveau');
@@ -575,7 +786,6 @@ document.getElementById('znNiveaus').addEventListener('click', e => {
 
 laadKeuze();
 teken();
-tekenTabel();
 
 // service worker: pagina blijft werken zonder internet
 if ('serviceWorker' in navigator) {

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Herstel na zenuwletsel — rekenhulp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .zh-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .zh-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .zh-terug:hover { text-decoration: underline; }
+
+  .zh-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .zh-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .zh-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 22px;
+  }
+
+  .zh-label {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); margin: 0 0 8px;
+  }
+
+  /* --- soort letsel --- */
+  .zh-soorten { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+  .zh-soort {
+    text-align: left;
+    padding: 12px 15px;
+    border: 1.5px solid var(--lijn); border-radius: 12px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+    line-height: 1.35;
+  }
+  .zh-soort:hover { border-color: var(--accent); }
+  .zh-soort.actief { border-color: var(--accent); background: var(--accent-zacht); box-shadow: inset 0 0 0 1px var(--accent); }
+  .zh-soort .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  /* --- invoer --- */
+  .zh-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .zh-kaart h2 { font-size: 1.1rem; margin: 0 0 3px; }
+  .zh-kaart-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin: 0 0 14px;
+  }
+
+  .zh-veldnaam {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); margin: 14px 0 5px;
+  }
+  .zh-veldnaam:first-of-type { margin-top: 0; }
+  .zh-veldnaam em { font-weight: 400; font-style: normal; color: var(--muted); }
+
+  .zh-veld {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--inkt);
+  }
+  .zh-veld:focus { outline: none; border-color: var(--accent); }
+
+  .zh-duo { display: flex; gap: 10px; }
+  .zh-duo > div { flex: 1; min-width: 0; }
+
+  .zh-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .zh-preset {
+    padding: 7px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 50px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+  }
+  .zh-preset:hover { border-color: var(--accent); background: var(--accent-zacht); }
+
+  .zh-meer {
+    margin-top: 14px;
+    border-top: 1px solid var(--lijn);
+    padding-top: 6px;
+  }
+  .zh-meer summary {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); cursor: pointer;
+    padding: 6px 0;
+  }
+
+  /* --- uitkomst --- */
+  .zh-uitkomst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-left: 5px solid var(--accent);
+  }
+  .zh-uitkomst h2 { font-size: 1.1rem; margin: 0 0 12px; }
+
+  .zh-groot {
+    font-family: system-ui, sans-serif;
+    font-size: 1.55rem; font-weight: 800;
+    color: var(--accent); line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .zh-onder {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .zh-regels {
+    margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.7;
+  }
+  .zh-regels div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .zh-regels span:first-child { color: var(--muted); white-space: nowrap; }
+  .zh-regels span:last-child { font-weight: 700; text-align: right; }
+
+  .zh-vlag {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .zh-vlag strong { display: block; margin-bottom: 3px; }
+  .zh-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .zh-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+  .zh-vlag.groen  { background: #E3F3EA; color: #0B5C38; }
+
+  .zh-nvt {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+  }
+  .zh-nvt ul { margin: 10px 0 0; padding-left: 20px; }
+  .zh-nvt li { margin-bottom: 5px; }
+
+  /* --- vervolgblokken --- */
+  .zh-sectie { margin-top: 32px; }
+  .zh-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .zh-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+  .zh-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .zh-lijst li { margin-bottom: 8px; }
+  .zh-lijst li:last-child { margin-bottom: 0; }
+
+  .zh-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px;
+    margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none;
+    line-height: 1.4;
+  }
+  .zh-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .zh-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .zh-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 11px 13px;
+    margin-top: 24px;
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze rekenhulp werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Herstel na zenuwletsel</div>
+</header>
+
+<div class="zh-wrap">
+  <a class="zh-terug" href="zenuwen.html">← Terug naar de zenuwschema's</a>
+
+  <h1 class="zh-kop">Wanneer mag je die spier verwachten?</h1>
+  <p class="zh-intro">
+    Een uitgroeiende axon legt ruwweg een millimeter per dag af. Meet de afstand van de laesie
+    naar de spier, en je hebt een verwachting van wanneer daar op zijn vroegst weer activiteit
+    in kan zitten.
+  </p>
+
+  <div class="zh-waarschuwing">
+    <strong>Dit is een schatting, geen voorspelling.</strong> De uitkomst is bedoeld om een orde van
+    grootte te geven en om te zien of je nog binnen het venster zit waarin herstel mogelijk is —
+    niet om een datum aan een kind of ouder te beloven. Vul hier geen patiëntgegevens in; de pagina
+    bewaart alleen je eigen instellingen, geen ingevoerde waarden.
+  </div>
+
+  <div class="zh-label">Wat voor letsel is het?</div>
+  <div class="zh-soorten" id="zhSoorten"></div>
+
+  <div id="zhRekenen">
+    <div class="zh-kaart">
+      <h2>Afstand en snelheid</h2>
+      <p class="zh-kaart-uitleg">
+        Meet met een centimeter over de huid, langs het verwachte verloop van de zenuw, van de
+        laesie tot het motorische punt van de spier die je wilt volgen.
+      </p>
+
+      <label class="zh-veldnaam" for="zhAfstand">Afstand laesie → spier <em>(cm)</em></label>
+      <input type="number" id="zhAfstand" class="zh-veld" inputmode="decimal" min="0" step="0.5" placeholder="bijv. 24">
+
+      <label class="zh-veldnaam" for="zhDatum">Datum van het letsel <em>(optioneel — geeft een verwachte datum)</em></label>
+      <input type="date" id="zhDatum" class="zh-veld">
+
+      <label class="zh-veldnaam">Regeneratiesnelheid <em>(mm per dag)</em></label>
+      <div class="zh-duo">
+        <div>
+          <input type="number" id="zhTraag" class="zh-veld" inputmode="decimal" min="0.1" step="0.1" value="1">
+          <div class="zh-onder" style="margin-top:4px;">langzaamst</div>
+        </div>
+        <div>
+          <input type="number" id="zhSnel" class="zh-veld" inputmode="decimal" min="0.1" step="0.1" value="2">
+          <div class="zh-onder" style="margin-top:4px;">snelst</div>
+        </div>
+      </div>
+      <div class="zh-presets" id="zhPresets"></div>
+
+      <details class="zh-meer">
+        <summary>Vertragingen aanpassen</summary>
+
+        <label class="zh-veldnaam" for="zhStart">Vertraging aan het begin <em>(dagen)</em></label>
+        <input type="number" id="zhStart" class="zh-veld" inputmode="numeric" min="0" step="1" value="21">
+        <div class="zh-onder" style="margin-top:5px;">
+          Wallerse degeneratie en het op gang komen van de uitgroei. Na een operatieve hechting
+          komt daar het passeren van de naad bij.
+        </div>
+
+        <label class="zh-veldnaam" for="zhEind">Vertraging aan het eind <em>(dagen)</em></label>
+        <input type="number" id="zhEind" class="zh-veld" inputmode="numeric" min="0" step="1" value="21">
+        <div class="zh-onder" style="margin-top:5px;">
+          De axon is er wel, maar de motorische eindplaatjes moeten opnieuw aansluiten voordat je
+          een contractie ziet.
+        </div>
+      </details>
+    </div>
+
+    <div class="zh-uitkomst" id="zhUitkomst"></div>
+  </div>
+
+  <div id="zhNietVanToepassing" hidden></div>
+
+  <div class="zh-sectie">
+    <h2>Hoe volg je het</h2>
+    <p class="zh-sectie-uitleg">
+      De rekensom geeft een verwachting; dit is wat je aan de patiënt zelf controleert.
+    </p>
+    <ul class="zh-lijst">
+      <li><strong>Teken van Tinel schuift mee.</strong> Klop van distaal naar proximaal en markeer waar de tintelingen beginnen. Dat punt hoort in hetzelfde tempo op te schuiven als je rekensom. Schuift het over enkele weken niet op, dan is dat een ongunstig teken.</li>
+      <li><strong>De spieren komen in volgorde terug</strong> — van proximaal naar distaal, in dezelfde volgorde als de takken van de zenuw afgaan. De spier die het dichtst bij de laesie ligt, doet het eerst weer iets.</li>
+      <li><strong>Verwacht eerst een spoortje, geen kracht.</strong> Eerst een zichtbare of voelbare aanspanning, daarna pas bruikbare kracht. Reken op maanden tussen die twee.</li>
+      <li><strong>Gevoel en kracht lopen niet gelijk op.</strong> Sensibel herstel loopt vaak voor op motorisch herstel.</li>
+      <li><strong>EMG loopt vooruit op het oog.</strong> Beginnende reïnnervatie is er vaak al te zien voordat je iets ziet bewegen — nuttig als je twijfelt of je nog moet afwachten.</li>
+      <li><strong>Houd de spier en het gewricht intussen bruikbaar:</strong> contractuurpreventie, spalken en aandacht voor de gevoelloze huid. Dat bepaalt mede wat je aan herstel overhoudt.</li>
+    </ul>
+
+    <a class="zh-link" href="zenuwen.html">
+      🖐️ Volgorde van de takken opzoeken
+      <span class="sub">N. medianus en n. ulnaris — welke spier ligt het dichtst bij de laesie</span>
+    </a>
+  </div>
+
+  <div class="zh-sectie">
+    <h2>Waar de rekensom ophoudt</h2>
+    <p class="zh-sectie-uitleg">
+      De grenzen van dit soort schattingen, expliciet.
+    </p>
+    <ul class="zh-lijst">
+      <li><strong>Eén millimeter per dag is een vuistregel</strong>, geen natuurwet. In het proximale deel gaat het doorgaans sneller, distaal langzamer.</li>
+      <li><strong>Bij kinderen wordt sneller en vollediger herstel beschreven</strong> dan bij volwassenen. Hoevéél sneller ligt niet vast in een hard getal — de snelheid die je hierboven kiest is dus jouw aanname, niet een gegeven.</li>
+      <li><strong>De axon halen is niet hetzelfde als functie terugkrijgen.</strong> Verkeerde wegwijzing van uitgroeiende axonen, incomplete reïnnervatie en spieratrofie bepalen mee hoeveel bruikbare kracht er komt.</li>
+      <li><strong>Denervatietijd telt.</strong> Naarmate een spier langer zonder aansturing zit, wordt reïnnervatie minder kansrijk; na ongeveer een jaar tot anderhalf jaar wordt zinvol motorisch herstel onwaarschijnlijk. Dat is precies waarom deze rekensom nuttig is: hij laat zien of je nog op tijd bent.</li>
+      <li><strong>Een spier die niet meer bereikt kan worden, is niet het einde.</strong> Peestranspositie, zenuwtranspositie of andere reconstructie kunnen dan aan de orde zijn — een afweging voor een gespecialiseerd hand- of plexusteam, en tijdig te maken.</li>
+    </ul>
+  </div>
+
+  <div class="zh-bron">
+    <strong>Bron:</strong> algemene, breed gedeelde uitgangspunten over axonale regeneratie na perifeer
+    zenuwletsel — geen specifieke richtlijn en geen overgenomen protocol. De getallen zijn instelbaar
+    omdat ze in de literatuur als orde van grootte worden genoemd en niet als vaste waarden. Controleer
+    bij twijfel tegen je eigen bronnen en leg beleidsbeslissingen voor in het multidisciplinair overleg.
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// HERSTEL NA ZENUWLETSEL — rekenhulp
+//
+// Opzet: eerst het soort letsel, want dat bepaalt óf de rekensom overhaupt
+// zinnig is. Bij neurapraxie is er geen axonale onderbreking en dus geen
+// uitgroeiafstand; een mm-per-dag-som zou daar een onzinnig antwoord geven.
+//
+// De uitkomst is bewust een venster en geen enkel getal. De snelheid is een
+// aanname, en een precies ogende datum zou meer zekerheid suggereren dan er is.
+// ============================================================================
+
+const SOORTEN = [
+  { id: 'neurapraxie', knop: 'Neurapraxie', sub: 'Geleidingsblok, axon intact (Sunderland I)',
+    rekent: false },
+  { id: 'axonotmesis', knop: 'Axonotmesis', sub: 'Axon onderbroken, zenuw in continuïteit (Sunderland II–IV)',
+    rekent: true, start: 21 },
+  { id: 'neurotmesis', knop: 'Neurotmesis, na herstel', sub: 'Zenuw doorgenomen en gehecht of getransplanteerd (Sunderland V)',
+    rekent: true, start: 30 },
+];
+
+const PRESETS = [
+  { naam: 'Volwassene, klassiek', traag: 1, snel: 2 },
+  { naam: 'Kind', traag: 2, snel: 3 },
+  { naam: 'Behoudend', traag: 1, snel: 1 },
+];
+
+const NVT_TEKST = `
+  <div class="zh-uitkomst">
+    <h2>Hier past deze rekensom niet bij</h2>
+    <div class="zh-nvt">
+      <p>Bij neurapraxie is de axon intact — er is alleen een geleidingsblok. Er hoeft dus niets
+      uit te groeien, en een afstand in millimeters zegt niets over de hersteltijd.</p>
+      <ul>
+        <li>Herstel verloopt doorgaans in dagen tot enkele weken, soms tot een paar maanden, en is meestal volledig.</li>
+        <li>De hersteltijd hangt af van hoe lang en hoe zwaar de druk is geweest, niet van de afstand tot de spier.</li>
+        <li>Er is geen spieratrofie door denervatie, dus het venster van ongeveer een jaar speelt hier niet.</li>
+        <li>Blijft het herstel uit zoals verwacht, heroverweeg dan of het tóch (deels) axonaal letsel is — daar is een EMG voor.</li>
+      </ul>
+    </div>
+  </div>`;
+
+const SLEUTEL = 'krnZenuwHerstel';
+let soortId = 'axonotmesis';
+
+function laadKeuze() {
+  try {
+    const rauw = localStorage.getItem(SLEUTEL);
+    if (!rauw) return;
+    const b = JSON.parse(rauw);
+    if (b.soort && SOORTEN.some(s => s.id === b.soort)) soortId = b.soort;
+    if (b.traag) document.getElementById('zhTraag').value = b.traag;
+    if (b.snel) document.getElementById('zhSnel').value = b.snel;
+  } catch (e) { /* privémodus */ }
+}
+function bewaarKeuze() {
+  try {
+    localStorage.setItem(SLEUTEL, JSON.stringify({
+      soort: soortId,
+      traag: document.getElementById('zhTraag').value,
+      snel: document.getElementById('zhSnel').value,
+    }));
+  } catch (e) { /* niets aan te doen */ }
+}
+
+function soort() { return SOORTEN.find(s => s.id === soortId); }
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function tekenSoorten() {
+  document.getElementById('zhSoorten').innerHTML = SOORTEN.map(s =>
+    `<button type="button" class="zh-soort${s.id === soortId ? ' actief' : ''}" data-id="${s.id}">
+       ${esc(s.knop)}<span class="sub">${esc(s.sub)}</span>
+     </button>`
+  ).join('');
+}
+
+function tekenPresets() {
+  document.getElementById('zhPresets').innerHTML = PRESETS.map((p, i) =>
+    `<button type="button" class="zh-preset" data-i="${i}">${esc(p.naam)}: ${p.traag}–${p.snel}</button>`
+  ).join('');
+}
+
+// dagen netjes uitdrukken in weken en maanden
+function inTijd(dagen) {
+  const weken = dagen / 7;
+  const maanden = dagen / 30.44;
+  if (dagen < 56) return Math.round(weken) + ' weken';
+  if (maanden < 24) return maanden.toFixed(1).replace('.', ',') + ' maanden';
+  return (maanden / 12).toFixed(1).replace('.', ',') + ' jaar';
+}
+
+function alsDatum(dagen, start) {
+  const d = new Date(start.getTime());
+  d.setDate(d.getDate() + Math.round(dagen));
+  return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getal(id) {
+  const v = parseFloat(document.getElementById(id).value.replace(',', '.'));
+  return isNaN(v) ? null : v;
+}
+
+function rekenen() {
+  const doel = document.getElementById('zhUitkomst');
+
+  const afstandCm = getal('zhAfstand');
+  const traag = getal('zhTraag');
+  const snel = getal('zhSnel');
+  const startVertraging = getal('zhStart');
+  const eindVertraging = getal('zhEind');
+
+  if (afstandCm === null || afstandCm <= 0) {
+    doel.innerHTML = `
+      <h2>Uitkomst</h2>
+      <p class="zh-onder">Vul hierboven de afstand in, dan verschijnt hier de verwachting.</p>`;
+    return;
+  }
+  if (!traag || !snel || traag <= 0 || snel <= 0) {
+    doel.innerHTML = `
+      <h2>Uitkomst</h2>
+      <p class="zh-onder">Vul een snelheid groter dan nul in.</p>`;
+    return;
+  }
+
+  // langzaamste snelheid geeft de langste tijd; ze mogen omgedraaid ingevuld staan
+  const laag = Math.min(traag, snel);
+  const hoog = Math.max(traag, snel);
+  const afstandMm = afstandCm * 10;
+  const vast = (startVertraging || 0) + (eindVertraging || 0);
+
+  const langst = vast + afstandMm / laag;
+  const kortst = vast + afstandMm / hoog;
+
+  const datumVeld = document.getElementById('zhDatum').value;
+  let datumRegels = '';
+  if (datumVeld) {
+    const start = new Date(datumVeld + 'T12:00:00');
+    if (!isNaN(start.getTime())) {
+      datumRegels = `
+        <div><span>Op zijn vroegst rond</span><span>${esc(alsDatum(kortst, start))}</span></div>
+        <div><span>Op zijn laatst rond</span><span>${esc(alsDatum(langst, start))}</span></div>`;
+    }
+  }
+
+  // venster waarin reïnnervatie nog kansrijk is
+  let vlag;
+  if (langst > 548) {
+    vlag = `<div class="zh-vlag rood">
+      <strong>Buiten het haalbare venster</strong>
+      Zelfs in het gunstigste geval komt de uitgroei hier pas ver voorbij het punt waarop de spier
+      nog zinvol te reïnnerveren is. Weeg nu al een andere route af — zenuwtranspositie dichter bij
+      de spier, of peestranspositie — en leg dat tijdig voor aan een gespecialiseerd team.</div>`;
+  } else if (langst > 365) {
+    vlag = `<div class="zh-vlag oranje">
+      <strong>Krap</strong>
+      De trage kant van de schatting valt voorbij het jaar. Denervatie van meer dan ongeveer een jaar
+      maakt zinvol motorisch herstel onwaarschijnlijk, dus wacht dit niet passief af: plan controle
+      met EMG en bespreek op tijd of een reconstructie aan de orde is.</div>`;
+  } else {
+    vlag = `<div class="zh-vlag groen">
+      <strong>Binnen het venster</strong>
+      De verwachte aankomst valt ruim binnen de termijn waarin reïnnervatie nog kansrijk is.
+      Volg het beloop met het teken van Tinel en zo nodig EMG.</div>`;
+  }
+
+  doel.innerHTML = `
+    <h2>Verwachte eerste activiteit in de spier</h2>
+    <div class="zh-groot">${esc(inTijd(kortst))} – ${esc(inTijd(langst))}</div>
+    <div class="zh-onder">na het letsel, bij ${String(afstandCm).replace('.', ',')} cm en ${String(laag).replace('.', ',')}–${String(hoog).replace('.', ',')} mm per dag</div>
+
+    <div class="zh-regels">
+      <div><span>Alleen de uitgroei</span><span>${esc(inTijd(afstandMm / hoog))} – ${esc(inTijd(afstandMm / laag))}</span></div>
+      <div><span>Vaste vertraging</span><span>${vast} dagen</span></div>
+      <div><span>In dagen</span><span>${Math.round(kortst)} – ${Math.round(langst)}</span></div>
+      ${datumRegels}
+    </div>
+
+    ${vlag}`;
+}
+
+function teken() {
+  tekenSoorten();
+  const rekent = soort().rekent;
+  document.getElementById('zhRekenen').hidden = !rekent;
+  const nvt = document.getElementById('zhNietVanToepassing');
+  nvt.hidden = rekent;
+  if (!rekent) { nvt.innerHTML = NVT_TEKST; return; }
+  rekenen();
+}
+
+document.getElementById('zhSoorten').addEventListener('click', e => {
+  const knop = e.target.closest('.zh-soort');
+  if (!knop || knop.dataset.id === soortId) return;
+  soortId = knop.dataset.id;
+  // beginvertraging hoort bij het soort letsel: na een hechting duurt het langer
+  // voordat de uitgroei op gang is
+  if (soort().start) document.getElementById('zhStart').value = soort().start;
+  bewaarKeuze();
+  teken();
+});
+
+document.getElementById('zhPresets').addEventListener('click', e => {
+  const knop = e.target.closest('.zh-preset');
+  if (!knop) return;
+  const p = PRESETS[parseInt(knop.dataset.i, 10)];
+  document.getElementById('zhTraag').value = p.traag;
+  document.getElementById('zhSnel').value = p.snel;
+  bewaarKeuze();
+  rekenen();
+});
+
+['zhAfstand', 'zhTraag', 'zhSnel', 'zhStart', 'zhEind', 'zhDatum'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if (id === 'zhTraag' || id === 'zhSnel') bewaarKeuze();
+    rekenen();
+  });
+});
+
+tekenPresets();
+laadKeuze();
+teken();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

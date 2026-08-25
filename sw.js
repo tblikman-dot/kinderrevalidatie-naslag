@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v8';
+const CACHE_VERSIE = 'krn-v9';
 
 const APP_BESTANDEN = [
   './',
@@ -16,6 +16,7 @@ const APP_BESTANDEN = [
   './gmfcs.html',
   './myotomen.html',
   './zenuwen.html',
+  './zenuwherstel.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
