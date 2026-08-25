@@ -185,6 +185,9 @@
   <p class="bb-intro">
     Twijfel je over het GMFCS-niveau? <a href="gmfcs.html">Bekijk de omschrijvingen per leeftijdsband →</a>
   </p>
+  <p class="bb-intro">
+    Migratiepercentage nog opmeten? <a id="bbHipScreen" href="#">Open de HipScreen-app →</a>
+  </p>
   <div class="bb-waarschuwing">
     <strong>Vul hier geen patiëntgegevens in.</strong> Deze pagina bewaart niets: alles verdwijnt
     zodra je hem sluit of opnieuw begint. Er wordt niets verstuurd of opgeslagen.
@@ -194,6 +197,19 @@
 </div>
 
 <script>
+// HipScreen (Shriners Children's): meet het migratiepercentage van een
+// X-bekken. Android-intentadres met de Play Store als terugval, zodat de link
+// nooit doodloopt — ook niet op een computer of iPhone, waar intent: niets doet.
+// Zie de toelichting bij HIPSCREEN_PAKKET in app.js.
+(function () {
+  const pakket = 'org.hipscreen.android';
+  const play = 'https://play.google.com/store/apps/details?id=' + pakket;
+  document.getElementById('bbHipScreen').href =
+    'intent:#Intent;package=' + pakket +
+    ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
+    ';S.browser_fallback_url=' + encodeURIComponent(play) + ';end';
+})();
+
 // ===== BESLISBOOM =====
 // Criteria uit: Richtlijnendatabase (FMS), richtlijn Cerebrale parese bij kinderen,
 // module "Chirurgie bij heup(sub)luxatie" (30-04-2018, geldigheid beoordeeld 09-08-2024).

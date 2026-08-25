@@ -1,3 +1,23 @@
+// ===== EXTERNE APP: HIPSCREEN =====
+// HipScreen (Shriners Children's, Kulkarni & Davids) meet het migratiepercentage
+// van een X-bekken. Een website kan geen gegevens met een Android-app
+// uitwisselen; wat wél kan is de app starten.
+//
+// Dit is een Android intent-adres: Chrome probeert het pakket te openen en valt
+// terug op de Play Store als de app er niet staat, zodat de knop nooit dood is.
+// Op een iPhone of op een computer werkt intent: niet — daar is de terugval de
+// enige uitkomst, en die is nog steeds zinnig.
+//
+// Let op: het pakket moet kloppen. Er bestaat ook een andere app met dezelfde
+// naam (com.hipscreen.hipscreen_mobile, "SMOPP Hipscreen"); die opent hiermee
+// niet. Het id staat in de Play Store-link van de app zelf, achter "?id=".
+const HIPSCREEN_PAKKET = 'org.hipscreen.android';
+const HIPSCREEN_PLAY = 'https://play.google.com/store/apps/details?id=' + HIPSCREEN_PAKKET;
+const HIPSCREEN_URL =
+  'intent:#Intent;package=' + HIPSCREEN_PAKKET +
+  ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
+  ';S.browser_fallback_url=' + encodeURIComponent(HIPSCREEN_PLAY) + ';end';
+
 // ===== STANDAARDINDELING (aanpasbaar/uitbreidbaar) =====
 // Dit zijn alleen categorienamen/onderwerpen, geen medische inhoud.
 const DEFAULT_CATS = [
@@ -10,6 +30,7 @@ const DEFAULT_CATS = [
     directLinks: [
       { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html' },
       { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
+      { label: '📱 HipScreen openen (MP meten)', url: HIPSCREEN_URL },
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
