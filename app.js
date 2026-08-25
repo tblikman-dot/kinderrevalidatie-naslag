@@ -38,10 +38,11 @@ const DEFAULT_CATS = [
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
-  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen (medianus/ulnaris) en herstel na zenuwletsel',
+  { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
+    zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
     directLinks: [
       { label: '🦵 Plaat: welk niveau, welke spieren', url: 'myotomen.html' },
-      { label: '🖐️ Perifere zenuwen — medianus & ulnaris', url: 'zenuwen.html' },
+      { label: '🖐️ Perifere zenuwen van de arm — verloop & uitval', url: 'zenuwen.html' },
       { label: '⏱️ Herstel na zenuwletsel — rekenhulp', url: 'zenuwherstel.html' },
     ] },
   { id: 'ontw', label: 'Ontwikkelingsstoornissen', scope: 'O.a. DCD, motorische ontwikkeling' },
@@ -493,6 +494,7 @@ function loadState() {
 
   categories.forEach(cat => {
     const def = DEFAULT_CATS.find(d => d.id === cat.id);
+    if (def && def.zoekwoorden !== cat.zoekwoorden) { cat.zoekwoorden = def.zoekwoorden; catsChanged = true; }
     if (def && def.directLinks) {
       const same = JSON.stringify(cat.directLinks) === JSON.stringify(def.directLinks);
       if (!same) { cat.directLinks = def.directLinks; catsChanged = true; }
@@ -847,6 +849,14 @@ function zoekTreffer(cat, filter) {
 
   if (normaliseer(cat.label).includes(f)) return { raak: true };
   if (normaliseer(cat.scope).includes(f)) return { raak: true };
+
+  // Trefwoorden die niet in de titel passen maar wel zijn waar je op zoekt.
+  if (cat.zoekwoorden && normaliseer(cat.zoekwoorden).includes(f)) return { raak: true };
+
+  // De vaste knoppen bij een categorie zijn ook vindbaar: "beslisboom",
+  // "HipScreen", "GMFCS" zijn nu eenmaal waar je op zoekt.
+  const knop = (cat.directLinks || []).find(l => normaliseer(l.label).includes(f));
+  if (knop) return { raak: true, hint: '🔗 ' + knop.label };
 
   const video = (videos[cat.id] || []).find(v => normaliseer(v.titel).includes(f));
   if (video) return { raak: true, hint: '🎬 ' + video.titel };

@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Perifere zenuwen — verloop &amp; innervatie</title>
+<title>Perifere zenuwen van de arm — verloop &amp; uitval</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0f4c5c">
@@ -300,7 +300,7 @@
 <div class="offline-balk">Geen internet — dit schema werkt gewoon door.</div>
 
 <header class="topbar">
-  <div class="topbar-title">Perifere zenuwen</div>
+  <div class="topbar-title">Perifere zenuwen van de arm</div>
 </header>
 
 <div class="zn-wrap">
@@ -350,7 +350,7 @@
 
   <div class="zn-bron">
     <strong>Bron:</strong> standaard perifere neuroanatomie, geordend naar de schema's van de
-    n. medianus en de n. ulnaris uit je eigen boek. De tekeningen zijn niet overgenomen; dit is een
+    n. medianus, n. ulnaris en n. radialis uit je eigen boek. De tekeningen zijn niet overgenomen; dit is een
     eigen opzet die dezelfde volgorde van aftakkingen aanhoudt. De aanduiding <em>deels</em> volgt de
     conventie uit die schema's: die spier krijgt een deel van zijn innervatie van een andere perifere
     zenuw. Controleer bij twijfel tegen je eigen bronnen.
@@ -594,6 +594,126 @@ const ZENUWEN = {
       '<strong>De ulnaire paradox</strong> is het handigste onderscheid: een uitgesproken klauw hoort bij een <em>distaal</em> letsel, een milde klauw bij een letsel bij de elleboog.',
       '<strong>De ramus dorsalis is je hoogtemeter.</strong> Doof op de handrug = elleboog of onderarm. Normaal op de handrug = pols of distaler.',
       '<strong>Denk aan anatomische varianten.</strong> Bij een Martin-Gruber-anastomose worden ulnaire handspieren deels door de n. medianus aangestuurd, waardoor de uitval milder lijkt dan verwacht.',
+    ],
+  },
+  // ==========================================================================
+  radialis: {
+    knop: 'N. radialis',
+    kort: 'C5–T1',
+    naam: 'Nervus radialis',
+    wortels: 'C5–T1 (vooral C5–C8) · uit de posterieure fasciculus van de plexus brachialis',
+
+    delen: [
+      { id: 'oksel',    naam: 'Oksel en bovenarm' },
+      { id: 'elleboog', naam: 'Bij de elleboog — vóór de splitsing' },
+      { id: 'opp',      naam: 'Ramus superficialis (zuiver sensibel)' },
+      { id: 'pin',      naam: 'N. interosseus posterior (zuiver motorisch)' },
+    ],
+
+    takken: [
+      { orde: 1, deel: 'oksel', naam: 'Triceps, caput longum', wortel: 'C6–C8',
+        functie: 'elleboogextensie',
+        test: 'Elleboog strekken tegen weerstand; let ook op de tricepsreflex (C7).' },
+      { orde: 2, deel: 'oksel', naam: 'Triceps, caput laterale', wortel: 'C6–C8',
+        functie: 'elleboogextensie',
+        test: 'Wordt samen met de andere koppen getest.' },
+      { orde: 3, deel: 'oksel', naam: 'Triceps, caput mediale', wortel: 'C6–C8',
+        functie: 'elleboogextensie',
+        info: 'De takken naar de triceps gaan grotendeels af vóór de zenuw de sulcus in de humerusschacht in loopt. Daarom blijft de triceps gespaard bij een letsel op schachtniveau.' },
+
+      { orde: 4, deel: 'elleboog', naam: 'Brachioradialis', wortel: 'C5–C6',
+        functie: 'elleboogflexie in middenstand',
+        test: 'Elleboog buigen met de duim omhoog; de pees springt dan zichtbaar op. Ook de brachioradialisreflex (C5–C6).' },
+      { orde: 5, deel: 'elleboog', naam: 'Extensor carpi radialis longus', wortel: 'C6–C7',
+        functie: 'polsextensie, radiaal',
+        test: 'Pols strekken tegen weerstand.' },
+      { orde: 6, deel: 'elleboog', naam: 'Extensor carpi radialis brevis', wortel: 'C7–C8',
+        functie: 'polsextensie',
+        info: 'De tak hiernaartoe ontspringt rond de splitsing en kan ook uit de diepe tak komen. Dat de polsextensie het meestal volhoudt bij een PIN-letsel, komt door deze spier en de ECRL.' },
+
+      { orde: 7, deel: 'opp', naam: 'Ramus superficialis', sensibel: true,
+        functie: 'gevoel over de radiale helft van de handrug, dorsaal dig I–III en de radiale helft van dig IV, tot aan de middenkootjes',
+        info: 'De <b>dorsale eerste webruimte (tabatière)</b> is het meest constante stukje; overlap met naburige huidzenuwen kan de rest verzachten.' },
+
+      { orde: 8,  deel: 'pin', naam: 'Supinator', wortel: 'C6–C7',
+        functie: 'supinatie onderarm',
+        test: 'Supineren met <b>gestrekte</b> elleboog — dat schakelt de biceps grotendeels uit.',
+        info: 'Takken hiernaartoe ontspringen deels al vóór de arcade van Frohse, dus deze spier kan bij een beklemming daar gespaard blijven.' },
+      { orde: 9,  deel: 'pin', naam: 'Extensor carpi ulnaris', wortel: 'C7–C8',
+        functie: 'polsextensie, ulnair',
+        test: 'Pols strekken richting pink. <b>Uitval hiervan geeft de radiale afwijking bij het strekken.</b>' },
+      { orde: 10, deel: 'pin', naam: 'Extensor digitorum', wortel: 'C7–C8',
+        functie: 'MCP-extensie dig II–V',
+        test: 'Grondkootjes strekken met de pols ondersteund.' },
+      { orde: 11, deel: 'pin', naam: 'Extensor digiti minimi', wortel: 'C7–C8',
+        functie: 'MCP-extensie pink',
+        test: 'Pink apart strekken.' },
+      { orde: 12, deel: 'pin', naam: 'Abductor pollicis longus', wortel: 'C7–C8',
+        functie: 'abductie duim in het handvlak',
+        test: 'Duim radiaal wegbewegen tegen weerstand.' },
+      { orde: 13, deel: 'pin', naam: 'Extensor pollicis longus', wortel: 'C7–C8',
+        functie: 'extensie IP duim, retropulsie',
+        test: '<b>Hand plat op tafel, duim optillen van het blad.</b> Een van de duidelijkste tests bij radialisuitval.' },
+      { orde: 14, deel: 'pin', naam: 'Extensor pollicis brevis', wortel: 'C7–C8',
+        functie: 'extensie MCP duim',
+        test: 'Grondkootje van de duim strekken.' },
+      { orde: 15, deel: 'pin', naam: 'Extensor indicis', wortel: 'C7–C8',
+        functie: 'extensie wijsvinger',
+        test: 'Wijsvinger apart strekken terwijl de andere vingers gebogen blijven.' },
+    ],
+
+    niveaus: [
+      { id: 'geen', knop: 'Overzicht', plek: 'geen letsel',
+        titel: 'Nervus radialis — volledig verloop', plaats: 'Alle takken, van proximaal naar distaal.',
+        uitleg: 'Kies hierboven een hoogte om te zien wat er dan uitvalt en wat gespaard blijft.' },
+
+      { id: 'oksel', vanaf: 1, knop: 'Oksel', plek: 'hoog, vóór de takken naar de triceps',
+        titel: 'Hoog radialisletsel', plaats: 'In de oksel, proximaal van de takken naar de triceps.',
+        oorzaak: 'Langdurige druk in de oksel, klassiek door verkeerd gebruikte okselkrukken.',
+        beeld: [
+          'Afhangende hand én <strong>zwakke elleboogextensie</strong>.',
+          'Tricepsreflex verlaagd of afwezig.',
+          'Gevoelsverlies over de dorsale zijde van bovenarm, onderarm en de radiale handrug.',
+        ],
+        sleutel: 'Een zwakke triceps is het onderscheid met een letsel in de humerusschacht. Daar blijft de elleboogextensie juist goed.' },
+
+      { id: 'sulcus', vanaf: 4, knop: 'Humerusschacht', plek: 'sulcus n. radialis, triceps al afgetakt',
+        titel: 'Letsel in de sulcus (afhangende hand)', plaats: 'Waar de zenuw om de humerusschacht draait, distaal van de takken naar de triceps.',
+        oorzaak: 'Humerusschachtfractuur, of druk tijdens diepe slaap of narcose ("Saturday night palsy").',
+        beeld: [
+          '<strong>Afhangende hand:</strong> pols en grondkootjes kunnen niet gestrekt worden.',
+          'Triceps en elleboogextensie zijn normaal.',
+          'Gevoelsverlies over de radiale handrug, het duidelijkst in de dorsale eerste webruimte.',
+          'De knijpkracht lijkt sterk verminderd — ondersteun de pols en er blijkt veel meer kracht te zijn.',
+        ],
+        sleutel: 'Afhangende hand mét een goede triceps: het letsel zit ter hoogte van de humerusschacht. Bij een fractuur herstelt dit vaak spontaan — reden om de tijdlijn uit te rekenen voordat je iets anders overweegt.' },
+
+      { id: 'pin', alleen: [8, 9, 10, 11, 12, 13, 14, 15], knop: 'N. interosseus posterior', plek: 'zijtak, zuiver motorisch',
+        titel: 'PIN-syndroom', plaats: 'De diepe, zuiver motorische tak, meestal beklemd bij de arcade van Frohse in de supinator.',
+        oorzaak: 'Beklemming bij de arcade van Frohse, een lipoom of ganglion, reumatoïde synovitis, of een neuralgische amyotrofie.',
+        beeld: [
+          '<strong>Vingerdrop zonder polsdrop:</strong> de grondkootjes hangen, maar de pols kan nog gestrekt worden.',
+          'Bij het strekken wijkt de pols naar <strong>radiaal</strong> af, doordat de extensor carpi ulnaris wél uitvalt.',
+          'Brachioradialis is normaal.',
+          '<strong>Geen enkel gevoelsverlies</strong> — de ramus superficialis takt eerder af.',
+        ],
+        sleutel: 'Kan de pols nog gestrekt worden, maar in radiale afwijking, en is er geen doof gevoel? Dan zit het in de diepe tak en niet hoger.' },
+
+      { id: 'oppervlakkig', alleen: [7], knop: 'Ramus superficialis', plek: 'zijtak, zuiver sensibel',
+        titel: 'Wartenberg (cheiralgia paresthetica)', plaats: 'De oppervlakkige, zuiver sensibele tak, waar die onder de pees van de brachioradialis vandaan komt.',
+        oorzaak: 'Uitwendige druk: een strak horlogebandje of armband, een te strak verband, boeien.',
+        beeld: [
+          'Tintelend of doof gevoel over de radiale handrug en de duimzijde.',
+          '<strong>Geen enkele krachtsvermindering</strong> — er lopen geen spiertakken in mee.',
+          'Teken van Tinel over de radiale zijde van de distale onderarm.',
+        ],
+        sleutel: 'Zuiver sensibele klachten in het radialisgebied zonder enige zwakte. Denk óók aan de duimzijde-aandoeningen die erop lijken, zoals de ziekte van De Quervain.' },
+    ],
+
+    letop: [
+      '<strong>Alleen de MCP-extensie valt uit, niet de IP-extensie.</strong> De eindkootjes worden gestrekt door de intrinsieken, die ulnair en mediaan geïnnerveerd zijn. Beoordeel dus de grondkootjes.',
+      '<strong>Ondersteun de pols bij het testen.</strong> Zowel de vingerextensie als de knijpkracht lijken veel slechter dan ze zijn zolang de pols hangt.',
+      '<strong>De dorsale eerste webruimte is het meest constante gevoelsgebied.</strong> Elders maakt overlap met naburige huidzenuwen het beeld milder.',
     ],
   },
 };
