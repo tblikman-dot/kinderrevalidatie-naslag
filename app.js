@@ -1,22 +1,52 @@
 // ===== EXTERNE APP: HIPSCREEN =====
-// HipScreen (Shriners Children's, Kulkarni & Davids) meet het migratiepercentage
-// van een X-bekken. Een website kan geen gegevens met een Android-app
-// uitwisselen; wat wél kan is de app starten.
+// HipScreen meet het migratiepercentage van een X-bekken. Een website kan geen
+// gegevens met een Android-app uitwisselen; wat wél kan is de app starten.
 //
-// Dit is een Android intent-adres: Chrome probeert het pakket te openen en valt
-// terug op de Play Store als de app er niet staat, zodat de knop nooit dood is.
-// Op een iPhone of op een computer werkt intent: niet — daar is de terugval de
-// enige uitkomst, en die is nog steeds zinnig.
+// Dit gebeurt met een Android intent-adres. Twee dingen om te weten:
 //
-// Let op: het pakket moet kloppen. Er bestaat ook een andere app met dezelfde
-// naam (com.hipscreen.hipscreen_mobile, "SMOPP Hipscreen"); die opent hiermee
-// niet. Het id staat in de Play Store-link van de app zelf, achter "?id=".
-const HIPSCREEN_PAKKET = 'org.hipscreen.android';
-const HIPSCREEN_PLAY = 'https://play.google.com/store/apps/details?id=' + HIPSCREEN_PAKKET;
-const HIPSCREEN_URL =
-  'intent:#Intent;package=' + HIPSCREEN_PAKKET +
-  ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
-  ';S.browser_fallback_url=' + encodeURIComponent(HIPSCREEN_PLAY) + ';end';
+// 1. Het pakket moet exact kloppen. Er staan twee apps met vrijwel dezelfde
+//    naam in de Play Store. Een website mag niet opvragen welke apps op het
+//    toestel staan (Android blokkeert dat bewust), dus dit valt niet te raden.
+//    Daarom is het pakket instelbaar en onthouden we de werkende keuze.
+//
+// 2. Lukt het intent niet, dan volgt de browser de terugval-URL. Die wijst
+//    hier niet naar de Play Store maar naar hipscreen.html, zodat je op een
+//    pagina belandt waar je het juiste pakket kunt kiezen in plaats van in een
+//    winkel waar je niets aan hebt.
+const HIPSCREEN_OPSLAG = 'krnHipScreenPakket';
+
+const HIPSCREEN_APPS = [
+  { id: 'org.hipscreen.android', naam: 'HipScreen',
+    door: 'Shriners Children\'s — de gevalideerde app uit de literatuur' },
+  { id: 'com.hipscreen.hipscreen_mobile', naam: 'SMOPP Hipscreen',
+    door: 'de andere app met vrijwel dezelfde naam' },
+];
+
+function hipscreenPakket() {
+  try {
+    const bewaard = localStorage.getItem(HIPSCREEN_OPSLAG);
+    if (bewaard && /^[a-z0-9_.]+$/i.test(bewaard)) return bewaard;
+  } catch (e) { /* privémodus */ }
+  return HIPSCREEN_APPS[0].id;
+}
+
+function hipscreenPlay(pakket) {
+  return 'https://play.google.com/store/apps/details?id=' + (pakket || hipscreenPakket());
+}
+
+// terugval: de hulppagina in deze app, met een absoluut adres want het intent
+// eist dat
+function hipscreenTerugval() {
+  try { return new URL('hipscreen.html?mislukt=1', location.href).href; }
+  catch (e) { return hipscreenPlay(); }
+}
+
+function hipscreenUrl(pakket) {
+  const p = pakket || hipscreenPakket();
+  return 'intent:#Intent;package=' + p +
+    ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
+    ';S.browser_fallback_url=' + encodeURIComponent(hipscreenTerugval()) + ';end';
+}
 
 // ===== STANDAARDINDELING (aanpasbaar/uitbreidbaar) =====
 // Dit zijn alleen categorienamen/onderwerpen, geen medische inhoud.
@@ -30,7 +60,8 @@ const DEFAULT_CATS = [
     directLinks: [
       { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html' },
       { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
-      { label: '📱 HipScreen openen (MP meten)', url: HIPSCREEN_URL },
+      { label: '📱 HipScreen openen (MP meten)', url: 'HIPSCREEN' },
+      { label: '⚙️ HipScreen opent niet? Instellen', url: 'hipscreen.html' },
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
@@ -1026,9 +1057,12 @@ function openCategory(id) {
       // Eigen pagina's (beslisboom, GMFCS) in hetzelfde venster openen: anders
       // stapt de app op het startscherm uit naar de browser. Externe bronnen
       // wél in een nieuw tabblad, zodat je je plek in de app niet kwijtraakt.
-      const extern = /^https?:/i.test(l.url);
+      // HipScreen krijgt zijn adres pas hier, want het hangt af van welk
+      // pakket er is ingesteld
+      const url = (l.url === 'HIPSCREEN') ? hipscreenUrl() : l.url;
+      const extern = /^https?:/i.test(url);
       const attr = extern ? ' target="_blank" rel="noopener"' : '';
-      return `<a href="${esc(l.url)}"${attr}>${esc(l.label)}</a>`;
+      return `<a href="${esc(url)}"${attr}>${esc(l.label)}</a>`;
     })
     .join('');
   document.getElementById('detailLinks').innerHTML = `

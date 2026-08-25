@@ -202,12 +202,18 @@
 // nooit doodloopt — ook niet op een computer of iPhone, waar intent: niets doet.
 // Zie de toelichting bij HIPSCREEN_PAKKET in app.js.
 (function () {
-  const pakket = 'org.hipscreen.android';
-  const play = 'https://play.google.com/store/apps/details?id=' + pakket;
+  // Zelfde ingestelde pakket als in de app; lukt het openen niet, dan land je
+  // op de instelpagina in plaats van in de Play Store.
+  let pakket = 'org.hipscreen.android';
+  try {
+    const b = localStorage.getItem('krnHipScreenPakket');
+    if (b && /^[a-z0-9_.]+$/i.test(b)) pakket = b;
+  } catch (e) { /* privémodus */ }
+  const terugval = new URL('hipscreen.html?mislukt=1', location.href).href;
   document.getElementById('bbHipScreen').href =
     'intent:#Intent;package=' + pakket +
     ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
-    ';S.browser_fallback_url=' + encodeURIComponent(play) + ';end';
+    ';S.browser_fallback_url=' + encodeURIComponent(terugval) + ';end';
 })();
 
 // ===== BESLISBOOM =====

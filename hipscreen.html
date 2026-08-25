@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>HipScreen openen — instellen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .hs-wrap { max-width: 620px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .hs-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .hs-terug:hover { text-decoration: underline; }
+
+  .hs-kop { font-size: 1.4rem; margin: 0 0 6px; }
+  .hs-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 14px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  .hs-melding {
+    background: #FBF3DC;
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+    color: #6B4E06;
+    margin: 0 0 20px;
+  }
+  .hs-melding strong { display: block; margin-bottom: 3px; }
+
+  .hs-label {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); margin: 0 0 8px;
+  }
+
+  .hs-keuzes { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+
+  .hs-kaart {
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .hs-kaart.gekozen { border-color: var(--accent); background: var(--accent-zacht); }
+
+  .hs-naam {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; font-weight: 700;
+    line-height: 1.3;
+  }
+  .hs-door {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.5; margin-top: 2px;
+  }
+  .hs-pakket {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 5px; word-break: break-all;
+  }
+  .hs-huidig {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 10.5px; font-weight: 800;
+    letter-spacing: 0.4px;
+    padding: 2px 8px; border-radius: 50px;
+    background: var(--accent); color: #fff;
+    margin-left: 6px; vertical-align: 1px;
+  }
+
+  .hs-knoppen { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+  .hs-knop {
+    padding: 10px 15px;
+    border: 1.5px solid var(--lijn); border-radius: 10px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+    text-decoration: none; display: inline-block;
+    line-height: 1.2;
+  }
+  .hs-knop:hover { border-color: var(--accent); }
+  .hs-knop.primair { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .hs-veld {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--inkt);
+    margin-top: 8px;
+  }
+  .hs-veld:focus { outline: none; border-color: var(--accent); }
+
+  .hs-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0;
+  }
+
+  .hs-fout {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--danger);
+    margin-top: 8px; display: none;
+  }
+  .hs-fout.show { display: block; }
+
+  .hs-sectie { margin-top: 30px; }
+  .hs-sectie h2 { font-size: 1.12rem; margin: 0 0 4px; }
+
+  .hs-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    margin: 10px 0 0;
+  }
+  .hs-lijst li { margin-bottom: 8px; }
+  .hs-lijst li:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — instellen kan, de app openen niet.</div>
+
+<header class="topbar">
+  <div class="topbar-title">HipScreen instellen</div>
+</header>
+
+<div class="hs-wrap">
+  <a class="hs-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="hs-kop">Welke HipScreen heb jij?</h1>
+  <p class="hs-intro">
+    Er staan twee apps met vrijwel dezelfde naam in de Play Store. Een website mag niet
+    opvragen welke apps op je toestel staan — dat blokkeert Android bewust — dus dit valt
+    niet automatisch te bepalen. Kies hieronder, dan onthoudt de app het.
+  </p>
+
+  <div class="hs-melding" id="hsMelding" hidden>
+    <strong>De app ging niet open</strong>
+    Daarom beland je hier. Probeer de andere hieronder: één van de twee is degene die jij hebt.
+  </div>
+
+  <div class="hs-label">Kies en probeer</div>
+  <div class="hs-keuzes" id="hsKeuzes"></div>
+
+  <div class="hs-kaart">
+    <div class="hs-naam">Een andere app</div>
+    <p class="hs-uitleg" style="margin-top:4px;">
+      Staat jouw versie er niet bij? Deel de app vanuit de Play Store en plak de link hier —
+      of typ alleen het pakket, het stukje achter <code>?id=</code>.
+    </p>
+    <input type="text" id="hsEigen" class="hs-veld" autocomplete="off" spellcheck="false"
+           placeholder="https://play.google.com/store/apps/details?id=…">
+    <div class="hs-fout" id="hsFout"></div>
+    <div class="hs-knoppen">
+      <button class="hs-knop primair" id="hsEigenOpslaan">Instellen en proberen</button>
+    </div>
+  </div>
+
+  <div class="hs-sectie">
+    <h2>Werkt geen van beide?</h2>
+    <ul class="hs-lijst">
+      <li><strong>Kijk of de app er echt op staat.</strong> Zoek hem in je appmenu; is hij er niet, dan is er ook niets te openen.</li>
+      <li><strong>Sommige toestellen staan het niet toe</strong> dat een website een andere app start, zeker niet vanuit een app die je op je startscherm hebt gezet. Open dit naslagwerk dan eens in Chrome zelf en probeer het opnieuw.</li>
+      <li><strong>Blijft het misgaan, dan is het geen ramp.</strong> Zet HipScreen naast dit naslagwerk op je startscherm; twee tikken in plaats van één. De inhoud hier verandert er niet door.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// HIPSCREEN INSTELLEN
+//
+// Een website kan niet zien welke apps er op een toestel staan — Android houdt
+// dat bewust af. Het pakket van een te openen app valt dus niet te raden. Deze
+// pagina laat de gebruiker kiezen of zelf invullen, en onthoudt dat.
+//
+// Deze pagina is ook de terugval van het intent zelf: lukt het openen niet, dan
+// land je hier in plaats van in de Play Store, waar je niets aan hebt.
+// ============================================================================
+
+const OPSLAG = 'krnHipScreenPakket';
+
+const APPS = [
+  { id: 'org.hipscreen.android', naam: 'HipScreen',
+    door: 'Shriners Children\'s — de gevalideerde app uit de literatuur' },
+  { id: 'com.hipscreen.hipscreen_mobile', naam: 'SMOPP Hipscreen',
+    door: 'de andere app met vrijwel dezelfde naam' },
+];
+
+function huidig() {
+  try {
+    const b = localStorage.getItem(OPSLAG);
+    if (b && /^[a-z0-9_.]+$/i.test(b)) return b;
+  } catch (e) { /* privémodus */ }
+  return APPS[0].id;
+}
+
+function bewaar(pakket) {
+  try { localStorage.setItem(OPSLAG, pakket); } catch (e) { /* niets aan te doen */ }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function play(pakket) {
+  return 'https://play.google.com/store/apps/details?id=' + pakket;
+}
+
+// Bij het proberen vanaf deze pagina is de Play Store wél de juiste terugval:
+// je zit hier al, dus nog eens hierheen sturen helpt niemand.
+function intentUrl(pakket) {
+  return 'intent:#Intent;package=' + pakket +
+    ';action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER' +
+    ';S.browser_fallback_url=' + encodeURIComponent(play(pakket)) + ';end';
+}
+
+function teken() {
+  const nu = huidig();
+  document.getElementById('hsKeuzes').innerHTML = APPS.map(a => `
+    <div class="hs-kaart${a.id === nu ? ' gekozen' : ''}">
+      <div class="hs-naam">${esc(a.naam)}${a.id === nu ? '<span class="hs-huidig">ingesteld</span>' : ''}</div>
+      <div class="hs-door">${esc(a.door)}</div>
+      <div class="hs-pakket">${esc(a.id)}</div>
+      <div class="hs-knoppen">
+        <a class="hs-knop primair" href="${esc(intentUrl(a.id))}" data-kies="${esc(a.id)}">Deze proberen</a>
+        <a class="hs-knop" href="${esc(play(a.id))}" target="_blank" rel="noopener">In de Play Store</a>
+      </div>
+    </div>`).join('');
+}
+
+// Klikken op "proberen" onthoudt meteen de keuze: gaat de app open, dan klopt
+// hij en staat hij de volgende keer goed. Gaat hij niet open, dan komt de
+// gebruiker hier terug en kiest de andere.
+document.getElementById('hsKeuzes').addEventListener('click', e => {
+  const knop = e.target.closest('[data-kies]');
+  if (!knop) return;
+  bewaar(knop.dataset.kies);
+});
+
+document.getElementById('hsEigenOpslaan').addEventListener('click', () => {
+  const veld = document.getElementById('hsEigen');
+  const fout = document.getElementById('hsFout');
+  const rauw = veld.value.trim();
+
+  // een hele Play Store-link mag, of alleen het pakket
+  let pakket = rauw;
+  const m = rauw.match(/[?&]id=([^&\s]+)/);
+  if (m) pakket = decodeURIComponent(m[1]);
+
+  if (!/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/i.test(pakket)) {
+    fout.textContent = '⚠️ Dat lijkt geen pakketnaam. Plak de hele Play Store-link, of typ iets in de vorm van naam.van.de.app';
+    fout.classList.add('show');
+    return;
+  }
+  fout.classList.remove('show');
+  bewaar(pakket);
+  teken();
+  location.href = intentUrl(pakket);
+});
+
+document.getElementById('hsEigen').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('hsEigenOpslaan').click();
+});
+
+// kwam je hier doordat het openen mislukte?
+try {
+  if (new URLSearchParams(location.search).get('mislukt') === '1') {
+    document.getElementById('hsMelding').hidden = false;
+  }
+} catch (e) { /* geen zoekreeks, prima */ }
+
+teken();
+
+// service worker: instellen moet ook zonder internet kunnen
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
