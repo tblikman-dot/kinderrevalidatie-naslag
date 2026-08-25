@@ -837,3 +837,35 @@ body.viewer-open { overflow: hidden; }
   opacity: 0.4;
   cursor: default;
 }
+
+/* ===== AANDACHTSGEBIED HERNOEMEN ===== */
+.modal-veldnaam {
+  display: block;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 12px 0 5px;
+}
+.modal-veldnaam:first-child { margin-top: 0; }
+.modal-veldnaam em { font-weight: 400; font-style: normal; }
+
+.modal-veld {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1.5px solid var(--lijn);
+  border-radius: 9px;
+  background: var(--paneel);
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--inkt);
+}
+.modal-veld:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* naam en omschrijving zijn aantikbaar om te hernoemen */
+#detailTitle, .detail-scope { cursor: pointer; }
+#detailTitle:hover, .detail-scope:hover { text-decoration: underline dotted; }

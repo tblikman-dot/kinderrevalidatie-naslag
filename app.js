@@ -1087,11 +1087,63 @@ function addCategory() {
   toast('✅ Toegevoegd');
 }
 
+// Kopjes hernoemen. Ook de standaardkopjes: loadState synchroniseert alleen de
+// directLinks van een standaardcategorie terug, dus een eigen naam blijft staan.
+function toonBewerkScherm(open) {
+  const ov = document.getElementById('editOverlay');
+  ov.hidden = !open;
+  if (!open) return;
+
+  const cat = categories.find(c => c.id === activeId);
+  if (!cat) { ov.hidden = true; return; }
+
+  document.getElementById('editLabel').value = cat.label || '';
+  document.getElementById('editScope').value = cat.scope || '';
+  document.getElementById('editError').classList.remove('show');
+
+  const veld = document.getElementById('editLabel');
+  veld.focus();
+  veld.select();
+}
+
+function bewaarCategorieNaam() {
+  if (!activeId) return;
+  const cat = categories.find(c => c.id === activeId);
+  if (!cat) return;
+
+  const label = document.getElementById('editLabel').value.trim();
+  const errEl = document.getElementById('editError');
+
+  if (!label) {
+    errEl.textContent = '⚠️ Een aandachtsgebied moet een naam hebben.';
+    errEl.classList.add('show');
+    document.getElementById('editLabel').focus();
+    return;
+  }
+
+  cat.label = label;
+  cat.scope = document.getElementById('editScope').value.trim();
+  saveCategories();
+
+  toonBewerkScherm(false);
+  document.getElementById('detailTitle').textContent = cat.label;
+  document.getElementById('detailScope').textContent = cat.scope;
+  renderList(document.getElementById('zoek').value);
+  toast('✅ Naam bijgewerkt');
+}
+
 function deleteCategory() {
   if (!activeId) return;
   const cat = categories.find(c => c.id === activeId);
   if (!cat) return;
-  if (!confirm(`"${cat.label}" en alle bijbehorende aantekeningen, video's en links verwijderen?`)) return;
+  const aantalFotos = (typeof fotosVan === 'function') ? fotosVan(activeId).length : 0;
+  const fotoDeel = aantalFotos ? `, ${aantalFotos} foto${aantalFotos === 1 ? '' : "'s"}` : '';
+  if (!confirm(`"${cat.label}" en alle bijbehorende aantekeningen, video's, links${fotoDeel} verwijderen?`)) return;
+
+  // Foto's staan in IndexedDB en verdwijnen niet vanzelf met de categorie mee;
+  // zonder dit blijven ze onzichtbaar ruimte innemen en in de back-up opduiken.
+  if (aantalFotos && typeof verwijderFotosVan === 'function') verwijderFotosVan(activeId);
+
   categories = categories.filter(c => c.id !== activeId);
   delete notes[activeId];
   delete videos[activeId];
@@ -1369,6 +1421,23 @@ document.getElementById('notesArea').addEventListener('paste', e => {
 });
 document.getElementById('addCatBtn').addEventListener('click', addCategory);
 document.getElementById('delCatBtn').addEventListener('click', deleteCategory);
+
+// hernoemen: via het potloodje, of door op de naam of de omschrijving te tikken
+document.getElementById('editCatBtn').addEventListener('click', () => toonBewerkScherm(true));
+document.getElementById('detailTitle').addEventListener('click', () => toonBewerkScherm(true));
+document.getElementById('detailScope').addEventListener('click', () => toonBewerkScherm(true));
+document.getElementById('editBewaar').addEventListener('click', bewaarCategorieNaam);
+document.getElementById('editAnnuleer').addEventListener('click', () => toonBewerkScherm(false));
+document.getElementById('editSluit').addEventListener('click', () => toonBewerkScherm(false));
+document.getElementById('editOverlay').addEventListener('click', e => {
+  if (e.target.id === 'editOverlay') toonBewerkScherm(false);
+});
+['editLabel', 'editScope'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') bewaarCategorieNaam();
+    if (e.key === 'Escape') toonBewerkScherm(false);
+  });
+});
 document.getElementById('backBtn').addEventListener('click', closeDetail);
 // notitieveld groter/kleiner; keuze onthouden
 const STORAGE_UITKLAP = 'krnNotesUitgeklapt';

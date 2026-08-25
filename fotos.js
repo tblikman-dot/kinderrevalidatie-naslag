@@ -270,6 +270,22 @@ function verwijderFoto(catId, id) {
     });
 }
 
+// Alle foto's van één aandachtsgebied weggooien — gebruikt als dat gebied zelf
+// verwijderd wordt, zodat er niets onzichtbaar blijft staan.
+function verwijderFotosVan(catId) {
+  const ids = fotosVan(catId).map(f => f.id);
+  if (!ids.length) return Promise.resolve(0);
+
+  return fotoTransactie('readwrite')
+    .then(store => Promise.all(ids.map(id => alsBelofte(store.delete(id)))))
+    .then(() => {
+      delete fotoIndex[catId];
+      bewaarFotoIndex();
+      return ids.length;
+    })
+    .catch(fout => { console.log('foto\'s verwijderen mislukt:', fout); return 0; });
+}
+
 function hernoemFoto(catId, id, titel) {
   return haalFoto(id).then(record => {
     if (!record) return;

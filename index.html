@@ -66,6 +66,32 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="editOverlay" hidden>
+  <div class="modal">
+    <div class="modal-kop">
+      <h2>Aandachtsgebied wijzigen</h2>
+      <button class="modal-sluit" id="editSluit" title="Sluiten">✕</button>
+    </div>
+
+    <div class="modal-inhoud">
+      <div class="modal-blok">
+        <label class="modal-veldnaam" for="editLabel">Naam</label>
+        <input type="text" id="editLabel" class="modal-veld" autocomplete="off">
+
+        <label class="modal-veldnaam" for="editScope">Omschrijving <em>(regel eronder, mag leeg)</em></label>
+        <input type="text" id="editScope" class="modal-veld" autocomplete="off">
+
+        <div class="video-error" id="editError"></div>
+
+        <div class="import-keuzes">
+          <button class="modal-knop primair" id="editBewaar">Opslaan</button>
+          <button class="modal-knop" id="editAnnuleer">Annuleren</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="layout" id="layout">
 
   <nav class="sidebar" id="sidebar">
@@ -83,10 +109,11 @@
     <div class="detail-content" id="detailContent" hidden>
       <div class="detail-head">
         <button class="back-btn" id="backBtn">← Terug</button>
-        <h1 id="detailTitle"></h1>
+        <h1 id="detailTitle" title="Tik om de naam te wijzigen"></h1>
+        <button class="del-cat-btn" id="editCatBtn" title="Naam en omschrijving wijzigen">✏️</button>
         <button class="del-cat-btn" id="delCatBtn" title="Aandachtsgebied verwijderen">🗑️</button>
       </div>
-      <p class="detail-scope" id="detailScope"></p>
+      <p class="detail-scope" id="detailScope" title="Tik om de omschrijving te wijzigen"></p>
       <div class="detail-links" id="detailLinks"></div>
       <div class="notes-label">Eigen aantekeningen</div>
       <div class="notes-toolbar" id="notesToolbar">
