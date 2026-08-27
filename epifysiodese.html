@@ -117,6 +117,20 @@
   }
   .ep-hint .let { color: #8A5B00; }
 
+  .ep-vinkjes { display: flex; flex-direction: column; gap: 7px; }
+  .ep-vinkjes label {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    padding: 10px 11px;
+    display: flex; align-items: center; gap: 9px;
+    cursor: pointer;
+  }
+  .ep-vinkjes label:has(input:checked) {
+    border-color: var(--danger); background: #FBEAE5; font-weight: 700;
+  }
+  .ep-vinkjes input { width: 17px; height: 17px; flex-shrink: 0; }
+
   .ep-meer { margin-top: 16px; border-top: 1px solid var(--lijn); padding-top: 6px; }
   .ep-meer summary {
     font-family: system-ui, sans-serif;
@@ -378,6 +392,21 @@
       </div>
     </div>
 
+    <div class="ep-groep">Groeischijven die al gesloten zijn</div>
+    <div class="ep-vinkjes">
+      <label><input type="checkbox" id="epDichtFemurR"> Distale femur rechts</label>
+      <label><input type="checkbox" id="epDichtFemurL"> Distale femur links</label>
+      <label><input type="checkbox" id="epDichtTibiaR"> Proximale tibia rechts</label>
+      <label><input type="checkbox" id="epDichtTibiaL"> Proximale tibia links</label>
+    </div>
+    <div class="ep-hint">
+      Vink aan wat definitief dicht is — een eerder uitgevoerde epifysiodese, of een fyse die na
+      trauma of infectie is gesloten. Dat verandert twee dingen tegelijk: die schijf kan niet nog
+      eens geremd worden, én het voorspelde eindverschil klopt niet meer volgens de gewone
+      multipliersom, want die gaat ervan uit dat beide benen ongestoord doorgroeien. De pagina telt
+      daarom de restgroei per groeischijf op en laat de gesloten eruit.
+    </div>
+
     <div class="ep-groep">Behandeldoel</div>
     <div class="ep-duo">
       <div>
@@ -390,8 +419,10 @@
       </div>
     </div>
     <div class="ep-hint">
-      De marge bepaalt de breedte van het venster. Bij een exact doel zonder marge valt het venster
-      samen tot één moment; dat is een klinische keuze, geen eigenschap van het model.
+      Denk je in termen van <b>&ldquo;niet meer dan 1 cm verschil&rdquo;</b>, zet dan het gewenste
+      restverschil op 0 en de marge op 10. De marge bepaalt de breedte van het venster: bij een exact
+      doel zonder marge valt het venster samen tot één moment. Dat is een klinische keuze, geen
+      eigenschap van het model.
     </div>
 
     <div class="ep-groep">Datums <em style="font-weight:400;text-transform:none;letter-spacing:0;">— optioneel</em></div>
@@ -501,6 +532,8 @@
     <h2>Ingreepvenster</h2>
     <p class="ep-sectie-uitleg" id="epPlanIntro"></p>
 
+    <div id="epHaalbaar"></div>
+
     <div class="ep-kaart">
       <div class="ep-groep">Uiterste operatiedatum</div>
       <label class="ep-veldnaam" for="epIngreep">Geplande ingreep</label>
@@ -535,6 +568,9 @@
       <li><strong>Twee modellen, één voorspeld eindverschil.</strong> Het verschil bij maturiteit komt uit de multiplier en wordt door beide modellen als uitgangspunt gebruikt; alleen de correctiecapaciteit verschilt. Dat is dezelfde hybride die gangbare rekenapps hanteren, maar het blijft een hybride.</li>
       <li><strong>Welk model je aanhoudt is een keuze.</strong> Lopen de twee kolommen ver uiteen, neem dan de conservatieve — de vroegste deadline. De pagina rekent die apart voor je uit.</li>
       <li><strong>Het multipliermodel is een congenitaal model.</strong> Het veronderstelt een constante procentuele groeiremming. Bij een verworven of iatrogene asymmetrie — een doorgemaakte fractuur, een infectie, een al uitgevoerde epifysiodese — geldt dat niet. Gebruik dan het paneel met de eerdere opname.</li>
+      <li><strong>Een gesloten groeischijf verandert de voorspelling, niet alleen de mogelijkheden.</strong> Zodra een fyse dicht is klopt de gewone som <code>Dm = D × M</code> niet meer, want die gaat ervan uit dat beide benen ongestoord doorgroeien. De pagina telt daarom de restgroei per groeischijf op en laat de gesloten eruit. Vink je niets aan, dan komt dat rekenkundig exact op <code>D × M</code> uit — er verandert dus niets aan de vertrouwde uitkomst.</li>
+      <li><strong>Alleen de vier groeischijven rond de knie.</strong> De vinkjes gaan over de distale femur en de proximale tibia, links en rechts; dat zijn de schijven waar een epifysiodese op aangrijpt en waar de constanten van deze pagina over gaan. De proximale femur en de distale tibia blijven in de berekening open. Zijn die bij dit kind ook gesloten, dan onderschat de pagina de gevolgen daarvan.</li>
+      <li><strong>Een gesloten fyse aan de kórte zijde werkt de andere kant op.</strong> Dan groeit juist het korte been minder door en wordt het verschil groter dan de gewone som voorspelt. Andersom kan een eerdere epifysiodese aan de lange zijde zó ver doorschieten dat het korte been de langste wordt; de pagina zegt dat dan met zoveel woorden, want verder remmen maakt het op dat punt erger.</li>
       <li><strong>Volledige en directe arrest.</strong> De berekening gaat ervan uit dat de fyse vanaf de ingreepdatum niets meer bijdraagt. Partiële arrest of uitgestelde fusie leveren minder correctie op, en dat is alleen op een vervolgopname te meten. Plan daarom ruim vóór de berekende datum.</li>
       <li><strong>Van leeftijd naar datum is een aanname.</strong> De rekensom werkt met leeftijden; de kalenderdata zijn daar een omzetting van via de opnamedatum. Reken je op skeletleeftijd, dan veronderstelt die omzetting dat de skeletleeftijd één op één met de kalendertijd meeloopt. Bij een afwijkend rijpingstempo schuift de werkelijke datum mee, en is een nieuwe handfoto de enige manier om dat te corrigeren.</li>
       <li><strong>Leeftijdsafronding.</strong> De multipliertabel is op twee decimalen gepubliceerd, waardoor opeenvolgende leeftijden dezelfde factor delen. De teruggerekende leeftijd is tot ongeveer een maand onnauwkeurig en valt bij gelijke waarden op de jongste leeftijd binnen dat plateau — de voorzichtige kant.</li>
@@ -568,7 +604,9 @@
       <code>Me</code>: <code>C = S × (1 − 1/Me)</code>, waarin <code>S</code> de volgroeide lengte
       van het aandeel van die fyse is. Terugrekenen naar het uiterste moment gaat via
       <code>Me = 1 / (1 − C/S)</code>. White-Menelaus: <code>t = einde groei − C / snelheid</code>.
-      Het voorspelde eindverschil is <code>Dm = D × M</code>.
+      Het voorspelde eindverschil is <code>Dm = D + restgroei(lang) − restgroei(kort)</code>, waarbij
+      de restgroei per groeischijf wordt opgeteld en gesloten schijven wegvallen. Zonder gesloten
+      schijven valt dat samen met de bekende <code>Dm = D × M</code>.
     </p>
     <p>
       <strong>De constanten.</strong> Aandeel van de distale femur in de femurgroei 0,71 en van de
@@ -670,12 +708,33 @@ function regel(naam, waarde, gedempt) {
 // doel nog binnen de marge landt.
 //   Cmin = de kleinste correctie die nog acceptabel is -> laatste moment
 //   Cmax = de grootste correctie die nog acceptabel is -> vroegste moment
-function vensterVoor(model, optie, ctx, Cmin, Cmax) {
-  const r = { status: '', vroegste: NaN, uiterste: NaN, capNu: NaN };
+//
+// doelStatus vertelt of er uberhaupt een ingreep nodig is; dat hangt af van het
+// voorspelde eindverschil en niet van deze fyse, dus het wordt buiten deze
+// functie een keer bepaald en hier alleen doorgegeven.
+//
+// Mogelijke uitkomsten:
+//   fyse gesloten - deze groeischijf is al dicht en kan niets meer opleveren
+//   omgeslagen    - het andere been wordt juist de langste; remmen aan deze
+//                   kant maakt het erger
+//   niet nodig    - het verschil blijft vanzelf binnen de marge
+//   buiten bereik - zelfs remmen vanaf vandaag tot het einde haalt het niet
+//   te laat       - het venster van deze fyse is voorbij
+//   haalbaar      - er is een venster, met een vroegste en een uiterste moment
+function vensterVoor(model, optie, ctx, Cmin, Cmax, doelStatus) {
+  const r = { status: '', vroegste: NaN, uiterste: NaN, capNu: 0 };
+
+  if (!optie.beschikbaar) { r.status = 'fyse gesloten'; return r; }
+
+  // Capaciteit is ook zinvol als er geen ingreep nodig is, dus die staat voorop.
+  r.capNu = (model === 'mult')
+    ? optie.S * (1 - 1 / ctx.M)
+    : optie.snelheid * Math.max(0, ctx.einde - ctx.leeftijd);
+
+  if (doelStatus === 'omgeslagen') { r.status = 'omgeslagen'; return r; }
+  if (doelStatus === 'binnen') { r.status = 'niet nodig'; return r; }
 
   if (model === 'mult') {
-    r.capNu = optie.S * (1 - 1 / ctx.M);
-    if (Cmin <= 0) { r.status = 'niet nodig'; return r; }
     if (Cmin >= optie.S) { r.status = 'buiten bereik'; return r; }
     if (Cmin > r.capNu) { r.status = 'te laat'; return r; }
     r.uiterste = leeftijdBijMultiplier(1 / (1 - Cmin / optie.S), ctx.geslacht);
@@ -683,9 +742,6 @@ function vensterVoor(model, optie, ctx, Cmin, Cmax) {
       ? ctx.leeftijd
       : leeftijdBijMultiplier(1 / (1 - Cmax / optie.S), ctx.geslacht);
   } else {
-    const jaren = Math.max(0, ctx.einde - ctx.leeftijd);
-    r.capNu = optie.snelheid * jaren;
-    if (Cmin <= 0) { r.status = 'niet nodig'; return r; }
     if (Cmin > r.capNu) { r.status = 'te laat'; return r; }
     r.uiterste = ctx.einde - Cmin / optie.snelheid;
     r.vroegste = ctx.einde - Cmax / optie.snelheid;
@@ -740,7 +796,7 @@ function tekenen() {
     el('epBanner').innerHTML = banner('oranje', 'Invoer nog niet compleet',
       'Vul beide leeftijden, het einde van de groei, de vier segmentlengtes en het doel in. ' +
       'Zonder die getallen valt er niets te berekenen.');
-    ['epKerncijfers', 'epCapTabel', 'epGroeiTabel', 'epDeadline', 'epKaarten', 'epNotities'].forEach(id => {
+    ['epKerncijfers', 'epCapTabel', 'epGroeiTabel', 'epHaalbaar', 'epDeadline', 'epKaarten', 'epNotities'].forEach(id => {
       el(id).innerHTML = '';
     });
     el('epTijdlijn').innerHTML = '';
@@ -748,7 +804,7 @@ function tekenen() {
     el('epCapBijschrift').textContent = '';
     el('epDeadlineHint').textContent = '';
     el('epTijdlijnBijschrift').textContent = '';
-    toonEerdereOpname(inv, null, '', '', false);
+    toonEerdereOpname(inv, null, '', '', false, false);
     return;
   }
 
@@ -758,6 +814,8 @@ function tekenen() {
   const langsIsL = beenL >= beenR;
   const langNaam = langsIsL ? 'links' : 'rechts';
   const kortNaam = langsIsL ? 'rechts' : 'links';
+  // Voor zinnen als "aan de linkerzijde"; "aan de links zijde" is geen Nederlands.
+  const langZijde = langsIsL ? 'linkerzijde' : 'rechterzijde';
   const langFemur = langsIsL ? inv.femurL : inv.femurR;
   const langTibia = langsIsL ? inv.tibiaL : inv.tibiaR;
   const kortFemur = langsIsL ? inv.femurR : inv.femurL;
@@ -767,20 +825,59 @@ function tekenen() {
   const dTibia = Math.abs(inv.tibiaL - inv.tibiaR);
   const rijpingsverschil = inv.leeftijdK - inv.leeftijdS;
 
+  // ---- reeds gesloten groeischijven ----
+  // De vinkjes staan per anatomische zijde, want zo weet je het: "de rechter
+  // distale femur is vorig jaar geremd". Hier worden ze omgezet naar de lange
+  // en de korte zijde, waar de rest van de rekensom mee werkt.
+  const dicht = {
+    femurR: el('epDichtFemurR').checked, femurL: el('epDichtFemurL').checked,
+    tibiaR: el('epDichtTibiaR').checked, tibiaL: el('epDichtTibiaL').checked,
+  };
+  const dichtLangFemur = langsIsL ? dicht.femurL : dicht.femurR;
+  const dichtLangTibia = langsIsL ? dicht.tibiaL : dicht.tibiaR;
+  const dichtKortFemur = langsIsL ? dicht.femurR : dicht.femurL;
+  const dichtKortTibia = langsIsL ? dicht.tibiaR : dicht.tibiaL;
+  const ietsDicht = dicht.femurR || dicht.femurL || dicht.tibiaR || dicht.tibiaL;
+
   function contextBij(leeftijd) {
     const M = multiplierVoor(leeftijd, inv.geslacht);
+    const groei = L => L * (M - 1);
+
+    // Restgroei per bot, met de gesloten fysen eruit. De distale femur levert
+    // een fractie jFd van de femurgroei, de proximale tibia een fractie jTp van
+    // de tibiagroei; de tegenoverliggende fysen leveren de rest en blijven open.
+    const restFemLang = (dichtLangFemur ? (1 - inv.jFd) : 1) * groei(langFemur);
+    const restTibLang = (dichtLangTibia ? (1 - inv.jTp) : 1) * groei(langTibia);
+    const restFemKort = (dichtKortFemur ? (1 - inv.jFd) : 1) * groei(kortFemur);
+    const restTibKort = (dichtKortTibia ? (1 - inv.jTp) : 1) * groei(kortTibia);
+    const restLang = restFemLang + restTibLang;
+    const restKort = restFemKort + restTibKort;
+
     return {
-      geslacht: inv.geslacht, leeftijd: leeftijd, einde: inv.einde, M: M, Dm: D0 * M,
-      Sfem: inv.jFd * langFemur * M,
-      Stib: inv.jTp * langTibia * M,
-      restFemLang: langFemur * (M - 1), restTibLang: langTibia * (M - 1),
-      restFemKort: kortFemur * (M - 1), restTibKort: kortTibia * (M - 1),
+      geslacht: inv.geslacht, leeftijd: leeftijd, einde: inv.einde, M: M,
+      // Het voorspelde eindverschil is het huidige verschil plus wat het lange
+      // been nog groeit min wat het korte been nog groeit. Staat er geen enkele
+      // fyse dicht, dan komt dit exact uit op de bekende Dm = D x M; met een
+      // gesloten fyse loopt het daarvan af, en dat is precies de bedoeling.
+      // Dm kan negatief worden: dan haalt het korte been het lange in.
+      Dm: D0 + restLang - restKort,
+      // S is de volgroeide lengte van het aandeel van deze fyse; een gesloten
+      // fyse heeft geen aandeel meer, dus 0.
+      Sfem: dichtLangFemur ? 0 : inv.jFd * langFemur * M,
+      Stib: dichtLangTibia ? 0 : inv.jTp * langTibia * M,
+      restFemLang: restFemLang, restTibLang: restTibLang,
+      restFemKort: restFemKort, restTibKort: restTibKort,
+      restLang: restLang, restKort: restKort,
     };
   }
+  // De gecombineerde ingreep bestaat alleen als beide fysen nog open zijn;
+  // is er een dicht, dan is "beide" geen aparte optie meer maar valt hij samen
+  // met de fyse die nog over is, en die staat al als eigen regel.
+  const beideKan = !dichtLangFemur && !dichtLangTibia;
   const ctxS = contextBij(inv.leeftijdS);
   const ctxK = contextBij(inv.leeftijdK);
-  ctxS.Sbeide = ctxS.Sfem + ctxS.Stib;
-  ctxK.Sbeide = ctxK.Sfem + ctxK.Stib;
+  ctxS.Sbeide = beideKan ? ctxS.Sfem + ctxS.Stib : 0;
+  ctxK.Sbeide = beideKan ? ctxK.Sfem + ctxK.Stib : 0;
 
   const P = (basis === 's') ? ctxS : ctxK;
   const basisNaam = (basis === 's') ? 'skeletleeftijd' : 'kalenderleeftijd';
@@ -818,33 +915,58 @@ function tekenen() {
   }
   function capWM(leeftijd) {
     const j = Math.max(0, inv.einde - leeftijd);
-    return { tib: inv.snelTib * j, fem: inv.snelFem * j, beide: (inv.snelTib + inv.snelFem) * j };
+    const tib = dichtLangTibia ? 0 : inv.snelTib * j;
+    const fem = dichtLangFemur ? 0 : inv.snelFem * j;
+    return { tib: tib, fem: fem, beide: (dichtLangTibia || dichtLangFemur) ? 0 : tib + fem };
   }
   const mS = capMult(ctxS), mK = capMult(ctxK), wS = capWM(inv.leeftijdS), wK = capWM(inv.leeftijdK);
+
+  // Een gesloten fyse levert geen getal maar een streep met uitleg; een 0,0 mm
+  // zou lezen als "toevallig niets", terwijl het "hier valt niets meer te
+  // remmen" is.
+  function capCel(waarde, gesloten) {
+    return gesloten
+      ? '<td class="getal" style="color:var(--muted)">gesloten</td>'
+      : '<td class="getal">' + mm(waarde) + '</td>';
+  }
+  function capRij(naam, gesloten, a, b, c, d, klasse) {
+    return '<tr' + (klasse ? ' class="' + klasse + '"' : '') + '><td>' + naam +
+      (gesloten ? ' <span style="font-weight:400;color:var(--muted)">— al gesloten</span>' : '') + '</td>' +
+      capCel(a, gesloten) + capCel(b, gesloten) + capCel(c, gesloten) + capCel(d, gesloten) + '</tr>';
+  }
 
   let ct = '<thead><tr><th>Correctie bij ingreep vandaag</th>' +
     '<th class="getal">Multiplier<br>skelet</th><th class="getal">Multiplier<br>kalender</th>' +
     '<th class="getal">W-Menelaus<br>skelet</th><th class="getal">W-Menelaus<br>kalender</th></tr></thead><tbody>';
-  ct += '<tr><td>Proximale tibia ' + langNaam + '</td><td class="getal">' + mm(mS.tib) + '</td><td class="getal">' +
-    mm(mK.tib) + '</td><td class="getal">' + mm(wS.tib) + '</td><td class="getal">' + mm(wK.tib) + '</td></tr>';
-  ct += '<tr><td>Distale femur ' + langNaam + '</td><td class="getal">' + mm(mS.fem) + '</td><td class="getal">' +
-    mm(mK.fem) + '</td><td class="getal">' + mm(wS.fem) + '</td><td class="getal">' + mm(wK.fem) + '</td></tr>';
-  ct += '<tr class="totaal"><td>Beide fysen ' + langNaam + '</td><td class="getal">' + mm(mS.beide) + '</td><td class="getal">' +
-    mm(mK.beide) + '</td><td class="getal">' + mm(wS.beide) + '</td><td class="getal">' + mm(wK.beide) + '</td></tr>';
+  ct += capRij('Proximale tibia ' + langNaam, dichtLangTibia, mS.tib, mK.tib, wS.tib, wK.tib, '');
+  ct += capRij('Distale femur ' + langNaam, dichtLangFemur, mS.fem, mK.fem, wS.fem, wK.fem, '');
+  ct += capRij('Beide fysen ' + langNaam, !beideKan, mS.beide, mK.beide, wS.beide, wK.beide, 'totaal');
   ct += '</tbody>';
   el('epCapTabel').innerHTML = ct;
   el('epCapBijschrift').innerHTML =
     'White-Menelaus rekent met ' + komma(inv.snelTib, 1) + ' mm/jaar voor de proximale tibia en ' +
     komma(inv.snelFem, 1) + ' mm/jaar voor de distale femur, over de resterende ' +
     komma(Math.max(0, inv.einde - leeftijdNu), 1) + ' jaar op ' + basisNaam + '. De multiplier schaalt ' +
-    'mee met de botlengte en geeft bij lange botten structureel meer capaciteit.';
+    'mee met de botlengte en geeft bij lange botten structureel meer capaciteit.' +
+    (beideKan ? '' : ' Omdat één van beide fysen al gesloten is, bestaat de gecombineerde ingreep hier niet meer.');
 
+  function merk(gesloten, wat) {
+    return gesloten ? ' <span style="font-weight:400;color:var(--muted)">— ' + wat + ' gesloten</span>' : '';
+  }
   let gt = '<thead><tr><th>Restgroei tot einde groei</th><th class="getal">Op skeletleeftijd</th>' +
     '<th class="getal">Op kalenderleeftijd</th></tr></thead><tbody>';
-  gt += '<tr><td>Femur ' + langNaam + '</td><td class="getal">' + mm(ctxS.restFemLang) + '</td><td class="getal">' + mm(ctxK.restFemLang) + '</td></tr>';
-  gt += '<tr><td>Tibia ' + langNaam + '</td><td class="getal">' + mm(ctxS.restTibLang) + '</td><td class="getal">' + mm(ctxK.restTibLang) + '</td></tr>';
-  gt += '<tr><td>Femur ' + kortNaam + '</td><td class="getal">' + mm(ctxS.restFemKort) + '</td><td class="getal">' + mm(ctxK.restFemKort) + '</td></tr>';
-  gt += '<tr><td>Tibia ' + kortNaam + '</td><td class="getal">' + mm(ctxS.restTibKort) + '</td><td class="getal">' + mm(ctxK.restTibKort) + '</td></tr>';
+  gt += '<tr><td>Femur ' + langNaam + merk(dichtLangFemur, 'distale fyse') + '</td><td class="getal">' +
+    mm(ctxS.restFemLang) + '</td><td class="getal">' + mm(ctxK.restFemLang) + '</td></tr>';
+  gt += '<tr><td>Tibia ' + langNaam + merk(dichtLangTibia, 'proximale fyse') + '</td><td class="getal">' +
+    mm(ctxS.restTibLang) + '</td><td class="getal">' + mm(ctxK.restTibLang) + '</td></tr>';
+  gt += '<tr><td>Femur ' + kortNaam + merk(dichtKortFemur, 'distale fyse') + '</td><td class="getal">' +
+    mm(ctxS.restFemKort) + '</td><td class="getal">' + mm(ctxK.restFemKort) + '</td></tr>';
+  gt += '<tr><td>Tibia ' + kortNaam + merk(dichtKortTibia, 'proximale fyse') + '</td><td class="getal">' +
+    mm(ctxS.restTibKort) + '</td><td class="getal">' + mm(ctxK.restTibKort) + '</td></tr>';
+  gt += '<tr><td>Been ' + langNaam + ' totaal</td><td class="getal">' + mm(ctxS.restLang) +
+    '</td><td class="getal">' + mm(ctxK.restLang) + '</td></tr>';
+  gt += '<tr><td>Been ' + kortNaam + ' totaal</td><td class="getal">' + mm(ctxS.restKort) +
+    '</td><td class="getal">' + mm(ctxK.restKort) + '</td></tr>';
   gt += '<tr class="totaal"><td>Voorspeld verschil bij einde groei</td><td class="getal">' + mm(ctxS.Dm) +
     '</td><td class="getal">' + mm(ctxK.Dm) + '</td></tr>';
   gt += '</tbody>';
@@ -856,18 +978,39 @@ function tekenen() {
   const Cmin = P.Dm - boven;   // kleinste acceptabele correctie -> uiterste moment
   const Cmax = P.Dm - onder;   // grootste acceptabele correctie -> vroegste moment
 
+  // Waar staan we ten opzichte van het doel? Drie mogelijkheden, en dat is niet
+  // hetzelfde als "haalbaar": dit gaat alleen over het voorspelde eindverschil,
+  // nog los van welke fyse er nog open is.
+  let doelStatus = 'ingreep nodig';
+  if (P.Dm < onder) doelStatus = 'omgeslagen';
+  else if (P.Dm <= boven) doelStatus = 'binnen';
+
+  const eindZonder = P.Dm >= 0
+    ? mm(P.Dm) + ' ten nadele van ' + kortNaam
+    : mm(-P.Dm) + ' ten nadele van ' + langNaam;
+
   el('epPlanIntro').textContent =
     'Gerekend op ' + basisNaam + ' (' + jaarLabel(leeftijdNu) + ', factor ' + komma(P.M, 3) + '). ' +
-    'Zonder ingreep eindigt het verschil op ' + mm(P.Dm) + ' ten nadele van ' + kortNaam + '. ' +
+    'Zonder ingreep eindigt het verschil op ' + eindZonder + '. ' +
     'Doel ' + mm(inv.doel) + ' ± ' + mm(inv.marge) + ', dus een correctie tussen ' +
-    mm(Math.max(0, Cmin)) + ' en ' + mm(Cmax) + '.';
+    mm(Math.max(0, Cmin)) + ' en ' + mm(Math.max(0, Cmax)) + '.';
 
   const rijen = [];
   OPTIES.forEach(o => {
     const S = o.id === 'tib' ? P.Stib : o.id === 'fem' ? P.Sfem : P.Sbeide;
     const snelheid = o.id === 'tib' ? inv.snelTib : o.id === 'fem' ? inv.snelFem : (inv.snelTib + inv.snelFem);
-    rijen.push({ optie: o, model: 'mult', naam: 'Multiplier', v: vensterVoor('mult', { S: S }, P, Cmin, Cmax) });
-    rijen.push({ optie: o, model: 'wm', naam: 'White-Menelaus', v: vensterVoor('wm', { snelheid: snelheid }, P, Cmin, Cmax) });
+    const beschikbaar = o.id === 'tib' ? !dichtLangTibia : o.id === 'fem' ? !dichtLangFemur : beideKan;
+    rijen.push({ optie: o, model: 'mult', naam: 'Multiplier',
+      v: vensterVoor('mult', { S: S, beschikbaar: beschikbaar }, P, Cmin, Cmax, doelStatus) });
+    rijen.push({ optie: o, model: 'wm', naam: 'White-Menelaus',
+      v: vensterVoor('wm', { snelheid: snelheid, beschikbaar: beschikbaar }, P, Cmin, Cmax, doelStatus) });
+  });
+
+  // De keuzelijst voor de uiterste operatiedatum benoemt zelf wat er nog kan.
+  Array.prototype.forEach.call(el('epIngreep').options, opt => {
+    const kan = opt.value === 'tib' ? !dichtLangTibia : opt.value === 'fem' ? !dichtLangFemur : beideKan;
+    const basisTekst = opt.value === 'tib' ? 'Proximale tibia' : opt.value === 'fem' ? 'Distale femur' : 'Beide fysen';
+    opt.textContent = basisTekst + (kan ? '' : ' — al gesloten');
   });
 
   // ---- datumlaag: leeftijden sturen de rekensom, datums zijn er een weergave van ----
@@ -876,17 +1019,116 @@ function tekenen() {
     return (opname && isFinite(leeftijd)) ? plusJaren(opname, leeftijd - leeftijdNu) : null;
   }
 
+  // ---- haalbaarheid van het doel ----
+  // De vraag waar het uiteindelijk om gaat: haal ik het beoogde eindverschil
+  // nog, met welke ingreep, en tot wanneer? Hier doen de gesloten fysen hun
+  // werk: ze halen opties weg en verkleinen wat er nog te halen valt.
+  const dichtLijst = [];
+  if (dicht.femurL) dichtLijst.push('distale femur links');
+  if (dicht.femurR) dichtLijst.push('distale femur rechts');
+  if (dicht.tibiaL) dichtLijst.push('proximale tibia links');
+  if (dicht.tibiaR) dichtLijst.push('proximale tibia rechts');
+  const dichtZin = dichtLijst.length
+    ? ' Meegerekend als al gesloten: ' + dichtLijst.join(', ') + '.'
+    : '';
+
+  const indexVan = r => OPTIES.findIndex(o => o.id === r.optie.id);
+  // Per model de kleinste ingreep die het doel nog haalt. "Kleinste" is hier de
+  // laagste capaciteit die nog voldoet: dat is tegelijk de minste overcorrectie
+  // en, doordat de gecombineerde ingreep altijd de grootste capaciteit heeft,
+  // de minst ingrijpende operatie.
+  function kleinsteHaalbaar(modelIndex) {
+    const kans = rijen.filter((r, i) => i % 2 === modelIndex && r.v.status === 'haalbaar');
+    kans.sort((a, b) => a.v.capNu - b.v.capNu);
+    return kans.length ? kans[0] : null;
+  }
+  function besteCapaciteit(modelIndex) {
+    const open = rijen.filter((r, i) => i % 2 === modelIndex && r.v.status !== 'fyse gesloten');
+    return open.length ? Math.max.apply(null, open.map(r => r.v.capNu)) : 0;
+  }
+
+  let oordeel;
+  if (doelStatus === 'omgeslagen') {
+    oordeel = banner('rood', 'Voorbijgeschoten — ' + kortNaam + ' wordt de langste',
+      'Bij einde groei is ' + langNaam + ' naar verwachting ' + mm(-P.Dm) + ' korter dan ' + kortNaam +
+      ', terwijl het doel ' + mm(inv.doel) + ' \u00b1 ' + mm(inv.marge) + ' is. Verder remmen aan de ' +
+      langZijde + ' maakt dat groter in plaats van kleiner. Wat hier nog helpt valt buiten deze rekenhulp; ' +
+      'leg dit voor aan de orthopeed.' + dichtZin);
+  } else if (doelStatus === 'binnen') {
+    oordeel = banner('groen', 'Doel wordt gehaald zonder ingreep',
+      'Het voorspelde eindverschil van ' + eindZonder + ' blijft binnen ' + mm(inv.marge) +
+      ' van het doel (' + mm(inv.doel) + '). Een epifysiodese zou eroverheen schieten.' + dichtZin);
+  } else if (rijen.every(r => r.v.status === 'fyse gesloten')) {
+    oordeel = banner('rood', 'Aan de ' + langZijde + ' is geen groeischijf meer open',
+      'Er is ' + mm(Cmin) + ' correctie nodig, maar zowel de distale femur als de proximale tibia ' +
+      langNaam + ' is al gesloten. Een epifysiodese rond de knie is hier geen optie meer; het ' +
+      'voorspelde eindverschil blijft ' + eindZonder + '. Verwijs voor overleg over wat er wél kan.' + dichtZin);
+  } else {
+    const kandidaten = [kleinsteHaalbaar(0), kleinsteHaalbaar(1)].filter(Boolean);
+
+    if (!kandidaten.length) {
+      const capM = besteCapaciteit(0), capW = besteCapaciteit(1);
+      const restA = P.Dm - capM, restB = P.Dm - capW;
+      oordeel = banner('rood', 'Doel niet meer haalbaar met een epifysiodese rond de knie',
+        'Er is ' + mm(Cmin) + ' correctie nodig. De groeischijven die aan de ' + langZijde +
+        ' nog open zijn leveren samen hooguit ' + mm(capM) + ' (multiplier) respectievelijk ' +
+        mm(capW) + ' (White-Menelaus), zelfs bij een ingreep vandaag. Er blijft dan naar verwachting ' +
+        mm(Math.min(restA, restB)) + ' tot ' + mm(Math.max(restA, restB)) + ' verschil over. ' +
+        'Verwijs voor overleg over de overige opties.' + dichtZin);
+    } else if (kandidaten.length === 2) {
+      // Het voorzichtigste antwoord: de zwaarste ingreep die een van beide
+      // modellen nodig vindt, met de vroegste deadline die daarbij hoort.
+      const doelIndex = Math.max(indexVan(kandidaten[0]), indexVan(kandidaten[1]));
+      let paar = [rijen[doelIndex * 2], rijen[doelIndex * 2 + 1]].filter(r => r.v.status === 'haalbaar');
+      if (!paar.length) paar = kandidaten;
+      const krapste = paar.reduce((a, b) => (a.v.uiterste <= b.v.uiterste ? a : b));
+      const maanden = Math.round((krapste.v.uiterste - leeftijdNu) * 12);
+      const haast = maanden <= 6;
+      oordeel = banner(haast ? 'oranje' : 'groen',
+        'Doel haalbaar — ' + OPTIES[doelIndex].naam.toLowerCase() + ' ' + langNaam +
+          (haast ? ', maar het is krap' : ''),
+        'Er is ' + mm(Cmin) + ' correctie nodig, en dit is de kleinste ingreep die dat volgens beide ' +
+        'modellen nog levert. Het voorzichtigste model (' + krapste.naam + ') zet het uiterste moment ' +
+        'op ' + komma(krapste.v.uiterste, 2) + ' jr' + (opname ? ', ofwel ' + datumKort(datumBij(krapste.v.uiterste)) : '') +
+        ' — nog ' + maanden + ' maanden. Plan ruim daarvoor: de arrest is niet meteen volledig.' + dichtZin);
+    } else {
+      const kan = kandidaten[0];
+      const tegen = (kan.model === 'mult') ? 'White-Menelaus' : 'de multiplier';
+      oordeel = banner('oranje', 'De modellen zijn het oneens of het nog kan',
+        'Volgens ' + kan.naam + ' haalt ' + OPTIES[indexVan(kan)].naam.toLowerCase() + ' ' + langNaam +
+        ' het doel nog, met ' + komma(kan.v.uiterste, 2) + ' jr als uiterste moment' +
+        (opname ? ' (' + datumKort(datumBij(kan.v.uiterste)) + ')' : '') + '. Volgens ' + tegen +
+        ' is dat venster al gesloten. Behandel dat als het krappe scenario en verwijs nu, zodat de ' +
+        'orthopeed met een actuele handfoto kan bepalen welk van beide klopt.' + dichtZin);
+    }
+  }
+  el('epHaalbaar').innerHTML = oordeel;
+
   // ---- uiterste operatiedatum ----
+  // Wijst de keuze naar een fyse die al gesloten is - bijvoorbeeld nog uit een
+  // eerdere sessie - schuif dan door naar de eerste die nog wel kan; anders
+  // wijst dit blok naar een dood spoor.
+  const kanOptie = id => (id === 'tib' ? !dichtLangTibia : id === 'fem' ? !dichtLangFemur : beideKan);
+  if (!kanOptie(el('epIngreep').value)) {
+    const eersteOpen = OPTIES.find(o => kanOptie(o.id));
+    if (eersteOpen) el('epIngreep').value = eersteOpen.id;
+  }
   const gekozen = el('epIngreep').value;
   const start = gekozen === 'tib' ? 0 : gekozen === 'fem' ? 2 : 4;
   const rM = rijen[start], rW = rijen[start + 1];
 
+  const GEEN_DATUM = {
+    'niet nodig':    ['n.v.t.', 'binnen de marge zonder ingreep'],
+    'omgeslagen':    ['n.v.t.', 'remmen aan deze zijde maakt het erger'],
+    'fyse gesloten': ['gesloten', 'deze groeischijf is al operatief gesloten'],
+    'te laat':       ['te laat', 'de benodigde correctie past hier niet meer in'],
+    'buiten bereik': ['te weinig', 'deze fyse heeft die correctie nooit in zich'],
+  };
+
   function deadlineTegel(naam, r, nadruk) {
     if (r.v.status !== 'haalbaar') {
-      return tegel(naam,
-        r.v.status === 'niet nodig' ? 'n.v.t.' : 'gesloten',
-        r.v.status === 'niet nodig' ? 'binnen de marge zonder ingreep' : 'de benodigde correctie past hier niet meer in',
-        nadruk);
+      const uitleg = GEEN_DATUM[r.v.status] || ['—', ''];
+      return tegel(naam, uitleg[0], uitleg[1], nadruk);
     }
     const d = datumBij(r.v.uiterste);
     return tegel(naam,
@@ -922,7 +1164,9 @@ function tekenen() {
     const rm = rijen[i * 2], rw = rijen[i * 2 + 1];
     const statussen = [rm.v.status, rw.v.status];
     let chip = '<span class="ep-chip ok">haalbaar</span>';
-    if (statussen.every(s => s === 'niet nodig')) chip = '<span class="ep-chip ok">niet nodig</span>';
+    if (statussen.every(s => s === 'fyse gesloten')) chip = '<span class="ep-chip stop">fyse al gesloten</span>';
+    else if (statussen.every(s => s === 'niet nodig')) chip = '<span class="ep-chip ok">niet nodig</span>';
+    else if (statussen.every(s => s === 'omgeslagen')) chip = '<span class="ep-chip stop">werkt averechts</span>';
     else if (statussen.every(s => s === 'te laat' || s === 'buiten bereik')) chip = '<span class="ep-chip stop">venster gesloten</span>';
     else if (statussen.some(s => s !== 'haalbaar')) chip = '<span class="ep-chip let">modellen oneens</span>';
 
@@ -945,15 +1189,22 @@ function tekenen() {
           regel('Uiterste moment', komma(v.uiterste, 2) + ' jr') +
           (opname ? regel('Uiterste datum', datumKort(d)) : '') +
           regel('Venster', Math.round((v.uiterste - v.vroegste) * 12) + ' mnd');
+      } else if (v.status === 'fyse gesloten') {
+        inhoud = regel('Uitkomst', 'al operatief gesloten', true);
       } else if (v.status === 'niet nodig') {
         inhoud = regel('Capaciteit nu', mm(v.capNu)) +
           regel('Uitkomst', 'geen ingreep nodig', true);
+      } else if (v.status === 'omgeslagen') {
+        inhoud = regel('Capaciteit nu', mm(v.capNu)) +
+          regel('Uitkomst', 'zou het verschil vergroten', true);
       } else if (v.status === 'te laat') {
         inhoud = regel('Capaciteit nu', mm(v.capNu)) +
           regel('Benodigd', mm(Cmin)) +
           regel('Uitkomst', 'venster gesloten', true);
       } else {
-        inhoud = regel('Uitkomst', 'buiten bereik van deze fyse', true);
+        inhoud = regel('Capaciteit nu', mm(v.capNu)) +
+          regel('Benodigd', mm(Cmin)) +
+          regel('Uitkomst', 'buiten bereik van deze fyse', true);
       }
       kaarten += '<div class="ep-model"><div class="naam">' + stip + r.naam + '</div>' +
         '<div class="ep-regels">' + inhoud + '</div></div>';
@@ -967,12 +1218,9 @@ function tekenen() {
   tekenTijdlijn(rijen, inv, leeftijdNu, basisNaam, langNaam);
 
   // ---- notities ----
+  // Het oordeel over haalbaarheid staat al boven in de sectie; hier alleen wat
+  // daar niet in past.
   let notities = '';
-  if (Cmin <= 0) {
-    notities += banner('groen', 'Binnen de marge zonder ingreep',
-      'Het voorspelde eindverschil van ' + mm(P.Dm) + ' blijft al binnen ' + mm(inv.marge) +
-      ' van het doel (' + mm(inv.doel) + '). Een epifysiodese zou het doel voorbijschieten.');
-  }
   const tibM = rijen[0].v, tibW = rijen[1].v;
   if (tibM.status === 'haalbaar' && tibW.status === 'haalbaar') {
     const kloof = Math.abs(tibM.uiterste - tibW.uiterste) * 12;
@@ -999,7 +1247,7 @@ function tekenen() {
   }
   el('epNotities').innerHTML = notities;
 
-  toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL);
+  toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL, ietsDicht);
 }
 
 // ---------------------------------------------------------------- datums ----
@@ -1076,6 +1324,8 @@ function tekenTijdlijn(rijen, inv, leeftijdNu, basisNaam, langNaam) {
           '" stroke="' + kleur + '" stroke-width="3"/>';
       } else {
         const label = v.status === 'niet nodig' ? 'geen ingreep nodig'
+          : v.status === 'fyse gesloten' ? 'fyse al gesloten'
+          : v.status === 'omgeslagen' ? 'werkt averechts'
           : v.status === 'te laat' ? 'venster gesloten' : 'buiten bereik';
         s += '<text x="' + (X(leeftijdNu) + 6).toFixed(1) + '" y="' + (y + 10) +
           '" font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680">' + label + '</text>';
@@ -1094,7 +1344,7 @@ function tekenTijdlijn(rijen, inv, leeftijdNu, basisNaam, langNaam) {
 }
 
 // -------------------------------------------------------- eerdere opname ----
-function toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL) {
+function toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL, ietsDicht) {
   const vak = el('epVorigeUit');
   const vFemurR = getal('epVFemurR'), vFemurL = getal('epVFemurL');
   const vTibiaR = getal('epVTibiaR'), vTibiaL = getal('epVTibiaL');
@@ -1144,7 +1394,12 @@ function toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL) {
   tekst += ' Doorgetrokken over de resterende ' + mm(restLang) + ' groei in het lange been geeft de ' +
     'gemeten verhouding een eindverschil van ' +
     (DmGemeten >= 0 ? mm(DmGemeten) + ' t.n.v. ' + kortNaam : mm(-DmGemeten) + ' t.n.v. ' + langNaam) +
-    ', tegenover ' + mm(P.Dm) + ' volgens het congenitale model.';
+    ', tegenover ' + mm(P.Dm) + ' volgens het model hierboven.';
+  if (ietsDicht) {
+    tekst += ' Let op: er staat een groeischijf als gesloten aangevinkt. De verwachte verhouding ' +
+      'hierboven is die van het congenitale model en houdt daar geen rekening mee, dus een afwijking ' +
+      'kan hier net zo goed de gesloten fyse zijn als een echte modelfout.';
+  }
 
   vak.innerHTML = h + '<div style="margin-top:12px;">' + banner(soort, kop, tekst) + '</div>';
 }
@@ -1156,6 +1411,7 @@ const ALLE_VELDEN = [
   'epDoel', 'epMarge', 'epGeboorte', 'epOpname', 'epIngreep',
   'epJFd', 'epJTp', 'epSnelFem', 'epSnelTib',
   'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
+  'epDichtFemurR', 'epDichtFemurL', 'epDichtTibiaR', 'epDichtTibiaL',
 ];
 
 // Patientgebonden velden; die worden bij "wissen" leeggemaakt en nooit bewaard.
@@ -1163,6 +1419,10 @@ const PATIENT_VELDEN = [
   'epLeeftijdS', 'epLeeftijdK', 'epFemurR', 'epFemurL', 'epTibiaR', 'epTibiaL',
   'epGeboorte', 'epOpname', 'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
 ];
+
+// Welke groeischijven al gesloten zijn is net zo goed een patientgegeven, maar
+// het zijn vinkjes en die worden anders leeggemaakt dan tekstvelden.
+const PATIENT_VINKJES = ['epDichtFemurR', 'epDichtFemurL', 'epDichtTibiaR', 'epDichtTibiaL'];
 
 ALLE_VELDEN.forEach(id => {
   const veld = el(id);
@@ -1191,6 +1451,7 @@ function vandaagInOpname() {
 
 el('epWissen').addEventListener('click', () => {
   PATIENT_VELDEN.forEach(id => { el(id).value = ''; });
+  PATIENT_VINKJES.forEach(id => { el(id).checked = false; });
   vandaagInOpname();
   tekenen();
 });
