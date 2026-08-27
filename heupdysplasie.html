@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Heupdysplasie (DDH) bij kinderen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .dd-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .dd-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .dd-terug:hover { text-decoration: underline; }
+
+  .dd-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .dd-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  .dd-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .dd-kaart h2 { font-size: 1.1rem; margin: 0 0 3px; }
+  .dd-kaart-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin: 0 0 14px;
+  }
+
+  .dd-groep {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted);
+    margin: 16px 0 8px;
+  }
+  .dd-groep:first-of-type { margin-top: 0; }
+
+  .dd-vink {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 0;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.45;
+    cursor: pointer;
+    border-bottom: 1px solid #F2F2EE;
+  }
+  .dd-vink:last-of-type { border-bottom: none; }
+  .dd-vink input { margin-top: 3px; flex: none; width: 18px; height: 18px; }
+  .dd-vink .sub {
+    display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px;
+  }
+
+  .dd-uitkomst {
+    border-radius: 12px;
+    padding: 15px 17px;
+    margin-top: 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+  }
+  .dd-uitkomst.leeg   { background: #F3F3F0; color: var(--muted); font-size: 13.5px; }
+  .dd-uitkomst.spoed  { background: #FBEAE5; color: #8E3617; }
+  .dd-uitkomst.plan   { background: #FBF3DC; color: #6B4E06; }
+  .dd-uitkomst.geen   { background: #E3F3EA; color: #0B5C38; }
+  .dd-advies { font-size: 1.15rem; font-weight: 800; display: block; margin-bottom: 5px; }
+  .dd-uitkomst .dd-regel { display: block; margin-top: 8px; }
+
+  .dd-sectie { margin-top: 32px; }
+  .dd-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .dd-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .dd-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .dd-lijst li { margin-bottom: 9px; }
+  .dd-lijst li:last-child { margin-bottom: 0; }
+
+  .dd-tabel-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+  }
+  table.dd-tabel {
+    border-collapse: collapse;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    min-width: 100%;
+  }
+  .dd-tabel th, .dd-tabel td {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--lijn);
+    text-align: left; vertical-align: top;
+  }
+  .dd-tabel thead th {
+    font-size: 11px; font-weight: 800;
+    color: var(--muted); white-space: nowrap;
+  }
+  .dd-tabel td:first-child { font-weight: 700; }
+
+  .dd-let {
+    background: #EDE7F6;
+    border-left: 4px solid #5B3E8E;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    color: #3E2A63;
+    margin-top: 10px;
+  }
+  .dd-let strong { display: block; margin-bottom: 4px; }
+
+  .dd-vlag {
+    background: #FBEAE5;
+    border-left: 4px solid #B3441E;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    color: #6E2B12;
+    margin-top: 10px;
+  }
+  .dd-vlag strong { display: block; margin-bottom: 4px; }
+
+  .dd-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px;
+    margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none;
+    line-height: 1.4;
+  }
+  .dd-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .dd-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .dd-punten {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; margin: 10px 0 0; padding-left: 20px;
+  }
+  .dd-punten li { margin-bottom: 4px; }
+
+  .dd-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 24px;
+    line-height: 1.6;
+  }
+  .dd-bron p { margin: 0 0 9px; }
+  .dd-bron p:last-child { margin-bottom: 0; }
+  .dd-bron a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door; externe links niet.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Heupdysplasie (DDH)</div>
+</header>
+
+<div class="dd-wrap">
+  <a class="dd-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="dd-kop">Heupdysplasie bij kinderen</h1>
+  <p class="dd-intro">
+    Vroeg opsporen loont: behandeling die later start is langduriger, ingrijpender en minder
+    effectief. Onderaan staat waarom deze screening de CP-heup <em>niet</em> dekt — dat is de
+    verwarring die je in de praktijk het vaakst tegenkomt.
+  </p>
+
+  <div class="dd-kaart">
+    <h2>Is er beeldvorming nodig?</h2>
+    <p class="dd-kaart-uitleg">
+      Vink aan wat van toepassing is. Volgens de FMS-richtlijn DDH en de JGZ-richtlijn Heupdysplasie.
+    </p>
+
+    <div class="dd-groep">Lichamelijk onderzoek</div>
+    <label class="dd-vink"><input type="checkbox" data-soort="lo" id="ddAbd">
+      <span>Abductie onder de 70 graden<span class="sub">aan één of beide zijden</span></span></label>
+    <label class="dd-vink"><input type="checkbox" data-soort="lo" id="ddAsym">
+      <span>Abductieverschil van 20 graden of meer<span class="sub">links versus rechts</span></span></label>
+    <label class="dd-vink"><input type="checkbox" data-soort="lo" id="ddKnie">
+      <span>Zichtbaar kniehoogteverschil<span class="sub">teken van Galeazzi</span></span></label>
+
+    <div class="dd-groep">Risicofactoren</div>
+    <label class="dd-vink"><input type="checkbox" data-soort="risico" id="ddFam">
+      <span>Familieanamnese<span class="sub">DDH of coxartrose vóór het 50e jaar bij een eerste- of tweedegraads familielid</span></span></label>
+    <label class="dd-vink"><input type="checkbox" data-soort="risico" id="ddStuit">
+      <span>Stuitligging na week 32<span class="sub">ongeacht hoe lang</span></span></label>
+    <label class="dd-vink"><input type="checkbox" data-soort="risico" id="ddStuitBev">
+      <span>Stuitligging bij de bevalling</span></label>
+    <label class="dd-vink"><input type="checkbox" data-soort="risico" id="ddBaker">
+      <span>Strak ingebakerd met gestrekte heupen en knieën</span></label>
+
+    <div class="dd-uitkomst leeg" id="ddUitkomst">
+      Vink hierboven aan wat van toepassing is, dan verschijnt hier het advies.
+    </div>
+  </div>
+
+  <div class="dd-sectie">
+    <h2>Waarom vroeg opsporen telt</h2>
+    <ul class="dd-lijst">
+      <li><strong>Onbehandeld kan DDH leiden tot ernstige invaliditeit en vroege coxartrose.</strong> Dat is de reden dat er überhaupt gescreend wordt.</li>
+      <li><strong>Laat behandelen is slechter.</strong> De JGZ-richtlijn noemt behandeling laat als die bij een geluxeerde heup ná drie maanden start, en bij dysplasie zónder luxatie ná zes maanden. Dan is het traject langduriger, invasiever en minder effectief.</li>
+      <li><strong>Ongeveer drie op de honderd kinderen</strong> tussen nul en zes maanden heeft DDH — het is dus geen zeldzaamheid.</li>
+      <li><strong>Bij prematuriteit reken je met de gecorrigeerde leeftijd.</strong></li>
+      <li><strong>Vanaf ongeveer een half jaar verbeent de femurkop</strong> en wordt in de praktijk meestal een röntgenfoto gemaakt in plaats van een echo. Dat verandert niets aan de urgentie.</li>
+    </ul>
+  </div>
+
+  <div class="dd-sectie">
+    <h2>Behandeling en controle</h2>
+    <p class="dd-sectie-uitleg">
+      Wat er gebeurt nadat je hebt verwezen — handig om te weten en uit te leggen.
+    </p>
+    <div class="dd-tabel-scroll">
+      <table class="dd-tabel">
+        <thead><tr><th>Fase</th><th>Wat er gebeurt</th></tr></thead>
+        <tbody>
+          <tr><td>Stabiele DDH</td><td>Spreidbehandeling met de Pavlik-bandage, tenzij het kind daar al te groot of te sterk voor is. Boven het half jaar zo nodig een ander spreidmiddel.</td></tr>
+          <tr><td>Tijdens de behandeling</td><td>Elke zes weken echocontrole tot de heup genormaliseerd is.</td></tr>
+          <tr><td>Na de behandeling</td><td>Controle rond het eerste jaar zodra het kind goed loopt, daarna op 3 en op 5 jaar. Is de heup op 5 jaar normaal, dan kan de follow-up worden afgesloten.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="dd-punten">
+      <li>Instabiele DDH en echte luxaties volgen een ander traject; dat staat in een aparte module van de richtlijn.</li>
+      <li>Avasculaire necrose van de femurkop is een bekende complicatie van de behandeling. Dat is een van de redenen dat de controles doorlopen tot het vijfde jaar.</li>
+    </ul>
+  </div>
+
+  <div class="dd-sectie">
+    <h2>Wat dit voor jou betekent</h2>
+    <p class="dd-sectie-uitleg">
+      Waar een revalidatiearts DDH tegenkomt, en wanneer je opnieuw verwijst.
+    </p>
+    <ul class="dd-lijst">
+      <li><strong>Denk eraan bij een asymmetrisch looppatroon zonder neurologische verklaring.</strong> Een gemiste DDH presenteert zich later als manklopen, een teken van Trendelenburg, beenlengteverschil of een exorotatiestand. Bij dubbelzijdige luxatie valt vooral de toegenomen lendenlordose en het waggelen op.</li>
+      <li><strong>Vraag bij een behandelde DDH in de voorgeschiedenis of de controles zijn afgerond.</strong> Restdysplasie blijkt soms pas bij de controle op 3 of 5 jaar. Loopt een kind bij jou en is die reeks niet afgemaakt, dan is dat een reden om terug te verwijzen.</li>
+      <li><strong>Verwijs opnieuw bij nieuwe klachten,</strong> ook als de follow-up ooit netjes is afgesloten: pijn in lies of knie, afgenomen abductie, of een looppatroon dat verslechtert.</li>
+      <li><strong>Let bij een motorische ontwikkelingsachterstand op de heupen.</strong> Beperkte of asymmetrische abductie is een bevinding die je zelf kunt doen en die vaak de eerste aanwijzing is.</li>
+      <li><strong>Kinderen met een syndroom, artrogrypose, spina bifida of een andere neuromusculaire aandoening</strong> hebben een eigen heupproblematiek die niet door de DDH-screening wordt gedekt. Dat vraagt om afspraken die bij die aandoening horen.</li>
+    </ul>
+  </div>
+
+  <div class="dd-sectie">
+    <h2>De verwarring met cerebrale parese</h2>
+    <p class="dd-sectie-uitleg">
+      Dit is de belangrijkste boodschap van deze pagina.
+    </p>
+
+    <div class="dd-let">
+      <strong>Een normale babyheup zegt niets over de CP-heup later</strong>
+      Bij CP is de heup bij de geboorte meestal normaal. De verplaatsing ontstaat pás daarna, doordat
+      spastische spieren de femurkop uit een op zichzelf normaal acetabulum duwen — meestal zichtbaar
+      ná het tweede jaar. Een kind met CP dat als baby een normale heupecho had, is dus <strong>niet
+      gescreend</strong> voor zijn CP-heup. Daarvoor bestaat een aparte surveillance, op basis van het
+      GMFCS-niveau en het migratiepercentage.
+    </div>
+
+    <div class="dd-tabel-scroll" style="margin-top:14px;">
+      <table class="dd-tabel">
+        <thead><tr><th></th><th>DDH</th><th>Heup bij CP</th></tr></thead>
+        <tbody>
+          <tr><td>Wanneer</td><td>Meestal al bij de geboorte afwijkend, herkend in het eerste jaar</td><td>Bij de geboorte normaal, verplaatst later — herkend na ongeveer 2 jaar</td></tr>
+          <tr><td>Oorzaak</td><td>Mechanisch (stuit), laxiteit, afwijkende acetabulaire groei</td><td>Spastische spieren duwen de kop uit een normaal acetabulum; bekkenobliquiteit</td></tr>
+          <tr><td>Opsporing</td><td>Lichamelijk onderzoek plus echo</td><td>Röntgen, want het lichamelijk onderzoek is op zichzelf onbetrouwbaar</td></tr>
+          <tr><td>Maat</td><td>Echo bij de baby, later acetabulaire index en centrum-randhoek</td><td><strong>Migratiepercentage volgens Reimers</strong></td></tr>
+          <tr><td>Beloop</td><td>Progressieve subluxatie is zeldzaam</td><td>Progressieve subluxatie komt juist vaak voor</td></tr>
+          <tr><td>Vroege maatregel</td><td>Pavlik-bandage of gesloten repositie</td><td>Spierverlenging, botuline&shy;toxine</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dd-vlag">
+      <strong>Waar het in de praktijk misgaat</strong>
+      Ouders zeggen "de heupen zijn goed nagekeken toen hij klein was". Dat klopt, en het zegt niets.
+      Bij een kind met CP begint het heuponderzoek juist opnieuw, volgens het screeningsschema dat bij
+      het GMFCS-niveau hoort.
+    </div>
+
+    <a class="dd-link" href="beslisboom-heup.html">
+      🌳 Beslisboom: heup beoordelen bij CP
+      <span class="sub">Migratiepercentage, afkapwaarden en beleid volgens de Nederlandse richtlijn</span>
+    </a>
+    <a class="dd-link" href="gmfcs.html">
+      🧒 GMFCS per leeftijdsband
+      <span class="sub">Het niveau bepaalt hoe vaak je een X-bekken maakt</span>
+    </a>
+  </div>
+
+  <div class="dd-bron">
+    <p>
+      <strong>Screening, verwijzing en behandeling:</strong> FMS-richtlijn
+      <em>DDH (dysplastische heupontwikkeling) bij kinderen onder één jaar</em>
+      (<a href="https://richtlijnendatabase.nl/richtlijn/ddh_dysplastische_heupontwikkeling_bij_kinderen_onder_n_jaar/startpagina_-_ddh.html" target="_blank" rel="noopener">Richtlijnendatabase</a>),
+      opgesteld met orthopedie, radiologie en jeugdgezondheidszorg — dit is de orthopedische richtlijn
+      waar je naar zocht.
+    </p>
+    <p>
+      <strong>Signalering en het punt over te laat behandelen:</strong> JGZ-richtlijn Heupdysplasie (2018)
+      (<a href="https://www.jgzrichtlijnen.nl/richtlijn/jgz-richtlijn-heupdysplasie/" target="_blank" rel="noopener">NCJ</a>).
+    </p>
+    <p>
+      <strong>De vergelijking met de CP-heup</strong> sluit aan op het materiaal dat al bij
+      "Heupscreening bij CP" in deze app staat. Wat de revalidatiearts zelf doet, is algemene
+      kinderrevalidatie- en kinderorthopedische kennis, geen richtlijntekst.
+    </p>
+    <p>
+      Deze pagina's waren vanaf hier niet rechtstreeks te openen; de criteria komen uit zoekresultaten
+      die onderling overeenkwamen. Controleer bij twijfel tegen de bron zelf.
+    </p>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// HEUPDYSPLASIE (DDH) — beeldvormingsadvies
+//
+// Uit de FMS-richtlijn DDH bij kinderen onder één jaar en de JGZ-richtlijn
+// Heupdysplasie (2018):
+//
+//   Afwijkend lichamelijk onderzoek (abductie < 70 graden, abductieverschil
+//   >= 20 graden, en/of zichtbaar kniehoogteverschil)
+//     -> echo binnen twee weken, ongeacht de leeftijd
+//
+//   Alleen risicofactoren, geen afwijkend onderzoek
+//     -> echo op de (gecorrigeerde) leeftijd van drie maanden
+//
+//   Geen van beide
+//     -> op deze grond geen beeldvorming; klinische controle blijft
+//
+// De pagina bewaart niets van wat je aanvinkt.
+// ============================================================================
+
+function aangevinkt(soort) {
+  return [...document.querySelectorAll(`input[data-soort="${soort}"]`)].filter(i => i.checked).length;
+}
+
+function beoordeel() {
+  const doel = document.getElementById('ddUitkomst');
+  const lo = aangevinkt('lo');
+  const risico = aangevinkt('risico');
+
+  if (lo === 0 && risico === 0) {
+    doel.className = 'dd-uitkomst leeg';
+    doel.textContent = 'Vink hierboven aan wat van toepassing is, dan verschijnt hier het advies.';
+    return;
+  }
+
+  if (lo > 0) {
+    doel.className = 'dd-uitkomst spoed';
+    doel.innerHTML =
+      '<span class="dd-advies">Echo binnen twee weken — ongeacht de leeftijd</span>' +
+      'Het lichamelijk onderzoek is afwijkend. Dat wacht niet op de leeftijd van drie maanden en ' +
+      'ook niet op een volgend consult.' +
+      '<span class="dd-regel">Vermeld in de verwijzing welke bevinding je deed en aan welke zijde. ' +
+      'Bij een prematuur kind: reken met de gecorrigeerde leeftijd.</span>' +
+      (risico > 0
+        ? '<span class="dd-regel">Er zijn daarnaast ' + risico + ' risicofactor' +
+          (risico === 1 ? '' : 'en') + '; noem die er ook bij.</span>'
+        : '');
+    return;
+  }
+
+  doel.className = 'dd-uitkomst plan';
+  doel.innerHTML =
+    '<span class="dd-advies">Echo op de leeftijd van drie maanden</span>' +
+    risico + ' risicofactor' + (risico === 1 ? '' : 'en') + ' zonder afwijkend lichamelijk onderzoek. ' +
+    'Plan de echo op de (gecorrigeerde) leeftijd van drie maanden.' +
+    '<span class="dd-regel">Wordt het onderzoek in de tussentijd wél afwijkend, dan geldt alsnog: ' +
+    'binnen twee weken een echo, ongeacht de leeftijd.</span>';
+}
+
+document.querySelectorAll('.dd-vink input').forEach(i => {
+  i.addEventListener('change', beoordeel);
+});
+beoordeel();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

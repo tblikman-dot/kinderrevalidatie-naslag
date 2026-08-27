@@ -60,6 +60,7 @@ const DEFAULT_CATS = [
     directLinks: [
       { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html' },
       { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
+      { label: '👶 Heupdysplasie (DDH) — niet hetzelfde', url: 'heupdysplasie.html' },
       { label: '📱 HipScreen openen (MP meten)', url: 'HIPSCREEN' },
       { label: '⚙️ HipScreen opent niet? Instellen', url: 'hipscreen.html' },
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
@@ -83,10 +84,11 @@ const DEFAULT_CATS = [
   { id: 'comm', label: 'Communicatie & AAC', scope: 'Ondersteunde communicatie' },
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
-  { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom, beenlengteverschil',
-    zoekwoorden: 'beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi',
+  { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupdysplasie, beenlengteverschil, wervelkolom',
+    zoekwoorden: 'beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi heupdysplasie DDH Pavlik stuitligging abductiebeperking coxartrose',
     directLinks: [
       { label: '📏 Beenlengteverschil — verwijzen & beleid', url: 'beenlengte.html' },
+      { label: '👶 Heupdysplasie (DDH) — screenen & verwijzen', url: 'heupdysplasie.html' },
     ] },
   { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS' },
   { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal',
@@ -249,6 +251,48 @@ Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, 
 // eigen id; toegepaste ids worden onthouden, zodat een blok precies één keer
 // wordt aangevuld en je eigen aanpassingen nooit worden overschreven.
 const EXTRA_BLOKKEN = [
+  {
+    id: 'ddh-1',
+    cat: 'ortho',
+    html: `<h3>Heupdysplasie (DDH) bij kinderen</h3>
+<div class="bron">BRON: FMS-richtlijn "DDH (dysplastische heupontwikkeling) bij kinderen onder één jaar" (Richtlijnendatabase) en de JGZ-richtlijn Heupdysplasie (2018). De vergelijking met de CP-heup sluit aan op het materiaal bij "Heupscreening bij CP".</div>
+
+<p><strong>Wanneer beeldvorming</strong></p>
+<ul>
+<li><strong>Afwijkend lichamelijk onderzoek</strong> &mdash; abductie &lt; 70&deg;, abductieverschil &ge; 20&deg;, en/of zichtbaar kniehoogteverschil &rarr; <mark>echo binnen 2 weken, ongeacht de leeftijd</mark>.</li>
+<li><strong>Alleen risicofactoren</strong> &rarr; echo op de (gecorrigeerde) leeftijd van <mark>3 maanden</mark>.</li>
+<li>Risicofactoren: familieanamnese (DDH of coxartrose v&oacute;&oacute;r het 50e jaar bij een 1e- of 2e-graads familielid), stuitligging n&aacute; week 32 ongeacht de duur, stuitligging bij de bevalling, strak inbakeren met gestrekte heupen en knie&euml;n.</li>
+</ul>
+
+<p><strong>Waarom vroeg</strong></p>
+<ul>
+<li>Onbehandeld kan DDH leiden tot ernstige invaliditeit en vroege coxartrose.</li>
+<li>Laat behandelen &mdash; bij luxatie n&aacute; 3 maanden, zonder luxatie n&aacute; 6 maanden &mdash; is langduriger, invasiever en minder effectief.</li>
+<li>Ongeveer 3 op de 100 kinderen van 0&ndash;6 maanden heeft DDH. Bij prematuriteit: gecorrigeerde leeftijd aanhouden.</li>
+</ul>
+
+<p><strong>Behandeling en controle</strong></p>
+<ul>
+<li>Stabiele DDH: spreidbehandeling met de Pavlik-bandage, tenzij het kind daarvoor al te groot of te sterk is.</li>
+<li>Tijdens de behandeling elke 6 weken echocontrole tot de heup genormaliseerd is.</li>
+<li>Daarna controle rond 1 jaar zodra het kind goed loopt, en op 3 en 5 jaar. Normaal op 5 jaar &rarr; follow-up afsluiten.</li>
+<li>Avasculaire necrose is een bekende complicatie van de behandeling &mdash; mede daarom lopen die controles door.</li>
+</ul>
+
+<p><strong>Voor de revalidatiearts</strong></p>
+<ul>
+<li>Denk aan gemiste DDH bij een asymmetrisch looppatroon z&oacute;nder neurologische verklaring: manklopen, teken van Trendelenburg, beenlengteverschil, exorotatiestand. Bij dubbelzijdige luxatie vooral toegenomen lendenlordose en waggelen.</li>
+<li>Vraag bij een behandelde DDH in de voorgeschiedenis of de controles op 3 en 5 jaar zijn afgerond; restdysplasie blijkt soms pas dan. Niet afgemaakt &rarr; terugverwijzen.</li>
+<li>Opnieuw verwijzen bij pijn in lies of knie, afgenomen abductie, of een verslechterend looppatroon.</li>
+</ul>
+
+<p><strong>Niet verwarren met de heup bij CP</strong></p>
+<ul>
+<li>Bij CP is de heup bij de geboorte meestal normaal; de verplaatsing ontstaat p&aacute;s daarna en wordt meestal n&aacute; het 2e jaar zichtbaar.</li>
+<li><strong>Een normale babyecho zegt dus niets over de CP-heup.</strong> Daarvoor geldt een aparte surveillance op basis van GMFCS-niveau en het <strong>migratiepercentage volgens Reimers</strong>.</li>
+<li>Ander instrument, ander moment, andere oorzaak: bij DDH mechanisch en acetabulair, bij CP spastische spieren die de kop uit een normaal acetabulum duwen.</li>
+</ul>`,
+  },
   {
     id: 'beenlengte-1',
     cat: 'ortho',

@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v12';
+const CACHE_VERSIE = 'krn-v13';
 
 const APP_BESTANDEN = [
   './',
@@ -19,6 +19,7 @@ const APP_BESTANDEN = [
   './zenuwherstel.html',
   './hipscreen.html',
   './beenlengte.html',
+  './heupdysplasie.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
