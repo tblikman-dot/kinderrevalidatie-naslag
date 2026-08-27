@@ -354,15 +354,22 @@
       Na beide correcties daalt de reeks netjes naar 1,00.
     </p>
     <p>
+      <strong>De zetfout is nagerekend in de Multiplier-app zelf.</strong> Via <em>Bone Length</em>,
+      meisje, 3 jaar en 1 maand, invoer 100 cm, geeft die app 203,2 cm — dus een multiplier van
+      2,032, niet 3,03. De fout staat in de gepubliceerde tabel en niet in de app; deze pagina
+      rekent hetzelfde als de app.
+    </p>
+    <p>
       <strong>De vuistregel</strong> gebruikt de klassieke groeisnelheden rond de knie (distale femur
       ongeveer 10 mm per jaar, proximale tibia ongeveer 6 mm per jaar) en einde groei rond 14 jaar bij
       meisjes en 16 jaar bij jongens. Dat zijn breed gedeelde benaderingen, geen richtlijnwaarden — ze
       staan daarom instelbaar.
     </p>
     <p>
-      Ik heb geen toegang tot apps op je telefoon en kan de Multiplier-app dus niet inzien. Deze
-      tabel komt uit de publicatie die jij hebt aangeleverd, niet uit die app — al vermeldt het
-      artikel dat het dezelfde waarden zijn als de app gebruikt.
+      Deze tabel komt uit de publicatie, niet uit de Multiplier-app — die kan ik niet inzien. Het
+      artikel vermeldt dat het dezelfde waarden zijn, en de steekproef hierboven bevestigt dat.
+      Wil je een andere leeftijd controleren: <em>Bone Length</em> in de app, voer 100 cm in, en
+      deel de uitkomst door 100. Dat getal is de multiplier.
     </p>
   </div>
 </div>
@@ -405,7 +412,9 @@
 //    2,05 (bij 3,00) en 2,01 (bij 3,17) zijn. Twee onafhankelijke uitlezingen
 //    van de PDF geven allebei 3,03, dus het is een fout in de publicatie en
 //    geen leesfout. Hier staat 2,03. Met 3,03 zou een verschil van 2 cm als
-//    6 cm voorspeld worden in plaats van 4 cm.
+//    6 cm voorspeld worden in plaats van 4 cm. Nagerekend in de Multiplier-app
+//    zelf (Bone Length, meisje 3 jr 1 mnd, 100 cm in -> 203,2 cm uit): die
+//    gebruikt 2,032, dus de fout zit alleen in de gedrukte tabel.
 // 2. ONTBREKENDE RIJ. De gedrukte tabel loopt in vier kolommen van 51 rijen:
 //    204 van de 205 mogelijke leeftijden. Leeftijd 12,75 valt tussen kolom 3
 //    (eindigt op 12,67) en kolom 4 (begint op 12,83) en ontbreekt daardoor.
@@ -590,7 +599,7 @@ function rekenen() {
     if (leeftijd > tot) {
       let_op = `<span class="let">De tabel loopt voor ${geslacht === 'jongen' ? 'jongens' : 'meisjes'} tot ${komma(tot)} jaar. Daarboven is er geen groei meer, dus factor 1,00.</span>`;
     } else if (Math.abs(leeftijd - 3.08) < 0.001 && geslacht !== 'jongen') {
-      let_op = `<span class="let">Let op: in de gepubliceerde tabel staat hier ${MULT_ZETFOUT.gedrukt} afgedrukt. Dat is vrijwel zeker een zetfout — de buren zijn 2,05 en 2,01 — dus hier wordt ${MULT_ZETFOUT.gebruikt} gebruikt.</span>`;
+      let_op = `<span class="let">Let op: in de gepubliceerde tabel staat hier ${MULT_ZETFOUT.gedrukt} afgedrukt. Dat is een zetfout — de buren zijn 2,05 en 2,01, en de Multiplier-app zelf geeft hier 2,032 — dus hier wordt ${MULT_ZETFOUT.gebruikt} gebruikt.</span>`;
     } else if (Math.abs(leeftijd - 12.75) < 0.001) {
       let_op = `<span class="let">Let op: ${MULT_ONTBRAK.leeftijd} ontbreekt in de gepubliceerde tabel; deze factor is het midden tussen de buren.</span>`;
     }
