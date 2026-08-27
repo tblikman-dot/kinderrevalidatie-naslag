@@ -85,9 +85,10 @@ const DEFAULT_CATS = [
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
   { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupdysplasie, beenlengteverschil, wervelkolom',
-    zoekwoorden: 'beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi heupdysplasie DDH Pavlik stuitligging abductiebeperking coxartrose',
+    zoekwoorden: 'beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi groeisturing multiplier Paley skeletleeftijd botleeftijd heupdysplasie DDH Pavlik stuitligging abductiebeperking coxartrose',
     directLinks: [
       { label: '📏 Beenlengteverschil — verwijzen & beleid', url: 'beenlengte.html' },
+      { label: '📐 Groeisturing — hoe groot wordt het?', url: 'groeisturing.html' },
       { label: '👶 Heupdysplasie (DDH) — screenen & verwijzen', url: 'heupdysplasie.html' },
     ] },
   { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS' },

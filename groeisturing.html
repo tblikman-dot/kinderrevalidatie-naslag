@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Groeisturing bij beenlengteverschil</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .gr-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .gr-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .gr-terug:hover { text-decoration: underline; }
+
+  .gr-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .gr-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .gr-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 22px;
+  }
+  .gr-waarschuwing strong { display: block; margin-bottom: 3px; }
+
+  .gr-schakel {
+    display: flex; gap: 6px;
+    background: #EFEFEB;
+    padding: 4px; border-radius: 11px;
+    margin-bottom: 16px;
+  }
+  .gr-schakel button {
+    flex: 1; padding: 10px 8px;
+    border: none; border-radius: 8px;
+    background: transparent;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    line-height: 1.25;
+  }
+  .gr-schakel button.actief {
+    background: var(--paneel); color: var(--inkt);
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .gr-schakel .sub {
+    display: block; font-weight: 400; font-size: 10.5px;
+    color: var(--muted); margin-top: 1px;
+  }
+
+  .gr-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .gr-kaart h2 { font-size: 1.1rem; margin: 0 0 3px; }
+  .gr-kaart-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin: 0 0 14px;
+  }
+
+  .gr-veldnaam {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); margin: 14px 0 5px;
+  }
+  .gr-veldnaam:first-of-type { margin-top: 0; }
+  .gr-veldnaam em { font-weight: 400; font-style: normal; color: var(--muted); }
+
+  .gr-veld, .gr-keuze {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--inkt);
+  }
+  .gr-veld:focus, .gr-keuze:focus { outline: none; border-color: var(--accent); }
+  .gr-duo { display: flex; gap: 10px; }
+  .gr-duo > div { flex: 1; min-width: 0; }
+
+  .gr-meer { margin-top: 14px; border-top: 1px solid var(--lijn); padding-top: 6px; }
+  .gr-meer summary {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); cursor: pointer; padding: 6px 0;
+  }
+
+  .gr-uitkomst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-left: 5px solid var(--accent);
+  }
+  .gr-uitkomst h2 { font-size: 1.1rem; margin: 0 0 12px; }
+  .gr-groot {
+    font-family: system-ui, sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--accent); line-height: 1.2; margin-bottom: 4px;
+  }
+  .gr-onder {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted); line-height: 1.55;
+  }
+  .gr-regels {
+    margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.75;
+  }
+  .gr-regels div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .gr-regels span:first-child { color: var(--muted); white-space: nowrap; }
+  .gr-regels span:last-child { font-weight: 700; text-align: right; }
+
+  .gr-vlag {
+    border-radius: 10px; padding: 12px 14px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .gr-vlag strong { display: block; margin-bottom: 3px; }
+  .gr-vlag.groen  { background: #E3F3EA; color: #0B5C38; }
+  .gr-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .gr-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+
+  .gr-sectie { margin-top: 32px; }
+  .gr-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .gr-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+  .gr-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .gr-lijst li { margin-bottom: 9px; }
+  .gr-lijst li:last-child { margin-bottom: 0; }
+
+  .gr-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .gr-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .gr-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .gr-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .gr-bron p { margin: 0 0 9px; }
+  .gr-bron p:last-child { margin-bottom: 0; }
+  .gr-bron a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze rekenhulp werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Groeisturing</div>
+</header>
+
+<div class="gr-wrap">
+  <a class="gr-terug" href="beenlengte.html">← Terug naar beenlengteverschil</a>
+
+  <h1 class="gr-kop">Hoe groot wordt het, en is de tijd er nog?</h1>
+  <p class="gr-intro">
+    Een epifysiodese remt de groeischijf aan de lange kant. Dat werkt alleen zolang er groei te
+    remmen valt, dus de vraag is niet alleen hoe groot het verschil wordt maar ook of je nog op
+    tijd bent.
+  </p>
+
+  <div class="gr-waarschuwing">
+    <strong>Reken met de skeletleeftijd, niet met de kalenderleeftijd.</strong>
+    Deze methodes gaan uit van botleeftijd, bepaald op een handfoto. Bij een kind dat voor- of
+    achterloopt in rijping schuift de hele uitkomst mee. Weet je de skeletleeftijd niet, gebruik dan
+    de kalenderleeftijd en lees het antwoord als een grove schatting. De uitkomst is een hulpmiddel
+    om te zien of verwijzen nog zin heeft — de operatieplanning is aan de orthopeed. Vul hier geen
+    patiëntgegevens in; de pagina bewaart alleen je eigen instellingen.
+  </div>
+
+  <div class="gr-schakel" id="grSchakel">
+    <button type="button" data-modus="vuistregel" class="actief">
+      Vuistregel<span class="sub">rekent zelf, groeisnelheden instelbaar</span>
+    </button>
+    <button type="button" data-modus="multiplier">
+      Multiplier<span class="sub">jij levert de factor</span>
+    </button>
+  </div>
+
+  <div class="gr-kaart">
+    <h2 id="grKaartTitel"></h2>
+    <p class="gr-kaart-uitleg" id="grKaartUitleg"></p>
+
+    <div class="gr-duo">
+      <div>
+        <label class="gr-veldnaam" for="grGeslacht">Geslacht</label>
+        <select id="grGeslacht" class="gr-keuze">
+          <option value="meisje">Meisje</option>
+          <option value="jongen">Jongen</option>
+        </select>
+      </div>
+      <div>
+        <label class="gr-veldnaam" for="grLeeftijd">Skeletleeftijd <em>(jaar)</em></label>
+        <input type="number" id="grLeeftijd" class="gr-veld" inputmode="decimal" min="0" max="20" step="0.5" placeholder="bijv. 9">
+      </div>
+    </div>
+
+    <label class="gr-veldnaam" for="grVerschil">Huidig beenlengteverschil <em>(cm)</em></label>
+    <input type="number" id="grVerschil" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 2,5">
+
+    <div id="grMultiplierVeld" hidden>
+      <label class="gr-veldnaam" for="grFactor">Multiplier <em>(uit je Multiplier-app of de tabel)</em></label>
+      <input type="number" id="grFactor" class="gr-veld" inputmode="decimal" min="1" step="0.01" placeholder="bijv. 1,45">
+      <div class="gr-onder" style="margin-top:5px;">
+        De factor hoort bij dit geslacht en deze skeletleeftijd. Deze app levert de tabel niet —
+        zie de toelichting onderaan.
+      </div>
+    </div>
+
+    <div id="grVuistregelVeld">
+      <label class="gr-veldnaam" for="grToename">Gemeten toename <em>(cm per jaar, optioneel)</em></label>
+      <input type="number" id="grToename" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="leeg = verschil blijft gelijk">
+      <div class="gr-onder" style="margin-top:5px;">
+        Heb je twee metingen met een jaar ertussen, vul dan het verschil daartussen in. Dat maakt de
+        voorspelling veel betrouwbaarder dan aannemen dat het gelijk blijft.
+      </div>
+    </div>
+
+    <details class="gr-meer">
+      <summary>Groeicijfers aanpassen</summary>
+
+      <div class="gr-duo">
+        <div>
+          <label class="gr-veldnaam" for="grEindeM">Einde groei meisje <em>(jaar)</em></label>
+          <input type="number" id="grEindeM" class="gr-veld" inputmode="decimal" min="8" max="20" step="0.5" value="14">
+        </div>
+        <div>
+          <label class="gr-veldnaam" for="grEindeJ">Einde groei jongen <em>(jaar)</em></label>
+          <input type="number" id="grEindeJ" class="gr-veld" inputmode="decimal" min="8" max="20" step="0.5" value="16">
+        </div>
+      </div>
+
+      <div class="gr-duo">
+        <div>
+          <label class="gr-veldnaam" for="grFemur">Distale femur <em>(mm/jaar)</em></label>
+          <input type="number" id="grFemur" class="gr-veld" inputmode="decimal" min="1" step="0.5" value="10">
+        </div>
+        <div>
+          <label class="gr-veldnaam" for="grTibia">Proximale tibia <em>(mm/jaar)</em></label>
+          <input type="number" id="grTibia" class="gr-veld" inputmode="decimal" min="1" step="0.5" value="6">
+        </div>
+      </div>
+      <div class="gr-onder" style="margin-top:8px;">
+        Standaardwaarden zijn de klassieke vuistregel rond de knie. Ze verschillen per bron en per
+        kind; pas ze aan als jouw centrum andere getallen aanhoudt.
+      </div>
+    </details>
+  </div>
+
+  <div class="gr-uitkomst" id="grUitkomst"></div>
+
+  <div class="gr-sectie">
+    <h2>Hoe je dit leest</h2>
+    <ul class="gr-lijst">
+      <li><strong>Epifysiodese is de gebruikelijke keuze bij een voorspeld verschil van ongeveer 2 tot 5 cm.</strong> Daarboven komt verlengen in beeld, met een veel langer traject. Dat sluit aan op de indeling die je al bij beenlengteverschil hebt staan.</li>
+      <li><strong>De multiplier gaat uit van een vaste verhouding.</strong> De methode neemt aan dat de verhouding tussen het korte en het lange been gelijk blijft — dat geldt voor aangeboren verschillen. Bij een verschil door een doorgemaakte fractuur, infectie of groeistoornis klopt die aanname vaak niet, en zegt de gemeten toename per jaar meer.</li>
+      <li><strong>Remmen kan aan femur, tibia of allebei.</strong> Rond de knie levert de distale femur het meeste op. Bij een grotere correctie wordt vaak allebei geremd, wat ook de verhouding tussen boven- en onderbeen verandert.</li>
+      <li><strong>Een epifysiodese maakt het lange been niet korter</strong> — het houdt op met groeien terwijl het andere doorgaat. De correctie ontstaat dus geleidelijk, over de resterende groeijaren.</li>
+      <li><strong>Groeisturing met plaatjes is iets anders.</strong> Een hemi-epifysiodese met een achtplaatje corrigeert een standsafwijking zoals genu valgum of varum, niet een lengteverschil. Zelfde principe, andere indicatie.</li>
+    </ul>
+  </div>
+
+  <div class="gr-sectie">
+    <h2>Waar deze rekensom ophoudt</h2>
+    <ul class="gr-lijst">
+      <li><strong>De uitkomst is zo goed als de leeftijd die je invult.</strong> Botleeftijd kan bij een tiener een jaar of meer afwijken van de kalenderleeftijd, en dat scheelt zo een centimeter correctiepotentieel.</li>
+      <li><strong>Groeisnelheden zijn gemiddelden.</strong> Individuele variatie is groot, en de laatste groei verloopt niet lineair maar dooft uit.</li>
+      <li><strong>Eén meting voorspelt slecht.</strong> Serieel meten met dezelfde methode is de betrouwbaarste voorspeller die je zelf in handen hebt.</li>
+      <li><strong>Dit vervangt geen orthopedische planning.</strong> De orthopeed gebruikt hier de skeletleeftijd, groeicurven en zo nodig een straight-line-graph of de multipliertabellen voor.</li>
+    </ul>
+
+    <a class="gr-link" href="beenlengte.html">
+      📏 Terug naar beenlengteverschil
+      <span class="sub">Verwijscriteria, meten en wat je zelf doet</span>
+    </a>
+  </div>
+
+  <div class="gr-bron">
+    <p>
+      <strong>Waarom de multipliertabel hier niet in staat.</strong> De multipliermethode (Paley e.a.,
+      2000) werkt met een factor per geslacht en skeletleeftijd. Die tabellen ken ik niet met de
+      zekerheid die nodig is om ze in een rekenhulp te zetten, en verzonnen getallen zijn hier
+      gevaarlijker dan geen getallen. Daarom vul je de factor zelf in, uit je Multiplier-app of uit
+      de publicatie — de rekensom en de interpretatie doet deze pagina wel.
+      <a href="https://pubmed.ncbi.nlm.nih.gov/27357078/" target="_blank" rel="noopener">Over de methode</a>.
+    </p>
+    <p>
+      <strong>De vuistregel</strong> gebruikt de klassieke groeisnelheden rond de knie (distale femur
+      ongeveer 10 mm per jaar, proximale tibia ongeveer 6 mm per jaar) en einde groei rond 14 jaar bij
+      meisjes en 16 jaar bij jongens. Dat zijn breed gedeelde benaderingen, geen richtlijnwaarden — ze
+      staan daarom instelbaar.
+    </p>
+    <p>
+      Ik heb geen toegang tot apps op je telefoon en kan de Multiplier-app dus niet inzien of
+      uitlezen. Wat hier staat is nagebouwd uit de gepubliceerde methode, niet uit die app.
+    </p>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// GROEISTURING BIJ BEENLENGTEVERSCHIL
+//
+// Twee routes naar dezelfde vraag: hoe groot wordt het verschil bij einde groei,
+// en is er nog genoeg groei over om het met een epifysiodese te corrigeren.
+//
+// 1. MULTIPLIER (Paley e.a. 2000)
+//    verschil bij einde groei = huidig verschil x multiplier
+//    De multipliertabellen (per geslacht en skeletleeftijd) staan hier bewust
+//    NIET in: die ken ik niet met voldoende zekerheid, en een verzonnen tabel
+//    is hier schadelijker dan geen tabel. De gebruiker levert de factor.
+//
+// 2. VUISTREGEL
+//    resterende groei = einde groei - skeletleeftijd
+//    verschil bij einde groei = huidig + gemeten toename x resterende groei
+//    haalbare correctie = resterende groei x groeisnelheid van de geremde schijf
+//    uiterste leeftijd = einde groei - benodigde correctie / groeisnelheid
+//
+// Alle groeicijfers zijn instelbaar; het zijn benaderingen, geen richtlijn.
+// ============================================================================
+
+const SLEUTEL = 'krnGroeisturing';
+let modus = 'vuistregel';
+
+const TEKSTEN = {
+  vuistregel: {
+    titel: 'Rekenen met de vuistregel',
+    uitleg: 'Deze pagina rekent zelf, met instelbare groeisnelheden rond de knie.',
+  },
+  multiplier: {
+    titel: 'Rekenen met de multiplier',
+    uitleg: 'Zoek de factor op voor dit geslacht en deze skeletleeftijd en vul hem hieronder in.',
+  },
+};
+
+function getal(id) {
+  const el = document.getElementById(id);
+  if (!el || el.value.trim() === '') return null;
+  const v = parseFloat(el.value.replace(',', '.'));
+  return isNaN(v) ? null : v;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function komma(n, cijfers) {
+  return n.toFixed(cijfers === undefined ? 1 : cijfers).replace('.', ',');
+}
+
+function laadKeuze() {
+  try {
+    const rauw = localStorage.getItem(SLEUTEL);
+    if (!rauw) return;
+    const b = JSON.parse(rauw);
+    if (b.modus === 'vuistregel' || b.modus === 'multiplier') modus = b.modus;
+    ['grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => {
+      if (b[id] !== undefined && b[id] !== null && b[id] !== '') document.getElementById(id).value = b[id];
+    });
+  } catch (e) { /* privémodus */ }
+}
+
+function bewaarKeuze() {
+  try {
+    const b = { modus };
+    ['grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => { b[id] = document.getElementById(id).value; });
+    localStorage.setItem(SLEUTEL, JSON.stringify(b));
+  } catch (e) { /* niets aan te doen */ }
+}
+
+function tekenSchakel() {
+  document.querySelectorAll('#grSchakel button').forEach(b => {
+    b.classList.toggle('actief', b.dataset.modus === modus);
+  });
+  document.getElementById('grKaartTitel').textContent = TEKSTEN[modus].titel;
+  document.getElementById('grKaartUitleg').textContent = TEKSTEN[modus].uitleg;
+  document.getElementById('grMultiplierVeld').hidden = (modus !== 'multiplier');
+  document.getElementById('grVuistregelVeld').hidden = (modus !== 'vuistregel');
+}
+
+function leeg(bericht) {
+  document.getElementById('grUitkomst').innerHTML =
+    '<h2>Uitkomst</h2><p class="gr-onder">' + esc(bericht) + '</p>';
+}
+
+function rekenen() {
+  const geslacht = document.getElementById('grGeslacht').value;
+  const leeftijd = getal('grLeeftijd');
+  const huidig = getal('grVerschil');
+
+  if (leeftijd === null || huidig === null || leeftijd < 0 || huidig < 0) {
+    leeg('Vul de leeftijd en het huidige verschil in, dan verschijnt hier de uitkomst.');
+    return;
+  }
+
+  const eindeGroei = (geslacht === 'meisje') ? getal('grEindeM') : getal('grEindeJ');
+  const femurMm = getal('grFemur');
+  const tibiaMm = getal('grTibia');
+  if (!eindeGroei || !femurMm || !tibiaMm) {
+    leeg('Vul geldige groeicijfers in bij "Groeicijfers aanpassen".');
+    return;
+  }
+
+  const jarenGroei = Math.max(0, eindeGroei - leeftijd);
+
+  // voorspeld verschil bij einde groei
+  let voorspeld, hoe;
+  if (modus === 'multiplier') {
+    const factor = getal('grFactor');
+    if (factor === null || factor <= 0) {
+      leeg('Vul de multiplier in die hoort bij dit geslacht en deze skeletleeftijd.');
+      return;
+    }
+    voorspeld = huidig * factor;
+    hoe = `${komma(huidig)} cm × multiplier ${komma(factor, 2)}`;
+  } else {
+    const toename = getal('grToename') || 0;
+    voorspeld = huidig + toename * jarenGroei;
+    hoe = toename > 0
+      ? `${komma(huidig)} cm plus ${komma(toename)} cm per jaar over ${komma(jarenGroei)} jaar groei`
+      : `${komma(huidig)} cm, aangenomen dat het verschil gelijk blijft`;
+  }
+
+  const voorspeldMm = voorspeld * 10;
+  const correctieFemur = jarenGroei * femurMm / 10;              // cm
+  const correctieBeide = jarenGroei * (femurMm + tibiaMm) / 10;  // cm
+
+  // uiterste leeftijd om deze correctie nog te halen
+  const uitersteFemur = eindeGroei - voorspeldMm / femurMm;
+  const uitersteBeide = eindeGroei - voorspeldMm / (femurMm + tibiaMm);
+
+  let vlag;
+  if (jarenGroei <= 0) {
+    vlag = `<div class="gr-vlag rood">
+      <strong>De groei is voorbij</strong>
+      Er valt niets meer te remmen, dus een epifysiodese is geen optie meer. Wat overblijft is
+      verlengen of verkorten — zwaardere ingrepen met een langer traject. Overleg met de orthopeed
+      wat hier nog zinvol is.</div>`;
+  } else if (voorspeld <= correctieFemur) {
+    vlag = `<div class="gr-vlag groen">
+      <strong>Ruim op tijd</strong>
+      Met alleen de distale femur is deze correctie nog haalbaar. Doe je niets, dan is
+      ${esc(komma(uitersteFemur))} jaar ongeveer het laatste moment waarop het met de femur alleen
+      nog lukt.</div>`;
+  } else if (voorspeld <= correctieBeide) {
+    vlag = `<div class="gr-vlag oranje">
+      <strong>Krap — femur alleen is niet meer genoeg</strong>
+      Voor deze correctie moeten femur én tibia geremd worden. Het laatste moment daarvoor ligt rond
+      ${esc(komma(uitersteBeide))} jaar. Verwijs niet af te wachten.</div>`;
+  } else {
+    vlag = `<div class="gr-vlag rood">
+      <strong>Te groot voor remmen alleen</strong>
+      Zelfs met femur én tibia geremd blijft er verschil over. Verlengen komt dan in beeld, eventueel
+      gecombineerd. Dit hoort thuis bij een orthopeed met ervaring in beenlengtechirurgie.</div>`;
+  }
+
+  // waar het in de behandelindeling valt
+  let plaats = '';
+  if (voorspeld < 2) {
+    plaats = 'Onder de 2 cm wordt meestal niet geopereerd; een schoenverhoging volstaat vaak.';
+  } else if (voorspeld <= 5) {
+    plaats = 'Tussen ongeveer 2 en 5 cm is een epifysiodese de gebruikelijke keuze.';
+  } else {
+    plaats = 'Boven ongeveer 5 cm komt verlengen in beeld, met een aanzienlijk langer traject.';
+  }
+
+  document.getElementById('grUitkomst').innerHTML = `
+    <h2>Verschil bij einde groei</h2>
+    <div class="gr-groot">${esc(komma(voorspeld))} cm</div>
+    <div class="gr-onder">${esc(hoe)}</div>
+
+    <div class="gr-regels">
+      <div><span>Resterende groei</span><span>${esc(komma(jarenGroei))} jaar</span></div>
+      <div><span>Correctie via femur</span><span>${esc(komma(correctieFemur))} cm</span></div>
+      <div><span>Via femur + tibia</span><span>${esc(komma(correctieBeide))} cm</span></div>
+      <div><span>Einde groei bij</span><span>${esc(komma(eindeGroei))} jaar</span></div>
+    </div>
+
+    ${vlag}
+    <div class="gr-onder" style="margin-top:12px;">${esc(plaats)}</div>`;
+}
+
+document.getElementById('grSchakel').addEventListener('click', e => {
+  const knop = e.target.closest('button');
+  if (!knop || knop.dataset.modus === modus) return;
+  modus = knop.dataset.modus;
+  bewaarKeuze();
+  tekenSchakel();
+  rekenen();
+});
+
+['grGeslacht', 'grLeeftijd', 'grVerschil', 'grFactor', 'grToename',
+ 'grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    if (['grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].indexOf(id) !== -1) bewaarKeuze();
+    rekenen();
+  });
+  el.addEventListener('change', rekenen);
+});
+
+laadKeuze();
+tekenSchakel();
+rekenen();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
