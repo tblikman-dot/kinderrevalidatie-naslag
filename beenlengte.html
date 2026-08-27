@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Beenlengteverschil bij kinderen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .bl-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .bl-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .bl-terug:hover { text-decoration: underline; }
+
+  .bl-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .bl-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  /* --- verwijshulp --- */
+  .bl-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .bl-kaart h2 { font-size: 1.1rem; margin: 0 0 3px; }
+  .bl-kaart-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin: 0 0 14px;
+  }
+
+  .bl-veldnaam {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); margin: 14px 0 5px;
+  }
+  .bl-veldnaam:first-of-type { margin-top: 0; }
+  .bl-veldnaam em { font-weight: 400; font-style: normal; color: var(--muted); }
+
+  .bl-veld {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--inkt);
+  }
+  .bl-veld:focus { outline: none; border-color: var(--accent); }
+  .bl-duo { display: flex; gap: 10px; }
+  .bl-duo > div { flex: 1; min-width: 0; }
+
+  .bl-uitkomst {
+    border-radius: 12px;
+    padding: 15px 17px;
+    margin-top: 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.6;
+  }
+  .bl-uitkomst.leeg { background: #F3F3F0; color: var(--muted); font-size: 13.5px; }
+  .bl-uitkomst.verwijzen { background: #FBEAE5; color: #8E3617; }
+  .bl-uitkomst.controle  { background: #E3F3EA; color: #0B5C38; }
+  .bl-advies {
+    font-size: 1.15rem; font-weight: 800;
+    display: block; margin-bottom: 5px;
+  }
+  .bl-uitkomst .bl-regel { display: block; margin-top: 7px; }
+
+  /* --- secties --- */
+  .bl-sectie { margin-top: 32px; }
+  .bl-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .bl-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .bl-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .bl-lijst li { margin-bottom: 9px; }
+  .bl-lijst li:last-child { margin-bottom: 0; }
+
+  .bl-tabel-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+  }
+  table.bl-tabel {
+    border-collapse: collapse;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    min-width: 100%;
+  }
+  .bl-tabel th, .bl-tabel td {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--lijn);
+    text-align: left;
+    vertical-align: top;
+  }
+  .bl-tabel thead th {
+    font-size: 11px; font-weight: 800;
+    color: var(--muted); white-space: nowrap;
+  }
+  .bl-tabel td.bl-maat { font-weight: 800; color: var(--accent); white-space: nowrap; }
+
+  .bl-vlag {
+    background: #FBEAE5;
+    border-left: 4px solid #B3441E;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    color: #6E2B12;
+    margin-top: 10px;
+  }
+  .bl-vlag strong { display: block; margin-bottom: 4px; font-size: 14.5px; }
+
+  .bl-praktijk {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 12px;
+  }
+
+  .bl-punten {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.6;
+    margin: 10px 0 0; padding-left: 20px;
+  }
+  .bl-punten li { margin-bottom: 4px; }
+
+  .bl-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 24px;
+    line-height: 1.6;
+  }
+  .bl-bron p { margin: 0 0 9px; }
+  .bl-bron p:last-child { margin-bottom: 0; }
+  .bl-bron a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door; externe links niet.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Beenlengteverschil</div>
+</header>
+
+<div class="bl-wrap">
+  <a class="bl-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="bl-kop">Beenlengteverschil bij kinderen</h1>
+  <p class="bl-intro">
+    De verwijsgrens hangt af van de leeftijd, en de tijd dringt: een epifysiodese moet
+    ruim vóór het einde van de groei gepland worden. Te laat verwijzen kost die optie.
+  </p>
+
+  <div class="bl-kaart">
+    <h2>Moet dit kind naar de orthopeed?</h2>
+    <p class="bl-kaart-uitleg">
+      Volgens de JGZ-richtlijn Extremiteiten. Vul de leeftijd en het gemeten verschil in.
+    </p>
+
+    <div class="bl-duo">
+      <div>
+        <label class="bl-veldnaam" for="blLeeftijd">Leeftijd <em>(jaren)</em></label>
+        <input type="number" id="blLeeftijd" class="bl-veld" inputmode="decimal" min="0" max="18" step="0.5" placeholder="bijv. 7">
+      </div>
+      <div>
+        <label class="bl-veldnaam" for="blVerschil">Verschil <em>(cm)</em></label>
+        <input type="number" id="blVerschil" class="bl-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 1,5">
+      </div>
+    </div>
+
+    <div class="bl-uitkomst leeg" id="blUitkomst">
+      Vul beide velden in, dan verschijnt hier het advies.
+    </div>
+  </div>
+
+  <div class="bl-sectie">
+    <h2>Waarom de tijd dringt</h2>
+    <p class="bl-sectie-uitleg">
+      De behandeling die het minst ingrijpend is, werkt alleen zolang er nog groei over is.
+    </p>
+    <ul class="bl-lijst">
+      <li><strong>Einde groei:</strong> meisjes rond de 14 jaar, of 1 tot 2 jaar na de menarche. Jongens rond de 16 jaar.</li>
+      <li><strong>De laatste groeispurt</strong> valt bij meisjes ruwweg vanaf hun elfde, bij jongens vanaf hun veertiende.</li>
+      <li><strong>Een epifysiodese remt de groei van het lange been.</strong> Dat werkt dus alleen als er nog voldoende groei te remmen valt — de timing luistert nauw en wordt door de orthopeed berekend. Verwijs daarom liever te vroeg dan te laat.</li>
+      <li><strong>Is de groei voorbij, dan blijven alleen verlengen of verkorten over</strong> — zwaardere ingrepen met een langer traject.</li>
+      <li><strong>Kijk naar het beloop, niet naar één meting.</strong> Blijft het verschil over 6 tot 12 maanden gelijk, dan is verdere toename onwaarschijnlijk. Neemt het toe, dan is dat op zichzelf een reden om te verwijzen, ook onder de afkapwaarde.</li>
+    </ul>
+  </div>
+
+  <div class="bl-sectie">
+    <h2>Wat de orthopeed doet, per grootte</h2>
+    <p class="bl-praktijk">
+      Deze indeling komt uit een regionale nascholingsavond orthopedie (Groningen, 6 oktober 2025),
+      niet uit een richtlijn. Handig om te weten wat je patiënt te wachten staat en wat je kunt
+      uitleggen — de indicatie stelt de orthopeed.
+    </p>
+    <div class="bl-tabel-scroll">
+      <table class="bl-tabel">
+        <thead>
+          <tr><th>Verschil</th><th>Wat er meestal gebeurt</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="bl-maat">0 – 2,5 cm</td><td>Schoenverhoging</td></tr>
+          <tr><td class="bl-maat">2,5 – 5 cm</td><td>Epifysiodese (het sluiten van de groeischijf aan de lange kant), beenverlenging of beenverkorting</td></tr>
+          <tr><td class="bl-maat">5 – 10 cm</td><td>Gecombineerde chirurgie</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="bl-punten">
+      <li>Verlengen gebeurt met callusdistractie: na een osteotomie wordt het bot millimeter voor millimeter uit elkaar gedraaid, waarna het nieuwe bot uithardt. Een traject van maanden, met een forse belasting voor kind en gezin.</li>
+      <li>Deze grenzen zijn richtinggevend, geen afkapwaarden. Wat iemand ervaart hangt ook af van de oorzaak, de stand van heup en knie en wat het kind wil doen.</li>
+    </ul>
+  </div>
+
+  <div class="bl-sectie">
+    <h2>Wat je zelf doet</h2>
+    <p class="bl-sectie-uitleg">
+      Het deel dat bij jou blijft liggen, ook als er verwezen is.
+    </p>
+    <ul class="bl-lijst">
+      <li><strong>Zoek de oorzaak.</strong> Beenlengteverschil is een bevinding, geen diagnose. Denk aan een doorgemaakte fractuur met groeistoornis, infectie, JIA, een aangeboren afwijking, een neurologische oorzaak (bij hemiplegische CP is het aangedane been meestal korter), of overgroei.</li>
+      <li><strong>Scheid echte van schijnbare verkorting.</strong> Een bekkenscheefstand door een adductie- of abductiecontractuur, een knieflexiecontractuur of een equinusstand geeft een verschil in stand zonder dat het bot korter is. Dat vraagt een andere aanpak dan een verhoging.</li>
+      <li><strong>Schoenverhoging: bouw op en corrigeer niet in één keer volledig.</strong> Bij een verschil dat er al lang zit, is een deelcorrectie vaak beter verdragen. Tot ongeveer een centimeter kan het in de schoen; daarboven onder de zool, anders komt de voet uit de schoen te staan.</li>
+      <li><strong>Let op wat je met de enkel doet.</strong> Alleen de hak verhogen zet de voet in plantairflexie; over de hele lengte verhogen houdt de enkelstand neutraal. Bij een bestaande equinus of een orthese luistert dat nauw.</li>
+      <li><strong>Meet met een vast protocol en leg vast hoe.</strong> Alleen dan zegt de volgende meting iets. Noteer methode, datum en of het kind stond of lag.</li>
+      <li><strong>Bespreek de tijdlijn met ouders.</strong> Dat er nu niets hoeft, betekent niet dat er nooit iets moet. Juist bij een jong kind is het beloop de reden om terug te zien.</li>
+    </ul>
+  </div>
+
+  <div class="bl-sectie">
+    <h2>Rode vlaggen</h2>
+    <div class="bl-vlag">
+      <strong>Segmentale overgroei of hemihypertrofie</strong>
+      Is niet één been kórter maar het andere langer én dikker, denk dan aan een overgroeisyndroom.
+      Bij een aantal daarvan is er een verhoogd risico op embryonale tumoren, waaronder de
+      Wilms-tumor, en wordt periodieke echoscreening van de buik geadviseerd. Dat is een verwijzing
+      naar de kinderarts of klinisch geneticus, náást de orthopeed — en die verwijzing heeft haast.
+    </div>
+    <ul class="bl-punten">
+      <li>Ook alarmerend: een verschil dat snel toeneemt, nachtelijke pijn, zwelling, of een verschil dat opkomt na een doorgemaakte infectie of fractuur.</li>
+      <li>Een vaatmalformatie kan eveneens overgroei van een extremiteit geven.</li>
+    </ul>
+  </div>
+
+  <div class="bl-sectie">
+    <h2>Meten</h2>
+    <p class="bl-sectie-uitleg">
+      Klinisch voor het beloop, radiologisch als er een besluit van afhangt.
+    </p>
+    <ul class="bl-lijst">
+      <li><strong>Blokjesmethode.</strong> Kind staat, jij legt plankjes onder het korte been tot de bekkenkammen horizontaal staan. Meet het functionele verschil, inclusief wat de voet en het bekken bijdragen — precies wat je nodig hebt om een verhoging te bepalen.</li>
+      <li><strong>Meetlint, liggend.</strong> Van de spina iliaca anterior superior naar de mediale malleolus geeft de werkelijke lengte; van de navel naar de mediale malleolus de schijnbare. Verschillen die twee, dan zit er iets in het bekken of in een contractuur.</li>
+      <li><strong>Test van Galeazzi.</strong> Kind op de rug, heupen en knieën gebogen, voeten naast elkaar op de bank. Staat de ene knie hoger, dan zit de verkorting in het femur; staat de ene knie verder naar voren, dan in de tibia.</li>
+      <li><strong>Radiologisch</strong> op een staande opname van de hele onderste extremiteit: van de top van de femurkop tot het midden van het tibiaplafond is de beenlengte. De mediale femurcondyl splitst dat in een femorale en een tibiale lengte, zodat je weet wáár het verschil zit — dat bepaalt mee welke ingreep in aanmerking komt.</li>
+    </ul>
+  </div>
+
+  <div class="bl-bron">
+    <p>
+      <strong>Verwijscriteria:</strong> JGZ-richtlijn Extremiteiten (Nederlands Centrum Jeugdgezondheid),
+      module 2.3.6 Beenlengteverschil.
+      <a href="https://www.jgzrichtlijnen.nl/richtlijn/jgz-richtlijn-extremiteiten/2-kennismodule-achtergrondinformatie/2-3-standsafwijkingen/2-3-6-beenlengteverschil/" target="_blank" rel="noopener">Bekijk de module</a>.
+      Let op: er bestaat <em>geen</em> aparte NOV- of FMS-richtlijn over beenlengteverschil; dit is de
+      Nederlandse bron waarin de verwijsgrenzen staan.
+    </p>
+    <p>
+      <strong>Behandelindeling per grootte en de groeitijdlijn:</strong> regionale nascholingsavond
+      orthopedie, Groningen, 6 oktober 2025 — praktijkinformatie, geen richtlijn. Namen van sprekers
+      bewust weggelaten.
+    </p>
+    <p>
+      <strong>Meten, oorzaken, schoenverhoging en rode vlaggen:</strong> algemene kinderorthopedische
+      en revalidatiegeneeskundige kennis. Voor de schoenverhoging is de onderbouwing beperkt; dat is
+      grotendeels praktijk. Controleer bij twijfel tegen je eigen bronnen.
+    </p>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// BEENLENGTEVERSCHIL — verwijshulp
+//
+// Verwijscriteria uit de JGZ-richtlijn Extremiteiten, module 2.3.6:
+//   < 10 jaar : verschil < 1 cm  -> hercontrole na 6-12 maanden
+//               verschil >= 1 cm -> verwijzen naar (kinder)orthopeed
+//   >= 10 jaar: verschil < 2 cm  -> geen verwijzing nodig, zo nodig hermeten
+//                                   na 6-12 maanden; blijft het constant, dan
+//                                   is verdere toename zeer onwaarschijnlijk
+//               verschil >= 2 cm -> verwijzen naar (kinder)orthopeed
+//
+// De pagina bewaart niets van wat je invult; er staan geen patiëntgegevens in.
+// ============================================================================
+
+function getal(id) {
+  const v = parseFloat(document.getElementById(id).value.replace(',', '.'));
+  return isNaN(v) ? null : v;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function komma(n) {
+  return String(n).replace('.', ',');
+}
+
+function beoordeel() {
+  const doel = document.getElementById('blUitkomst');
+  const leeftijd = getal('blLeeftijd');
+  const verschil = getal('blVerschil');
+
+  if (leeftijd === null || verschil === null || leeftijd < 0 || verschil < 0) {
+    doel.className = 'bl-uitkomst leeg';
+    doel.textContent = 'Vul beide velden in, dan verschijnt hier het advies.';
+    return;
+  }
+
+  const jong = leeftijd < 10;
+  const grens = jong ? 1 : 2;
+  const groep = jong ? 'jonger dan 10 jaar' : '10 jaar of ouder';
+  const verwijzen = verschil >= grens;
+
+  if (verwijzen) {
+    doel.className = 'bl-uitkomst verwijzen';
+    doel.innerHTML =
+      '<span class="bl-advies">Verwijzen naar de (kinder)orthopeed</span>' +
+      `${esc(komma(verschil))} cm bij een kind van ${esc(komma(leeftijd))} jaar — ` +
+      `${groep}, dus de grens ligt bij ${grens} cm.` +
+      '<span class="bl-regel">Vermeld in de verwijzing hoe je hebt gemeten, sinds wanneer het verschil ' +
+      'bestaat en of het toeneemt. Bij een jong kind is de timing van een eventuele epifysiodese ' +
+      'de reden dat dit niet kan wachten.</span>';
+  } else {
+    doel.className = 'bl-uitkomst controle';
+    doel.innerHTML =
+      '<span class="bl-advies">Nu geen verwijzing — hercontrole</span>' +
+      `${esc(komma(verschil))} cm bij een kind van ${esc(komma(leeftijd))} jaar — ` +
+      `${groep}, dus onder de grens van ${grens} cm.` +
+      '<span class="bl-regel">Meet over 6 tot 12 maanden opnieuw, met dezelfde methode. ' +
+      'Blijft het verschil gelijk, dan is verdere toename onwaarschijnlijk. Neemt het toe, ' +
+      'verwijs dan alsnog — ook onder de afkapwaarde.</span>' +
+      (verschil > 0
+        ? '<span class="bl-regel">Overweeg intussen een schoenverhoging als het kind er last van heeft; ' +
+          'dat staat los van de verwijsvraag.</span>'
+        : '');
+  }
+}
+
+['blLeeftijd', 'blVerschil'].forEach(id => {
+  document.getElementById(id).addEventListener('input', beoordeel);
+});
+beoordeel();
+
+// service worker: pagina blijft werken zonder internet
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

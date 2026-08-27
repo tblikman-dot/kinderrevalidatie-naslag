@@ -83,7 +83,11 @@ const DEFAULT_CATS = [
   { id: 'comm', label: 'Communicatie & AAC', scope: 'Ondersteunde communicatie' },
   { id: 'hulp', label: 'Hulpmiddelen & voorzieningen', scope: 'Rolstoelen, orthesen, WMO' },
   { id: 'pijn', label: 'Pijn bij kinderen', scope: '' },
-  { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom' },
+  { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupen, wervelkolom, beenlengteverschil',
+    zoekwoorden: 'beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi',
+    directLinks: [
+      { label: '📏 Beenlengteverschil — verwijzen & beleid', url: 'beenlengte.html' },
+    ] },
   { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS' },
   { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal',
     directLinks: [
@@ -245,6 +249,48 @@ Let op: dit is de praktijkafspraak van dit team op basis van onderling overleg, 
 // eigen id; toegepaste ids worden onthouden, zodat een blok precies één keer
 // wordt aangevuld en je eigen aanpassingen nooit worden overschreven.
 const EXTRA_BLOKKEN = [
+  {
+    id: 'beenlengte-1',
+    cat: 'ortho',
+    html: `<h3>Beenlengteverschil bij kinderen</h3>
+<div class="bron">BRON: verwijscriteria uit de JGZ-richtlijn Extremiteiten (NCJ), module 2.3.6 Beenlengteverschil. Er bestaat g&eacute;&eacute;n aparte NOV- of FMS-richtlijn hierover. De behandelindeling per grootte en de groeitijdlijn komen uit een regionale nascholingsavond orthopedie (Groningen, 6 oktober 2025) &mdash; praktijkinformatie, geen richtlijn; namen van sprekers bewust weggelaten.</div>
+
+<p><strong>Wanneer verwijzen naar de (kinder)orthopeed</strong></p>
+<ul>
+<li><strong>Kind jonger dan 10 jaar:</strong> verschil <mark>&ge; 1 cm</mark> &rarr; verwijzen. Daaronder: opnieuw meten na 6&ndash;12 maanden.</li>
+<li><strong>Kind van 10 jaar of ouder:</strong> verschil <mark>&ge; 2 cm</mark> &rarr; verwijzen. Daaronder geen verwijzing nodig; zo nodig hermeten na 6&ndash;12 maanden.</li>
+<li>Blijft het verschil bij hermeten gelijk, dan is verdere toename zeer onwaarschijnlijk. <strong>Neemt het toe, verwijs dan ook onder de afkapwaarde.</strong></li>
+</ul>
+
+<p><strong>Waarom de timing telt</strong></p>
+<ul>
+<li>Einde groei: meisjes rond 14 jaar (of 1&ndash;2 jaar na de menarche), jongens rond 16 jaar.</li>
+<li>Laatste groeispurt: meisjes vanaf ongeveer 11 jaar, jongens vanaf ongeveer 14 jaar.</li>
+<li>Een epifysiodese remt de groei aan de lange kant en werkt dus alleen zolang er groei over is. Te laat verwijzen kost die optie; dan blijven verlengen of verkorten over.</li>
+</ul>
+
+<p><strong>Behandeling per grootte</strong> <span class="bron" style="display:inline">(regio-avond, richtinggevend)</span></p>
+<ul>
+<li><strong>0&ndash;2,5 cm:</strong> schoenverhoging</li>
+<li><strong>2,5&ndash;5 cm:</strong> epifysiodese, beenverlenging of beenverkorting</li>
+<li><strong>5&ndash;10 cm:</strong> gecombineerde chirurgie</li>
+<li>Verlengen gaat via callusdistractie &mdash; een traject van maanden.</li>
+</ul>
+
+<p><strong>Rode vlag: segmentale overgroei</strong></p>
+<ul>
+<li>Is het andere been niet korter maar <strong>langer &eacute;n dikker</strong>, denk dan aan een overgroeisyndroom. Bij een aantal daarvan is er een verhoogd risico op embryonale tumoren (o.a. Wilms-tumor) en wordt echoscreening van de buik geadviseerd.</li>
+<li>Dat is een verwijzing naar kinderarts of klinisch geneticus, n&aacute;&aacute;st de orthopeed &mdash; en die heeft haast.</li>
+</ul>
+
+<p><strong>Wat je zelf doet</strong></p>
+<ul>
+<li>Zoek de oorzaak: doorgemaakte fractuur met groeistoornis, infectie, JIA, aangeboren afwijking, neurologisch (bij hemiplegische CP is het aangedane been meestal korter), of overgroei.</li>
+<li>Scheid <strong>echte</strong> van <strong>schijnbare</strong> verkorting: bekkenscheefstand door een adductiecontractuur, knieflexiecontractuur of equinus geeft een standsverschil zonder korter bot.</li>
+<li>Schoenverhoging: opbouwen, niet in één keer volledig corrigeren. Tot ongeveer 1 cm in de schoen, daarboven onder de zool. Alleen de hak verhogen zet de voet in plantairflexie &mdash; over de hele lengte houdt de enkelstand neutraal.</li>
+<li>Meet met een vast protocol en leg vast h&oacute;e je mat, anders zegt de volgende meting niets.</li>
+</ul>`,
+  },
   {
     id: 'ob-cp-heup-1',
     cat: 'heup',
