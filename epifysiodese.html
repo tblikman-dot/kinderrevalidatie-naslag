@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Epifysiodese-planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  :root {
+    --m1: #0f4c5c;   /* multiplier */
+    --m2: #a4551f;   /* White-Menelaus */
+  }
+
+  .ep-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .ep-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .ep-terug:hover { text-decoration: underline; }
+
+  .ep-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .ep-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .ep-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 22px;
+  }
+  .ep-waarschuwing strong { display: block; margin-bottom: 3px; }
+
+  .ep-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .ep-kaart h2 { font-size: 1.1rem; margin: 0 0 3px; }
+  .ep-kaart-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin: 0 0 14px;
+  }
+
+  .ep-groep {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .09em; text-transform: uppercase;
+    color: var(--muted);
+    margin: 20px 0 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--lijn);
+  }
+  .ep-groep:first-child { margin-top: 0; }
+
+  .ep-veldnaam {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); margin: 12px 0 5px;
+  }
+  .ep-veldnaam em { font-weight: 400; font-style: normal; color: var(--muted); }
+
+  .ep-veld, .ep-keuze {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--inkt);
+  }
+  .ep-veld:focus, .ep-keuze:focus { outline: none; border-color: var(--accent); }
+
+  .ep-duo { display: flex; gap: 10px; }
+  .ep-duo > div { flex: 1; min-width: 0; }
+  .ep-duo .ep-veldnaam { margin-top: 12px; }
+
+  .ep-radios {
+    display: flex; gap: 8px; margin-top: 6px;
+  }
+  .ep-radios label {
+    flex: 1;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    padding: 10px 11px;
+    display: flex; align-items: center; gap: 7px;
+    cursor: pointer;
+  }
+  .ep-radios label.aan { border-color: var(--accent); background: var(--accent-zacht); font-weight: 700; }
+
+  .ep-hint {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.55; margin-top: 7px;
+  }
+  .ep-hint .let { color: #8A5B00; }
+
+  .ep-meer { margin-top: 16px; border-top: 1px solid var(--lijn); padding-top: 6px; }
+  .ep-meer summary {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); cursor: pointer; padding: 6px 0;
+  }
+
+  .ep-knop {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--inkt); cursor: pointer;
+  }
+  .ep-knop:hover { border-color: var(--accent); background: var(--accent-zacht); }
+
+  .ep-banner {
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .ep-banner strong { display: block; margin-bottom: 3px; font-size: 14.5px; }
+  .ep-banner.groen  { background: #E3F3EA; color: #0B5C38; }
+  .ep-banner.oranje { background: #FBF3DC; color: #6B4E06; }
+  .ep-banner.rood   { background: #FBEAE5; color: #8E3617; }
+
+  .ep-tegels {
+    display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 9px; margin-bottom: 12px;
+  }
+  .ep-tegel {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 12px 13px;
+    font-family: system-ui, sans-serif;
+  }
+  .ep-tegel .label {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+  }
+  .ep-tegel .waarde { font-size: 1.2rem; font-weight: 800; color: var(--accent); line-height: 1.2; }
+  .ep-tegel .noot { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin-top: 3px; }
+  .ep-tegel.nadruk { border-left: 5px solid var(--accent); }
+
+  .ep-tabel-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .ep-tabel {
+    border-collapse: collapse; width: 100%;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; min-width: 420px;
+  }
+  .ep-tabel th, .ep-tabel td {
+    border: 1px solid var(--lijn);
+    padding: 8px 9px; text-align: left; vertical-align: top;
+  }
+  .ep-tabel th { background: #F3F3F0; font-weight: 700; font-size: 12px; }
+  .ep-tabel td.getal, .ep-tabel th.getal { text-align: right; white-space: nowrap; }
+  .ep-tabel tr.totaal td { background: #F8F8F5; font-weight: 700; }
+  .ep-bijschrift {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    line-height: 1.55; margin-top: 8px;
+  }
+
+  .ep-stip {
+    display: inline-block; width: 9px; height: 9px;
+    border-radius: 50%; margin-right: 6px; vertical-align: baseline;
+  }
+  .ep-stip.s1 { background: var(--m1); }
+  .ep-stip.s2 { background: var(--m2); }
+
+  .ep-plan {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .ep-plan-kop {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px; margin-bottom: 4px;
+  }
+  .ep-plan-kop h3 {
+    font-size: 1rem; margin: 0;
+  }
+  .ep-chip {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 700;
+    border-radius: 20px; padding: 3px 9px; white-space: nowrap;
+  }
+  .ep-chip.ok   { background: #E3F3EA; color: #0B5C38; }
+  .ep-chip.let  { background: #FBF3DC; color: #6B4E06; }
+  .ep-chip.stop { background: #FBEAE5; color: #8E3617; }
+
+  .ep-model {
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid var(--lijn);
+    font-family: system-ui, sans-serif;
+  }
+  .ep-model .naam { font-size: 12.5px; font-weight: 700; margin-bottom: 5px; }
+  .ep-regels { font-size: 13.5px; line-height: 1.85; }
+  .ep-regels div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .ep-regels span:first-child { color: var(--muted); }
+  .ep-regels span:last-child { font-weight: 700; text-align: right; white-space: nowrap; }
+  .ep-regels div.uit span:last-child { color: var(--muted); font-weight: 400; }
+
+  .ep-figuur { margin: 0 0 12px; }
+  .ep-figuur svg { width: 100%; height: auto; display: block; }
+  .ep-legenda {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .ep-sectie { margin-top: 32px; }
+  .ep-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .ep-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+  .ep-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .ep-lijst li { margin-bottom: 9px; }
+  .ep-lijst li:last-child { margin-bottom: 0; }
+
+  .ep-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .ep-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .ep-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .ep-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .ep-bron p { margin: 0 0 9px; }
+  .ep-bron p:last-child { margin-bottom: 0; }
+  .ep-bron a { color: var(--accent); }
+  .ep-bron code {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11.5px; background: #E9E9E5; padding: 1px 4px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze rekenhulp werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Epifysiodese-planner</div>
+</header>
+
+<div class="ep-wrap">
+  <a class="ep-terug" href="groeisturing.html">← Terug naar groeisturing</a>
+
+  <h1 class="ep-kop">Welke fyse, en tot wanneer heb je nog?</h1>
+  <p class="ep-intro">
+    Rekent per groeischijf hoeveel correctie er nog in zit, binnen welk leeftijdsvenster een
+    epifysiodese het gewenste restverschil nog haalt, en — als je een geboortedatum en een
+    opnamedatum invult — wat dat als uiterste operatiedatum op de kalender betekent. De proximale
+    tibia, de distale femur en de combinatie staan apart, omdat ze verschillende deadlines hebben.
+  </p>
+
+  <div class="ep-waarschuwing">
+    <strong>Niets van wat je hier invult wordt bewaard of verstuurd.</strong>
+    De getallen staan alleen in het scherm van dit moment; ververs de pagina en ze zijn weg. Alleen
+    je eigen modelinstellingen (groeisnelheden, fracties, marge) worden onthouden — geen leeftijden,
+    geen lengtes, geen datums. Vul liever toch geen herleidbare gegevens in. Dit is rekenkundige
+    ondersteuning bij het meedenken, geen indicatiestelling: de planning van de ingreep ligt bij de
+    orthopeed.
+  </div>
+
+  <!-- ================= INVOER ================= -->
+  <div class="ep-kaart">
+    <h2>Invoer</h2>
+    <p class="ep-kaart-uitleg">
+      Voorgevuld met een verzonnen voorbeeld, zodat je meteen ziet wat de pagina doet. Overschrijf
+      het met je eigen getallen, of wis alles onderaan deze kaart.
+    </p>
+
+    <div class="ep-groep">Kind</div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epGeslacht">Geslacht</label>
+        <select id="epGeslacht" class="ep-keuze">
+          <option value="jongen">Jongen</option>
+          <option value="meisje">Meisje</option>
+        </select>
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epEinde">Einde groei <em>(jaar)</em></label>
+        <input type="number" id="epEinde" class="ep-veld" inputmode="decimal" min="8" max="20" step="0.5" value="16">
+      </div>
+    </div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epLeeftijdS">Skeletleeftijd <em>(jaar)</em></label>
+        <input type="number" id="epLeeftijdS" class="ep-veld" inputmode="decimal" min="0" max="20" step="0.01" value="12">
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epLeeftijdK">Kalenderleeftijd <em>(jaar)</em></label>
+        <input type="number" id="epLeeftijdK" class="ep-veld" inputmode="decimal" min="0" max="20" step="0.01" value="12">
+      </div>
+    </div>
+
+    <label class="ep-veldnaam">Waarmee wordt gerekend</label>
+    <div class="ep-radios" id="epBasisKeuze">
+      <label class="aan"><input type="radio" name="epBasis" value="s" checked> Skeletleeftijd</label>
+      <label><input type="radio" name="epBasis" value="k"> Kalenderleeftijd</label>
+    </div>
+    <div class="ep-hint">
+      De multipliertabel is op kalenderleeftijd gepubliceerd, maar bij een kind dat voor- of
+      achterloopt in rijping is de skeletleeftijd fysiologisch de juistere invoer. Lopen beide ver
+      uiteen, dan verschijnt hieronder wat de andere basis zou opleveren.
+    </div>
+
+    <div class="ep-groep">Segmentlengtes op de langebeenopname</div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epFemurR">Femur rechts <em>(mm)</em></label>
+        <input type="number" id="epFemurR" class="ep-veld" inputmode="decimal" min="1" step="0.1" value="400">
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epFemurL">Femur links <em>(mm)</em></label>
+        <input type="number" id="epFemurL" class="ep-veld" inputmode="decimal" min="1" step="0.1" value="400">
+      </div>
+    </div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epTibiaR">Tibia rechts <em>(mm)</em></label>
+        <input type="number" id="epTibiaR" class="ep-veld" inputmode="decimal" min="1" step="0.1" value="320">
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epTibiaL">Tibia links <em>(mm)</em></label>
+        <input type="number" id="epTibiaL" class="ep-veld" inputmode="decimal" min="1" step="0.1" value="340">
+      </div>
+    </div>
+
+    <div class="ep-groep">Behandeldoel</div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epDoel">Gewenst restverschil <em>(mm)</em></label>
+        <input type="number" id="epDoel" class="ep-veld" inputmode="decimal" step="1" value="0">
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epMarge">Acceptabele marge <em>(± mm)</em></label>
+        <input type="number" id="epMarge" class="ep-veld" inputmode="decimal" min="1" step="1" value="5">
+      </div>
+    </div>
+    <div class="ep-hint">
+      De marge bepaalt de breedte van het venster. Bij een exact doel zonder marge valt het venster
+      samen tot één moment; dat is een klinische keuze, geen eigenschap van het model.
+    </div>
+
+    <div class="ep-groep">Datums <em style="font-weight:400;text-transform:none;letter-spacing:0;">— optioneel</em></div>
+    <div class="ep-duo">
+      <div>
+        <label class="ep-veldnaam" for="epGeboorte">Geboortedatum</label>
+        <input type="date" id="epGeboorte" class="ep-veld">
+      </div>
+      <div>
+        <label class="ep-veldnaam" for="epOpname">Datum van deze opname</label>
+        <input type="date" id="epOpname" class="ep-veld">
+      </div>
+    </div>
+    <div class="ep-hint" id="epDatumHint"></div>
+
+    <details class="ep-meer">
+      <summary>Modelconstanten aanpassen</summary>
+      <div class="ep-hint" style="margin-bottom:4px;">
+        <b>Multiplier</b> — het aandeel van elke fyse in de lengtegroei van het betreffende bot.
+        <b>White-Menelaus</b> — een vaste groeisnelheid per fyse tot het einde van de groei. Beide
+        zijn breed gedeelde benaderingen, geen richtlijnwaarden.
+      </div>
+      <div class="ep-duo">
+        <div>
+          <label class="ep-veldnaam" for="epJFd">Distale femur <em>(fractie)</em></label>
+          <input type="number" id="epJFd" class="ep-veld" inputmode="decimal" min="0.05" max="0.95" step="0.01" value="0.71">
+        </div>
+        <div>
+          <label class="ep-veldnaam" for="epJTp">Proximale tibia <em>(fractie)</em></label>
+          <input type="number" id="epJTp" class="ep-veld" inputmode="decimal" min="0.05" max="0.95" step="0.01" value="0.57">
+        </div>
+      </div>
+      <div class="ep-duo">
+        <div>
+          <label class="ep-veldnaam" for="epSnelFem">Distale femur <em>(mm/jaar)</em></label>
+          <input type="number" id="epSnelFem" class="ep-veld" inputmode="decimal" min="1" step="0.5" value="10">
+        </div>
+        <div>
+          <label class="ep-veldnaam" for="epSnelTib">Proximale tibia <em>(mm/jaar)</em></label>
+          <input type="number" id="epSnelTib" class="ep-veld" inputmode="decimal" min="1" step="0.5" value="6">
+        </div>
+      </div>
+    </details>
+
+    <details class="ep-meer">
+      <summary>Eerdere opname toevoegen — toetst het model aan de echte groei</summary>
+      <div class="ep-hint" style="margin-bottom:4px;">
+        Met een tweede meetpunt wordt de groeiverhouding tussen beide benen gemeten in plaats van
+        aangenomen. Dat is de enige manier om te zien of een eerder uitgevoerde epifysiodese
+        werkelijk remt.
+      </div>
+      <div class="ep-duo">
+        <div>
+          <label class="ep-veldnaam" for="epVFemurR">Femur rechts <em>(mm)</em></label>
+          <input type="number" id="epVFemurR" class="ep-veld" inputmode="decimal" min="1" step="0.1" placeholder="eerdere opname">
+        </div>
+        <div>
+          <label class="ep-veldnaam" for="epVFemurL">Femur links <em>(mm)</em></label>
+          <input type="number" id="epVFemurL" class="ep-veld" inputmode="decimal" min="1" step="0.1" placeholder="eerdere opname">
+        </div>
+      </div>
+      <div class="ep-duo">
+        <div>
+          <label class="ep-veldnaam" for="epVTibiaR">Tibia rechts <em>(mm)</em></label>
+          <input type="number" id="epVTibiaR" class="ep-veld" inputmode="decimal" min="1" step="0.1" placeholder="eerdere opname">
+        </div>
+        <div>
+          <label class="ep-veldnaam" for="epVTibiaL">Tibia links <em>(mm)</em></label>
+          <input type="number" id="epVTibiaL" class="ep-veld" inputmode="decimal" min="1" step="0.1" placeholder="eerdere opname">
+        </div>
+      </div>
+      <label class="ep-veldnaam" for="epInterval">Tijd tussen beide opnames <em>(jaar)</em></label>
+      <input type="number" id="epInterval" class="ep-veld" inputmode="decimal" min="0.1" step="0.01" placeholder="bijv. 1,5">
+      <div id="epVorigeUit"></div>
+    </details>
+
+    <button type="button" class="ep-knop" id="epWissen">Alle velden wissen</button>
+  </div>
+
+  <!-- ================= UITGANGSSITUATIE ================= -->
+  <div class="ep-sectie">
+    <h2>Uitgangssituatie</h2>
+    <p class="ep-sectie-uitleg">Wat er zonder ingreep gebeurt.</p>
+    <div id="epBanner"></div>
+    <div class="ep-tegels" id="epKerncijfers"></div>
+  </div>
+
+  <!-- ================= CAPACITEIT ================= -->
+  <div class="ep-sectie">
+    <h2>Correctiecapaciteit per fyse</h2>
+    <p class="ep-sectie-uitleg">
+      Hoeveel millimeter een epifysiodese oplevert als die vandaag zou plaatsvinden. De multiplier
+      schaalt de restgroei mee met de botlengte; White-Menelaus rekent met een vaste snelheid per
+      jaar tot het einde van de groei.
+    </p>
+    <div class="ep-tabel-scroll"><table class="ep-tabel" id="epCapTabel"></table></div>
+    <div class="ep-bijschrift" id="epCapBijschrift"></div>
+
+    <details class="ep-meer" style="border-top:none;">
+      <summary>Restgroei per bot volgens de multiplier</summary>
+      <div class="ep-tabel-scroll" style="margin-top:8px;"><table class="ep-tabel" id="epGroeiTabel"></table></div>
+    </details>
+  </div>
+
+  <!-- ================= INGREEPVENSTER ================= -->
+  <div class="ep-sectie">
+    <h2>Ingreepvenster</h2>
+    <p class="ep-sectie-uitleg" id="epPlanIntro"></p>
+
+    <div class="ep-kaart">
+      <div class="ep-groep">Uiterste operatiedatum</div>
+      <label class="ep-veldnaam" for="epIngreep">Geplande ingreep</label>
+      <select id="epIngreep" class="ep-keuze">
+        <option value="tib">Proximale tibia</option>
+        <option value="fem">Distale femur</option>
+        <option value="beide">Beide fysen</option>
+      </select>
+      <div class="ep-tegels" id="epDeadline" style="margin-top:14px;"></div>
+      <div class="ep-hint" id="epDeadlineHint"></div>
+    </div>
+
+    <figure class="ep-figuur">
+      <svg id="epTijdlijn" role="img" aria-labelledby="epTlTitel">
+        <title id="epTlTitel">Leeftijdsvenster waarin een epifysiodese het doelverschil nog haalt, per fyse en per rekenmodel.</title>
+      </svg>
+      <div class="ep-legenda">
+        <span><span class="ep-stip s1"></span>Multiplier</span>
+        <span><span class="ep-stip s2"></span>White-Menelaus</span>
+      </div>
+      <figcaption class="ep-bijschrift" id="epTijdlijnBijschrift"></figcaption>
+    </figure>
+
+    <div id="epKaarten"></div>
+    <div id="epNotities"></div>
+  </div>
+
+  <!-- ================= AANNAMES ================= -->
+  <div class="ep-sectie">
+    <h2>Aannames en grenzen</h2>
+    <ul class="ep-lijst">
+      <li><strong>Twee modellen, één voorspeld eindverschil.</strong> Het verschil bij maturiteit komt uit de multiplier en wordt door beide modellen als uitgangspunt gebruikt; alleen de correctiecapaciteit verschilt. Dat is dezelfde hybride die gangbare rekenapps hanteren, maar het blijft een hybride.</li>
+      <li><strong>Welk model je aanhoudt is een keuze.</strong> Lopen de twee kolommen ver uiteen, neem dan de conservatieve — de vroegste deadline. De pagina rekent die apart voor je uit.</li>
+      <li><strong>Het multipliermodel is een congenitaal model.</strong> Het veronderstelt een constante procentuele groeiremming. Bij een verworven of iatrogene asymmetrie — een doorgemaakte fractuur, een infectie, een al uitgevoerde epifysiodese — geldt dat niet. Gebruik dan het paneel met de eerdere opname.</li>
+      <li><strong>Volledige en directe arrest.</strong> De berekening gaat ervan uit dat de fyse vanaf de ingreepdatum niets meer bijdraagt. Partiële arrest of uitgestelde fusie leveren minder correctie op, en dat is alleen op een vervolgopname te meten. Plan daarom ruim vóór de berekende datum.</li>
+      <li><strong>Van leeftijd naar datum is een aanname.</strong> De rekensom werkt met leeftijden; de kalenderdata zijn daar een omzetting van via de opnamedatum. Reken je op skeletleeftijd, dan veronderstelt die omzetting dat de skeletleeftijd één op één met de kalendertijd meeloopt. Bij een afwijkend rijpingstempo schuift de werkelijke datum mee, en is een nieuwe handfoto de enige manier om dat te corrigeren.</li>
+      <li><strong>Leeftijdsafronding.</strong> De multipliertabel is op twee decimalen gepubliceerd, waardoor opeenvolgende leeftijden dezelfde factor delen. De teruggerekende leeftijd is tot ongeveer een maand onnauwkeurig en valt bij gelijke waarden op de jongste leeftijd binnen dat plateau — de voorzichtige kant.</li>
+      <li><strong>Meetruis telt mee.</strong> Een staande langebeenopname heeft een meetonzekerheid in de orde van 3 tot 5 mm. Een berekend verschil van die grootte is geen verschil.</li>
+    </ul>
+  </div>
+
+  <div class="ep-sectie">
+    <h2>Verder</h2>
+    <a class="ep-link" href="groeisturing.html">
+      📐 Groeisturing — hoe groot wordt het?
+      <span class="sub">Snelle schatting met alleen leeftijd en verschil, zonder segmentlengtes</span>
+    </a>
+    <a class="ep-link" href="beenlengte.html">
+      📏 Beenlengteverschil — verwijzen &amp; beleid
+      <span class="sub">Verwijscriteria, meten en wat je zelf doet</span>
+    </a>
+  </div>
+
+  <div class="ep-bron">
+    <p>
+      <strong>De multipliertabel</strong> komt uit Tabel 1 van Mills &amp; Nelson,
+      <em>An improved spreadsheet for calculating limb length discrepancy and epiphysiodesis timing
+      using the multiplier method</em>, J Child Orthop 2016;10:313–319 (open access,
+      <a href="https://pubmed.ncbi.nlm.nih.gov/27357078/" target="_blank" rel="noopener">PubMed</a>).
+      Dezelfde tabel als op de groeisturingspagina, inclusief de twee correcties die daar zijn
+      verantwoord; hij staat in één gedeeld bestand zodat beide pagina's niet uit elkaar lopen.
+    </p>
+    <p>
+      <strong>De formules.</strong> Correctie door een epifysiodese op het moment met factor
+      <code>Me</code>: <code>C = S × (1 − 1/Me)</code>, waarin <code>S</code> de volgroeide lengte
+      van het aandeel van die fyse is. Terugrekenen naar het uiterste moment gaat via
+      <code>Me = 1 / (1 − C/S)</code>. White-Menelaus: <code>t = einde groei − C / snelheid</code>.
+      Het voorspelde eindverschil is <code>Dm = D × M</code>.
+    </p>
+    <p>
+      <strong>De constanten.</strong> Aandeel van de distale femur in de femurgroei 0,71 en van de
+      proximale tibia in de tibiagroei 0,57; groeisnelheden 10 mm/jaar (distale femur) en 6 mm/jaar
+      (proximale tibia), met einde groei rond 16 jaar bij jongens en 14 jaar bij meisjes. Breed
+      gedeelde benaderingen, geen richtlijnwaarden — ze staan daarom instelbaar.
+    </p>
+  </div>
+</div>
+
+<script src="multiplier.js"></script>
+<script>
+// ============================================================================
+// EPIFYSIODESE-PLANNER
+//
+// Rekent twee dingen uit die klinisch verschillende vragen zijn:
+//
+// 1. HOEVEEL kan deze fyse nog corrigeren als je vandaag zou opereren?
+//    multiplier:      C = S x (1 - 1/M),  met S = fractie x botlengte x M
+//    White-Menelaus:  C = snelheid x (einde groei - leeftijd)
+//
+// 2. TOT WANNEER haal je het doel nog? Dat is de omgekeerde weg: bij welke
+//    leeftijd is de resterende capaciteit precies gelijk aan de benodigde
+//    correctie?
+//    multiplier:      Me = 1 / (1 - C/S), daarna leeftijd terugzoeken
+//    White-Menelaus:  t = einde groei - C / snelheid
+//
+// De marge maakt van dat ene moment een venster: de kleinste nog acceptabele
+// correctie geeft het UITERSTE moment, de grootste het VROEGSTE moment (eerder
+// opereren haalt te veel lengte weg).
+//
+// Het voorspelde eindverschil Dm = D x M komt in beide modellen uit de
+// multiplier. Dat is een hybride, en staat als zodanig op de pagina.
+//
+// GEEN PATIENTGEGEVENS: leeftijden, lengtes en datums worden bewust niet
+// opgeslagen. Alleen de modelconstanten en de weergavekeuzes gaan naar
+// localStorage.
+// ============================================================================
+
+const EP_SLEUTEL = 'krnEpifysiodese';
+
+// Welke velden mogen onthouden worden. Alles wat hier niet in staat is
+// patientgebonden en verdwijnt bij het verversen van de pagina.
+const EP_BEWAARD = ['epJFd', 'epJTp', 'epSnelFem', 'epSnelTib', 'epDoel', 'epMarge', 'epIngreep'];
+
+const OPTIES = [
+  { id: 'tib',   naam: 'Proximale tibia' },
+  { id: 'fem',   naam: 'Distale femur' },
+  { id: 'beide', naam: 'Beide fysen' },
+];
+
+const JAAR_MS = 365.2425 * 86400000;
+
+// ---------------------------------------------------------------- hulpjes ---
+function el(id) { return document.getElementById(id); }
+function getal(id) { const v = parseFloat(el(id).value); return isFinite(v) ? v : NaN; }
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function komma(n, cijfers) {
+  if (!isFinite(n)) return '—';
+  return n.toLocaleString('nl-NL', { minimumFractionDigits: cijfers, maximumFractionDigits: cijfers });
+}
+function mm(n, cijfers) {
+  return isFinite(n) ? komma(n, cijfers === undefined ? 1 : cijfers) + ' mm' : '—';
+}
+function jaarLabel(a) {
+  if (!isFinite(a)) return '—';
+  let j = Math.floor(a), m = Math.round((a - j) * 12);
+  if (m === 12) { j += 1; m = 0; }
+  return j + ' jr ' + m + ' mnd';
+}
+function leesDatum(waarde) {
+  if (!waarde) return null;
+  const d = new Date(waarde + 'T12:00:00');
+  return isNaN(d.getTime()) ? null : d;
+}
+function plusJaren(d, jaren) { return new Date(d.getTime() + jaren * JAAR_MS); }
+function datumKort(d) {
+  return d ? d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+}
+function jarenTussen(a, b) { return (b.getTime() - a.getTime()) / JAAR_MS; }
+
+function tegel(label, waarde, noot, nadruk) {
+  return '<div class="ep-tegel' + (nadruk ? ' nadruk' : '') + '">' +
+    '<div class="label">' + label + '</div>' +
+    '<div class="waarde">' + waarde + '</div>' +
+    '<div class="noot">' + noot + '</div></div>';
+}
+function banner(soort, kop, tekst) {
+  return '<div class="ep-banner ' + soort + '"><strong>' + kop + '</strong>' + tekst + '</div>';
+}
+function regel(naam, waarde, gedempt) {
+  return '<div' + (gedempt ? ' class="uit"' : '') + '><span>' + naam + '</span><span>' + waarde + '</span></div>';
+}
+
+// ---------------------------------------------------------------- venster ---
+// Bepaalt voor een ingreep onder een model het leeftijdsvenster waarbinnen het
+// doel nog binnen de marge landt.
+//   Cmin = de kleinste correctie die nog acceptabel is -> laatste moment
+//   Cmax = de grootste correctie die nog acceptabel is -> vroegste moment
+function vensterVoor(model, optie, ctx, Cmin, Cmax) {
+  const r = { status: '', vroegste: NaN, uiterste: NaN, capNu: NaN };
+
+  if (model === 'mult') {
+    r.capNu = optie.S * (1 - 1 / ctx.M);
+    if (Cmin <= 0) { r.status = 'niet nodig'; return r; }
+    if (Cmin >= optie.S) { r.status = 'buiten bereik'; return r; }
+    if (Cmin > r.capNu) { r.status = 'te laat'; return r; }
+    r.uiterste = leeftijdBijMultiplier(1 / (1 - Cmin / optie.S), ctx.geslacht);
+    r.vroegste = (Cmax >= optie.S)
+      ? ctx.leeftijd
+      : leeftijdBijMultiplier(1 / (1 - Cmax / optie.S), ctx.geslacht);
+  } else {
+    const jaren = Math.max(0, ctx.einde - ctx.leeftijd);
+    r.capNu = optie.snelheid * jaren;
+    if (Cmin <= 0) { r.status = 'niet nodig'; return r; }
+    if (Cmin > r.capNu) { r.status = 'te laat'; return r; }
+    r.uiterste = ctx.einde - Cmin / optie.snelheid;
+    r.vroegste = ctx.einde - Cmax / optie.snelheid;
+  }
+
+  if (!isFinite(r.vroegste) || r.vroegste < ctx.leeftijd) r.vroegste = ctx.leeftijd;
+  if (r.uiterste < r.vroegste) r.uiterste = r.vroegste;
+  r.status = 'haalbaar';
+  return r;
+}
+
+// ----------------------------------------------------------------- opslag ---
+function laadInstellingen() {
+  let opgeslagen = {};
+  try { opgeslagen = JSON.parse(localStorage.getItem(EP_SLEUTEL) || '{}') || {}; } catch (e) { opgeslagen = {}; }
+  EP_BEWAARD.forEach(id => {
+    if (opgeslagen[id] !== undefined && el(id)) el(id).value = opgeslagen[id];
+  });
+}
+function bewaarInstellingen() {
+  const uit = {};
+  EP_BEWAARD.forEach(id => { if (el(id)) uit[id] = el(id).value; });
+  try { localStorage.setItem(EP_SLEUTEL, JSON.stringify(uit)); } catch (e) { /* vol of geblokkeerd */ }
+}
+
+// ------------------------------------------------------------------ tonen ---
+function tekenen() {
+  const inv = {
+    geslacht: el('epGeslacht').value,
+    leeftijdS: getal('epLeeftijdS'),
+    leeftijdK: getal('epLeeftijdK'),
+    einde: getal('epEinde'),
+    femurR: getal('epFemurR'), femurL: getal('epFemurL'),
+    tibiaR: getal('epTibiaR'), tibiaL: getal('epTibiaL'),
+    doel: getal('epDoel'),
+    marge: Math.max(0.5, getal('epMarge') || 5),
+    jFd: getal('epJFd'), jTp: getal('epJTp'),
+    snelFem: getal('epSnelFem'), snelTib: getal('epSnelTib'),
+  };
+
+  const basis = document.querySelector('input[name="epBasis"]:checked').value;
+  Array.prototype.forEach.call(el('epBasisKeuze').children, lab => {
+    lab.classList.toggle('aan', lab.querySelector('input').checked);
+  });
+
+  toonDatumHint(inv);
+
+  const compleet = [inv.leeftijdS, inv.leeftijdK, inv.einde, inv.femurR, inv.femurL, inv.tibiaR, inv.tibiaL]
+    .every(v => isFinite(v) && v > 0) && isFinite(inv.doel);
+
+  if (!compleet) {
+    el('epBanner').innerHTML = banner('oranje', 'Invoer nog niet compleet',
+      'Vul beide leeftijden, het einde van de groei, de vier segmentlengtes en het doel in. ' +
+      'Zonder die getallen valt er niets te berekenen.');
+    ['epKerncijfers', 'epCapTabel', 'epGroeiTabel', 'epDeadline', 'epKaarten', 'epNotities'].forEach(id => {
+      el(id).innerHTML = '';
+    });
+    el('epTijdlijn').innerHTML = '';
+    el('epPlanIntro').textContent = '';
+    el('epCapBijschrift').textContent = '';
+    el('epDeadlineHint').textContent = '';
+    el('epTijdlijnBijschrift').textContent = '';
+    toonEerdereOpname(inv, null, '', '', false);
+    return;
+  }
+
+  // ---- zijden bepalen ----
+  const beenR = inv.femurR + inv.tibiaR;
+  const beenL = inv.femurL + inv.tibiaL;
+  const langsIsL = beenL >= beenR;
+  const langNaam = langsIsL ? 'links' : 'rechts';
+  const kortNaam = langsIsL ? 'rechts' : 'links';
+  const langFemur = langsIsL ? inv.femurL : inv.femurR;
+  const langTibia = langsIsL ? inv.tibiaL : inv.tibiaR;
+  const kortFemur = langsIsL ? inv.femurR : inv.femurL;
+  const kortTibia = langsIsL ? inv.tibiaR : inv.tibiaL;
+  const D0 = Math.abs(beenL - beenR);
+  const dFemur = Math.abs(inv.femurL - inv.femurR);
+  const dTibia = Math.abs(inv.tibiaL - inv.tibiaR);
+  const rijpingsverschil = inv.leeftijdK - inv.leeftijdS;
+
+  function contextBij(leeftijd) {
+    const M = multiplierVoor(leeftijd, inv.geslacht);
+    return {
+      geslacht: inv.geslacht, leeftijd: leeftijd, einde: inv.einde, M: M, Dm: D0 * M,
+      Sfem: inv.jFd * langFemur * M,
+      Stib: inv.jTp * langTibia * M,
+      restFemLang: langFemur * (M - 1), restTibLang: langTibia * (M - 1),
+      restFemKort: kortFemur * (M - 1), restTibKort: kortTibia * (M - 1),
+    };
+  }
+  const ctxS = contextBij(inv.leeftijdS);
+  const ctxK = contextBij(inv.leeftijdK);
+  ctxS.Sbeide = ctxS.Sfem + ctxS.Stib;
+  ctxK.Sbeide = ctxK.Sfem + ctxK.Stib;
+
+  const P = (basis === 's') ? ctxS : ctxK;
+  const basisNaam = (basis === 's') ? 'skeletleeftijd' : 'kalenderleeftijd';
+  const leeftijdNu = (basis === 's') ? inv.leeftijdS : inv.leeftijdK;
+
+  // ---- uitgangssituatie ----
+  let bSoort = 'groen';
+  let bKop, bTekst;
+  if (D0 < 3) {
+    bKop = 'Geen relevant beenlengteverschil';
+    bTekst = 'Het gemeten verschil van ' + mm(D0) + ' ligt binnen de meetruis van een staande ' +
+      'langebeenopname (3 tot 5 mm).';
+  } else {
+    bKop = 'Verschil van ' + mm(D0) + ' ten nadele van ' + kortNaam;
+    bTekst = 'Femur ' + mm(dFemur) + ', tibia ' + mm(dTibia) + '. Het langste been is ' + langNaam +
+      ' — daar wordt de epifysiodese uitgevoerd.';
+  }
+  if (Math.abs(rijpingsverschil) >= 1) {
+    bSoort = 'oranje';
+    bKop += ' — rijpingsverschil van ' + komma(Math.abs(rijpingsverschil), 1) + ' jaar';
+    bTekst += ' Skelet- en kalenderleeftijd lopen ' + komma(Math.abs(rijpingsverschil), 1) +
+      ' jaar uiteen, waardoor beide rekenbases duidelijk verschillende antwoorden geven.';
+  }
+  el('epBanner').innerHTML = banner(bSoort, bKop, bTekst);
+
+  el('epKerncijfers').innerHTML =
+    tegel('Verschil nu', mm(D0), 'ten nadele van ' + kortNaam) +
+    tegel('Zonder ingreep', mm(P.Dm), 'bij einde groei, op ' + basisNaam, true) +
+    tegel('Factor skeletleeftijd', komma(ctxS.M, 3), 'bij ' + jaarLabel(inv.leeftijdS)) +
+    tegel('Factor kalenderleeftijd', komma(ctxK.M, 3), 'bij ' + jaarLabel(inv.leeftijdK));
+
+  // ---- capaciteit ----
+  function capMult(c) {
+    return { tib: c.Stib * (1 - 1 / c.M), fem: c.Sfem * (1 - 1 / c.M), beide: c.Sbeide * (1 - 1 / c.M) };
+  }
+  function capWM(leeftijd) {
+    const j = Math.max(0, inv.einde - leeftijd);
+    return { tib: inv.snelTib * j, fem: inv.snelFem * j, beide: (inv.snelTib + inv.snelFem) * j };
+  }
+  const mS = capMult(ctxS), mK = capMult(ctxK), wS = capWM(inv.leeftijdS), wK = capWM(inv.leeftijdK);
+
+  let ct = '<thead><tr><th>Correctie bij ingreep vandaag</th>' +
+    '<th class="getal">Multiplier<br>skelet</th><th class="getal">Multiplier<br>kalender</th>' +
+    '<th class="getal">W-Menelaus<br>skelet</th><th class="getal">W-Menelaus<br>kalender</th></tr></thead><tbody>';
+  ct += '<tr><td>Proximale tibia ' + langNaam + '</td><td class="getal">' + mm(mS.tib) + '</td><td class="getal">' +
+    mm(mK.tib) + '</td><td class="getal">' + mm(wS.tib) + '</td><td class="getal">' + mm(wK.tib) + '</td></tr>';
+  ct += '<tr><td>Distale femur ' + langNaam + '</td><td class="getal">' + mm(mS.fem) + '</td><td class="getal">' +
+    mm(mK.fem) + '</td><td class="getal">' + mm(wS.fem) + '</td><td class="getal">' + mm(wK.fem) + '</td></tr>';
+  ct += '<tr class="totaal"><td>Beide fysen ' + langNaam + '</td><td class="getal">' + mm(mS.beide) + '</td><td class="getal">' +
+    mm(mK.beide) + '</td><td class="getal">' + mm(wS.beide) + '</td><td class="getal">' + mm(wK.beide) + '</td></tr>';
+  ct += '</tbody>';
+  el('epCapTabel').innerHTML = ct;
+  el('epCapBijschrift').innerHTML =
+    'White-Menelaus rekent met ' + komma(inv.snelTib, 1) + ' mm/jaar voor de proximale tibia en ' +
+    komma(inv.snelFem, 1) + ' mm/jaar voor de distale femur, over de resterende ' +
+    komma(Math.max(0, inv.einde - leeftijdNu), 1) + ' jaar op ' + basisNaam + '. De multiplier schaalt ' +
+    'mee met de botlengte en geeft bij lange botten structureel meer capaciteit.';
+
+  let gt = '<thead><tr><th>Restgroei tot einde groei</th><th class="getal">Op skeletleeftijd</th>' +
+    '<th class="getal">Op kalenderleeftijd</th></tr></thead><tbody>';
+  gt += '<tr><td>Femur ' + langNaam + '</td><td class="getal">' + mm(ctxS.restFemLang) + '</td><td class="getal">' + mm(ctxK.restFemLang) + '</td></tr>';
+  gt += '<tr><td>Tibia ' + langNaam + '</td><td class="getal">' + mm(ctxS.restTibLang) + '</td><td class="getal">' + mm(ctxK.restTibLang) + '</td></tr>';
+  gt += '<tr><td>Femur ' + kortNaam + '</td><td class="getal">' + mm(ctxS.restFemKort) + '</td><td class="getal">' + mm(ctxK.restFemKort) + '</td></tr>';
+  gt += '<tr><td>Tibia ' + kortNaam + '</td><td class="getal">' + mm(ctxS.restTibKort) + '</td><td class="getal">' + mm(ctxK.restTibKort) + '</td></tr>';
+  gt += '<tr class="totaal"><td>Voorspeld verschil bij einde groei</td><td class="getal">' + mm(ctxS.Dm) +
+    '</td><td class="getal">' + mm(ctxK.Dm) + '</td></tr>';
+  gt += '</tbody>';
+  el('epGroeiTabel').innerHTML = gt;
+
+  // ---- vensters ----
+  const onder = inv.doel - inv.marge;
+  const boven = inv.doel + inv.marge;
+  const Cmin = P.Dm - boven;   // kleinste acceptabele correctie -> uiterste moment
+  const Cmax = P.Dm - onder;   // grootste acceptabele correctie -> vroegste moment
+
+  el('epPlanIntro').textContent =
+    'Gerekend op ' + basisNaam + ' (' + jaarLabel(leeftijdNu) + ', factor ' + komma(P.M, 3) + '). ' +
+    'Zonder ingreep eindigt het verschil op ' + mm(P.Dm) + ' ten nadele van ' + kortNaam + '. ' +
+    'Doel ' + mm(inv.doel) + ' ± ' + mm(inv.marge) + ', dus een correctie tussen ' +
+    mm(Math.max(0, Cmin)) + ' en ' + mm(Cmax) + '.';
+
+  const rijen = [];
+  OPTIES.forEach(o => {
+    const S = o.id === 'tib' ? P.Stib : o.id === 'fem' ? P.Sfem : P.Sbeide;
+    const snelheid = o.id === 'tib' ? inv.snelTib : o.id === 'fem' ? inv.snelFem : (inv.snelTib + inv.snelFem);
+    rijen.push({ optie: o, model: 'mult', naam: 'Multiplier', v: vensterVoor('mult', { S: S }, P, Cmin, Cmax) });
+    rijen.push({ optie: o, model: 'wm', naam: 'White-Menelaus', v: vensterVoor('wm', { snelheid: snelheid }, P, Cmin, Cmax) });
+  });
+
+  // ---- datumlaag: leeftijden sturen de rekensom, datums zijn er een weergave van ----
+  const opname = leesDatum(el('epOpname').value);
+  function datumBij(leeftijd) {
+    return (opname && isFinite(leeftijd)) ? plusJaren(opname, leeftijd - leeftijdNu) : null;
+  }
+
+  // ---- uiterste operatiedatum ----
+  const gekozen = el('epIngreep').value;
+  const start = gekozen === 'tib' ? 0 : gekozen === 'fem' ? 2 : 4;
+  const rM = rijen[start], rW = rijen[start + 1];
+
+  function deadlineTegel(naam, r, nadruk) {
+    if (r.v.status !== 'haalbaar') {
+      return tegel(naam,
+        r.v.status === 'niet nodig' ? 'n.v.t.' : 'gesloten',
+        r.v.status === 'niet nodig' ? 'binnen de marge zonder ingreep' : 'de benodigde correctie past hier niet meer in',
+        nadruk);
+    }
+    const d = datumBij(r.v.uiterste);
+    return tegel(naam,
+      opname ? datumKort(d) : komma(r.v.uiterste, 2) + ' jr',
+      opname ? 'uiterlijk — ' + komma(r.v.uiterste, 2) + ' jr op ' + basisNaam
+             : 'vul een opnamedatum in voor de kalenderdatum',
+      nadruk);
+  }
+
+  let tegels = deadlineTegel('Multiplier', rM, false) + deadlineTegel('White-Menelaus', rW, false);
+  const haalbaar = [rM, rW].filter(r => r.v.status === 'haalbaar');
+  if (haalbaar.length) {
+    const vroegste = haalbaar.reduce((a, b) => (a.v.uiterste <= b.v.uiterste ? a : b));
+    tegels += tegel('Conservatief plannen vóór',
+      opname ? datumKort(datumBij(vroegste.v.uiterste)) : komma(vroegste.v.uiterste, 2) + ' jr',
+      'de vroegste van beide modellen — ' + vroegste.naam, true);
+    const maanden = Math.round((vroegste.v.uiterste - leeftijdNu) * 12);
+    tegels += tegel('Nog beschikbaar', maanden + ' mnd',
+      opname ? 'vanaf de opnamedatum tot die datum' : 'vanaf nu tot dat moment', true);
+  }
+  el('epDeadline').innerHTML = tegels;
+  el('epDeadlineHint').innerHTML = opname
+    ? 'De kalenderdata volgen uit de opnamedatum plus het leeftijdsverschil.' +
+      (basis === 's'
+        ? ' <span class="let">Omdat je op skeletleeftijd rekent, veronderstelt die omzetting dat de skeletleeftijd één op één met de kalendertijd oploopt. Bij een afwijkend rijpingstempo schuift de datum mee — dat is precies wat een nieuwe handfoto zou moeten toetsen.</span>'
+        : '') +
+      ' Plan de ingreep ruim vóór deze datum: de arrest is niet meteen volledig.'
+    : 'Vul hierboven een opnamedatum in om deze leeftijden om te zetten in kalenderdata.';
+
+  // ---- kaarten per ingreep ----
+  let kaarten = '';
+  OPTIES.forEach((o, i) => {
+    const rm = rijen[i * 2], rw = rijen[i * 2 + 1];
+    const statussen = [rm.v.status, rw.v.status];
+    let chip = '<span class="ep-chip ok">haalbaar</span>';
+    if (statussen.every(s => s === 'niet nodig')) chip = '<span class="ep-chip ok">niet nodig</span>';
+    else if (statussen.every(s => s === 'te laat' || s === 'buiten bereik')) chip = '<span class="ep-chip stop">venster gesloten</span>';
+    else if (statussen.some(s => s !== 'haalbaar')) chip = '<span class="ep-chip let">modellen oneens</span>';
+
+    kaarten += '<div class="ep-plan">' +
+      '<div class="ep-plan-kop"><h3>' + esc(o.naam) + ' ' + langNaam + '</h3>' + chip + '</div>';
+
+    [rm, rw].forEach(r => {
+      const v = r.v;
+      const stip = '<span class="ep-stip ' + (r.model === 'mult' ? 's1' : 's2') + '"></span>';
+      let inhoud;
+      if (v.status === 'haalbaar') {
+        const eind = P.Dm - v.capNu;
+        const eindTekst = eind >= 0
+          ? mm(eind) + ' t.n.v. ' + kortNaam
+          : mm(-eind) + ' t.n.v. ' + langNaam;
+        const d = datumBij(v.uiterste);
+        inhoud = regel('Capaciteit nu', mm(v.capNu)) +
+          regel('Eindverschil bij ingreep nu', eindTekst) +
+          regel('Vroegste moment', komma(v.vroegste, 2) + ' jr') +
+          regel('Uiterste moment', komma(v.uiterste, 2) + ' jr') +
+          (opname ? regel('Uiterste datum', datumKort(d)) : '') +
+          regel('Venster', Math.round((v.uiterste - v.vroegste) * 12) + ' mnd');
+      } else if (v.status === 'niet nodig') {
+        inhoud = regel('Capaciteit nu', mm(v.capNu)) +
+          regel('Uitkomst', 'geen ingreep nodig', true);
+      } else if (v.status === 'te laat') {
+        inhoud = regel('Capaciteit nu', mm(v.capNu)) +
+          regel('Benodigd', mm(Cmin)) +
+          regel('Uitkomst', 'venster gesloten', true);
+      } else {
+        inhoud = regel('Uitkomst', 'buiten bereik van deze fyse', true);
+      }
+      kaarten += '<div class="ep-model"><div class="naam">' + stip + r.naam + '</div>' +
+        '<div class="ep-regels">' + inhoud + '</div></div>';
+    });
+
+    kaarten += '</div>';
+  });
+  el('epKaarten').innerHTML = kaarten;
+
+  // ---- tijdlijn ----
+  tekenTijdlijn(rijen, inv, leeftijdNu, basisNaam, langNaam);
+
+  // ---- notities ----
+  let notities = '';
+  if (Cmin <= 0) {
+    notities += banner('groen', 'Binnen de marge zonder ingreep',
+      'Het voorspelde eindverschil van ' + mm(P.Dm) + ' blijft al binnen ' + mm(inv.marge) +
+      ' van het doel (' + mm(inv.doel) + '). Een epifysiodese zou het doel voorbijschieten.');
+  }
+  const tibM = rijen[0].v, tibW = rijen[1].v;
+  if (tibM.status === 'haalbaar' && tibW.status === 'haalbaar') {
+    const kloof = Math.abs(tibM.uiterste - tibW.uiterste) * 12;
+    if (kloof >= 3) {
+      notities += banner('oranje',
+        'De modellen verschillen ' + Math.round(kloof) + ' maanden over de deadline',
+        'Voor de proximale tibia geeft de multiplier ' + komma(tibM.uiterste, 2) + ' jr en White-Menelaus ' +
+        komma(tibW.uiterste, 2) + ' jr als uiterste moment. Plannen op ' +
+        komma(Math.min(tibM.uiterste, tibW.uiterste), 2) + ' jr houdt beide modellen binnen bereik.');
+    }
+  }
+  if (tibM.status === 'te laat' || tibW.status === 'te laat') {
+    notities += banner('rood', 'Voor de proximale tibia alleen is het venster gesloten',
+      'Er is ' + mm(Cmin) + ' correctie nodig, terwijl deze fyse er nog ' + mm(tibM.capNu) +
+      ' (multiplier) respectievelijk ' + mm(tibW.capNu) + ' (White-Menelaus) in heeft. De ' +
+      'gecombineerde ingreep of een andere strategie is dan aan de orde.');
+  }
+  if (Math.abs(rijpingsverschil) >= 1) {
+    const ander = (basis === 's') ? ctxK : ctxS;
+    notities += banner('oranje', 'De andere leeftijdsbasis geeft een ander antwoord',
+      'Op ' + (basis === 's' ? 'kalenderleeftijd' : 'skeletleeftijd') + ' bedraagt het voorspelde ' +
+      'eindverschil ' + mm(ander.Dm) + ' in plaats van ' + mm(P.Dm) + '. Dat verschil is de prijs van ' +
+      'de rijpingsafwijking en is met deze rekensom niet op te lossen.');
+  }
+  el('epNotities').innerHTML = notities;
+
+  toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL);
+}
+
+// ---------------------------------------------------------------- datums ----
+function toonDatumHint(inv) {
+  const geboorte = leesDatum(el('epGeboorte').value);
+  const opname = leesDatum(el('epOpname').value);
+  if (geboorte && opname) {
+    const leeftijd = jarenTussen(geboorte, opname);
+    let tekst = 'Kalenderleeftijd op de opnamedatum: <b>' + komma(leeftijd, 2) + ' jaar</b> (' +
+      jaarLabel(leeftijd) + ').';
+    if (isFinite(inv.leeftijdK) && Math.abs(leeftijd - inv.leeftijdK) > 0.15) {
+      tekst += ' <span class="let">Dat wijkt af van de ingevulde ' + komma(inv.leeftijdK, 2) +
+        ' jaar — controleer welke klopt.</span>';
+    }
+    el('epDatumHint').innerHTML = tekst;
+  } else {
+    el('epDatumHint').textContent =
+      'Vul beide in en de uitkomsten verschijnen ook als kalenderdatum, inclusief de uiterste ' +
+      'operatiedatum. De geboortedatum dient alleen om de kalenderleeftijd te controleren en wordt ' +
+      'niet bewaard.';
+  }
+}
+
+// -------------------------------------------------------------- tijdlijn ----
+function tekenTijdlijn(rijen, inv, leeftijdNu, basisNaam, langNaam) {
+  const svg = el('epTijdlijn');
+  const B = 340, padL = 6, padR = 6, rijH = 54, top = 30;
+  const H = top + OPTIES.length * rijH + 22;
+
+  let x0 = Math.min(leeftijdNu, inv.einde) - 0.25;
+  let x1 = inv.einde + 0.25;
+  if (x1 <= x0) x1 = x0 + 1;
+  const X = a => padL + (a - x0) / (x1 - x0) * (B - padL - padR);
+
+  let s = '';
+
+  // rooster + jaartallen
+  const stap = (x1 - x0) > 6 ? 1 : 0.5;
+  const eerste = Math.ceil(x0 / stap) * stap;
+  for (let t = eerste; t <= x1 + 1e-9; t += stap) {
+    s += '<line x1="' + X(t).toFixed(1) + '" y1="' + (top - 8) + '" x2="' + X(t).toFixed(1) +
+      '" y2="' + (H - 18) + '" stroke="#E4E4E0" stroke-width="1"/>';
+    s += '<text x="' + X(t).toFixed(1) + '" y="' + (H - 6) +
+      '" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">' +
+      komma(t, 1) + '</text>';
+  }
+
+  // nu + einde groei
+  s += '<line x1="' + X(leeftijdNu).toFixed(1) + '" y1="' + (top - 14) + '" x2="' + X(leeftijdNu).toFixed(1) +
+    '" y2="' + (H - 18) + '" stroke="#0f2733" stroke-width="1.5"/>';
+  s += '<text x="' + (X(leeftijdNu) + 4).toFixed(1) + '" y="' + (top - 17) +
+    '" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#0f2733">nu</text>';
+  s += '<line x1="' + X(inv.einde).toFixed(1) + '" y1="' + (top - 14) + '" x2="' + X(inv.einde).toFixed(1) +
+    '" y2="' + (H - 18) + '" stroke="#6b7680" stroke-width="1.5" stroke-dasharray="4 3"/>';
+  s += '<text x="' + (X(inv.einde) - 4).toFixed(1) + '" y="' + (top - 17) +
+    '" text-anchor="end" font-family="system-ui, sans-serif" font-size="10" fill="#6b7680">einde groei</text>';
+
+  OPTIES.forEach((o, oi) => {
+    const yBasis = top + oi * rijH;
+    s += '<text x="' + padL + '" y="' + (yBasis + 9) +
+      '" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#0f2733">' +
+      esc(o.naam) + ' ' + esc(langNaam) + '</text>';
+
+    [0, 1].forEach(mi => {
+      const r = rijen[oi * 2 + mi], v = r.v;
+      const y = yBasis + 14 + mi * 17;
+      const kleur = mi === 0 ? '#0f4c5c' : '#a4551f';
+      if (v.status === 'haalbaar') {
+        const xa = X(v.vroegste), xb = X(v.uiterste);
+        const breed = Math.max(3, xb - xa);
+        s += '<rect x="' + xa.toFixed(1) + '" y="' + y + '" width="' + breed.toFixed(1) +
+          '" height="13" rx="3" fill="' + kleur + '" fill-opacity="0.20" stroke="' + kleur + '" stroke-width="1.5"/>';
+        s += '<line x1="' + xb.toFixed(1) + '" y1="' + y + '" x2="' + xb.toFixed(1) + '" y2="' + (y + 13) +
+          '" stroke="' + kleur + '" stroke-width="3"/>';
+      } else {
+        const label = v.status === 'niet nodig' ? 'geen ingreep nodig'
+          : v.status === 'te laat' ? 'venster gesloten' : 'buiten bereik';
+        s += '<text x="' + (X(leeftijdNu) + 6).toFixed(1) + '" y="' + (y + 10) +
+          '" font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680">' + label + '</text>';
+      }
+    });
+  });
+
+  svg.setAttribute('viewBox', '0 0 ' + B + ' ' + H);
+  svg.innerHTML = '<title id="epTlTitel">Leeftijdsvenster waarin een epifysiodese het doelverschil ' +
+    'nog haalt, per fyse en per rekenmodel.</title>' + s;
+
+  el('epTijdlijnBijschrift').textContent =
+    'Elke balk loopt van het vroegste tot het uiterste ingreepmoment op ' + basisNaam +
+    ', bij een doel van ' + komma(inv.doel, 0) + ' ± ' + komma(inv.marge, 0) +
+    ' mm. Het dikke rechteruiteinde is de deadline; de getallen staan in de kaarten hieronder.';
+}
+
+// -------------------------------------------------------- eerdere opname ----
+function toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL) {
+  const vak = el('epVorigeUit');
+  const vFemurR = getal('epVFemurR'), vFemurL = getal('epVFemurL');
+  const vTibiaR = getal('epVTibiaR'), vTibiaL = getal('epVTibiaL');
+  const interval = getal('epInterval');
+
+  if (!P || ![vFemurR, vFemurL, vTibiaR, vTibiaL, interval].every(v => isFinite(v) && v > 0)) {
+    vak.innerHTML = '<div class="ep-hint" style="margin-top:10px;">Vul alle vier de eerdere lengtes ' +
+      'en het interval in om de gemeten groeiverhouding te berekenen.</div>';
+    return;
+  }
+
+  const vorigR = vFemurR + vTibiaR, vorigL = vFemurL + vTibiaL;
+  const nuR = inv.femurR + inv.tibiaR, nuL = inv.femurL + inv.tibiaL;
+  const groeiR = nuR - vorigR, groeiL = nuL - vorigL;
+  const groeiLang = langsIsL ? groeiL : groeiR;
+  const groeiKort = langsIsL ? groeiR : groeiL;
+  const verhouding = groeiLang !== 0 ? groeiKort / groeiLang : NaN;
+  const verwacht = langsIsL ? (nuR / nuL) : (nuL / nuR);
+  const vorigVerschil = Math.abs(vorigL - vorigR), nuVerschil = Math.abs(nuL - nuR);
+  const restLang = P.restFemLang + P.restTibLang;
+  const DmGemeten = nuVerschil - restLang * (1 - verhouding);
+
+  let h = '<div class="ep-tabel-scroll" style="margin-top:12px;"><table class="ep-tabel">' +
+    '<thead><tr><th>Gemeten tussen beide opnames</th><th class="getal">Lang been (' + langNaam +
+    ')</th><th class="getal">Kort been (' + kortNaam + ')</th></tr></thead><tbody>';
+  h += '<tr><td>Groei femur</td><td class="getal">' + mm(langsIsL ? inv.femurL - vFemurL : inv.femurR - vFemurR) +
+    '</td><td class="getal">' + mm(langsIsL ? inv.femurR - vFemurR : inv.femurL - vFemurL) + '</td></tr>';
+  h += '<tr><td>Groei tibia</td><td class="getal">' + mm(langsIsL ? inv.tibiaL - vTibiaL : inv.tibiaR - vTibiaR) +
+    '</td><td class="getal">' + mm(langsIsL ? inv.tibiaR - vTibiaR : inv.tibiaL - vTibiaL) + '</td></tr>';
+  h += '<tr class="totaal"><td>Groei totaal</td><td class="getal">' + mm(groeiLang) + '</td><td class="getal">' +
+    mm(groeiKort) + '</td></tr>';
+  h += '<tr><td>Per jaar</td><td class="getal">' + mm(groeiLang / interval) + '</td><td class="getal">' +
+    mm(groeiKort / interval) + '</td></tr>';
+  h += '</tbody></table></div>';
+  h += '<div class="ep-bijschrift">Het verschil ging van ' + mm(vorigVerschil) + ' naar ' + mm(nuVerschil) +
+    ' in ' + komma(interval, 2) + ' jaar, ofwel ' + mm((nuVerschil - vorigVerschil) / interval) + ' per jaar.</div>';
+
+  let soort = 'groen', kop = 'Gemeten en aangenomen groei komen overeen';
+  let tekst = 'De korte zijde groeide met ' + komma(verhouding * 100, 1) + ' % van het tempo van de lange ' +
+    'zijde; het congenitale model gaat uit van ' + komma(verwacht * 100, 1) + ' %.';
+  if (Math.abs(verhouding - verwacht) > 0.02) {
+    soort = 'oranje';
+    kop = 'Gemeten groei wijkt af van het model';
+    tekst += ' Dat verschil is groot genoeg om het constante-remmingsmodel bij dit kind niet zonder ' +
+      'meer te vertrouwen — bijvoorbeeld door een eerdere epifysiodese die wel of juist niet remt.';
+  }
+  tekst += ' Doorgetrokken over de resterende ' + mm(restLang) + ' groei in het lange been geeft de ' +
+    'gemeten verhouding een eindverschil van ' +
+    (DmGemeten >= 0 ? mm(DmGemeten) + ' t.n.v. ' + kortNaam : mm(-DmGemeten) + ' t.n.v. ' + langNaam) +
+    ', tegenover ' + mm(P.Dm) + ' volgens het congenitale model.';
+
+  vak.innerHTML = h + '<div style="margin-top:12px;">' + banner(soort, kop, tekst) + '</div>';
+}
+
+// ------------------------------------------------------------- aansluiten ---
+const ALLE_VELDEN = [
+  'epGeslacht', 'epEinde', 'epLeeftijdS', 'epLeeftijdK',
+  'epFemurR', 'epFemurL', 'epTibiaR', 'epTibiaL',
+  'epDoel', 'epMarge', 'epGeboorte', 'epOpname', 'epIngreep',
+  'epJFd', 'epJTp', 'epSnelFem', 'epSnelTib',
+  'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
+];
+
+// Patientgebonden velden; die worden bij "wissen" leeggemaakt en nooit bewaard.
+const PATIENT_VELDEN = [
+  'epLeeftijdS', 'epLeeftijdK', 'epFemurR', 'epFemurL', 'epTibiaR', 'epTibiaL',
+  'epGeboorte', 'epOpname', 'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
+];
+
+ALLE_VELDEN.forEach(id => {
+  const veld = el(id);
+  if (!veld) return;
+  veld.addEventListener('input', () => { bewaarInstellingen(); tekenen(); });
+  veld.addEventListener('change', () => { bewaarInstellingen(); tekenen(); });
+});
+
+el('epGeslacht').addEventListener('change', () => {
+  el('epEinde').value = (el('epGeslacht').value === 'meisje') ? '14' : '16';
+  tekenen();
+});
+
+Array.prototype.forEach.call(document.querySelectorAll('input[name="epBasis"]'), r => {
+  r.addEventListener('change', tekenen);
+});
+
+// De opnamedatum staat standaard op vandaag; dat is de datum die je bijna altijd
+// bedoelt en het scheelt invoeren op een telefoon.
+function vandaagInOpname() {
+  const nu = new Date();
+  el('epOpname').value = nu.getFullYear() + '-' +
+    String(nu.getMonth() + 1).padStart(2, '0') + '-' +
+    String(nu.getDate()).padStart(2, '0');
+}
+
+el('epWissen').addEventListener('click', () => {
+  PATIENT_VELDEN.forEach(id => { el(id).value = ''; });
+  vandaagInOpname();
+  tekenen();
+});
+
+vandaagInOpname();
+
+laadInstellingen();
+tekenen();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
