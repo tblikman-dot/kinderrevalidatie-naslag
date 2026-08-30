@@ -126,7 +126,7 @@
     flex: 1; min-width: 0;
     font-size: 13px; font-weight: 700;
   }
-  .ep-fysen select { width: 150px; flex-shrink: 0; font-size: 14px; padding: 9px 8px; }
+  .ep-fysen select { width: 172px; flex-shrink: 0; font-size: 13.5px; padding: 9px 8px; }
   .ep-fysen label:has(select[data-stand="dicht"]) > span { color: var(--danger); }
   .ep-fysen label:has(select[data-stand="dicht"]) select { border-color: var(--danger); background: #FBEAE5; }
   .ep-fysen label:has(select[data-stand="plaat"]) > span { color: #8A5B00; }
@@ -398,35 +398,46 @@
       <label><span>Distale femur rechts</span>
         <select id="epFyseFemurR" class="ep-keuze">
           <option value="open">Open</option>
-          <option value="plaat">Plaatjes in situ</option>
+          <option value="plaat">Plaatjes beiderzijds</option>
           <option value="dicht">Definitief gesloten</option>
         </select></label>
       <label><span>Distale femur links</span>
         <select id="epFyseFemurL" class="ep-keuze">
           <option value="open">Open</option>
-          <option value="plaat">Plaatjes in situ</option>
+          <option value="plaat">Plaatjes beiderzijds</option>
           <option value="dicht">Definitief gesloten</option>
         </select></label>
       <label><span>Proximale tibia rechts</span>
         <select id="epFyseTibiaR" class="ep-keuze">
           <option value="open">Open</option>
-          <option value="plaat">Plaatjes in situ</option>
+          <option value="plaat">Plaatjes beiderzijds</option>
           <option value="dicht">Definitief gesloten</option>
         </select></label>
       <label><span>Proximale tibia links</span>
         <select id="epFyseTibiaL" class="ep-keuze">
           <option value="open">Open</option>
-          <option value="plaat">Plaatjes in situ</option>
+          <option value="plaat">Plaatjes beiderzijds</option>
           <option value="dicht">Definitief gesloten</option>
         </select></label>
     </div>
     <div class="ep-hint">
       <b>Definitief gesloten</b> is een eerder uitgevoerde epifysiodese, of een fyse die na trauma of
-      infectie dicht is. <b>Plaatjes in situ</b> is een tijdelijke, omkeerbare remming met
-      achtplaatjes over de hele schijf. Dat is geen stilstand maar <em>vertraging</em>: de schijf
-      groeit langzamer door, en na verwijderen komt de groei weer op gang. Beide veranderen ook de
-      voorspelling van het eindverschil, want de gewone multipliersom gaat ervan uit dat beide benen
-      ongestoord doorgroeien. Er wordt daarom per groeischijf geteld.
+      infectie dicht is.
+      <br><br>
+      <b>Plaatjes beiderzijds</b> betekent achtplaatjes aan de <em>mediale én de laterale</em> kant
+      van dezelfde schijf, die samen als trekband over de hele fyse liggen. Groei duwt epifyse en
+      metafyse uit elkaar en de plaatjes houden dat tegen; de schroeven staan daarom na verloop van
+      tijd wijder uit elkaar. Omdat het geen compressie is maar een trekband, is het geen stilstand
+      maar <em>vertraging</em> — en dat is precies waarom er in de literatuur maar 42 tot 68 % van
+      de verwachte remming wordt gehaald. Na verwijderen komt de groei weer op gang.
+      <br><br>
+      <b>Zit er maar één plaatje op</b>, mediaal óf lateraal, kies dan <b>Open</b>. Dat is een
+      hemi-epifysiodese: de schijf groeit aan de vrije kant door en het bot buigt. Dat corrigeert een
+      standsafwijking en remt de lengte nauwelijks, dus voor deze berekening telt het niet als rem.
+      <br><br>
+      Zowel plaatjes als een gesloten fyse veranderen ook de voorspelling van het eindverschil, want
+      de gewone multipliersom gaat ervan uit dat beide benen ongestoord doorgroeien. Er wordt daarom
+      per groeischijf geteld.
     </div>
 
     <div id="epPlaatVeld" hidden>
