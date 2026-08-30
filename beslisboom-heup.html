@@ -188,7 +188,11 @@
   }
   .bb-plan > p:first-child { color: #0f7a4a; }
   .bb-plan .bb-bron { background: #FDF6EC; color: #5A4A33; }
-  .bb-plan .bb-controleer a { color: var(--accent); }
+  .bb-spoor { font-size: 12.5px; font-weight: 400; color: var(--muted); }
+  .bb-ster {
+    background: #FBF3DC; color: #5A4A33;
+    border-radius: 8px; padding: 9px 12px; font-size: 13.5px;
+  }
 </style>
 </head>
 <body>
@@ -207,6 +211,11 @@
     welke overweging daarbij hoort. Dit is een hulpmiddel bij het naslaan van de
     criteria — de richtlijn schrijft voor dat de indicatie in een multidisciplinair
     team wordt gesteld.
+  </p>
+  <p class="bb-intro">
+    Bij de uitkomst &ldquo;vervolgen&rdquo; rekent hij ook het screeningsschema uit: wanneer het
+    volgende lichamelijk onderzoek en de volgende X-bekken aan de beurt zijn, en wanneer de
+    surveillance mag stoppen.
   </p>
   <p class="bb-intro">
     Twijfel je over het GMFCS-niveau? <a href="gmfcs.html">Bekijk de omschrijvingen per leeftijdsband →</a>
@@ -260,11 +269,20 @@ const BOOM = {
     vraag: 'Wat is het GMFCS-niveau?',
     hint: 'Verandert de afkapwaarden voor chirurgie niet, maar bepaalt wél hoe vaak er gescreend wordt.',
     opties: [
-      { label: 'GMFCS I',  sub: 'Loopt zonder beperking',       naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'I'] },
-      { label: 'GMFCS II', sub: 'Loopt met beperkingen',        naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'II'] },
-      { label: 'GMFCS III',sub: 'Loopt met loophulpmiddel',     naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'III'] },
-      { label: 'GMFCS IV', sub: 'Verplaatst zich zittend',      naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
-      { label: 'GMFCS V',  sub: 'Wordt in alles verplaatst',    naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
+      { label: 'GMFCS I',  sub: 'Loopt zonder beperking',   naar: 'wgh',      bewaar: 'gmfcs13', zet: ['niveau', 'I'] },
+      { label: 'GMFCS II', sub: 'Loopt met beperkingen',    naar: 'wgh',      bewaar: 'gmfcs13', zet: ['niveau', 'II'] },
+      { label: 'GMFCS III',sub: 'Loopt met loophulpmiddel', naar: 'wgh',      bewaar: 'gmfcs13', zet: ['niveau', 'III'] },
+      { label: 'GMFCS IV', sub: 'Verplaatst zich zittend',  naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
+      { label: 'GMFCS V',  sub: 'Wordt in alles verplaatst',naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
+    ]
+  },
+
+  wgh: {
+    vraag: 'Is er een Winters-Gage-Hicks gangbeeld type IV?',
+    hint: 'Het screeningsschema heeft hier een eigen kolom voor, ongeacht het GMFCS-niveau: type IV krijgt vaker een X-bekken dan GMFCS I en II.',
+    opties: [
+      { label: 'Nee, of niet geclassificeerd', naar: 'leeftijd', zet: ['wgh', 'nee'] },
+      { label: 'Ja, type IV', sub: 'Volgt de eigen kolom van het schema', naar: 'leeftijd', zet: ['wgh', 'ja'] },
     ]
   },
 
@@ -400,38 +418,109 @@ const BOOM = {
 };
 
 // ===== SCREENINGSSCHEMA =====
-// Uit een ANDERE module van dezelfde richtlijn dan de chirurgiecriteria hierboven:
-// "Screening ter preventie van heupluxatie".
+// Overgenomen uit de tabel "Screeningsschema heupluxatie bij spastische cerebrale
+// parese", bijlage bij de richtlijn Cerebrale parese bij kinderen
+// (Richtlijnendatabase, FMS). Dit is een ander document dan de module
+// "Chirurgie bij heup(sub)luxatie" waar de afkapwaarden hierboven uit komen.
 //
-// LET OP BIJ ONDERHOUD. De richtlijnendatabase en de CP-Net-aanbevelingskaart zijn
-// vanaf deze omgeving niet bereikbaar; dit schema is samengesteld uit secundaire
-// weergaven van die module. Dat staat ook zichtbaar op de pagina, met de vraag om
-// het een keer tegen de aanbevelingskaart te controleren. Wijzigt er iets: pas het
-// hier aan en haal die waarschuwing pas weg als de bron echt is nagelopen.
-const SCHEMA_BRON = 'Richtlijn Cerebrale parese bij kinderen, module "Screening ter preventie van heupluxatie" (FMS).';
+// Het schema is geen intervalregel maar een lijst met bezoekmomenten, en het
+// onderscheidt per moment of er alleen lichamelijk onderzoek is (LO) of ook een
+// X-bekken (LO + X). Dat onderscheid gaat verloren zodra je het als "eens per
+// zoveel jaar" opschrijft, dus het staat hier als lijst.
+//
+// Let op de afkapwaarde: dit schema stopt bij MP <= 30, terwijl de
+// chirurgiemodule met 33 en 40% werkt. Dat is geen slordigheid maar een
+// verschil tussen de twee documenten.
+const SCHEMA_BRON = 'Screeningsschema heupluxatie bij spastische cerebrale parese — bijlage bij de richtlijn Cerebrale parese bij kinderen (Richtlijnendatabase, FMS).';
 
-const EERSTE_LEEFTIJD = 1;   // niet eerder dan na de leeftijd van 1 jaar
+// Voor iedereen gelijk, ongeacht niveau.
+const START_MOMENTEN = [
+  { leeftijd: 1.0, wat: 'START' },
+  { leeftijd: 1.5, wat: 'HEREVAL' },
+];
+
+const WAT = {
+  START:   'Start van de surveillance: lichamelijk onderzoek, CP-classificatie én X-bekken AP',
+  HEREVAL: 'Re-evaluatie: lichamelijk onderzoek, CP-classificatie én X-bekken AP',
+  LO:      'Alleen lichamelijk onderzoek',
+  LOX:     'Lichamelijk onderzoek én X-bekken AP',
+};
 
 const SCHEMA = {
   'I': {
-    regel: 'Herhalen op indicatie.',
-    volgende: () => null,
+    naam: 'GMFCS I',
+    bezoeken: [[2, 'LO'], [4, 'LO'], [6, 'LO']],
+    stop: 'Na het bezoek op 6 jaar stopt de surveillance.',
+    laat: 'Wordt de CP ná het 2e maar vóór het 4e jaar vastgesteld of vermoed, start dan direct met surveillance — wacht niet tot het 4e jaar.',
   },
   'II': {
-    regel: 'Herhalen op de leeftijd van 6 en 10 jaar. Is het MP dan < 33%, daarna alleen nog op indicatie.',
-    volgende: l => (l < 6 ? 6 : (l < 10 ? 10 : null)),
+    naam: 'GMFCS II',
+    bezoeken: [[2, 'LO'], [4, 'LO'], [6, 'LOX'], [8, 'LO'], [10, 'LOX']],
+    stop: 'Stop als het MP op de leeftijd van 10 jaar ≤ 30 is — tenzij er een Winters-Gage-Hicks gangbeeld type IV is.',
   },
   'III': {
-    regel: 'Jaarlijks tot de leeftijd van 8 jaar. Blijft het MP daarna langer dan 2 jaar stabiel onder 33%, dan eens per 2 jaar tot skeletrijpheid.',
-    volgende: l => l + 1,
-    // Alleen vanaf 8 jaar, en alleen als het MP al langer dan 2 jaar stabiel < 33% is.
-    ruimer: l => (l >= 8 ? l + 2 : null),
+    naam: 'GMFCS III',
+    bezoeken: [[2, 'LOX'], [3, 'LOX'], [4, 'LOX'], [5, 'LOX'], [6, 'LOX'], [7, 'LOX'], [8, 'LOX']],
+    // De bron drukt de * pas af bij 12-16 jaar. Hij wordt hier al getoond zodra
+    // het interval van 1 naar 2 jaar gaat, want dat is het moment waarop de
+    // waarschuwing "verlaag de frequentie niet" ergens over gaat.
+    vervolg: { vanaf: 8, interval: 2, wat: 'LOX', ster: true },
+    vervolgTekst: 'Vanaf 8 jaar tweejaarlijks tot skeletrijpheid.',
+    stop: 'Stop bij skeletrijpheid met MP ≤ 30.',
+    laat: 'Wordt de CP ná het 2e jaar vastgesteld of vermoed, start dan met het 12-maandenschema en houd dat ten minste 24 maanden aan.',
   },
   'IV-V': {
-    regel: 'Elk half jaar tot de leeftijd van 4 jaar, daarna jaarlijks tot skeletrijpheid.',
-    volgende: l => (l < 4 ? l + 0.5 : l + 1),
+    naam: 'GMFCS IV en V',
+    bezoeken: [[2, 'LOX'], [2.5, 'LOX'], [3, 'LOX'], [3.5, 'LOX']],
+    vervolg: { vanaf: 4, interval: 1, wat: 'LOX', ster: true },
+    vervolgTekst: 'Elk half jaar tot 4 jaar, daarna jaarlijks tot skeletrijpheid.',
+    stop: 'Stop bij skeletrijpheid met MP ≤ 30.',
+    laat: 'Wordt de CP ná het 2e jaar vastgesteld of vermoed, start dan met het 6-maandenschema en houd dat ten minste 24 maanden aan, met de daarbij passende frequentie.',
+  },
+  'WGH4': {
+    naam: 'Winters-Gage-Hicks gangbeeld type IV',
+    bezoeken: [[2, 'LOX'], [4, 'LO'], [6, 'LOX'], [8, 'LO'], [10, 'LOX']],
+    vervolg: { vanaf: 10, interval: 2, wat: 'LOX' },
+    vervolgTekst: 'Vanaf 10 jaar tweejaarlijks tot skeletrijpheid.',
+    stop: 'Stop bij skeletrijpheid met MP ≤ 30.',
+    laat: 'Wordt de CP ná het 2e maar vóór het 4e jaar vastgesteld of vermoed, start dan direct met surveillance.',
   },
 };
+
+// Het eerstvolgende moment na de opgegeven leeftijd. Geeft null terug als de
+// surveillance volgens het schema klaar is.
+function volgendBezoek(spoor, leeftijd) {
+  for (const m of START_MOMENTEN) {
+    if (leeftijd < m.leeftijd) return { leeftijd: m.leeftijd, wat: m.wat };
+  }
+  const s = SCHEMA[spoor];
+  for (const [l, wat] of s.bezoeken) {
+    if (l > leeftijd) return { leeftijd: l, wat: wat };
+  }
+  if (s.vervolg) {
+    let l = s.vervolg.vanaf;
+    while (l <= leeftijd) l += s.vervolg.interval;
+    return { leeftijd: l, wat: s.vervolg.wat, ster: s.vervolg.ster, totSR: true };
+  }
+  return null;
+}
+
+// De eerstvolgende paar momenten, om te laten zien hoe het verder loopt. De
+// tabel loopt tot "12-16 of SR", dus daarboven worden geen losse jaartallen meer
+// opgesomd; daar staat "en zo door tot skeletrijpheid" onder.
+const TABEL_TOT = 16;
+function komendeBezoeken(spoor, leeftijd, aantal) {
+  const uit = [];
+  let l = leeftijd;
+  for (let i = 0; i < aantal; i++) {
+    const b = volgendBezoek(spoor, l);
+    if (!b) break;
+    if (i > 0 && b.leeftijd > TABEL_TOT) break;
+    uit.push(b);
+    l = b.leeftijd;
+  }
+  return uit;
+}
 
 function jaarTekst(l) {
   if (!isFinite(l)) return '—';
@@ -449,60 +538,56 @@ function maandenTekst(vanaf, tot) {
   return 'over ' + m + ' maanden';
 }
 
-// Bouwt het vervolgplan op. Zonder niveau of leeftijd valt er niets te plannen;
-// dan wordt alleen de regel getoond die bij het niveau hoort.
+// Bouwt het vervolgplan op. Zonder niveau of leeftijd valt er niets te plannen.
 function planHtml(antw) {
-  const niveau = antw.niveau;
-  if (!niveau || !SCHEMA[niveau]) return '';
-  const s = SCHEMA[niveau];
+  const spoor = (antw.wgh === 'ja') ? 'WGH4' : antw.niveau;
+  if (!spoor || !SCHEMA[spoor]) return '';
+  const s = SCHEMA[spoor];
   const l = antw.leeftijd;
   const heeftLeeftijd = isFinite(l);
 
   let kern;
   if (!heeftLeeftijd) {
-    kern = '<p>Vul een leeftijd in om het volgende moment uit te rekenen. De regel bij ' +
-      'GMFCS ' + esc(niveau === 'IV-V' ? 'IV–V' : niveau) + ' is: ' + esc(s.regel) + '</p>';
-  } else if (l < EERSTE_LEEFTIJD) {
-    kern = '<p><strong>Eerste X-bekken AP op de leeftijd van 1 jaar.</strong> De screening start ' +
-      'zodra de diagnose of verdenking spastische CP er is, maar niet eerder dan na de eerste ' +
-      'verjaardag. Dat is ' + esc(maandenTekst(l, EERSTE_LEEFTIJD)) + '.</p>';
+    const lijst = s.bezoeken.map(b => jaarTekst(b[0]) + ' — ' + WAT[b[1]].toLowerCase()).join('; ');
+    kern = '<p>Vul een leeftijd in om het eerstvolgende moment uit te rekenen. Het spoor voor ' +
+      esc(s.naam) + ' is: ' + esc(lijst) +
+      (s.vervolgTekst ? '. ' + esc(s.vervolgTekst) : '.') + '</p>';
   } else {
-    const v = s.volgende(l);
-    if (v === null) {
-      kern = '<p><strong>Geen vast volgend moment.</strong> ' + esc(s.regel) +
-        ' Beoordeel op geleide van het lichamelijk onderzoek hieronder.</p>';
+    const komend = komendeBezoeken(spoor, l, 4);
+    if (!komend.length) {
+      kern = '<p><strong>Volgens het schema is de surveillance klaar.</strong> ' + esc(s.stop) + '</p>';
     } else {
-      kern = '<p><strong>Volgende X-bekken AP op de leeftijd van ' + esc(jaarTekst(v)) + '</strong> — ' +
-        esc(maandenTekst(l, v)) + '.</p><p>' + esc(s.regel) + '</p>';
-      const ruim = s.ruimer ? s.ruimer(l) : null;
-      if (ruim !== null) {
-        kern += '<p>Is het MP bij dit kind al langer dan 2 jaar stabiel onder 33%, dan mag het ' +
-          'interval naar 2 jaar: dan wordt het ' + esc(jaarTekst(ruim)) + '.</p>';
+      const eerste = komend[0];
+      kern = '<p><strong>Volgende moment op de leeftijd van ' + esc(jaarTekst(eerste.leeftijd)) +
+        '</strong> — ' + esc(maandenTekst(l, eerste.leeftijd)) + '.<br>' + esc(WAT[eerste.wat]) + '.</p>';
+      if (komend.length > 1) {
+        kern += '<p>Daarna: ' + komend.slice(1).map(b =>
+          esc(jaarTekst(b.leeftijd)) + ' (' + (b.wat === 'LO' ? 'alleen LO' : 'LO + X-bekken') + ')'
+        ).join(', ') + (s.vervolg ? ', en zo door tot skeletrijpheid' : '') + '.</p>';
+      }
+      if (eerste.ster) {
+        kern += '<p class="bb-ster"><strong>Verlaag de frequentie niet</strong> als het kind nog geen ' +
+          '24 maanden surveillance heeft gehad, als er na 2 jaar nog geen stabiele situatie is ' +
+          '(stabiel = minder dan 10% verandering in MP over 12 maanden), of als het MP boven de 30% ligt.</p>';
       }
     }
   }
 
   return `
     <div class="bb-uitkomst-tekst bb-plan">
-      <p><strong>Vervolgafspraak volgens het screeningsschema</strong></p>
+      <p><strong>Vervolgafspraak volgens het screeningsschema</strong><br>
+      <span class="bb-spoor">Spoor: ${esc(s.naam)}</span></p>
       ${kern}
-      <p><strong>Lichamelijk onderzoek</strong> hoort bij elke screening en kan de X-bekken niet
-      vervangen. Beoordeel tussendoor bij elk poliklinisch contact; deze bevindingen zijn een
-      indicatie om de X-bekken te vervroegen:</p>
-      <ul>
-        <li>afgenomen passieve abductie of exorotatie van de heup</li>
-        <li>asymmetrische kniehoogte bij 90° heupflexie, beiderzijds in ruglig</li>
-        <li>looppatroon met toegenomen bekkenhoogte in midstance, of endorotatie in de heup met flexie in heup en knie</li>
-        <li>windswept deformity</li>
-      </ul>
-      <div class="bb-bron bb-controleer">
-        <strong>Nog niet aan de bron gecontroleerd.</strong>
-        Dit schema komt uit de module <em>Screening ter preventie van heupluxatie</em> — een andere
-        module dan de chirurgiecriteria hierboven. Ik kon die module en de CP-Net-aanbevelingskaart
-        niet zelf inzien; dit is samengesteld uit secundaire weergaven ervan. Loop het één keer na
-        voordat je erop vaart:
-        <a href="https://cp-net.nl/wp-content/uploads/2021/08/6.8.1.-Aanbevelingskaart-Screening-preventie-heupluxatie.pdf" target="_blank" rel="noopener">aanbevelingskaart CP-Net ↗</a>.
-        <br>BRON: ${esc(SCHEMA_BRON)}
+      <p><strong>Stoppen.</strong> ${esc(s.stop)} Skeletrijpheid is hier: de cartilago ypsiloformis
+      is verbeend.</p>
+      <p><strong>Blijf doorgaan na skeletrijpheid</strong> bij bekkenscheefstand samen met klinisch
+      of radiologisch aangetoonde progressie van scoliose — dan blijft er risico op (sub)luxatie.</p>
+      ${s.laat ? '<p><strong>Late diagnose.</strong> ' + esc(s.laat) + '</p>' : ''}
+      <p><strong>Twijfel je over het GMFCS-niveau?</strong> Volg dan het schema van het hógere niveau.</p>
+      <div class="bb-bron">
+        BRON: ${esc(SCHEMA_BRON)}<br>
+        Let op dat dit schema met <strong>MP ≤ 30</strong> werkt als stopcriterium, terwijl de
+        chirurgiecriteria hierboven met 33 en 40% werken. Dat verschil zit in de bronnen zelf.
       </div>
     </div>`;
 }
