@@ -163,6 +163,32 @@
   }
   .bb-knop:hover { border-color: var(--accent); }
   .bb-knop.primair { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .bb-optie.primair { background: var(--accent); color: #fff; border-color: var(--accent); text-align: center; }
+  .bb-optie.primair:hover { background: #0c3f4c; }
+
+  .bb-getalrij { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .bb-getal {
+    flex: 1; min-width: 0;
+    padding: 13px 14px;
+    border: 1.5px solid var(--lijn); border-radius: 11px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 17px; color: var(--inkt);
+  }
+  .bb-getal:focus { outline: none; border-color: var(--accent); }
+  .bb-eenheid { font-family: system-ui, sans-serif; font-size: 14px; color: var(--muted); }
+
+  .bb-plan {
+    background: #F4F8F6;
+    border: 1px solid #CFE3D8;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .bb-plan > p:first-child { color: #0f7a4a; }
+  .bb-plan .bb-bron { background: #FDF6EC; color: #5A4A33; }
+  .bb-plan .bb-controleer a { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -232,11 +258,24 @@ const BOOM = {
 
   gmfcs: {
     vraag: 'Wat is het GMFCS-niveau?',
-    hint: 'Verandert de afkapwaarden niet — wordt gebruikt om de relevante context bij de uitkomst te tonen.',
+    hint: 'Verandert de afkapwaarden voor chirurgie niet, maar bepaalt wél hoe vaak er gescreend wordt.',
     opties: [
-      { label: 'GMFCS I–III', sub: 'Lopend', naar: 'eerder', bewaar: 'gmfcs13' },
-      { label: 'GMFCS IV–V', sub: 'Niet-lopend', naar: 'eerder', bewaar: 'gmfcs45' },
+      { label: 'GMFCS I',  sub: 'Loopt zonder beperking',       naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'I'] },
+      { label: 'GMFCS II', sub: 'Loopt met beperkingen',        naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'II'] },
+      { label: 'GMFCS III',sub: 'Loopt met loophulpmiddel',     naar: 'leeftijd', bewaar: 'gmfcs13', zet: ['niveau', 'III'] },
+      { label: 'GMFCS IV', sub: 'Verplaatst zich zittend',      naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
+      { label: 'GMFCS V',  sub: 'Wordt in alles verplaatst',    naar: 'leeftijd', bewaar: 'gmfcs45', zet: ['niveau', 'IV-V'] },
     ]
+  },
+
+  leeftijd: {
+    vraag: 'Wat is de leeftijd van het kind?',
+    hint: 'Bepaalt samen met het GMFCS-niveau wanneer de volgende X-bekken AP aan de beurt is.',
+    getal: {
+      id: 'bbLeeftijd', sleutel: 'leeftijd', naar: 'eerder',
+      min: 0, max: 20, step: 0.5, eenheid: 'jaar', placeholder: 'bijv. 6,5',
+      overslaan: 'Leeftijd onbekend / overslaan',
+    }
   },
 
   eerder: {
@@ -325,19 +364,20 @@ const BOOM = {
   },
 
   u_vervolgen: {
-    uitkomst: true, type: 'vervolgen', badge: 'Vervolgen',
+    uitkomst: true, type: 'vervolgen', badge: 'Vervolgen', plan: true,
     titel: 'Geen operatie-indicatie op basis van deze criteria',
     tekst: `<p>Er is op dit moment geen indicatie voor preventieve chirurgie volgens de aangehouden criteria.</p>
-      <p>Blijf vervolgen volgens het screenings- en interventieschema van de richtlijn — de screeningsfrequentie
-      hangt af van het GMFCS-niveau en de leeftijd.</p>`
+      <p>Blijf vervolgen volgens het screeningsschema. Wat dat voor dit kind betekent staat hieronder.</p>`
   },
 
   u_herhaal_opname: {
-    uitkomst: true, type: 'vervolgen', badge: 'Herhaal beeldvorming',
+    uitkomst: true, type: 'vervolgen', badge: 'Herhaal beeldvorming', plan: true,
     titel: 'Nog onvoldoende gegevens om toename aan te tonen',
     tekst: `<p>Bij MP 33–40% vraagt de richtlijn om aangetoonde toename over ten minste 2 X-bekken AP met
       6 maanden interval. Zonder die tweede opname is dat criterium niet te toetsen.</p>
-      <p>Plan een herhaalde X-bekken AP conform het screeningsschema en beoordeel opnieuw.</p>`
+      <p>Plan een herhaalde X-bekken AP en beoordeel opnieuw. Let op: die tweede opname mag niet
+      eerder dan 6 maanden na de vorige, ook niet als het screeningsschema hieronder een korter
+      interval zou toestaan.</p>`
   },
 
   u_ossaal_eerder: {
@@ -359,6 +399,114 @@ const BOOM = {
   },
 };
 
+// ===== SCREENINGSSCHEMA =====
+// Uit een ANDERE module van dezelfde richtlijn dan de chirurgiecriteria hierboven:
+// "Screening ter preventie van heupluxatie".
+//
+// LET OP BIJ ONDERHOUD. De richtlijnendatabase en de CP-Net-aanbevelingskaart zijn
+// vanaf deze omgeving niet bereikbaar; dit schema is samengesteld uit secundaire
+// weergaven van die module. Dat staat ook zichtbaar op de pagina, met de vraag om
+// het een keer tegen de aanbevelingskaart te controleren. Wijzigt er iets: pas het
+// hier aan en haal die waarschuwing pas weg als de bron echt is nagelopen.
+const SCHEMA_BRON = 'Richtlijn Cerebrale parese bij kinderen, module "Screening ter preventie van heupluxatie" (FMS).';
+
+const EERSTE_LEEFTIJD = 1;   // niet eerder dan na de leeftijd van 1 jaar
+
+const SCHEMA = {
+  'I': {
+    regel: 'Herhalen op indicatie.',
+    volgende: () => null,
+  },
+  'II': {
+    regel: 'Herhalen op de leeftijd van 6 en 10 jaar. Is het MP dan < 33%, daarna alleen nog op indicatie.',
+    volgende: l => (l < 6 ? 6 : (l < 10 ? 10 : null)),
+  },
+  'III': {
+    regel: 'Jaarlijks tot de leeftijd van 8 jaar. Blijft het MP daarna langer dan 2 jaar stabiel onder 33%, dan eens per 2 jaar tot skeletrijpheid.',
+    volgende: l => l + 1,
+    // Alleen vanaf 8 jaar, en alleen als het MP al langer dan 2 jaar stabiel < 33% is.
+    ruimer: l => (l >= 8 ? l + 2 : null),
+  },
+  'IV-V': {
+    regel: 'Elk half jaar tot de leeftijd van 4 jaar, daarna jaarlijks tot skeletrijpheid.',
+    volgende: l => (l < 4 ? l + 0.5 : l + 1),
+  },
+};
+
+function jaarTekst(l) {
+  if (!isFinite(l)) return '—';
+  const heel = Math.floor(l);
+  const maanden = Math.round((l - heel) * 12);
+  if (maanden === 0) return heel + ' jaar';
+  if (maanden === 6) return heel + '½ jaar';
+  return heel + ' jaar en ' + maanden + ' maanden';
+}
+
+function maandenTekst(vanaf, tot) {
+  const m = Math.round((tot - vanaf) * 12);
+  if (m <= 0) return 'nu';
+  if (m === 1) return 'over een maand';
+  return 'over ' + m + ' maanden';
+}
+
+// Bouwt het vervolgplan op. Zonder niveau of leeftijd valt er niets te plannen;
+// dan wordt alleen de regel getoond die bij het niveau hoort.
+function planHtml(antw) {
+  const niveau = antw.niveau;
+  if (!niveau || !SCHEMA[niveau]) return '';
+  const s = SCHEMA[niveau];
+  const l = antw.leeftijd;
+  const heeftLeeftijd = isFinite(l);
+
+  let kern;
+  if (!heeftLeeftijd) {
+    kern = '<p>Vul een leeftijd in om het volgende moment uit te rekenen. De regel bij ' +
+      'GMFCS ' + esc(niveau === 'IV-V' ? 'IV–V' : niveau) + ' is: ' + esc(s.regel) + '</p>';
+  } else if (l < EERSTE_LEEFTIJD) {
+    kern = '<p><strong>Eerste X-bekken AP op de leeftijd van 1 jaar.</strong> De screening start ' +
+      'zodra de diagnose of verdenking spastische CP er is, maar niet eerder dan na de eerste ' +
+      'verjaardag. Dat is ' + esc(maandenTekst(l, EERSTE_LEEFTIJD)) + '.</p>';
+  } else {
+    const v = s.volgende(l);
+    if (v === null) {
+      kern = '<p><strong>Geen vast volgend moment.</strong> ' + esc(s.regel) +
+        ' Beoordeel op geleide van het lichamelijk onderzoek hieronder.</p>';
+    } else {
+      kern = '<p><strong>Volgende X-bekken AP op de leeftijd van ' + esc(jaarTekst(v)) + '</strong> — ' +
+        esc(maandenTekst(l, v)) + '.</p><p>' + esc(s.regel) + '</p>';
+      const ruim = s.ruimer ? s.ruimer(l) : null;
+      if (ruim !== null) {
+        kern += '<p>Is het MP bij dit kind al langer dan 2 jaar stabiel onder 33%, dan mag het ' +
+          'interval naar 2 jaar: dan wordt het ' + esc(jaarTekst(ruim)) + '.</p>';
+      }
+    }
+  }
+
+  return `
+    <div class="bb-uitkomst-tekst bb-plan">
+      <p><strong>Vervolgafspraak volgens het screeningsschema</strong></p>
+      ${kern}
+      <p><strong>Lichamelijk onderzoek</strong> hoort bij elke screening en kan de X-bekken niet
+      vervangen. Beoordeel tussendoor bij elk poliklinisch contact; deze bevindingen zijn een
+      indicatie om de X-bekken te vervroegen:</p>
+      <ul>
+        <li>afgenomen passieve abductie of exorotatie van de heup</li>
+        <li>asymmetrische kniehoogte bij 90° heupflexie, beiderzijds in ruglig</li>
+        <li>looppatroon met toegenomen bekkenhoogte in midstance, of endorotatie in de heup met flexie in heup en knie</li>
+        <li>windswept deformity</li>
+      </ul>
+      <div class="bb-bron bb-controleer">
+        <strong>Nog niet aan de bron gecontroleerd.</strong>
+        Dit schema komt uit de module <em>Screening ter preventie van heupluxatie</em> — een andere
+        module dan de chirurgiecriteria hierboven. Ik kon die module en de CP-Net-aanbevelingskaart
+        niet zelf inzien; dit is samengesteld uit secundaire weergaven ervan. Loop het één keer na
+        voordat je erop vaart:
+        <a href="https://cp-net.nl/wp-content/uploads/2021/08/6.8.1.-Aanbevelingskaart-Screening-preventie-heupluxatie.pdf" target="_blank" rel="noopener">aanbevelingskaart CP-Net ↗</a>.
+        <br>BRON: ${esc(SCHEMA_BRON)}
+      </div>
+    </div>`;
+}
+
 const CONTEXT = {
   gmfcs13: 'GMFCS I–III (lopend): aannemelijk dat mobiliteit (zitten, staan, lopen) beter behouden blijft tot in de volwassenheid dan met een heupluxatie. Bij ossale chirurgie is het succespercentage in deze groep hoger.',
   gmfcs45: 'GMFCS IV–V (niet-lopend): zitten, staan en verplaatsen met hulpmiddelen blijven beter behouden in de volwassenheid. Deze groep heeft vaker een indicatie voor preventieve ossale operaties, met een hoger complicatierisico (ossaal gemiddeld 22% vs. weke delen ~6%).',
@@ -366,6 +514,7 @@ const CONTEXT = {
 
 let pad = [];        // [{knooppunt, vraag, antwoord}]
 let bewaard = [];    // context-sleutels
+let antwoorden = {}; // losse gegevens die de uitkomst nodig heeft (niveau, leeftijd)
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -380,6 +529,7 @@ function toon(id) {
         <span class="bb-badge">${esc(n.badge)}</span>
         <h2>${esc(n.titel)}</h2>
         <div class="bb-uitkomst-tekst">${n.tekst}</div>
+        ${n.plan ? planHtml(antwoorden) : ''}
         ${context.length ? `<div class="bb-uitkomst-tekst"><p><strong>Context bij dit GMFCS-niveau</strong></p><ul>${
           context.map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>` : ''}
         <div class="bb-uitkomst-tekst"><p><strong>De richtlijn vraagt daarnaast om:</strong></p>
@@ -396,6 +546,43 @@ function toon(id) {
         <button class="bb-knop primair" onclick="opnieuw()">Opnieuw beginnen</button>
         <a class="bb-knop" href="https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen" target="_blank" rel="noopener">Richtlijn openen ↗</a>
       </div>`;
+    return;
+  }
+
+  if (n.getal) {
+    const g = n.getal;
+    el.innerHTML = `
+      <div class="bb-voortgang">Vraag ${pad.length + 1}</div>
+      <div class="bb-kaart">
+        <p class="bb-vraag">${esc(n.vraag)}</p>
+        ${n.hint ? `<p class="bb-hint">${esc(n.hint)}</p>` : ''}
+        <div class="bb-getalrij">
+          <input type="number" id="${g.id}" class="bb-getal" inputmode="decimal"
+                 min="${g.min}" max="${g.max}" step="${g.step}" placeholder="${esc(g.placeholder)}">
+          <span class="bb-eenheid">${esc(g.eenheid)}</span>
+        </div>
+        <div class="bb-opties">
+          <button class="bb-optie primair" id="bbVerder">Verder</button>
+          <button class="bb-optie" id="bbOversla">${esc(g.overslaan)}</button>
+        </div>
+      </div>
+      ${padHtml()}
+      ${pad.length ? '<div class="bb-knoppen"><button class="bb-knop" onclick="terug()">← Vorige vraag</button><button class="bb-knop" onclick="opnieuw()">Opnieuw beginnen</button></div>' : ''}`;
+
+    const veld = document.getElementById(g.id);
+    const ga = (waarde, label) => {
+      pad.push({ knooppunt: id, vraag: n.vraag, antwoord: label, bewaar: null, zet: g.sleutel });
+      antwoorden[g.sleutel] = waarde;
+      toon(g.naar);
+    };
+    document.getElementById('bbVerder').addEventListener('click', () => {
+      const w = parseFloat(veld.value);
+      if (!isFinite(w)) { veld.focus(); return; }
+      ga(w, jaarTekst(w));
+    });
+    document.getElementById('bbOversla').addEventListener('click', () => ga(NaN, 'niet ingevuld'));
+    veld.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('bbVerder').click(); });
+    veld.focus();
     return;
   }
 
@@ -418,8 +605,10 @@ function toon(id) {
   el.querySelectorAll('.bb-optie').forEach(btn => {
     btn.addEventListener('click', () => {
       const o = n.opties[parseInt(btn.dataset.i, 10)];
-      pad.push({ knooppunt: id, vraag: n.vraag, antwoord: o.label, bewaar: o.bewaar || null });
+      pad.push({ knooppunt: id, vraag: n.vraag, antwoord: o.label,
+                 bewaar: o.bewaar || null, zet: o.zet ? o.zet[0] : null });
       if (o.bewaar) bewaard.push(o.bewaar);
+      if (o.zet) antwoorden[o.zet[0]] = o.zet[1];
       toon(o.naar);
     });
   });
@@ -437,12 +626,14 @@ function terug() {
   const vorige = pad.pop();
   if (!vorige) return;
   if (vorige.bewaar) bewaard = bewaard.filter(k => k !== vorige.bewaar);
+  if (vorige.zet) delete antwoorden[vorige.zet];
   toon(vorige.knooppunt);
 }
 
 function opnieuw() {
   pad = [];
   bewaard = [];
+  antwoorden = {};
   toon('start');
 }
 
