@@ -587,6 +587,16 @@
     </details>
   </div>
 
+  <!-- ================= REMMING DOOR PLAATJES ================= -->
+  <div class="ep-sectie" id="epPlaatSectie" hidden>
+    <h2>Wat de plaatjes zelf doen</h2>
+    <p class="ep-sectie-uitleg" id="epPlaatIntro"></p>
+    <div id="epPlaatOordeel"></div>
+    <div class="ep-tegels" id="epPlaatTegels"></div>
+    <div class="ep-tabel-scroll"><table class="ep-tabel" id="epPlaatTabel"></table></div>
+    <div class="ep-bijschrift" id="epPlaatBijschrift"></div>
+  </div>
+
   <!-- ================= INGREEPVENSTER ================= -->
   <div class="ep-sectie">
     <h2>Ingreepvenster</h2>
@@ -922,6 +932,7 @@ function tekenen() {
       el(id).innerHTML = '';
     });
     el('epTijdlijn').innerHTML = '';
+    el('epPlaatSectie').hidden = true;
     el('epPlanIntro').textContent = '';
     el('epCapBijschrift').textContent = '';
     el('epDeadlineHint').textContent = '';
@@ -959,6 +970,16 @@ function tekenen() {
   const standLangTibia = langsIsL ? stand.tibiaL : stand.tibiaR;
   const standKortFemur = langsIsL ? stand.femurR : stand.femurL;
   const standKortTibia = langsIsL ? stand.tibiaR : stand.tibiaL;
+
+  const FYSE_NAMEN = {
+    femurL: 'distale femur links', femurR: 'distale femur rechts',
+    tibiaL: 'proximale tibia links', tibiaR: 'proximale tibia rechts',
+  };
+  const dichtLijst = [], plaatLijst = [];
+  Object.keys(FYSE_NAMEN).forEach(k => {
+    if (stand[k] === 'dicht') dichtLijst.push(FYSE_NAMEN[k]);
+    if (stand[k] === 'plaat') plaatLijst.push(FYSE_NAMEN[k]);
+  });
 
   const dichtLangFemur = standLangFemur === 'dicht';
   const dichtLangTibia = standLangTibia === 'dicht';
@@ -1045,6 +1066,13 @@ function tekenen() {
   const P = (basis === 's') ? ctxS : ctxK;
   const basisNaam = (basis === 's') ? 'skeletleeftijd' : 'kalenderleeftijd';
   const leeftijdNu = (basis === 's') ? inv.leeftijdS : inv.leeftijdK;
+
+  // ---- datumlaag: leeftijden sturen de rekensom, datums zijn er een weergave van ----
+  const opname = leesDatum(el('epOpname').value);
+  function datumBij(leeftijd) {
+    return (opname && isFinite(leeftijd)) ? plusJaren(opname, leeftijd - leeftijdNu) : null;
+  }
+  const leeftijdEnDatum = a => komma(a, 2) + ' jr' + (opname ? ' (' + datumKort(datumBij(a)) + ')' : '');
 
   // ---- uitgangssituatie ----
   let bSoort = 'groen';
@@ -1152,6 +1180,128 @@ function tekenen() {
   if (P.Dm < onder) doelStatus = 'omgeslagen';
   else if (P.Dm <= boven) doelStatus = 'binnen';
 
+  // ---- wat de plaatjes zelf doen ----
+  // De plaatjes zijn geen achtergrondruis maar een lopende behandeling. De
+  // vraag "haal ik het doel met de plaatjes alleen, en wanneer moeten ze er dan
+  // uit" is dezelfde vorm als het ingreepvenster, alleen met de verwijderdatum
+  // als knop in plaats van de operatiedatum.
+  //
+  // Er wordt gescand in plaats van teruggerekend. Met een plaatje op het lange
+  // been daalt het eindverschil naarmate je later verwijdert; zit het op het
+  // korte been, dan stijgt het. Bij plaatjes aan beide kanten kan het zelfs
+  // niet-monotoon lopen. Scannen is daar ongevoelig voor.
+  const eindeScan = inv.einde + 0.5;
+  function eindverschilBij(uitLeeftijd) { return contextBij(leeftijdNu, uitLeeftijd).Dm; }
+  function remVenster() {
+    const stap = 1 / 24;                       // halve maanden
+    let eerste = NaN, laatste = NaN, gaten = false, binnenGeweest = false, buitenNa = false;
+    for (let x = leeftijdNu; x <= eindeScan + 1e-9; x += stap) {
+      const binnen = eindverschilBij(x) >= onder && eindverschilBij(x) <= boven;
+      if (binnen) {
+        if (buitenNa) gaten = true;            // opnieuw binnen na eruit geweest te zijn
+        if (!isFinite(eerste)) eerste = x;
+        laatste = x; binnenGeweest = true;
+      } else if (binnenGeweest) {
+        buitenNa = true;
+      }
+    }
+    return { eerste: eerste, laatste: laatste, gaten: gaten };
+  }
+
+  el('epPlaatSectie').hidden = !ietsPlaat;
+  if (ietsPlaat) toonPlaatjes();
+
+  function toonPlaatjes() {
+    const nuEruit = eindverschilBij(leeftijdNu);
+    const blijftErin = eindverschilBij(eindeScan);
+    const venster = remVenster();
+    const welke = plaatLijst.join(' en de ');
+
+    el('epPlaatIntro').textContent =
+      'Achtplaatjes over de hele groeischijf remmen de groei maar leggen hem niet stil. Hieronder ' +
+      'staat wat die rem oplevert als je hem laat zitten, en tussen welke leeftijden de plaatjes ' +
+      'eruit moeten om het doel van ' + mm(inv.doel) + ' ± ' + mm(inv.marge) + ' te halen. Gerekend ' +
+      'met ' + komma(remFem * 100, 0) + ' % remming op de femur en ' + komma(remTib * 100, 0) +
+      ' % op de proximale tibia.';
+
+    el('epPlaatTegels').innerHTML =
+      tegel('Nu eruit', mm(nuEruit), 'eindverschil als je vandaag verwijdert') +
+      tegel('Erin laten', mm(blijftErin), 'eindverschil als ze tot het einde blijven zitten') +
+      // Laten zitten helpt alleen als het eindverschil er dichter bij het doel
+      // van komt; op het korte been is het juist andersom.
+      tegel(Math.abs(blijftErin - inv.doel) <= Math.abs(nuEruit - inv.doel) ? 'Levert de rem op' : 'Kost de rem',
+        mm(Math.abs(nuEruit - blijftErin)),
+        Math.abs(blijftErin - inv.doel) <= Math.abs(nuEruit - inv.doel)
+          ? 'winst van laten zitten t.o.v. nu weghalen'
+          : 'laten zitten maakt het zoveel erger', true) +
+      (isFinite(venster.eerste)
+        ? tegel('Eruit tussen', komma(venster.eerste, 2) + '–' + komma(venster.laatste, 2) + ' jr',
+            opname ? datumKort(datumBij(venster.eerste)) + ' tot ' + datumKort(datumBij(venster.laatste)) : 'op ' + basisNaam, true)
+        : tegel('Eruit tussen', 'geen moment', 'geen verwijderleeftijd haalt het doel', true));
+
+    if (!isFinite(venster.eerste)) {
+      const dichtstbij = Math.abs(nuEruit - inv.doel) <= Math.abs(blijftErin - inv.doel)
+        ? { naam: 'nu verwijderen', waarde: nuEruit } : { naam: 'laten zitten', waarde: blijftErin };
+      el('epPlaatOordeel').innerHTML = banner('oranje', 'Met de plaatjes alleen haal je het doel niet',
+        'Op geen enkele verwijderleeftijd landt het eindverschil tussen ' + mm(onder) + ' en ' + mm(boven) +
+        '. Het dichtst in de buurt komt ' + dichtstbij.naam + ', met ' + mm(dichtstbij.waarde) +
+        '. De rem alleen is dus niet genoeg; kijk hieronder of een epifysiodese het gat dicht.');
+    } else {
+      // De randen van het venster betekenen alleen iets als ze er echt zijn.
+      // Loopt het venster door tot het einde van de scan, dan is "later" geen
+      // fout maar gewoon laten zitten; begint het vandaag, dan is "eerder" er
+      // niet.
+      const openEinde = venster.laatste >= eindeScan - 1e-6;
+      const openBegin = venster.eerste <= leeftijdNu + 1e-6;
+      const speling = Math.round((venster.laatste - venster.eerste) * 12);
+      const krap = !openBegin && venster.eerste - leeftijdNu < 0.5;
+
+      let wat;
+      if (openBegin && openEinde) {
+        wat = 'Elk moment haalt het doel: nu verwijderen kan, laten zitten tot het einde van de groei ook.';
+      } else if (openBegin) {
+        wat = 'Verwijder ze uiterlijk op ' + leeftijdEnDatum(venster.laatste) +
+          '. Nu weghalen mag ook; langer laten zitten schiet door naar de andere kant.';
+      } else if (openEinde) {
+        wat = 'Laat ze zitten tot minstens ' + leeftijdEnDatum(venster.eerste) +
+          '. Daarna mag je ze weghalen wanneer het uitkomt, en ze mogen er ook gewoon in blijven — ' +
+          'eerder verwijderen laat het verschil te groot worden.';
+      } else {
+        wat = 'Haal ze weg tussen ' + leeftijdEnDatum(venster.eerste) + ' en ' +
+          leeftijdEnDatum(venster.laatste) + ', een speling van ' + speling +
+          ' maanden. Eerder blijft het verschil te groot, later schiet het door naar de andere kant.';
+      }
+
+      el('epPlaatOordeel').innerHTML = banner(krap ? 'oranje' : 'groen',
+        'Met de plaatjes alleen haal je het doel' + (krap ? ', maar het moment komt snel' : ''),
+        wat + (venster.gaten ? ' Let op: dat venster is niet aaneengesloten — loop de tabel na.' : ''));
+    }
+
+    // Vooruitblik: het eindverschil bij een handvol verwijdermomenten.
+    let rijenTekst = '<thead><tr><th>Plaatjes eruit op</th><th class="getal">Eindverschil bij einde groei</th>' +
+      '<th>Binnen het doel</th></tr></thead><tbody>';
+    const momenten = [];
+    for (let x = leeftijdNu; x < eindeScan; x += 0.5) momenten.push(x);
+    momenten.push(eindeScan);
+    momenten.forEach((x, i) => {
+      const d = eindverschilBij(x);
+      const binnen = d >= onder && d <= boven;
+      const naam = (i === 0) ? 'nu — ' + leeftijdEnDatum(x)
+        : (x >= eindeScan) ? 'niet verwijderen' : leeftijdEnDatum(x);
+      rijenTekst += '<tr><td>' + naam + '</td><td class="getal">' +
+        (d >= 0 ? mm(d) + ' t.n.v. ' + kortNaam : mm(-d) + ' t.n.v. ' + langNaam) + '</td><td>' +
+        (binnen ? '<span class="ep-chip ok">ja</span>' : '<span class="ep-chip stop">nee</span>') + '</td></tr>';
+    });
+    rijenTekst += '</tbody>';
+    el('epPlaatTabel').innerHTML = rijenTekst;
+
+    el('epPlaatBijschrift').textContent =
+      'Plaatjes op de ' + welke + '. Elke regel is dezelfde patiënt met één verandering: het moment ' +
+      'waarop de plaatjes eruit gaan. Zit het plaatje op het lange been, dan loopt het verschil terug ' +
+      'naarmate je later verwijdert; zit het op het korte been, dan andersom. Dit zegt niets over de ' +
+      'complicaties van langer laten zitten — zie het hoofdstuk verderop.';
+  }
+
   const eindZonder = P.Dm >= 0
     ? mm(P.Dm) + ' ten nadele van ' + kortNaam
     : mm(-P.Dm) + ' ten nadele van ' + langNaam;
@@ -1180,25 +1330,10 @@ function tekenen() {
     opt.textContent = basisTekst + (kan ? '' : ' — al gesloten');
   });
 
-  // ---- datumlaag: leeftijden sturen de rekensom, datums zijn er een weergave van ----
-  const opname = leesDatum(el('epOpname').value);
-  function datumBij(leeftijd) {
-    return (opname && isFinite(leeftijd)) ? plusJaren(opname, leeftijd - leeftijdNu) : null;
-  }
-
   // ---- haalbaarheid van het doel ----
   // De vraag waar het uiteindelijk om gaat: haal ik het beoogde eindverschil
   // nog, met welke ingreep, en tot wanneer? Hier doen de gesloten fysen hun
   // werk: ze halen opties weg en verkleinen wat er nog te halen valt.
-  const FYSE_NAMEN = {
-    femurL: 'distale femur links', femurR: 'distale femur rechts',
-    tibiaL: 'proximale tibia links', tibiaR: 'proximale tibia rechts',
-  };
-  const dichtLijst = [], plaatLijst = [];
-  Object.keys(FYSE_NAMEN).forEach(k => {
-    if (stand[k] === 'dicht') dichtLijst.push(FYSE_NAMEN[k]);
-    if (stand[k] === 'plaat') plaatLijst.push(FYSE_NAMEN[k]);
-  });
   let dichtZin = '';
   if (dichtLijst.length) dichtZin += ' Meegerekend als definitief gesloten: ' + dichtLijst.join(', ') + '.';
   if (plaatLijst.length) {
