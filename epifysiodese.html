@@ -117,19 +117,20 @@
   }
   .ep-hint .let { color: #8A5B00; }
 
-  .ep-vinkjes { display: flex; flex-direction: column; gap: 7px; }
-  .ep-vinkjes label {
+  .ep-fysen { display: flex; flex-direction: column; gap: 8px; }
+  .ep-fysen label {
     font-family: system-ui, sans-serif;
-    font-size: 13.5px;
-    border: 1.5px solid var(--lijn); border-radius: 9px;
-    padding: 10px 11px;
-    display: flex; align-items: center; gap: 9px;
-    cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
   }
-  .ep-vinkjes label:has(input:checked) {
-    border-color: var(--danger); background: #FBEAE5; font-weight: 700;
+  .ep-fysen label > span {
+    flex: 1; min-width: 0;
+    font-size: 13px; font-weight: 700;
   }
-  .ep-vinkjes input { width: 17px; height: 17px; flex-shrink: 0; }
+  .ep-fysen select { width: 150px; flex-shrink: 0; font-size: 14px; padding: 9px 8px; }
+  .ep-fysen label:has(select[data-stand="dicht"]) > span { color: var(--danger); }
+  .ep-fysen label:has(select[data-stand="dicht"]) select { border-color: var(--danger); background: #FBEAE5; }
+  .ep-fysen label:has(select[data-stand="plaat"]) > span { color: #8A5B00; }
+  .ep-fysen label:has(select[data-stand="plaat"]) select { border-color: #C9922B; background: #FBF3DC; }
 
   .ep-meer { margin-top: 16px; border-top: 1px solid var(--lijn); padding-top: 6px; }
   .ep-meer summary {
@@ -392,19 +393,51 @@
       </div>
     </div>
 
-    <div class="ep-groep">Groeischijven die al gesloten zijn</div>
-    <div class="ep-vinkjes">
-      <label><input type="checkbox" id="epDichtFemurR"> Distale femur rechts</label>
-      <label><input type="checkbox" id="epDichtFemurL"> Distale femur links</label>
-      <label><input type="checkbox" id="epDichtTibiaR"> Proximale tibia rechts</label>
-      <label><input type="checkbox" id="epDichtTibiaL"> Proximale tibia links</label>
+    <div class="ep-groep">Toestand van de groeischijven</div>
+    <div class="ep-fysen">
+      <label><span>Distale femur rechts</span>
+        <select id="epFyseFemurR" class="ep-keuze">
+          <option value="open">Open</option>
+          <option value="plaat">Plaatjes in situ</option>
+          <option value="dicht">Definitief gesloten</option>
+        </select></label>
+      <label><span>Distale femur links</span>
+        <select id="epFyseFemurL" class="ep-keuze">
+          <option value="open">Open</option>
+          <option value="plaat">Plaatjes in situ</option>
+          <option value="dicht">Definitief gesloten</option>
+        </select></label>
+      <label><span>Proximale tibia rechts</span>
+        <select id="epFyseTibiaR" class="ep-keuze">
+          <option value="open">Open</option>
+          <option value="plaat">Plaatjes in situ</option>
+          <option value="dicht">Definitief gesloten</option>
+        </select></label>
+      <label><span>Proximale tibia links</span>
+        <select id="epFyseTibiaL" class="ep-keuze">
+          <option value="open">Open</option>
+          <option value="plaat">Plaatjes in situ</option>
+          <option value="dicht">Definitief gesloten</option>
+        </select></label>
     </div>
     <div class="ep-hint">
-      Vink aan wat definitief dicht is — een eerder uitgevoerde epifysiodese, of een fyse die na
-      trauma of infectie is gesloten. Dat verandert twee dingen tegelijk: die schijf kan niet nog
-      eens geremd worden, én het voorspelde eindverschil klopt niet meer volgens de gewone
-      multipliersom, want die gaat ervan uit dat beide benen ongestoord doorgroeien. De pagina telt
-      daarom de restgroei per groeischijf op en laat de gesloten eruit.
+      <b>Definitief gesloten</b> is een eerder uitgevoerde epifysiodese, of een fyse die na trauma of
+      infectie dicht is. <b>Plaatjes in situ</b> is een tijdelijke, omkeerbare remming met
+      achtplaatjes over de hele schijf. Dat is geen stilstand maar <em>vertraging</em>: de schijf
+      groeit langzamer door, en na verwijderen komt de groei weer op gang. Beide veranderen ook de
+      voorspelling van het eindverschil, want de gewone multipliersom gaat ervan uit dat beide benen
+      ongestoord doorgroeien. Er wordt daarom per groeischijf geteld.
+    </div>
+
+    <div id="epPlaatVeld" hidden>
+      <label class="ep-veldnaam" for="epPlaatUit">Leeftijd waarop de plaatjes eruit gaan <em>(jaar)</em></label>
+      <input type="number" id="epPlaatUit" class="ep-veld" inputmode="decimal" min="0" max="20" step="0.25" placeholder="leeg = nu meteen eruit">
+      <div class="ep-hint">
+        Laat leeg als je ze nu zou verwijderen; dan telt de volle restgroei weer mee. Vul je een
+        latere leeftijd in, dan telt de pagina alleen de groei die ná dat moment nog komt volledig
+        mee. Vul je een leeftijd voorbij het einde van de groei in, dan blijven de plaatjes er dus
+        in zitten.
+      </div>
     </div>
 
     <div class="ep-groep">Behandeldoel</div>
@@ -464,6 +497,19 @@
           <label class="ep-veldnaam" for="epSnelTib">Proximale tibia <em>(mm/jaar)</em></label>
           <input type="number" id="epSnelTib" class="ep-veld" inputmode="decimal" min="1" step="0.5" value="6">
         </div>
+      </div>
+
+      <label class="ep-veldnaam" for="epRemming">Remming door plaatjes in situ <em>(% van de normale groei)</em></label>
+      <input type="number" id="epRemming" class="ep-veld" inputmode="decimal" min="0" max="100" step="5" value="80">
+      <div class="ep-hint">
+        Achtplaatjes remmen de groei, maar zetten hem niet stil — de literatuur spreekt bewust van
+        <em>growth deceleration</em> en niet van arrest. Een cohort dat tot volgroeidheid is gevolgd
+        meldt een correctietempo van 0,40 mm per maand voor de proximale tibia en 0,68 mm per maand
+        voor de distale femur. Afgezet tegen de groeisnelheden hierboven (6 en 10 mm per jaar) komt
+        dat op ongeveer 80 % remming uit voor allebei. Die 80 % is mijn eigen deling van die twee
+        getallen, geen gepubliceerd percentage — vandaar dat het instelbaar is. Zet je hem op 100 %,
+        dan reken je alsof een plaatje de schijf volledig stillegt; dat is optimistischer dan wat er
+        gemeten is.
       </div>
     </details>
 
@@ -561,6 +607,49 @@
     <div id="epNotities"></div>
   </div>
 
+  <!-- ================= PLAATJES ================= -->
+  <div class="ep-sectie">
+    <h2>Plaatjes eruit: wat je terugkrijgt</h2>
+    <p class="ep-sectie-uitleg">
+      Waarom de pagina een plaatje anders behandelt dan een gesloten fyse, en waar de getallen
+      vandaan komen.
+    </p>
+    <ul class="ep-lijst">
+      <li><strong>Ja, de groei komt terug.</strong> Tension band plating is uitdrukkelijk omkeerbaar: na het verwijderen hervat de schijf zijn groei, en in beeldvormend onderzoek is een reboundverschijnsel beschreven. In dierexperimenteel werk keerde de zonale opbouw van de fyse om, met een toename van de proliferatieve zone aan de eerder geremde kant. Overcorrecties bleken tijdens follow-up geleidelijk vanzelf terug te lopen. Je premisse klopt dus.</li>
+      <li><strong>Maar het is vertraging, geen stilstand.</strong> Dit is de correctie die de rekensom nodig had. De literatuur noemt het consequent <em>growth deceleration rather than growth arrest</em>. In een cohort van 66 kinderen dat tot volgroeidheid is gevolgd was het correctietempo 0,40 mm per maand voor de proximale tibia en 0,68 mm per maand voor de distale femur. Een fyse met een plaatje erop als "dicht" rekenen overschat dus wat er gecorrigeerd wordt, en onderschat de lengte die er nog aan zit te komen.</li>
+      <li><strong>Eén plaatje aan één kant is iets heel anders.</strong> Een enkel achtplaatje mediaal of lateraal is een hemi-epifysiodese voor een <em>standsafwijking</em> — genu valgum of varum. Dat remt de lengte nauwelijks, dus daar valt bij verwijderen ook weinig aan lengte terug te winnen. De optie op deze pagina gaat over plaatjes over de hele schijf, als tijdelijke epifysiodese voor lengte.</li>
+      <li><strong>De terugkeer is niet gegarandeerd.</strong> Onbedoelde definitieve fysaire sluiting is een erkende complicatie, met een groter risico naarmate de plaatjes langer dan ongeveer twee jaar blijven zitten en naarmate het kind jonger is. Blijft de groei uit, dan is het plaatje alsnog een definitieve epifysiodese geworden — en dan hoort de keuze hierboven op <em>definitief gesloten</em>.</li>
+      <li><strong>Plaatjes hebben meer complicaties dan schroeven.</strong> Bij een directe vergelijking van 53 kinderen was de afname van het lengteverschil na twee jaar vergelijkbaar tussen plaatjes en percutane transfysaire schroeven, maar traden er meer implantaatgebonden complicaties en heroperaties voor standsafwijkingen op in de plaatjesgroep. Een systematische review met meta-analyse over 44 studies en 2184 kinderen kwam tot dezelfde richting: schroeven scoorden het gunstigst, met minder ernstige complicaties en minder standsafwijkingen.</li>
+      <li><strong>Wat de pagina bewust níet doet.</strong> De rebound wordt niet meegerekend. Er is geen bruikbaar getal voor hoeveel extra lengte die oplevert, dus de berekening gaat uit van gewone groei na het verwijderen. Valt er rebound op, dan krijg je meer dan hier staat — de uitkomst is in dat opzicht dus aan de voorzichtige kant.</li>
+    </ul>
+    <div class="ep-bron" style="margin-top:14px;">
+      <p><strong>Bronnen bij dit hoofdstuk.</strong></p>
+      <p>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9166257/" target="_blank" rel="noopener">Growth
+        Deceleration for Limb Length Discrepancy: Tension Band Plates Followed to Maturity</a> — 66 kinderen,
+        correctietempo 0,40 mm/maand (proximale tibia) en 0,68 mm/maand (distale femur).
+      </p>
+      <p>
+        Cheng e.a., <a href="https://pubmed.ncbi.nlm.nih.gov/34040656/" target="_blank" rel="noopener">Tension
+        band plates have greater risks of complications in temporary epiphysiodesis</a>, J Child Orthop
+        2021;15(2):106–113 — 53 kinderen, plaatjes versus percutane transfysaire schroeven.
+      </p>
+      <p>
+        Tirta e.a., <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11257069/" target="_blank" rel="noopener">Staples,
+        tension-band plates, and percutaneous epiphysiodesis screws used for leg-length discrepancy
+        treatment: a systematic review and proportional meta-analysis</a>, Acta Orthopaedica 2024 —
+        44 studies, 2184 kinderen.
+      </p>
+      <p>
+        <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11722013/" target="_blank" rel="noopener">Limb
+        Axis Disorder During Leg Length Discrepancy Treatment with Temporary Epiphysiodesis Using
+        Eight-Plate Implants</a> en <a href="https://www.tandfonline.com/doi/full/10.1080/17453674.2021.1873603" target="_blank" rel="noopener">Comparison
+        of histomorphometric and radiographic effects of growth guidance with tension-band devices</a> —
+        rebound en het herstel van de fyse na verwijderen.
+      </p>
+    </div>
+  </div>
+
   <!-- ================= AANNAMES ================= -->
   <div class="ep-sectie">
     <h2>Aannames en grenzen</h2>
@@ -568,6 +657,8 @@
       <li><strong>Twee modellen, één voorspeld eindverschil.</strong> Het verschil bij maturiteit komt uit de multiplier en wordt door beide modellen als uitgangspunt gebruikt; alleen de correctiecapaciteit verschilt. Dat is dezelfde hybride die gangbare rekenapps hanteren, maar het blijft een hybride.</li>
       <li><strong>Welk model je aanhoudt is een keuze.</strong> Lopen de twee kolommen ver uiteen, neem dan de conservatieve — de vroegste deadline. De pagina rekent die apart voor je uit.</li>
       <li><strong>Het multipliermodel is een congenitaal model.</strong> Het veronderstelt een constante procentuele groeiremming. Bij een verworven of iatrogene asymmetrie — een doorgemaakte fractuur, een infectie, een al uitgevoerde epifysiodese — geldt dat niet. Gebruik dan het paneel met de eerdere opname.</li>
+      <li><strong>Een plaatje remt met een aangenomen percentage.</strong> De 80 % die standaard wordt gebruikt is niet als zodanig gepubliceerd; het is het gemeten correctietempo gedeeld door de klassieke groeisnelheid van diezelfde fyse. Dat gemiddelde komt uit een cohort van 3 tot 16,6 jaar, terwijl de groeisnelheid met de leeftijd afneemt — het is dus een grove benadering en staat daarom instelbaar. Bij één kind kan een plaatje veel meer of veel minder remmen.</li>
+      <li><strong>Het verwijdermoment is een plan, geen feit.</strong> De pagina rekent alsof de plaatjes op de ingevulde leeftijd precies eruit gaan en de groei daarna meteen normaal is. Schuift die datum op, dan schuift de uitkomst mee; en of de groei werkelijk hervat is alleen op een vervolgopname te zien.</li>
       <li><strong>Een gesloten groeischijf verandert de voorspelling, niet alleen de mogelijkheden.</strong> Zodra een fyse dicht is klopt de gewone som <code>Dm = D × M</code> niet meer, want die gaat ervan uit dat beide benen ongestoord doorgroeien. De pagina telt daarom de restgroei per groeischijf op en laat de gesloten eruit. Vink je niets aan, dan komt dat rekenkundig exact op <code>D × M</code> uit — er verandert dus niets aan de vertrouwde uitkomst.</li>
       <li><strong>Alleen de vier groeischijven rond de knie.</strong> De vinkjes gaan over de distale femur en de proximale tibia, links en rechts; dat zijn de schijven waar een epifysiodese op aangrijpt en waar de constanten van deze pagina over gaan. De proximale femur en de distale tibia blijven in de berekening open. Zijn die bij dit kind ook gesloten, dan onderschat de pagina de gevolgen daarvan.</li>
       <li><strong>Een gesloten fyse aan de kórte zijde werkt de andere kant op.</strong> Dan groeit juist het korte been minder door en wordt het verschil groter dan de gewone som voorspelt. Andersom kan een eerdere epifysiodese aan de lange zijde zó ver doorschieten dat het korte been de langste wordt; de pagina zegt dat dan met zoveel woorden, want verder remmen maakt het op dat punt erger.</li>
@@ -650,7 +741,7 @@ const EP_SLEUTEL = 'krnEpifysiodese';
 
 // Welke velden mogen onthouden worden. Alles wat hier niet in staat is
 // patientgebonden en verdwijnt bij het verversen van de pagina.
-const EP_BEWAARD = ['epJFd', 'epJTp', 'epSnelFem', 'epSnelTib', 'epDoel', 'epMarge', 'epIngreep'];
+const EP_BEWAARD = ['epJFd', 'epJTp', 'epSnelFem', 'epSnelTib', 'epRemming', 'epDoel', 'epMarge', 'epIngreep'];
 
 const OPTIES = [
   { id: 'tib',   naam: 'Proximale tibia' },
@@ -789,6 +880,14 @@ function tekenen() {
 
   toonDatumHint(inv);
 
+  // De toestand van de fysen en het bijbehorende veld staan los van de rest van
+  // de invoer, dus die worden bijgewerkt voordat er op volledigheid wordt
+  // afgebroken - anders blijft het verwijderveld verborgen zolang de lengtes
+  // nog niet ingevuld zijn.
+  const FYSE_VELDEN = ['epFyseFemurR', 'epFyseFemurL', 'epFyseTibiaR', 'epFyseTibiaL'];
+  FYSE_VELDEN.forEach(id => el(id).setAttribute('data-stand', el(id).value));
+  el('epPlaatVeld').hidden = !FYSE_VELDEN.some(id => el(id).value === 'plaat');
+
   const compleet = [inv.leeftijdS, inv.leeftijdK, inv.einde, inv.femurR, inv.femurL, inv.tibiaR, inv.tibiaL]
     .every(v => isFinite(v) && v > 0) && isFinite(inv.doel);
 
@@ -829,40 +928,77 @@ function tekenen() {
   // De vinkjes staan per anatomische zijde, want zo weet je het: "de rechter
   // distale femur is vorig jaar geremd". Hier worden ze omgezet naar de lange
   // en de korte zijde, waar de rest van de rekensom mee werkt.
-  const dicht = {
-    femurR: el('epDichtFemurR').checked, femurL: el('epDichtFemurL').checked,
-    tibiaR: el('epDichtTibiaR').checked, tibiaL: el('epDichtTibiaL').checked,
+  const stand = {
+    femurR: el('epFyseFemurR').value, femurL: el('epFyseFemurL').value,
+    tibiaR: el('epFyseTibiaR').value, tibiaL: el('epFyseTibiaL').value,
   };
-  const dichtLangFemur = langsIsL ? dicht.femurL : dicht.femurR;
-  const dichtLangTibia = langsIsL ? dicht.tibiaL : dicht.tibiaR;
-  const dichtKortFemur = langsIsL ? dicht.femurR : dicht.femurL;
-  const dichtKortTibia = langsIsL ? dicht.tibiaR : dicht.tibiaL;
-  const ietsDicht = dicht.femurR || dicht.femurL || dicht.tibiaR || dicht.tibiaL;
+  const standLangFemur = langsIsL ? stand.femurL : stand.femurR;
+  const standLangTibia = langsIsL ? stand.tibiaL : stand.tibiaR;
+  const standKortFemur = langsIsL ? stand.femurR : stand.femurL;
+  const standKortTibia = langsIsL ? stand.tibiaR : stand.tibiaL;
 
-  function contextBij(leeftijd) {
+  const dichtLangFemur = standLangFemur === 'dicht';
+  const dichtLangTibia = standLangTibia === 'dicht';
+  const alleStanden = [stand.femurR, stand.femurL, stand.tibiaR, stand.tibiaL];
+  const ietsDicht = alleStanden.some(s => s !== 'open');
+  const ietsPlaat = alleStanden.some(s => s === 'plaat');
+
+  const remming = Math.min(1, Math.max(0, (getal('epRemming') || 0) / 100));
+  // Leeg veld = de plaatjes gaan er nu uit; dan telt de volle restgroei weer mee.
+  const plaatUitRuw = getal('epPlaatUit');
+  const plaatUit = isFinite(plaatUitRuw) ? plaatUitRuw : -Infinity;
+
+  // uitLeeftijd overschrijft het geplande verwijdermoment; daarmee kan dezelfde
+  // som ook doorgerekend worden voor "wat als ze er nu uit gaan".
+  function contextBij(leeftijd, uitLeeftijd) {
+    const uit = (uitLeeftijd === undefined) ? plaatUit : uitLeeftijd;
     const M = multiplierVoor(leeftijd, inv.geslacht);
-    const groei = L => L * (M - 1);
+    // Factor op het moment dat de plaatjes eruit gaan. Ligt dat moment al
+    // achter ons, dan is er niets meer geremd en geldt de huidige factor.
+    const Muit = multiplierVoor(Math.max(uit, leeftijd), inv.geslacht);
 
-    // Restgroei per bot, met de gesloten fysen eruit. De distale femur levert
-    // een fractie jFd van de femurgroei, de proximale tibia een fractie jTp van
-    // de tibiagroei; de tegenoverliggende fysen leveren de rest en blijven open.
-    const restFemLang = (dichtLangFemur ? (1 - inv.jFd) : 1) * groei(langFemur);
-    const restTibLang = (dichtLangTibia ? (1 - inv.jTp) : 1) * groei(langTibia);
-    const restFemKort = (dichtKortFemur ? (1 - inv.jFd) : 1) * groei(kortFemur);
-    const restTibKort = (dichtKortTibia ? (1 - inv.jTp) : 1) * groei(kortTibia);
+    // Restgroei van een enkele groeischijf, met S = aandeel x botlengte x M.
+    //
+    //   open     alles wat er nog in zit:            S x (1 - 1/M)
+    //   dicht    niets:                              0
+    //   plaat    de groei van nu tot het verwijderen is geremd, daarna weer
+    //            volledig. De groei vanaf het verwijdermoment is S x (1 - 1/Muit);
+    //            wat daarvoor zit is het verschil, en daarvan blijft (1 - remming)
+    //            over.
+    //
+    // Dat de tweede term dezelfde vorm heeft als de capaciteit van een
+    // epifysiodese is geen toeval: wat je wint door een plaatje op leeftijd X
+    // te verwijderen is precies de groei die een epifysiodese op leeftijd X
+    // zou hebben tegengehouden.
+    function restVanFyse(aandeel, botlengte, toestand) {
+      const S = aandeel * botlengte * M;
+      if (toestand === 'dicht') return 0;
+      const volledig = S * (1 - 1 / M);
+      if (toestand !== 'plaat') return volledig;
+      const naVerwijderen = S * (1 - 1 / Muit);
+      const geremdeDeel = volledig - naVerwijderen;
+      return (1 - remming) * geremdeDeel + naVerwijderen;
+    }
+
+    // Per bot: de fyse waar het om gaat plus de tegenoverliggende, die altijd
+    // open blijft (de proximale femur en de distale tibia doen hier niet mee).
+    const restFemLang = restVanFyse(inv.jFd, langFemur, standLangFemur) + (1 - inv.jFd) * langFemur * (M - 1);
+    const restTibLang = restVanFyse(inv.jTp, langTibia, standLangTibia) + (1 - inv.jTp) * langTibia * (M - 1);
+    const restFemKort = restVanFyse(inv.jFd, kortFemur, standKortFemur) + (1 - inv.jFd) * kortFemur * (M - 1);
+    const restTibKort = restVanFyse(inv.jTp, kortTibia, standKortTibia) + (1 - inv.jTp) * kortTibia * (M - 1);
     const restLang = restFemLang + restTibLang;
     const restKort = restFemKort + restTibKort;
 
     return {
       geslacht: inv.geslacht, leeftijd: leeftijd, einde: inv.einde, M: M,
       // Het voorspelde eindverschil is het huidige verschil plus wat het lange
-      // been nog groeit min wat het korte been nog groeit. Staat er geen enkele
-      // fyse dicht, dan komt dit exact uit op de bekende Dm = D x M; met een
-      // gesloten fyse loopt het daarvan af, en dat is precies de bedoeling.
+      // been nog groeit min wat het korte been nog groeit. Staat alles op open,
+      // dan komt dit exact uit op de bekende Dm = D x M.
       // Dm kan negatief worden: dan haalt het korte been het lange in.
       Dm: D0 + restLang - restKort,
-      // S is de volgroeide lengte van het aandeel van deze fyse; een gesloten
-      // fyse heeft geen aandeel meer, dus 0.
+      // S is de volgroeide lengte van het aandeel van deze fyse. Alleen een
+      // definitief gesloten fyse heeft geen aandeel meer; op een fyse met een
+      // plaatje kan nog wel permanent geremd worden.
       Sfem: dichtLangFemur ? 0 : inv.jFd * langFemur * M,
       Stib: dichtLangTibia ? 0 : inv.jTp * langTibia * M,
       restFemLang: restFemLang, restTibLang: restTibLang,
@@ -940,6 +1076,8 @@ function tekenen() {
     '<th class="getal">W-Menelaus<br>skelet</th><th class="getal">W-Menelaus<br>kalender</th></tr></thead><tbody>';
   ct += capRij('Proximale tibia ' + langNaam, dichtLangTibia, mS.tib, mK.tib, wS.tib, wK.tib, '');
   ct += capRij('Distale femur ' + langNaam, dichtLangFemur, mS.fem, mK.fem, wS.fem, wK.fem, '');
+  // NB: een fyse met een plaatje telt hier gewoon mee - permanent remmen kan
+  // daar nog steeds, door het plaatje te laten zitten of om te zetten.
   ct += capRij('Beide fysen ' + langNaam, !beideKan, mS.beide, mK.beide, wS.beide, wK.beide, 'totaal');
   ct += '</tbody>';
   el('epCapTabel').innerHTML = ct;
@@ -950,18 +1088,20 @@ function tekenen() {
     'mee met de botlengte en geeft bij lange botten structureel meer capaciteit.' +
     (beideKan ? '' : ' Omdat één van beide fysen al gesloten is, bestaat de gecombineerde ingreep hier niet meer.');
 
-  function merk(gesloten, wat) {
-    return gesloten ? ' <span style="font-weight:400;color:var(--muted)">— ' + wat + ' gesloten</span>' : '';
+  function merk(toestand, wat) {
+    if (toestand === 'dicht') return ' <span style="font-weight:400;color:var(--danger)">— ' + wat + ' gesloten</span>';
+    if (toestand === 'plaat') return ' <span style="font-weight:400;color:#8A5B00">— plaatjes op de ' + wat + '</span>';
+    return '';
   }
   let gt = '<thead><tr><th>Restgroei tot einde groei</th><th class="getal">Op skeletleeftijd</th>' +
     '<th class="getal">Op kalenderleeftijd</th></tr></thead><tbody>';
-  gt += '<tr><td>Femur ' + langNaam + merk(dichtLangFemur, 'distale fyse') + '</td><td class="getal">' +
+  gt += '<tr><td>Femur ' + langNaam + merk(standLangFemur, 'distale fyse') + '</td><td class="getal">' +
     mm(ctxS.restFemLang) + '</td><td class="getal">' + mm(ctxK.restFemLang) + '</td></tr>';
-  gt += '<tr><td>Tibia ' + langNaam + merk(dichtLangTibia, 'proximale fyse') + '</td><td class="getal">' +
+  gt += '<tr><td>Tibia ' + langNaam + merk(standLangTibia, 'proximale fyse') + '</td><td class="getal">' +
     mm(ctxS.restTibLang) + '</td><td class="getal">' + mm(ctxK.restTibLang) + '</td></tr>';
-  gt += '<tr><td>Femur ' + kortNaam + merk(dichtKortFemur, 'distale fyse') + '</td><td class="getal">' +
+  gt += '<tr><td>Femur ' + kortNaam + merk(standKortFemur, 'distale fyse') + '</td><td class="getal">' +
     mm(ctxS.restFemKort) + '</td><td class="getal">' + mm(ctxK.restFemKort) + '</td></tr>';
-  gt += '<tr><td>Tibia ' + kortNaam + merk(dichtKortTibia, 'proximale fyse') + '</td><td class="getal">' +
+  gt += '<tr><td>Tibia ' + kortNaam + merk(standKortTibia, 'proximale fyse') + '</td><td class="getal">' +
     mm(ctxS.restTibKort) + '</td><td class="getal">' + mm(ctxK.restTibKort) + '</td></tr>';
   gt += '<tr><td>Been ' + langNaam + ' totaal</td><td class="getal">' + mm(ctxS.restLang) +
     '</td><td class="getal">' + mm(ctxK.restLang) + '</td></tr>';
@@ -1023,14 +1163,24 @@ function tekenen() {
   // De vraag waar het uiteindelijk om gaat: haal ik het beoogde eindverschil
   // nog, met welke ingreep, en tot wanneer? Hier doen de gesloten fysen hun
   // werk: ze halen opties weg en verkleinen wat er nog te halen valt.
-  const dichtLijst = [];
-  if (dicht.femurL) dichtLijst.push('distale femur links');
-  if (dicht.femurR) dichtLijst.push('distale femur rechts');
-  if (dicht.tibiaL) dichtLijst.push('proximale tibia links');
-  if (dicht.tibiaR) dichtLijst.push('proximale tibia rechts');
-  const dichtZin = dichtLijst.length
-    ? ' Meegerekend als al gesloten: ' + dichtLijst.join(', ') + '.'
-    : '';
+  const FYSE_NAMEN = {
+    femurL: 'distale femur links', femurR: 'distale femur rechts',
+    tibiaL: 'proximale tibia links', tibiaR: 'proximale tibia rechts',
+  };
+  const dichtLijst = [], plaatLijst = [];
+  Object.keys(FYSE_NAMEN).forEach(k => {
+    if (stand[k] === 'dicht') dichtLijst.push(FYSE_NAMEN[k]);
+    if (stand[k] === 'plaat') plaatLijst.push(FYSE_NAMEN[k]);
+  });
+  let dichtZin = '';
+  if (dichtLijst.length) dichtZin += ' Meegerekend als definitief gesloten: ' + dichtLijst.join(', ') + '.';
+  if (plaatLijst.length) {
+    dichtZin += ' Met plaatjes in situ: ' + plaatLijst.join(', ') + ' — gerekend met ' +
+      komma(remming * 100, 0) + ' % remming' +
+      (isFinite(plaatUitRuw)
+        ? ' tot ' + komma(plaatUitRuw, 2) + ' jr, daarna weer volledige groei.'
+        : ' en verwijdering nu.');
+  }
 
   const indexVan = r => OPTIES.findIndex(o => o.id === r.optie.id);
   // Per model de kleinste ingreep die het doel nog haalt. "Kleinste" is hier de
@@ -1221,6 +1371,49 @@ function tekenen() {
   // Het oordeel over haalbaarheid staat al boven in de sectie; hier alleen wat
   // daar niet in past.
   let notities = '';
+
+  // Zit er aan de lange zijde een plaatje op de fyse die je zou willen remmen,
+  // dan betekent "permanent remmen" daar iets anders dan een nieuwe ingreep.
+  const plaatLang = [];
+  if (standLangFemur === 'plaat') plaatLang.push('distale femur');
+  if (standLangTibia === 'plaat') plaatLang.push('proximale tibia');
+  if (plaatLang.length) {
+    notities += banner('oranje', 'Er zitten al plaatjes op de ' + plaatLang.join(' en de ') + ' ' + langNaam,
+      'De capaciteit hierboven gaat uit van volledige arrest vanaf het ingreepmoment. Permanent remmen ' +
+      'betekent hier dus het plaatje laten zitten óf omzetten naar een definitieve epifysiodese — een ' +
+      'plaatje alleen remt met ongeveer ' + komma(remming * 100, 0) + ' % en houdt de groei niet stil.');
+  }
+
+  // Wat levert het op om de plaatjes nu te verwijderen? Dat hangt er helemaal
+  // van af aan welk been ze zitten, en dat is precies het soort omkering dat je
+  // niet uit je hoofd wilt doen.
+  if (ietsPlaat && isFinite(plaatUitRuw) && plaatUitRuw > leeftijdNu) {
+    const nuEruit = contextBij(leeftijdNu, -Infinity).Dm;
+    const winst = P.Dm - nuEruit;   // positief = eruit halen maakt het verschil kleiner
+    const zelfdeKant = (P.Dm >= 0) === (nuEruit >= 0);
+    let kop, soort, tekst;
+    if (Math.abs(winst) < 1) {
+      soort = 'groen'; kop = 'Het verwijdermoment maakt hier nauwelijks verschil';
+      tekst = 'Nu verwijderen of pas op ' + komma(plaatUitRuw, 2) + ' jr scheelt minder dan een ' +
+        'millimeter in het eindverschil.';
+    } else if (winst > 0) {
+      soort = 'groen'; kop = 'Nu verwijderen scheelt ' + mm(winst) + ' in je voordeel';
+      tekst = 'De plaatjes zitten aan de kant die je juist wilt láten groeien. Haal je ze nu eruit in ' +
+        'plaats van op ' + komma(plaatUitRuw, 2) + ' jr, dan gaat het voorspelde eindverschil van ' +
+        mm(P.Dm) + ' naar ' + mm(nuEruit) + '. Dat is de restgroei die je terugwint.';
+    } else {
+      soort = 'oranje'; kop = 'Nu verwijderen maakt het ' + mm(-winst) + ' erger';
+      tekst = 'De plaatjes zitten aan de lánge kant en doen daar precies wat je wilt. Haal je ze nu ' +
+        'eruit, dan loopt het voorspelde eindverschil op van ' + mm(P.Dm) + ' naar ' + mm(nuEruit) +
+        ', omdat het langste been zijn groei terugkrijgt. Laten zitten of omzetten naar een ' +
+        'definitieve epifysiodese ligt hier meer voor de hand dan verwijderen.';
+    }
+    if (!zelfdeKant) {
+      tekst += ' Let op dat het verschil daarbij van kant wisselt.';
+    }
+    notities += banner(soort, kop, tekst);
+  }
+
   const tibM = rijen[0].v, tibW = rijen[1].v;
   if (tibM.status === 'haalbaar' && tibW.status === 'haalbaar') {
     const kloof = Math.abs(tibM.uiterste - tibW.uiterste) * 12;
@@ -1411,18 +1604,20 @@ const ALLE_VELDEN = [
   'epDoel', 'epMarge', 'epGeboorte', 'epOpname', 'epIngreep',
   'epJFd', 'epJTp', 'epSnelFem', 'epSnelTib',
   'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
-  'epDichtFemurR', 'epDichtFemurL', 'epDichtTibiaR', 'epDichtTibiaL',
+  'epFyseFemurR', 'epFyseFemurL', 'epFyseTibiaR', 'epFyseTibiaL',
+  'epPlaatUit', 'epRemming',
 ];
 
 // Patientgebonden velden; die worden bij "wissen" leeggemaakt en nooit bewaard.
 const PATIENT_VELDEN = [
   'epLeeftijdS', 'epLeeftijdK', 'epFemurR', 'epFemurL', 'epTibiaR', 'epTibiaL',
   'epGeboorte', 'epOpname', 'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
+  'epPlaatUit',
 ];
 
-// Welke groeischijven al gesloten zijn is net zo goed een patientgegeven, maar
-// het zijn vinkjes en die worden anders leeggemaakt dan tekstvelden.
-const PATIENT_VINKJES = ['epDichtFemurR', 'epDichtFemurL', 'epDichtTibiaR', 'epDichtTibiaL'];
+// De toestand van de groeischijven is net zo goed een patientgegeven; die gaat
+// bij wissen terug naar "open" in plaats van leeg.
+const PATIENT_FYSEN = ['epFyseFemurR', 'epFyseFemurL', 'epFyseTibiaR', 'epFyseTibiaL'];
 
 ALLE_VELDEN.forEach(id => {
   const veld = el(id);
@@ -1451,7 +1646,8 @@ function vandaagInOpname() {
 
 el('epWissen').addEventListener('click', () => {
   PATIENT_VELDEN.forEach(id => { el(id).value = ''; });
-  PATIENT_VINKJES.forEach(id => { el(id).checked = false; });
+  PATIENT_FYSEN.forEach(id => { el(id).value = 'open'; });
+  el('epPlaatUit').value = '';
   vandaagInOpname();
   tekenen();
 });
