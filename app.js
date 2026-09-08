@@ -69,7 +69,12 @@ const DEFAULT_CATS = [
   { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Techniek, spierlokalisatie, onderwijsvideo\'s' },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
-  { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: '' },
+  { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: 'MMC, spina bifida occulta, tethered cord',
+    zoekwoorden: 'spina bifida myelomeningocele MMC SBO occulta tethered cord retethering filum terminale conus medullaris lipoom syringomyelie hydromyelie neurale buisdefect uitvalsniveau blaasfunctie kyfoscoliose',
+    directLinks: [
+      { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html' },
+      { label: '🦵 Spieruitvalsniveaus', url: 'myotomen.html' },
+    ] },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
     zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
     directLinks: [

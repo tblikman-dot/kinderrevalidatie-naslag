@@ -154,6 +154,34 @@
   /* --- overzichtstabel --- */
   .my-sectie { margin-top: 34px; }
   .my-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .my-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .my-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .my-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .my-innerv {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 12px 10px;
+    margin-bottom: 10px;
+  }
+  .my-innerv h3 {
+    font-size: 0.98rem; margin: 0 0 8px 2px;
+  }
+  .my-innerv svg { width: 100%; height: auto; display: block; }
+
   .my-sectie-uitleg {
     font-family: system-ui, sans-serif;
     font-size: 13px; color: var(--muted);
@@ -299,11 +327,41 @@
     </div>
   </div>
 
+  <div class="my-sectie">
+    <h2>Innervatie per gewricht</h2>
+    <p class="my-sectie-uitleg">
+      Waarom een niveau doet wat het doet. Elke spiergroep hangt aan méér dan één segment, en rond
+      elk gewricht liggen de tegenspelers een tot twee segmenten uit elkaar. Die trap verklaart
+      waarom een laesie zelden een gewricht netjes uitschakelt, maar meestal een onbalans achterlaat
+      — de ene kant valt eerder weg dan de andere.
+    </p>
+    <div id="myInnervatie"></div>
+    <div class="my-let-op">
+      <strong>Zo lees je het:</strong>
+      <ul>
+        <li>De balk loopt over de segmenten die de groep aansturen; de <strong>onderste</strong> segmenten zijn de laatste die wegvallen.</li>
+        <li>Rond de heup vallen de <strong>buigers en adductoren</strong> het laatst uit en de <strong>strekkers en abductoren</strong> het eerst — vandaar de flexie-adductiestand en de heupinstabiliteit bij hoge laesies.</li>
+        <li>Rond de enkel loopt het van <strong>voetheffers</strong> (hoogst) naar <strong>intrinsieke voetspieren</strong> (laagst); daartussen zit de klassieke onbalans die voetdeformaties geeft.</li>
+        <li>De grenzen komen van een schematische figuur met vloeiende overgangen. Neem ze als <em>indicatief</em>: het is de volgorde die telt, niet de exacte grens.</li>
+      </ul>
+    </div>
+
+    <a class="my-link" href="tetheredcord.html">
+      🔗 Tethered cord syndroom
+      <span class="sub">Als het motorisch niveau zakt — beeld, symptomen per domein, en waarom het in de groeispurt piekt</span>
+    </a>
+  </div>
+
   <div class="my-bron">
-    <strong>Bron:</strong> standaard neuroanatomie / myotoomniveaus — dezelfde inhoud als je aantekening bij
-    "Uitvalsniveau &amp; spierinnervatie", hier alleen als plaat. Geen boekpassage. De verwachte verplaatsing per
-    niveau is de bekende globale samenhang tussen motorisch niveau en loopvaardigheid; die is <em>indicatief</em>,
-    met grote individuele variatie. Controleer bij twijfel tegen je eigen bronnen.
+    <strong>Bron:</strong> de plaat en de tabel bovenaan komen uit standaard neuroanatomie / myotoomniveaus —
+    dezelfde inhoud als je aantekening bij "Uitvalsniveau &amp; spierinnervatie", hier alleen als plaat. De
+    verwachte verplaatsing per niveau is de bekende globale samenhang tussen motorisch niveau en loopvaardigheid;
+    die is <em>indicatief</em>, met grote individuele variatie.
+    <br><br>
+    <strong>Innervatie per gewricht</strong> is nagetekend naar figuur 23.3 uit het leerboek
+    <em>Kinderrevalidatie</em>, hoofdstuk 23 — aangeleverd als foto van een oudere druk. De segmentgrenzen zijn
+    van die schematische figuur afgelezen, waarin de banden in elkaar overlopen; neem ze als indicatief en
+    controleer bij twijfel tegen de meest recente druk.
   </div>
 </div>
 
@@ -528,6 +586,88 @@ document.getElementById('myStrip').addEventListener('click', e => {
 
 laadKeuze();
 teken();
+
+// ============================================================================
+// INNERVATIE PER GEWRICHT
+//
+// Nagetekend naar figuur 23.3 uit het leerboek Kinderrevalidatie: per gewricht
+// de spiergroepen met de segmenten die ze aansturen.
+//
+// De grenzen zijn van een schematische figuur afgelezen waarin de banden in
+// elkaar overlopen. Ze staan hier als hele segmenten, maar dat suggereert meer
+// scherpte dan de bron heeft - daarom staat er onder de plaat dat ze indicatief
+// zijn. Wat de figuur werkelijk laat zien is de volgorde: rond elk gewricht
+// liggen de tegenspelers een tot twee segmenten uit elkaar.
+// ============================================================================
+const SEGMENTEN = ['L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3'];
+
+const GEWRICHTEN = [
+  { naam: 'Heup', groepen: [
+    ['buigers heup',    'L1', 'L4'],
+    ['adductoren',      'L2', 'L5'],
+    ['exorotatoren',    'L4', 'S1'],
+    ['abductoren',      'L4', 'S1'],
+    ['strekkers heup',  'L5', 'S2'],
+  ]},
+  { naam: 'Knie', groepen: [
+    ['strekkers knie',  'L2', 'L4'],
+    ['buigers knie',    'L4', 'S2'],
+  ]},
+  { naam: 'Enkel en voet', groepen: [
+    ['voetheffers',            'L4', 'L5'],
+    ['tibialis posterior',     'L4', 'S1'],
+    ['strekkers grote teen',   'L5', 'S1'],
+    ['peroneus musculatuur',   'L5', 'S1'],
+    ['kuitspieren',            'S1', 'S2'],
+    ['buigers grote teen',     'S1', 'S2'],
+    ['intrinsieke voetspieren','S2', 'S3'],
+  ]},
+];
+
+function tekenInnervatie() {
+  const vak = document.getElementById('myInnervatie');
+  if (!vak) return;
+
+  const B = 340, gutter = 122, padR = 6, rijH = 19, top = 22;
+  const kolom = (B - gutter - padR) / SEGMENTEN.length;
+
+  vak.innerHTML = GEWRICHTEN.map(g => {
+    const H = top + g.groepen.length * rijH + 6;
+    let s = '';
+
+    // kolommen om de tel af te lezen, om en om licht gearceerd
+    SEGMENTEN.forEach((seg, i) => {
+      const x = gutter + i * kolom;
+      if (i % 2 === 1) {
+        s += '<rect x="' + x.toFixed(1) + '" y="' + (top - 4) + '" width="' + kolom.toFixed(1) +
+          '" height="' + (H - top) + '" fill="#F3F3F0"/>';
+      }
+      s += '<text x="' + (x + kolom / 2).toFixed(1) + '" y="' + (top - 9) +
+        '" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680">' +
+        seg + '</text>';
+    });
+
+    g.groepen.forEach((rij, r) => {
+      const [naam, van, tot] = rij;
+      const i = SEGMENTEN.indexOf(van), j = SEGMENTEN.indexOf(tot);
+      const y = top + r * rijH;
+      s += '<text x="' + (gutter - 7) + '" y="' + (y + 11) +
+        '" text-anchor="end" font-family="system-ui, sans-serif" font-size="9.5" fill="#0f2733">' +
+        esc(naam) + '</text>';
+      s += '<rect x="' + (gutter + i * kolom + 1.5).toFixed(1) + '" y="' + (y + 2) +
+        '" width="' + ((j - i + 1) * kolom - 3).toFixed(1) + '" height="12" rx="3" ' +
+        'fill="#0f4c5c" fill-opacity="0.2" stroke="#0f4c5c" stroke-width="1.2"/>';
+      s += '<text x="' + (gutter + i * kolom + ((j - i + 1) * kolom) / 2).toFixed(1) + '" y="' + (y + 11) +
+        '" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#0f4c5c">' +
+        van + '\u2013' + tot + '</text>';
+    });
+
+    return '<div class="my-innerv"><h3>' + esc(g.naam) + '</h3>' +
+      '<svg viewBox="0 0 ' + B + ' ' + H + '" role="img" aria-label="Segmenten die de spiergroepen rond ' +
+      esc(g.naam.toLowerCase()) + ' aansturen">' + s + '</svg></div>';
+  }).join('');
+}
+tekenInnervatie();
 
 // service worker: plaat blijft werken zonder internet
 if ('serviceWorker' in navigator) {

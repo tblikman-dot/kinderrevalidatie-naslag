@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Tethered cord</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .tc-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .tc-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .tc-terug:hover { text-decoration: underline; }
+
+  .tc-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .tc-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  .tc-sectie { margin-top: 30px; }
+  .tc-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .tc-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .tc-plaat {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 14px 12px;
+  }
+  .tc-plaat svg { width: 100%; height: auto; display: block; }
+  .tc-bijschrift {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.6; margin-top: 10px;
+  }
+
+  .tc-legenda {
+    display: flex; flex-wrap: wrap; gap: 6px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 10px;
+  }
+  .tc-legenda span { display: flex; align-items: center; gap: 6px; }
+  .tc-vlak { width: 13px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+
+  .tc-tabel-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tc-tabel {
+    border-collapse: collapse; width: 100%;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; min-width: 360px;
+  }
+  .tc-tabel th, .tc-tabel td {
+    border: 1px solid var(--lijn);
+    padding: 9px 10px; text-align: left; vertical-align: top;
+    line-height: 1.55;
+  }
+  .tc-tabel th {
+    background: #F3F3F0; font-weight: 700; font-size: 12.5px;
+    white-space: nowrap; width: 1%;
+  }
+
+  .tc-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .tc-lijst li { margin-bottom: 9px; }
+  .tc-lijst li:last-child { margin-bottom: 0; }
+
+  .tc-vlag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .tc-vlag strong { display: block; margin-bottom: 3px; }
+  .tc-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .tc-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+
+  .tc-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .tc-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .tc-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .tc-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .tc-bron p { margin: 0 0 9px; }
+  .tc-bron p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Tethered cord</div>
+</header>
+
+<div class="tc-wrap">
+  <a class="tc-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="tc-kop">Tethered cord syndroom</h1>
+  <p class="tc-intro">
+    Het ruggenmerg staat onder tractie doordat de conus medullaris laag ligt en het filum terminale
+    te kort en verdikt is, al dan niet met een lipoom. De klachten ontstaan of nemen toe wanneer het
+    kind snel groeit — de wervelkolom wordt langer, het vastzittende merg niet.
+  </p>
+
+  <!-- ================= PLAAT ================= -->
+  <div class="tc-sectie">
+    <h2>Wat je op de MRI ziet</h2>
+    <p class="tc-sectie-uitleg">
+      Normale ligging naast de twee vormen die tractie geven. Let bij B en C ook op het verloop van
+      de wortels: die lopen niet meer los naar beneden waaier-gewijs, maar worden meegetrokken.
+    </p>
+
+    <div class="tc-plaat">
+      <svg viewBox="0 0 340 280" role="img" aria-labelledby="tcTitel">
+        <title id="tcTitel">Drie schematische zijaanzichten van de lumbosacrale wervelkolom: normale
+        ligging van de conus medullaris, lage conus met kort verdikt filum terminale, en lage conus
+        met daarbij een lipoom.</title>
+
+        <defs>
+          <pattern id="lipoom" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+            <line x1="0" y1="0" x2="0" y2="5" stroke="#5a5148" stroke-width="2"/>
+          </pattern>
+        </defs>
+
+        <!-- ===== PANEEL A: normaal ===== -->
+        <g transform="translate(8,0)">
+          <!-- durale zak -->
+          <path d="M30 18 L30 168 Q30 186 39 190 Q48 186 48 168 L48 18 Z" fill="#EBD3D8" opacity="0.85"/>
+          <!-- ruggenmerg met conus op L1 -->
+          <path d="M33 18 L33 44 Q39 62 45 44 L45 18 Z" fill="#BFB8B4"/>
+          <!-- filum terminale: dun -->
+          <line x1="39" y1="60" x2="39" y2="186" stroke="#3a3733" stroke-width="1"/>
+          <!-- cauda equina: losse waaier -->
+          <g stroke="#3a3733" stroke-width="1.1" fill="none">
+            <path d="M37 56 C 32 90, 28 130, 25 176"/>
+            <path d="M38 56 C 35 92, 32 134, 30 180"/>
+            <path d="M40 56 C 44 92, 47 134, 49 180"/>
+            <path d="M41 56 C 47 90, 51 130, 54 176"/>
+            <path d="M39 56 C 39 96, 38 140, 37 184"/>
+          </g>
+          <!-- wervels -->
+          <g fill="#EFE4C4" stroke="#8a7f60" stroke-width="0.8">
+            <rect x="52" y="20"  width="24" height="20" rx="4"/>
+            <rect x="52" y="45"  width="24" height="20" rx="4"/>
+            <rect x="52" y="70"  width="24" height="20" rx="4"/>
+            <rect x="52" y="95"  width="24" height="20" rx="4"/>
+            <rect x="52" y="120" width="24" height="20" rx="4"/>
+            <rect x="52" y="145" width="23" height="19" rx="4"/>
+            <rect x="53" y="169" width="21" height="18" rx="4"/>
+          </g>
+          <text x="82" y="33"  font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">L1</text>
+          <text x="81" y="182" font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">S1</text>
+          <!-- aanwijzer conus -->
+          <line x1="39" y1="52" x2="16" y2="40" stroke="#0f4c5c" stroke-width="0.9"/>
+          <text x="0" y="37" font-family="system-ui, sans-serif" font-size="8.5" font-weight="700" fill="#0f4c5c">conus</text>
+          <text x="20" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0f2733">A</text>
+          <text x="20" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8.5" fill="#6b7680">normaal</text>
+        </g>
+
+        <!-- ===== PANEEL B: laag + kort verdikt filum ===== -->
+        <g transform="translate(118,0)">
+          <path d="M30 18 L30 168 Q30 186 39 190 Q48 186 48 168 L48 18 Z" fill="#EBD3D8" opacity="0.85"/>
+          <!-- ruggenmerg loopt door tot laag -->
+          <path d="M33 18 L33 104 Q39 124 45 104 L45 18 Z" fill="#BFB8B4"/>
+          <!-- kort, verdikt filum -->
+          <line x1="39" y1="118" x2="39" y2="186" stroke="#1f1c19" stroke-width="4.5" stroke-linecap="round"/>
+          <!-- wortels: strak naar beneden meegetrokken -->
+          <g stroke="#3a3733" stroke-width="1.1" fill="none">
+            <path d="M35 112 C 33 132, 31 158, 30 182"/>
+            <path d="M37 112 C 36 134, 35 160, 34 184"/>
+            <path d="M42 112 C 43 134, 44 160, 45 184"/>
+            <path d="M44 112 C 46 132, 48 158, 49 182"/>
+          </g>
+          <g fill="#EFE4C4" stroke="#8a7f60" stroke-width="0.8">
+            <rect x="52" y="20"  width="24" height="20" rx="4"/>
+            <rect x="52" y="45"  width="24" height="20" rx="4"/>
+            <rect x="52" y="70"  width="24" height="20" rx="4"/>
+            <rect x="52" y="95"  width="24" height="20" rx="4"/>
+            <rect x="52" y="120" width="24" height="20" rx="4"/>
+            <rect x="52" y="145" width="23" height="19" rx="4"/>
+            <rect x="53" y="169" width="21" height="18" rx="4"/>
+          </g>
+          <line x1="39" y1="150" x2="18" y2="163" stroke="#8E3617" stroke-width="0.9"/>
+          <text x="-6" y="176" font-family="system-ui, sans-serif" font-size="8.5" font-weight="700" fill="#8E3617">kort, dik filum</text>
+          <text x="20" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0f2733">B</text>
+          <text x="20" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8.5" fill="#6b7680">lage conus</text>
+        </g>
+
+        <!-- ===== PANEEL C: laag + lipoom ===== -->
+        <g transform="translate(228,0)">
+          <path d="M30 18 L30 168 Q30 186 39 190 Q48 186 48 168 L48 18 Z" fill="#EBD3D8" opacity="0.85"/>
+          <path d="M33 18 L33 104 Q39 124 45 104 L45 18 Z" fill="#BFB8B4"/>
+          <!-- lipoom: wig die het merg naar dorsaal en caudaal trekt -->
+          <path d="M39 112 L20 196 L44 196 L44 118 Z" fill="url(#lipoom)" stroke="#5a5148" stroke-width="1"/>
+          <line x1="39" y1="118" x2="34" y2="186" stroke="#1f1c19" stroke-width="4" stroke-linecap="round"/>
+          <g stroke="#3a3733" stroke-width="1.1" fill="none">
+            <path d="M36 110 C 31 130, 27 156, 24 180"/>
+            <path d="M38 110 C 35 132, 32 158, 30 184"/>
+            <path d="M42 112 C 44 134, 46 160, 47 184"/>
+          </g>
+          <g fill="#EFE4C4" stroke="#8a7f60" stroke-width="0.8">
+            <rect x="52" y="20"  width="24" height="20" rx="4"/>
+            <rect x="52" y="45"  width="24" height="20" rx="4"/>
+            <rect x="52" y="70"  width="24" height="20" rx="4"/>
+            <rect x="52" y="95"  width="24" height="20" rx="4"/>
+            <rect x="52" y="120" width="24" height="20" rx="4"/>
+            <rect x="52" y="145" width="23" height="19" rx="4"/>
+            <rect x="53" y="169" width="21" height="18" rx="4"/>
+          </g>
+          <line x1="30" y1="170" x2="14" y2="186" stroke="#5a5148" stroke-width="0.9"/>
+          <text x="-4" y="198" font-family="system-ui, sans-serif" font-size="8.5" font-weight="700" fill="#5a5148">lipoom</text>
+          <text x="20" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#0f2733">C</text>
+          <text x="20" y="230" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8.5" fill="#6b7680">lage conus + lipoom</text>
+        </g>
+
+        <!-- onderschrift -->
+        <text x="170" y="258" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">
+          bij B en C lopen de wortels niet meer los uit maar strak mee naar caudaal
+        </text>
+      </svg>
+
+      <div class="tc-legenda">
+        <span><span class="tc-vlak" style="background:#BFB8B4"></span>ruggenmerg / conus</span>
+        <span><span class="tc-vlak" style="background:#EBD3D8"></span>durale zak</span>
+        <span><span class="tc-vlak" style="background:#1f1c19"></span>filum terminale</span>
+        <span><span class="tc-vlak" style="background:#EFE4C4;border:1px solid #8a7f60"></span>wervellichaam</span>
+      </div>
+
+      <div class="tc-bijschrift">
+        <strong>A</strong> normale ligging van de conus medullaris met daaronder de losse waaier van
+        de cauda equina. <strong>B</strong> lage conus met een te kort en verdikt filum terminale.
+        <strong>C</strong> lage conus met een te kort en verdikt filum terminale plus een lipoom, en
+        een abnormaal verloop van de wortels. Nagetekend naar figuur 23.4 uit het leerboek — de
+        verhoudingen zijn schematisch, niet op schaal.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SYMPTOMEN ================= -->
+  <div class="tc-sectie">
+    <h2>Symptomen</h2>
+    <p class="tc-sectie-uitleg">
+      Vier domeinen. Het woord dat er in alle vier toe doet is <em>toename</em>: bij een kind met
+      spina bifida is uitval op zichzelf niet nieuw, maar verandering wél.
+    </p>
+    <div class="tc-tabel-scroll">
+      <table class="tc-tabel">
+        <tbody>
+          <tr>
+            <th>Neurologisch</th>
+            <td>Rugpijn, radiculaire pijn, (toename van) atrofie, spasticiteit, krachtsverlies,
+              dysparesthesieën in beide benen of billen, afwijkende peesreflexen in de benen,
+              pathologische voetzoolreflexen.</td>
+          </tr>
+          <tr>
+            <th>Orthopedisch</th>
+            <td>(Toename van) afwijkingen aan de wervelkolom — kyfoscoliose — en voetdeformaties.</td>
+          </tr>
+          <tr>
+            <th>Urogenitaal</th>
+            <td>Neurogene blaasfunctiestoornissen: retentie, incontinentie, recidiverende
+              urineweginfecties, impotentie.</td>
+          </tr>
+          <tr>
+            <th>Intestinaal</th>
+            <td>Obstipatie, incontinentie.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tc-vlag oranje">
+      <strong>Toenemende spasticiteit is een signaal, geen diagnose.</strong>
+      Bij spina bifida treedt spinale spasticiteit vrijwel altijd op als er onder het laesieniveau
+      nog intact ruggenmerg aanwezig is. Die spasticiteit heeft een signaalfunctie: ze kan toenemen
+      bij een infectie elders in het lichaam, bij een fractuur, én bij een symptomatische tethered
+      cord. Zoek dus eerst de andere twee uit voordat je aan het merg denkt — en andersom: schrijf
+      een toename niet weg als "hoort erbij".
+    </div>
+  </div>
+
+  <!-- ================= WANNEER ================= -->
+  <div class="tc-sectie">
+    <h2>Bij wie en wanneer</h2>
+    <ul class="tc-lijst">
+      <li><strong>Bij 2,8 tot 3,2% van de kinderen met een myelomeningocele</strong> treedt het tethered cord syndroom op.</li>
+      <li><strong>Het piekt in de groeispurt.</strong> Het komt het meest voor op de leeftijd waarop kinderen snel groeien — logisch, want de tractie ontstaat doordat de wervelkolom langer wordt terwijl het merg vastzit. Dat maakt de groeispurt het moment om er actief naar te vragen.</li>
+      <li><strong>Bij spina bifida occulta komt het ook vaak voor</strong>, vooral als er een lipoom bij zit.</li>
+      <li><strong>Na een ontkoppelingsoperatie kan het terugkomen.</strong> Opnieuw vastgroeien kan opnieuw tot progressie van klachten leiden; dat heet retethering.</li>
+    </ul>
+
+    <div class="tc-vlag rood">
+      <strong>Denk ook aan syringomyelie of hydromyelie.</strong>
+      Vochtophopingen in het ruggenmerg zijn een andere complicatie bij kinderen én volwassenen met
+      spina bifida. Die kunnen leiden tot (toename van) neurologische uitval in de <em>armen</em> —
+      een gebied dat bij een lumbosacrale laesie juist niet is aangedaan — en tot een snel
+      progressieve scoliose. Nieuwe armklachten of een scoliose die opeens hard gaat, horen dus niet
+      bij het bekende beeld.
+    </div>
+  </div>
+
+  <div class="tc-sectie">
+    <h2>Verder</h2>
+    <a class="tc-link" href="myotomen.html">
+      🦵 Spieruitvalsniveaus
+      <span class="sub">Welke bewegingen bij welk niveau, en de innervatie per gewricht — het motorisch niveau kan zakken bij een tethered cord</span>
+    </a>
+  </div>
+
+  <div class="tc-bron">
+    <p>
+      <strong>Bron.</strong> Nagetekend en samengevat uit het leerboek <em>Kinderrevalidatie</em>,
+      hoofdstuk 23 (figuur 23.4 en kader 23.1, met de omliggende tekst). Aangeleverd als foto van een
+      oudere druk; controleer bij twijfel tegen de meest recente druk.
+    </p>
+    <p>
+      De tekening is met de hand nagemaakt in plaats van overgenomen, en de indeling van de symptomen
+      volgt het kader uit het boek. Percentages en leeftijdsverbanden zijn letterlijk overgenomen —
+      daar is niets aan bijgeschat.
+    </p>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
