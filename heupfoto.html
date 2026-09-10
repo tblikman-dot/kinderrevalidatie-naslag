@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Heupfoto beoordelen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .hf-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .hf-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .hf-terug:hover { text-decoration: underline; }
+
+  .hf-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .hf-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  .hf-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    color: #5A4A33;
+    margin: 0 0 22px;
+  }
+  .hf-waarschuwing strong { display: block; margin-bottom: 3px; }
+
+  .hf-sectie { margin-top: 32px; }
+  .hf-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .hf-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  .hf-plaat {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 12px 10px;
+  }
+  .hf-plaat svg { width: 100%; height: auto; display: block; }
+
+  .hf-legenda {
+    display: flex; flex-wrap: wrap; gap: 6px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 10px;
+  }
+  .hf-legenda span { display: flex; align-items: center; gap: 6px; }
+  .hf-lijn { width: 16px; height: 0; border-top-width: 2px; border-top-style: solid; flex-shrink: 0; }
+
+  .hf-bijschrift {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.6; margin-top: 10px;
+  }
+
+  .hf-tabel-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hf-tabel {
+    border-collapse: collapse; width: 100%;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; min-width: 400px;
+  }
+  .hf-tabel th, .hf-tabel td {
+    border: 1px solid var(--lijn);
+    padding: 8px 10px; text-align: left; vertical-align: top;
+    line-height: 1.5;
+  }
+  .hf-tabel th { background: #F3F3F0; font-weight: 700; font-size: 12px; }
+  .hf-tabel td.getal { text-align: right; white-space: nowrap; }
+  .hf-tabel td.ok   { color: #0B5C38; font-weight: 700; }
+  .hf-tabel td.let  { color: #6B4E06; font-weight: 700; }
+  .hf-tabel td.stop { color: #8E3617; font-weight: 700; }
+
+  .hf-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .hf-lijst li { margin-bottom: 9px; }
+  .hf-lijst li:last-child { margin-bottom: 0; }
+
+  .hf-check {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 6px 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .hf-check label {
+    display: flex; gap: 11px; align-items: flex-start;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--lijn);
+    font-size: 14px; line-height: 1.5;
+    cursor: pointer;
+  }
+  .hf-check label:last-child { border-bottom: none; }
+  .hf-check input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+  .hf-check .toel {
+    display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px;
+  }
+  .hf-check label:has(input:checked) > span { color: var(--muted); }
+
+  .hf-uitslag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .hf-uitslag strong { display: block; margin-bottom: 3px; }
+  .hf-uitslag.groen  { background: #E3F3EA; color: #0B5C38; }
+  .hf-uitslag.oranje { background: #FBF3DC; color: #6B4E06; }
+
+  .hf-vlag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .hf-vlag strong { display: block; margin-bottom: 3px; }
+  .hf-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .hf-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+
+  .hf-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .hf-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .hf-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .hf-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .hf-bron p { margin: 0 0 9px; }
+  .hf-bron p:last-child { margin-bottom: 0; }
+  .hf-bron a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Heupfoto beoordelen</div>
+</header>
+
+<div class="hf-wrap">
+  <a class="hf-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="hf-kop">Wanneer is een kinderheup op de foto normaal?</h1>
+  <p class="hf-intro">
+    De lijnen, de AC-hoek en het migratiepercentage op een rij, met de leeftijd erbij — want een
+    hoek die op zes maanden nog gewoon is, is op een jaar afwijkend. Onderaan staat een afvinklijst
+    voor de vraag waar het meestal op neerkomt: mag deze foto de deur uit als normaal?
+  </p>
+
+  <div class="hf-waarschuwing">
+    <strong>Eén afkapwaarde bestaat niet.</strong>
+    Het acetabulum wordt met de leeftijd steiler ingedeeld: de AC-hoek daalt van rond de 28° bij een
+    pasgeborene naar rond de 20° op een jaar. Wie één grens onthoudt, mist dysplasie bij een baby of
+    verwijst een peuter onnodig. Beoordeel altijd met de leeftijd erbij, en bij voorkeur met een
+    eerdere opname ernaast — het beloop zegt meer dan één meting.
+  </div>
+
+  <!-- ================= WELKE METING WANNEER ================= -->
+  <div class="hf-sectie">
+    <h2>Welke meting op welke leeftijd</h2>
+    <p class="hf-sectie-uitleg">
+      De eerste vraag is niet <em>hoe groot is de hoek</em> maar <em>mag ik deze hoek hier
+      überhaupt gebruiken</em>.
+    </p>
+    <div class="hf-tabel-scroll">
+      <table class="hf-tabel">
+        <thead><tr><th>Leeftijd</th><th>Wat je gebruikt</th><th>Waarom</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>0 – ± 4 maanden</td>
+            <td><strong>Echo volgens Graf</strong>, geen röntgen</td>
+            <td>De kop is nog kraakbenig en niet verbeend; op een foto zie je hem simpelweg niet.</td>
+          </tr>
+          <tr>
+            <td>± 4 – 9 maanden</td>
+            <td>Echo zolang die betrouwbaar lukt</td>
+            <td>De Nederlandse richtlijn houdt echo aan totdat de Graf-methode niet meer kan.</td>
+          </tr>
+          <tr>
+            <td>vanaf ± 9 maanden</td>
+            <td><strong>X-bekken AP</strong> met AC-hoek</td>
+            <td>De heup wordt lastiger echografisch af te beelden; de kopkern is inmiddels verbeend.</td>
+          </tr>
+          <tr>
+            <td>tot ± 8 jaar</td>
+            <td>AC-hoek blijft bruikbaar</td>
+            <td>Daarna sluit het triradiate kraakbeen te ver en verliest de hoek zijn ijkpunt.</td>
+          </tr>
+          <tr>
+            <td>oudere kinderen</td>
+            <td><strong>CE-hoek van Wiberg</strong></td>
+            <td>Vraagt een voldoende verbeende kop met een herkenbaar centrum.</td>
+          </tr>
+          <tr>
+            <td>bij CP, elke leeftijd</td>
+            <td><strong>Migratiepercentage</strong> (Reimers)</td>
+            <td>Lateralisatie is daar de maat die telt, niet de steilheid van het dak.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= DE LIJNEN ================= -->
+  <div class="hf-sectie">
+    <h2>De lijnen</h2>
+    <p class="hf-sectie-uitleg">
+      Links een normale heup, rechts een dysplastische. Dezelfde vier lijnen, twee verschillende
+      antwoorden.
+    </p>
+
+    <div class="hf-plaat">
+      <svg viewBox="0 0 340 272" role="img" aria-labelledby="hfTitel">
+        <title id="hfTitel">Schematisch AP-bekken van een kind met de lijn van Hilgenreiner, de lijn
+        van Perkin, de vier kwadranten, de AC-hoek en de lijn van Shenton; links normaal, rechts
+        dysplastisch.</title>
+
+        <!-- ===== benig bekken ===== -->
+        <g fill="#EFE4C4" stroke="#8a7f60" stroke-width="1">
+          <!-- ossa ilii -->
+          <path d="M46 60 Q 66 34 116 40 Q 148 50 156 82 L156 110 L120 110 Q 96 106 78 100 Q 52 90 46 60 Z"/>
+          <path d="M294 60 Q 274 34 224 40 Q 192 50 184 82 L184 110 L220 110 Q 244 106 262 100 Q 288 90 294 60 Z"/>
+          <!-- sacrum -->
+          <path d="M158 62 Q 170 54 182 62 L180 126 Q 170 134 160 126 Z"/>
+          <!-- rami rond het foramen obturatum -->
+          <path d="M156 112 Q 134 128 130 158 Q 128 188 150 200 Q 168 206 170 186 L170 138 Q 166 122 156 112 Z"/>
+          <path d="M184 112 Q 206 128 210 158 Q 212 188 190 200 Q 172 206 170 186 L170 138 Q 174 122 184 112 Z"/>
+        </g>
+        <ellipse cx="150" cy="166" rx="13" ry="21" fill="#FAFAF8" stroke="#8a7f60" stroke-width="1"/>
+        <ellipse cx="190" cy="166" rx="13" ry="21" fill="#FAFAF8" stroke="#8a7f60" stroke-width="1"/>
+
+        <!-- ===== femora ===== -->
+        <g fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2">
+          <path d="M124 134 L104 150 L86 214 L110 222 L134 152 Z"/>
+          <path d="M228 120 L248 138 L262 204 L238 212 L218 140 Z"/>
+        </g>
+
+        <!-- ===== lijn van Shenton ===== -->
+        <path d="M112 158 Q 134 176 158 156" fill="none" stroke="#0B5C38" stroke-width="2.2"/>
+        <path d="M244 150 Q 234 164 224 168" fill="none" stroke="#8E3617" stroke-width="2.2"/>
+        <path d="M198 152 Q 194 148 190 146" fill="none" stroke="#8E3617" stroke-width="2.2"/>
+        <circle cx="212" cy="160" r="7" fill="none" stroke="#8E3617" stroke-width="1.1" stroke-dasharray="2 2"/>
+
+        <!-- ===== acetabulumdak ===== -->
+        <line x1="156" y1="110" x2="120" y2="96" stroke="#8E3617" stroke-width="2"/>
+        <line x1="184" y1="110" x2="220" y2="84" stroke="#8E3617" stroke-width="2"/>
+        <path d="M140 110 A 16 16 0 0 0 139 103" fill="none" stroke="#8E3617" stroke-width="1.3"/>
+        <path d="M200 110 A 16 16 0 0 1 201 100" fill="none" stroke="#8E3617" stroke-width="1.3"/>
+
+        <!-- ===== hulplijnen ===== -->
+        <line x1="24" y1="110" x2="316" y2="110" stroke="#0f4c5c" stroke-width="1.8"/>
+        <line x1="120" y1="64" x2="120" y2="212" stroke="#0f4c5c" stroke-width="1.6" stroke-dasharray="5 3"/>
+        <line x1="220" y1="64" x2="220" y2="212" stroke="#0f4c5c" stroke-width="1.6" stroke-dasharray="5 3"/>
+
+        <!-- ===== kopkernen ===== -->
+        <circle cx="134" cy="126" r="11" fill="#C9DDE4" stroke="#0f4c5c" stroke-width="1.6"/>
+        <circle cx="232" cy="110" r="11" fill="#F3D3C9" stroke="#8E3617" stroke-width="1.6"/>
+
+        <!-- ===== opschriften ===== -->
+        <g font-family="system-ui, sans-serif" font-weight="700">
+          <text x="24" y="105" font-size="9" fill="#0f4c5c">Hilgenreiner</text>
+          <text x="120" y="58" text-anchor="middle" font-size="9" fill="#0f4c5c">Perkin</text>
+          <text x="220" y="58" text-anchor="middle" font-size="9" fill="#0f4c5c">Perkin</text>
+
+          <line x1="136" y1="106" x2="66" y2="88" stroke="#8E3617" stroke-width="0.8"/>
+          <text x="62" y="85" text-anchor="end" font-size="9.5" fill="#8E3617">AC ≈ 22°</text>
+          <line x1="204" y1="106" x2="278" y2="88" stroke="#8E3617" stroke-width="0.8"/>
+          <text x="282" y="85" font-size="9.5" fill="#8E3617">AC ≈ 36°</text>
+
+          <line x1="140" y1="170" x2="96" y2="192" stroke="#0B5C38" stroke-width="0.8"/>
+          <text x="92" y="196" text-anchor="end" font-size="9" fill="#0B5C38">Shenton</text>
+          <text x="92" y="207" text-anchor="end" font-size="9" font-weight="400" fill="#0B5C38">vloeiend</text>
+          <line x1="216" y1="166" x2="266" y2="188" stroke="#8E3617" stroke-width="0.8"/>
+          <text x="270" y="192" font-size="9" fill="#8E3617">Shenton</text>
+          <text x="270" y="203" font-size="9" font-weight="400" fill="#8E3617">onderbroken</text>
+
+          <text x="96" y="244" text-anchor="middle" font-size="10.5" fill="#0B5C38">normaal</text>
+          <text x="96" y="257" text-anchor="middle" font-size="9" font-weight="400" fill="#0B5C38">kop onder-mediaal</text>
+          <text x="250" y="244" text-anchor="middle" font-size="10.5" fill="#8E3617">dysplastisch</text>
+          <text x="250" y="257" text-anchor="middle" font-size="9" font-weight="400" fill="#8E3617">kop boven-lateraal</text>
+        </g>
+      </svg>
+
+      <div class="hf-legenda">
+        <span><span class="hf-lijn" style="border-color:#0f4c5c"></span>Hilgenreiner &amp; Perkin</span>
+        <span><span class="hf-lijn" style="border-color:#8E3617"></span>acetabulumdak (AC-hoek)</span>
+        <span><span class="hf-lijn" style="border-color:#0B5C38"></span>lijn van Shenton</span>
+      </div>
+
+      <div class="hf-bijschrift">
+        <strong>Hilgenreiner</strong> loopt horizontaal door beide triradiate kraakbenen.
+        <strong>Perkin</strong> staat daar loodrecht op, door de laterale acetabulumrand. Samen maken
+        ze vier kwadranten: de kopkern hoort in het <strong>onder-mediale</strong> kwadrant. De
+        <strong>AC-hoek</strong> is de hoek tussen Hilgenreiner en de lijn van het triradiate
+        kraakbeen naar de laterale acetabulumrand. De <strong>lijn van Shenton</strong> loopt van de
+        mediale femurhals door naar de bovenrand van het foramen obturatum en hoort een vloeiende
+        boog te zijn. Schematisch, niet op schaal.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= AC-HOEK ================= -->
+  <div class="hf-sectie">
+    <h2>De AC-hoek per leeftijd</h2>
+    <p class="hf-sectie-uitleg">
+      Gemiddelden bij gezonde heupen. Let op het verschil tussen jongens en meisjes: dat is groter
+      dan je zou denken, en meisjes starten steiler.
+    </p>
+    <div class="hf-tabel-scroll">
+      <table class="hf-tabel">
+        <thead><tr><th>Leeftijd</th><th class="getal">Meisjes</th><th class="getal">Jongens</th></tr></thead>
+        <tbody>
+          <tr><td>Pasgeborene</td><td class="getal">30° ± 4°</td><td class="getal">26° ± 5°</td></tr>
+          <tr><td>3 – 4 maanden</td><td class="getal" colspan="2" style="text-align:center">gemiddeld ± 25°</td></tr>
+          <tr><td>1 jaar</td><td class="getal">20° ± 3°</td><td class="getal">18° ± 4°</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="hf-sectie-uitleg" style="margin-top:16px;">
+      Afkapwaarden voor dysplasie, volgens de indeling van Tönnis: licht = 1 tot 2 standaarddeviaties
+      boven het gemiddelde, ernstig = meer dan 2 standaarddeviaties.
+    </p>
+    <div class="hf-tabel-scroll">
+      <table class="hf-tabel">
+        <thead><tr><th>Leeftijd</th><th>Normaal</th><th>Lichte dysplasie</th><th>Ernstige dysplasie</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>± 10 maanden</td>
+            <td class="ok">≤ 30°</td><td class="let">30 – 35°</td><td class="stop">≥ 35°</td>
+          </tr>
+          <tr>
+            <td>± 2 jaar</td>
+            <td class="ok">≤ 25°</td><td class="let">25 – 30°</td><td class="stop">≥ 30°</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hf-vlag oranje">
+      <strong>Dezelfde 30°, twee verschillende antwoorden.</strong>
+      Op de leeftijd van 6 tot 7 maanden valt een AC-hoek van 30° nog binnen twee standaarddeviaties
+      — dus normaal. Op de leeftijd van 1 jaar valt diezelfde 30° daar juist buiten. Dat is precies
+      waarom een getal zonder leeftijd niets waard is, en waarom "de hoek is 30, dat kan nog" een
+      antwoord is dat je alleen bij een baby mag geven.
+    </div>
+
+    <ul class="hf-lijst" style="margin-top:14px;">
+      <li><strong>Meet aan beide kanten en vergelijk.</strong> Een links-rechtsverschil is een bevinding op zich, ook als beide hoeken binnen de norm vallen.</li>
+      <li><strong>Een AC-hoek van 30° of meer</strong> wordt in de literatuur gebruikt als drempel waarboven een bekkenosteotomie (Salter) in beeld komt — bij de leeftijd waarop die hoek ook echt afwijkend is.</li>
+      <li><strong>Rotatie op de opname verandert de hoek.</strong> Een scheve of gekantelde AP maakt de ene kant steiler en de andere vlakker. Beoordeel eerst de opname, dan pas de heup.</li>
+    </ul>
+  </div>
+
+  <!-- ================= LATERALISATIE ================= -->
+  <div class="hf-sectie">
+    <h2>Lateralisatie: het migratiepercentage</h2>
+    <p class="hf-sectie-uitleg">
+      Het percentage van de femurkop dat <em>buiten</em> de acetabulaire bedekking valt, gemeten
+      volgens Reimers: de breedte van het deel van de kop lateraal van de Perkinlijn, gedeeld door de
+      totale breedte van de kop. Bij cerebrale parese is dit de maat waar het beleid aan hangt.
+    </p>
+    <div class="hf-tabel-scroll">
+      <table class="hf-tabel">
+        <thead><tr><th>MP</th><th>Betekenis bij CP</th></tr></thead>
+        <tbody>
+          <tr><td class="ok">&lt; 33%</td><td>Geen operatie-indicatie op grond van dit criterium; vervolgen volgens het screeningsschema.</td></tr>
+          <tr><td class="let">33 – 40%</td><td>Indicatie voor preventieve chirurgie <em>als</em> toename is aangetoond over ten minste 2 opnames met 6 maanden ertussen.</td></tr>
+          <tr><td class="stop">≥ 40%</td><td>Indicatie voor preventieve chirurgie.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hf-sectie-uitleg" style="margin-top:10px;">
+      Let op: het screeningsschema uit dezelfde richtlijn gebruikt <strong>MP ≤ 30</strong> als
+      criterium om de surveillance te mógen stoppen. Dat is een ander getal dan de 33% hierboven, en
+      dat verschil zit in de bronnen zelf — niet in een slordigheid.
+    </p>
+
+    <div class="hf-vlag rood">
+      <strong>De CP-heup is een ander verhaal dan DDH.</strong>
+      Bij DDH is het acetabulum primair onvoldoende aangelegd; bij CP wordt een aanvankelijk normale
+      heup er door spierdisbalans uit getrokken. Een normale babyheup zegt dus niets over de CP-heup
+      later, en de screening voor DDH dekt de CP-heup niet af.
+    </div>
+  </div>
+
+  <!-- ================= AFVINKLIJST ================= -->
+  <div class="hf-sectie">
+    <h2>Mag deze foto als normaal de deur uit?</h2>
+    <p class="hf-sectie-uitleg">
+      Zeven punten. Blijft er één open, dan is "normaal" nog geen afgerond antwoord.
+    </p>
+    <div class="hf-check" id="hfCheck">
+      <label><input type="checkbox">
+        <span>De opname is beoordeelbaar
+          <span class="toel">Symmetrische AP, geen rotatie, geen verschil in abductie tussen beide benen. Rotatie kantelt de AC-hoek naar beide kanten op.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>De methode past bij de leeftijd
+          <span class="toel">Onder ongeveer vier maanden hoort hier een echo volgens Graf te staan, geen röntgenfoto.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>Beide kopkernen liggen in het onder-mediale kwadrant
+          <span class="toel">Van Hilgenreiner en Perkin samen.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>De AC-hoek is beoordeeld tegen de norm van <em>deze</em> leeftijd
+          <span class="toel">Niet tegen één onthouden grens, en niet tegen een volwassen norm.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>De lijn van Shenton is vloeiend
+          <span class="toel">Bij kinderen boven ongeveer drie tot vier jaar hoort die ononderbroken te zijn.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>Links en rechts zijn met elkaar vergeleken
+          <span class="toel">Asymmetrie is een bevinding, ook binnen de normaalwaarden.</span>
+        </span></label>
+      <label><input type="checkbox">
+        <span>Er is een eerdere opname bekeken, of afgesproken wanneer de volgende komt
+          <span class="toel">Eén opname is een momentopname; het beloop voorspelt beter dan de losse waarde.</span>
+        </span></label>
+    </div>
+    <div id="hfUitslag"></div>
+  </div>
+
+  <!-- ================= WAT HIER NIET IN STAAT ================= -->
+  <div class="hf-sectie">
+    <h2>Wat hier bewust níet in staat</h2>
+    <ul class="hf-lijst">
+      <li><strong>De volledige tabel van Tönnis, leeftijd voor leeftijd.</strong> Die geeft per maand en per geslacht het gemiddelde met de 1SD- en 2SD-grens. Ik kon het origineel niet inzien — de bronnen staan achter een betaalmuur of zijn vanaf hier geblokkeerd — dus staan hier alleen de ankerpunten die ik in secundaire bronnen bevestigd kreeg. Heb je die tabel bij de hand, stuur hem dan; dan zet ik hem er compleet in, net als bij het CP-screeningsschema.</li>
+      <li><strong>Afkapwaarden voor de CE-hoek van Wiberg per leeftijd.</strong> Genoemd als opvolger van de AC-hoek bij oudere kinderen, maar zonder getallen omdat ik ze niet kon verifiëren.</li>
+      <li><strong>Een rekenhulp die de AC-hoek per willekeurige leeftijd beoordeelt.</strong> Dat zou tussen twee ankerpunten moeten interpoleren en daarmee een precisie suggereren die er niet is. Zodra de echte tabel er ligt, kan dat wel.</li>
+    </ul>
+  </div>
+
+  <div class="hf-sectie">
+    <h2>Verder</h2>
+    <a class="hf-link" href="heupdysplasie.html">
+      👶 Heupdysplasie (DDH) — screenen &amp; verwijzen
+      <span class="sub">Risicofactoren, wanneer echo, en de link met de CP-heup</span>
+    </a>
+    <a class="hf-link" href="beslisboom-heup.html">
+      🦴 Beslisboom heup bij CP
+      <span class="sub">Van migratiepercentage naar beleid, met het screeningsschema per GMFCS-niveau</span>
+    </a>
+  </div>
+
+  <div class="hf-bron">
+    <p>
+      <strong>Waar de getallen vandaan komen.</strong> De AC-hoekwaarden gaan terug op Tönnis,
+      <em>Normal values of the hip joint for the evaluation of X-rays in children and adults</em>,
+      Clin Orthop Relat Res 1976;119:39–47 — de bron waar vrijwel alle latere tabellen op teruggrijpen.
+      Ik heb dat artikel zelf niet kunnen inzien; de gemiddelden en de afkapwaarden hierboven komen uit
+      secundaire publicaties die die tabel citeren, en ze zijn onderling consistent. Beschouw ze als
+      betrouwbaar op de genoemde ankerpunten en niet als een volledige tabel.
+    </p>
+    <p>
+      <strong>De keuze van beeldvorming per leeftijd</strong> volgt de richtlijn
+      <em>DDH — dysplastische heupontwikkeling bij kinderen onder één jaar</em> (NOV, via de
+      Richtlijnendatabase van de Federatie Medisch Specialisten): echo zolang de Graf-methode kan,
+      daarna röntgen, met het omslagpunt rond negen maanden.
+    </p>
+    <p>
+      <strong>De MP-afkapwaarden</strong> komen uit de richtlijn <em>Cerebrale parese bij kinderen</em>,
+      module "Chirurgie bij heup(sub)luxatie" — dezelfde bron als de beslisboom in deze app.
+    </p>
+    <p>
+      Dit is een naslag bij het meelezen, geen radiologisch verslag. De beoordeling van de opname
+      ligt bij de radioloog en de indicatiestelling bij het multidisciplinaire team.
+    </p>
+  </div>
+</div>
+
+<script>
+// Afvinklijst: pas als alles aan staat is "normaal" een afgerond antwoord.
+// Bewust geen opslag - dit is een denkhulp bij één foto, geen dossier.
+(function () {
+  const vak = document.getElementById('hfCheck');
+  const uit = document.getElementById('hfUitslag');
+  const vinkjes = Array.prototype.slice.call(vak.querySelectorAll('input'));
+
+  function toon() {
+    const aan = vinkjes.filter(v => v.checked).length;
+    const totaal = vinkjes.length;
+    if (aan === totaal) {
+      uit.innerHTML = '<div class="hf-uitslag groen"><strong>Alle zeven punten afgelopen</strong>' +
+        'Op deze punten is er niets wat tegen een normale beoordeling pleit. Leg vast waar de ' +
+        'volgende controle op staat, zodat "normaal" ook een vervolg heeft.</div>';
+    } else {
+      uit.innerHTML = '<div class="hf-uitslag oranje"><strong>' + aan + ' van de ' + totaal +
+        ' afgevinkt</strong>Zolang er punten open staan is normaal nog geen afgerond antwoord — ' +
+        'meestal is het de opnamekwaliteit of de vergelijking met een eerdere foto die ontbreekt.</div>';
+    }
+  }
+
+  vinkjes.forEach(v => v.addEventListener('change', toon));
+  toon();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
