@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Stroomschema DDH</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .ds-wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .ds-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .ds-terug:hover { text-decoration: underline; }
+
+  .ds-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .ds-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .ds-waarschuwing {
+    background: #FDF6EC;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #5A4A33;
+    margin: 14px 0 20px;
+  }
+
+  .ds-voortgang {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .ds-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .ds-vraag { font-size: 1.12rem; font-weight: 700; line-height: 1.4; margin: 0 0 4px; }
+  .ds-hint {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+
+  .ds-opties { display: flex; flex-direction: column; gap: 9px; }
+  .ds-optie {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border: 1.5px solid var(--lijn);
+    border-radius: 12px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--inkt);
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  .ds-optie:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .ds-optie:active { transform: scale(0.99); }
+  .ds-optie .sub {
+    display: block;
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* uitkomst */
+  .ds-uitkomst { border-left: 5px solid var(--accent); }
+  .ds-uitkomst.indicatie { border-left-color: #B3441E; }
+  .ds-uitkomst.vervolgen { border-left-color: #0f7a4a; }
+  .ds-uitkomst.overleg   { border-left-color: #B8860B; }
+
+  .ds-badge {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    margin-bottom: 10px;
+  }
+  .ds-uitkomst.indicatie .ds-badge { background: #FBEAE5; color: #B3441E; }
+  .ds-uitkomst.vervolgen .ds-badge { background: #E3F3EA; color: #0f7a4a; }
+  .ds-uitkomst.overleg   .ds-badge { background: #FBF3DC; color: #8A6508; }
+
+  .ds-uitkomst h2 { font-size: 1.2rem; margin: 0 0 10px; }
+  .ds-uitkomst-tekst { font-family: system-ui, sans-serif; font-size: 14.5px; line-height: 1.65; }
+  .ds-uitkomst-tekst ul { margin: 8px 0 12px; padding-left: 22px; }
+  .ds-uitkomst-tekst li { margin-bottom: 5px; }
+  .ds-uitkomst-tekst p { margin: 0 0 10px; }
+
+  .ds-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-top: 14px;
+    line-height: 1.55;
+  }
+
+  .ds-pad {
+    margin-top: 18px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .ds-pad-titel { font-weight: 700; margin-bottom: 6px; color: var(--inkt); }
+  .ds-pad ol { margin: 0; padding-left: 20px; }
+  .ds-pad li { margin-bottom: 3px; }
+
+  .ds-knoppen { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .ds-knop {
+    padding: 11px 18px;
+    border-radius: 11px;
+    border: 1.5px solid var(--lijn);
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--inkt);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .ds-knop:hover { border-color: var(--accent); }
+  .ds-knop.primair { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .ds-optie.primair { background: var(--accent); color: #fff; border-color: var(--accent); text-align: center; }
+  .ds-optie.primair:hover { background: #0c3f4c; }
+
+  .ds-getalrij { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ds-getal {
+    flex: 1; min-width: 0;
+    padding: 13px 14px;
+    border: 1.5px solid var(--lijn); border-radius: 11px;
+    background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 17px; color: var(--inkt);
+  }
+  .ds-getal:focus { outline: none; border-color: var(--accent); }
+  .ds-eenheid { font-family: system-ui, sans-serif; font-size: 14px; color: var(--muted); }
+
+  .ds-plan {
+    background: #F4F8F6;
+    border: 1px solid #CFE3D8;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .ds-plan > p:first-child { color: #0f7a4a; }
+  .ds-plan .ds-bron { background: #FDF6EC; color: #5A4A33; }
+  .ds-spoor { font-size: 12.5px; font-weight: 400; color: var(--muted); }
+  .ds-ster {
+    background: #FBF3DC; color: #5A4A33;
+    border-radius: 8px; padding: 9px 12px; font-size: 13.5px;
+  }
+
+  .ds-pdf {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--accent);
+    border-radius: 11px;
+    padding: 13px 16px;
+    margin: 0 0 20px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .ds-pdf:hover { background: var(--accent-zacht); }
+  .ds-pdf .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+  .ds-stap {
+    background: var(--accent-zacht);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .ds-stap strong { display: block; margin-bottom: 3px; }
+  .ds-buiten {
+    background: #F3F3F0;
+    border: 1px dashed var(--rand, #C7C7C2);
+    border-radius: 10px;
+    padding: 11px 13px;
+    margin-top: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted); line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — het stroomschema werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Stroomschema DDH</div>
+</header>
+
+<div class="ds-wrap">
+  <a class="ds-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="ds-kop">Dysplastische heupontwikkeling onder één jaar</h1>
+  <p class="ds-intro">
+    Het stroomschema bij de NOV-richtlijn, klik voor klik. Op papier is dit één A3 met vier
+    parallelle kolommen; hier loop je alleen het pad dat bij dít kind hoort.
+  </p>
+
+  <a class="ds-pdf" href="stroomschema-ddh.pdf" target="_blank" rel="noopener">
+    📄 Het originele stroomschema (PDF)
+    <span class="sub">Het hele schema in één oogopslag — ook offline beschikbaar in de app</span>
+  </a>
+
+  <div class="ds-waarschuwing">
+    <strong>Lees altijd de module zelf bij twijfel.</strong>
+    Het schema geeft de hoofdlijn; de overwegingen en aanbevelingen van de richtlijn bevatten de
+    nuances, de afwijkende situaties en de achtergrond. En: betrek de ouders of verzorgers bij de
+    besluitvorming — dat staat als aparte noot op het schema.
+  </div>
+
+  <div id="dsInhoud"></div>
+</div>
+
+<script>
+// ===== STROOMSCHEMA DDH =====
+// Overgenomen uit: Stroomschema bij de richtlijn "Dysplastische heupontwikkeling
+// bij kinderen onder de een jaar", NOV / Kennisinstituut van de Federatie
+// Medisch Specialisten, versie 1 (08-07-2020).
+//
+// Het schema loopt in vier kolommen naast elkaar. Hier is het uitgerold tot een
+// pad per kind. Alles wat na de leeftijd van 1 jaar komt valt volgens het schema
+// zelf BUITEN de afbakening van de richtlijn en berust op WKO-consensus; dat
+// staat bij die uitkomsten apart vermeld en mag niet wegvallen.
+const BRON = 'Stroomschema bij de richtlijn "Dysplastische heupontwikkeling bij kinderen onder de \u00e9\u00e9n jaar" — NOV / Kennisinstituut FMS, versie 1 (08-07-2020).';
+
+const BUITEN = 'Dit deel van het schema (na de leeftijd van 1 jaar) valt buiten de afbakening van de richtlijn en berust op WKO-consensus.';
+
+const BOOM = {
+  start: {
+    vraag: 'Wat is de Graf-classificatie op de echo?',
+    hint: 'De echo-indicatie zelf volgt uit de JGZ-richtlijn.',
+    opties: [
+      { label: 'Graf I', sub: 'Normale heup', naar: 'u_geen' },
+      { label: 'Graf IIA', sub: 'Fysiologisch onrijp voor de leeftijd', naar: 'iia' },
+      { label: 'Graf IIB of IIC', naar: 'iibc_6w' },
+      { label: 'Graf D, III of IV', sub: 'Decentrering tot luxatie', naar: 'd34' },
+    ]
+  },
+
+  iia: {
+    stap: 'Controle met echo op de leeftijd van 3 maanden.',
+    vraag: 'Is er normalisatie bij die controle?',
+    opties: [
+      { label: 'Ja', naar: 'u_geen' },
+      { label: 'Nee', sub: 'Verwijzen naar het kinderorthopedisch netwerk', naar: 'iibc_6w' },
+    ]
+  },
+
+  iibc_6w: {
+    stap: 'Verwijzing naar een kinderorthopedisch netwerk met DDH-behandelteam. Afwachtend beleid, controle elke 6 weken met echo.',
+    vraag: 'Is er verbetering na 6 weken?',
+    opties: [
+      { label: 'Ja', naar: 'iibc_norm' },
+      { label: 'Nee', naar: 'u_spreid' },
+    ]
+  },
+
+  iibc_norm: {
+    vraag: 'Is er normalisatie?',
+    opties: [
+      { label: 'Ja', naar: 'u_fu135' },
+      { label: 'Nee', sub: 'Afwachtend beleid voortzetten, elke 6 weken echo', naar: 'iibc_12w' },
+    ]
+  },
+
+  iibc_12w: {
+    vraag: 'Is er normalisatie na 12 weken?',
+    opties: [
+      { label: 'Ja', naar: 'u_fu135' },
+      { label: 'Nee', naar: 'u_spreid' },
+    ]
+  },
+
+  d34: {
+    stap: 'Verwijzing naar een kinderorthopedisch netwerk met DDH-behandelteam. Spreidvoorziening: Pavlik. Controle met een echo elke 3 tot 4 weken.',
+    vraag: 'Is er stabiele centralisatie na 6 tot 8 weken?',
+    opties: [
+      { label: 'Ja', naar: 'na_spreid' },
+      { label: 'Nee', naar: 'repositie' },
+    ]
+  },
+
+  repositie: {
+    stap: 'Gesloten repositie, al dan niet met adductorentenotomie, plus beeldvorming.',
+    vraag: 'Is de gesloten repositie succesvol?',
+    opties: [
+      { label: 'Ja', naar: 'gips' },
+      { label: 'Nee', naar: 'open_rep' },
+    ]
+  },
+
+  open_rep: {
+    stap: 'Plan een open repositie.',
+    vraag: 'Daarna volgt dezelfde nabehandeling als na een gesloten repositie.',
+    opties: [
+      { label: 'Verder \u2192', naar: 'gips' },
+    ]
+  },
+
+  gips: {
+    stap: 'Drie maanden gipsbroek, met frequente controles — bij voorkeur echografisch.',
+    vraag: 'Is er reluxatie in de follow-up?',
+    opties: [
+      { label: 'Ja', sub: 'Terug naar een open repositie', naar: 'open_rep' },
+      { label: 'Nee', naar: 'restdysplasie' },
+    ]
+  },
+
+  restdysplasie: {
+    stap: 'Na drie maanden gaat het gips eraf.',
+    vraag: 'Is er restdysplasie?',
+    opties: [
+      { label: 'Ja', sub: 'Alsnog een spreidvoorziening', naar: 'na_spreid' },
+      { label: 'Nee', sub: 'Geen spreidvoorziening', naar: 'jaar1' },
+    ]
+  },
+
+  na_spreid: {
+    stap: 'Spreidvoorziening: onder de 6 maanden Pavlik, boven de 6 maanden Pavlik of een alternatief op indicatie. Controle met echo — of zo nodig X — elke 6 weken. Staken bij normalisatie, of op de leeftijd van 1 jaar.',
+    vraag: 'Verder naar de controle op de leeftijd van 1 jaar.',
+    opties: [
+      { label: 'Verder →', naar: 'jaar1' },
+    ]
+  },
+
+  jaar1: {
+    stap: 'Op de leeftijd van 1 jaar: controle met een X-bekken.',
+    vraag: 'Is er (sub)luxatie of instabiliteit?',
+    opties: [
+      { label: 'Nee', naar: 'u_fu351018' },
+      { label: 'Ja', naar: 'jaar2' },
+    ]
+  },
+
+  jaar2: {
+    stap: 'X-bekken herhalen op de leeftijd van 2 jaar én na minimaal 6 maanden lopen.',
+    vraag: 'Is er dan nog steeds (sub)luxatie of instabiliteit?',
+    opties: [
+      { label: 'Nee', naar: 'u_fu351018' },
+      { label: 'Ja', naar: 'u_osteotomie' },
+    ]
+  },
+
+  // ===== UITKOMSTEN =====
+  u_geen: {
+    uitkomst: true, type: 'vervolgen', badge: 'Geen behandelindicatie',
+    titel: 'Geen afwijking',
+    tekst: `<p>Er is geen behandelindicatie: de heup is normaal.</p>`
+  },
+
+  u_spreid: {
+    uitkomst: true, type: 'indicatie', badge: 'Spreidvoorziening',
+    titel: 'Behandelen met een spreidvoorziening',
+    tekst: `<p><strong>Spreidvoorziening:</strong> onder de 6 maanden een Pavlik-bandage; boven de
+      6 maanden een Pavlik of een alternatief op indicatie.</p>
+      <p><strong>Controle</strong> met echo — of zo nodig een X-bekken — elke 6 weken.</p>
+      <p><strong>Staken</strong> bij normalisatie, of op de leeftijd van 1 jaar.</p>
+      <p><strong>Daarna:</strong> follow-up met X-bekken op 1, 3 en 5 jaar; ontslag bij normalisatie
+      op de leeftijd van 5 jaar.</p>`,
+    buiten: true
+  },
+
+  u_fu135: {
+    uitkomst: true, type: 'vervolgen', badge: 'Follow-up',
+    titel: 'Genormaliseerd — alleen nog vervolgen',
+    tekst: `<p>Geen spreidvoorziening nodig.</p>
+      <p><strong>Follow-up</strong> met X-bekken op de leeftijd van 1, 3 en 5 jaar.</p>
+      <p><strong>Ontslag</strong> bij normalisatie, op de leeftijd van 5 jaar.</p>`,
+    buiten: true
+  },
+
+  u_fu351018: {
+    uitkomst: true, type: 'vervolgen', badge: 'Langdurige follow-up',
+    titel: 'Gecentreerd en stabiel — vervolgen tot volwassenheid',
+    tekst: `<p><strong>Follow-up</strong> met X-bekken op de leeftijd van 3, 5, 10 en 18 jaar.</p>
+      <p><strong>Ontslag</strong> op de leeftijd van 18 jaar.</p>
+      <p>Blijkt er tijdens die follow-up alsnog (sub)luxatie of instabiliteit, dan komt een
+      bekkenosteotomie met zo nodig aanvullende procedures opnieuw in beeld.</p>`,
+    buiten: true
+  },
+
+  u_osteotomie: {
+    uitkomst: true, type: 'indicatie', badge: 'Chirurgie overwegen',
+    titel: 'Persisterende (sub)luxatie of instabiliteit',
+    tekst: `<p>Overweeg een <strong>bekkenosteotomie</strong> en zo nodig aanvullende procedures,
+      waaronder een — eventueel te herhalen — open repositie, of een femurosteotomie.</p>`,
+    buiten: true
+  },
+};
+
+let pad = [];
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toon(id) {
+  const n = BOOM[id];
+  const el = document.getElementById('dsInhoud');
+
+  if (n.uitkomst) {
+    el.innerHTML = `
+      <div class="ds-kaart ds-uitkomst ${n.type}">
+        <span class="ds-badge">${esc(n.badge)}</span>
+        <h2>${esc(n.titel)}</h2>
+        <div class="ds-uitkomst-tekst">${n.tekst}</div>
+        ${n.buiten ? `<div class="ds-buiten">${esc(BUITEN)}</div>` : ''}
+        <div class="ds-bron">BRON: ${esc(BRON)}<br>Lees bij twijfel de overwegingen en aanbevelingen van de module zelf, en betrek de ouders/verzorgers bij de besluitvorming.</div>
+      </div>
+      ${padHtml()}
+      <div class="ds-knoppen">
+        <button class="ds-knop" onclick="terug()">← Vorige vraag</button>
+        <button class="ds-knop primair" onclick="opnieuw()">Opnieuw beginnen</button>
+        <a class="ds-knop" href="stroomschema-ddh.pdf" target="_blank" rel="noopener">Schema openen ↗</a>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="ds-voortgang">Stap ${pad.length + 1}</div>
+    <div class="ds-kaart">
+      ${n.stap ? `<div class="ds-stap"><strong>Wat er nu gebeurt</strong>${esc(n.stap)}</div>` : ''}
+      <p class="ds-vraag">${esc(n.vraag)}</p>
+      ${n.hint ? `<p class="ds-hint">${esc(n.hint)}</p>` : ''}
+      <div class="ds-opties">
+        ${n.opties.map((o, i) => `
+          <button class="ds-optie" data-i="${i}">
+            ${esc(o.label)}
+            ${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}
+          </button>`).join('')}
+      </div>
+    </div>
+    ${padHtml()}
+    ${pad.length ? '<div class="ds-knoppen"><button class="ds-knop" onclick="terug()">← Vorige vraag</button><button class="ds-knop" onclick="opnieuw()">Opnieuw beginnen</button></div>' : ''}`;
+
+  el.querySelectorAll('.ds-optie').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const o = n.opties[parseInt(btn.dataset.i, 10)];
+      pad.push({ knooppunt: id, vraag: n.vraag, antwoord: o.label });
+      toon(o.naar);
+    });
+  });
+}
+
+function padHtml() {
+  if (!pad.length) return '';
+  return `<div class="ds-pad">
+    <div class="ds-pad-titel">Jouw antwoorden</div>
+    <ol>${pad.map(p => `<li>${esc(p.vraag)} <strong>${esc(p.antwoord)}</strong></li>`).join('')}</ol>
+  </div>`;
+}
+
+function terug() {
+  const vorige = pad.pop();
+  if (!vorige) return;
+  toon(vorige.knooppunt);
+}
+
+function opnieuw() {
+  pad = [];
+  toon('start');
+}
+
+toon('start');
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
