@@ -67,9 +67,9 @@ const DEFAULT_CATS = [
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Techniek, spierlokalisatie, onderwijsvideo\'s',
-    zoekwoorden: 'spasticiteit dystonie spastische dystonie choreoathetose ataxie piramidaal extrapiramidaal basale kernen corticospinaal Lance Pandyan Monbaliu respons botulinetoxine indicatie snelheidsafhankelijk hyperreflexie',
+    zoekwoorden: 'positieve negatieve symptomen spastische parese clonus hyperreflexie hypertonie co-contractie associated reaction withdrawal response spierzwakte selectiviteit vermoeibaarheid spierstijfheid contractuur spasticiteit dystonie spastische dystonie choreoathetose ataxie piramidaal extrapiramidaal basale kernen corticospinaal Lance Pandyan Monbaliu respons botulinetoxine indicatie snelheidsafhankelijk hyperreflexie',
     directLinks: [
-      { label: '⚡ Spasticiteit of dystonie — en reageert het?', url: 'spasticiteit-dystonie.html' },
+      { label: '⚡ Spastische parese — symptomen, dystonie, botoxrespons', url: 'spasticiteit-dystonie.html' },
     ] },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
