@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Doelspieren kiezen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .dm-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .dm-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .dm-terug:hover { text-decoration: underline; }
+
+  .dm-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .dm-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  .dm-sectie { margin-top: 32px; }
+  .dm-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .dm-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* --- criteria --- */
+  .dm-crit {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 4px 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .dm-crit .rij {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--lijn);
+  }
+  .dm-crit .rij:last-child { border-bottom: none; }
+  .dm-crit .nr {
+    flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dm-crit .wat { flex: 1; min-width: 0; font-size: 14px; line-height: 1.5; }
+  .dm-crit .wat b { display: block; }
+  .dm-crit .hoe {
+    display: inline-block; margin-top: 4px;
+    font-size: 11.5px; font-weight: 700;
+    border-radius: 20px; padding: 3px 9px;
+    background: var(--accent-zacht); color: var(--accent);
+  }
+  .dm-crit .hoe.echo { background: #FBEAE5; color: #8E3617; }
+
+  /* --- patronen --- */
+  .dm-patroon {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .dm-patroon .glyph { flex-shrink: 0; width: 64px; }
+  .dm-patroon .glyph svg { width: 64px; height: 84px; display: block; }
+  .dm-patroon .body { flex: 1; min-width: 0; }
+  .dm-patroon h3 {
+    font-size: 1rem; margin: 0 0 8px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .dm-patroon h3 .rom {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 800; letter-spacing: .05em;
+    color: var(--accent);
+  }
+  .dm-gew {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .dm-gew div { display: flex; gap: 10px; }
+  .dm-gew span:first-child { color: var(--muted); width: 74px; flex-shrink: 0; }
+  .dm-gew span:last-child { font-weight: 700; }
+  .dm-gew span.neutraal { font-weight: 400; color: var(--muted); }
+
+  /* --- stand -> spieren --- */
+  .dm-tabel-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .dm-tabel {
+    border-collapse: collapse; width: 100%;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; min-width: 380px;
+  }
+  .dm-tabel th, .dm-tabel td {
+    border: 1px solid var(--lijn);
+    padding: 8px 10px; text-align: left; vertical-align: top;
+    line-height: 1.5;
+  }
+  .dm-tabel th { background: #F3F3F0; font-weight: 700; font-size: 12px; }
+  .dm-tabel td.gew { font-weight: 700; white-space: nowrap; }
+
+  .dm-vlag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .dm-vlag strong { display: block; margin-bottom: 3px; }
+  .dm-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .dm-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .dm-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 700;
+    color: var(--inkt); text-decoration: none; line-height: 1.4;
+  }
+  .dm-link:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .dm-link .sub {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px;
+  }
+
+  .dm-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .dm-bron p { margin: 0 0 9px; }
+  .dm-bron p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Doelspieren kiezen</div>
+</header>
+
+<div class="dm-wrap">
+  <a class="dm-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="dm-kop">Welke spier krijgt de naald?</h1>
+  <p class="dm-intro">
+    Stap twee, ná de indicatie. De cursus redeneert niet per spier maar <em>per gewricht</em>:
+    welke stand zie je, welke spieren maken die stand, en welke daarvan houdt de beweging het meest
+    tegen. Voor de arm helpt daarbij een indeling in vijf herkenbare patronen.
+  </p>
+
+  <!-- ================= PER GEWRICHT ================= -->
+  <div class="dm-sectie">
+    <h2>Redeneer per gewricht</h2>
+    <p class="dm-sectie-uitleg">
+      Het doel is hier verbetering van de passieve functie — méér passieve bewegingsuitslag. Voor
+      elk gewricht loop je dezelfde vijf vragen langs, en per vraag hoort een ander middel om het
+      antwoord te vinden.
+    </p>
+    <div class="dm-crit">
+      <div class="rij">
+        <span class="nr">1</span>
+        <span class="wat"><b>Welke spieren beperken de passieve bewegingsuitslag het meest?</b>
+          Beweeg en rek het gewricht zelf en voel waar het tegenhoudt.
+          <span class="hoe">manipulatie en rekken</span></span>
+      </div>
+      <div class="rij">
+        <span class="nr">2</span>
+        <span class="wat"><b>Welke zijn het meest hypertoon?</b>
+          Voel de spierbuik zelf, in rust en tijdens rekken.
+          <span class="hoe">palpatie</span></span>
+      </div>
+      <div class="rij">
+        <span class="nr">3</span>
+        <span class="wat"><b>Welke hebben het grootste volume?</b>
+          Een grote spier levert meer kracht dan een kleine met dezelfde tonus.
+          <span class="hoe">redeneren</span></span>
+      </div>
+      <div class="rij">
+        <span class="nr">4</span>
+        <span class="wat"><b>Welke hebben het grootste krachtmoment?</b>
+          Het gaat om kracht maal hefboomarm ten opzichte van het gewricht — een spier die ver van de
+          as aanhecht, telt zwaarder dan zijn volume alleen zou zeggen.
+          <span class="hoe">redeneren</span></span>
+      </div>
+      <div class="rij">
+        <span class="nr">5</span>
+        <span class="wat"><b>Welke zijn het meest &ldquo;vitaal&rdquo;?</b>
+          Een spier die al grotendeels in bindweefsel is veranderd, heeft weinig actieve component
+          meer over — en dus weinig om met toxine weg te nemen.
+          <span class="hoe echo">echo: volume en echogeniciteit</span></span>
+      </div>
+    </div>
+
+    <div class="dm-vlag oranje">
+      <strong>Vraag 5 is de link met de weefselpagina.</strong>
+      Een sterk echogene, kleine spier is op weg naar contractuur: de weerstand zit dan in de rode
+      curve, niet in de aansturing. Die spier injecteren levert weinig op, ook als hij op palpatie
+      hard aanvoelt. Hardheid en overactiviteit zijn niet hetzelfde.
+    </div>
+  </div>
+
+  <!-- ================= PATRONEN ================= -->
+  <div class="dm-sectie">
+    <h2>Vijf armpatronen</h2>
+    <p class="dm-sectie-uitleg">
+      De indeling van Hefter e.a. voor de spastische arm: vijf typische houdingen, per gewricht
+      uitgeschreven. Bedoeld als beslishulp voor botulinetoxine — als je het patroon herkent, weet
+      je welke gewrichten je moet uitwerken en welke je met rust kunt laten.
+    </p>
+
+    <div class="dm-patroon">
+      <div class="glyph">
+        <svg viewBox="0 0 64 84" aria-hidden="true">
+          <path d="M22 6 Q32 2 42 6 L44 30 L20 30 Z" fill="#EFE4C4" stroke="#8a7f60"/>
+          <path d="M24 30 L14 56 L22 60 L30 40" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M18 58 L36 34 L42 38 L26 62 Z" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <circle cx="40" cy="34" r="6" fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3><span class="rom">I</span>Gebalde vuist tegen de borst</h3>
+        <div class="dm-gew">
+          <div><span>Schouder</span><span>endorotatie / adductie</span></div>
+          <div><span>Elleboog</span><span>flexie</span></div>
+          <div><span>Onderarm</span><span>supinatie</span></div>
+          <div><span>Pols</span><span>flexie</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-patroon">
+      <div class="glyph">
+        <svg viewBox="0 0 64 84" aria-hidden="true">
+          <path d="M22 6 Q32 2 42 6 L44 30 L20 30 Z" fill="#EFE4C4" stroke="#8a7f60"/>
+          <path d="M24 30 L14 56 L22 60 L30 40" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M18 58 L44 52 L45 58 L22 64 Z" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M45 50 L54 44 L56 49 L48 56 Z" fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3><span class="rom">II</span>Zelfde arm, pols omhoog</h3>
+        <div class="dm-gew">
+          <div><span>Schouder</span><span>endorotatie / adductie</span></div>
+          <div><span>Elleboog</span><span>flexie</span></div>
+          <div><span>Onderarm</span><span>supinatie</span></div>
+          <div><span>Pols</span><span>extensie</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-patroon">
+      <div class="glyph">
+        <svg viewBox="0 0 64 84" aria-hidden="true">
+          <path d="M22 6 Q32 2 42 6 L44 30 L20 30 Z" fill="#EFE4C4" stroke="#8a7f60"/>
+          <path d="M24 30 L14 56 L22 60 L30 40" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M18 58 L48 56 L48 62 L20 64 Z" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <circle cx="53" cy="59" r="5" fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3><span class="rom">III</span>Alleen de elleboog</h3>
+        <div class="dm-gew">
+          <div><span>Schouder</span><span>endorotatie / adductie</span></div>
+          <div><span>Elleboog</span><span>flexie</span></div>
+          <div><span>Onderarm</span><span class="neutraal">neutraal</span></div>
+          <div><span>Pols</span><span class="neutraal">neutraal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-patroon">
+      <div class="glyph">
+        <svg viewBox="0 0 64 84" aria-hidden="true">
+          <path d="M22 6 Q32 2 42 6 L44 30 L20 30 Z" fill="#EFE4C4" stroke="#8a7f60"/>
+          <path d="M24 30 L14 56 L22 60 L30 40" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M18 58 L46 54 L47 60 L20 64 Z" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M46 56 L50 68 L44 70 L41 58 Z" fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3><span class="rom">IV</span>Pronatie met hangende hand</h3>
+        <div class="dm-gew">
+          <div><span>Schouder</span><span>endorotatie / adductie</span></div>
+          <div><span>Elleboog</span><span>flexie</span></div>
+          <div><span>Onderarm</span><span>pronatie</span></div>
+          <div><span>Pols</span><span>flexie</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-patroon">
+      <div class="glyph">
+        <svg viewBox="0 0 64 84" aria-hidden="true">
+          <path d="M22 6 Q32 2 42 6 L44 30 L20 30 Z" fill="#EFE4C4" stroke="#8a7f60"/>
+          <path d="M22 30 L16 76 L24 77 L30 32" fill="#EFE4C4" stroke="#8a7f60" stroke-width="1.2"/>
+          <path d="M17 76 L20 82 L14 84 L12 78 Z" fill="#E6DCBB" stroke="#8a7f60" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <h3><span class="rom">V</span>Gestrekte arm naar achteren</h3>
+        <div class="dm-gew">
+          <div><span>Schouder</span><span>endorotatie / retroversie</span></div>
+          <div><span>Elleboog</span><span>extensie</span></div>
+          <div><span>Onderarm</span><span>pronatie</span></div>
+          <div><span>Pols</span><span>flexie</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-vlag blauw">
+      <strong>Wat de patronen gemeen hebben, en waar ze uiteenlopen.</strong>
+      De schouder staat in vier van de vijf in endorotatie en adductie en de elleboog in flexie —
+      dat is de constante. Het onderscheid zit in de onderarm en de pols: supinatie (I, II),
+      neutraal (III) of pronatie (IV, V), en de pols gebogen, gestrekt of neutraal. Precies die
+      twee gewrichten bepalen dus of de pronatoren en de polsflexoren op je lijstje horen.
+      Patroon V is de uitzondering: gestrekte elleboog, arm naar achteren — de flexoren van de
+      elleboog zijn daar niet het probleem.
+    </div>
+
+    <div class="dm-vlag oranje">
+      <strong>Herkomst van de indeling.</strong>
+      Hefter beschreef deze patronen bij volwassenen na een beroerte. De houdingen zelf komen
+      bij kinderen met een spastische arm net zo voor, en de cursus gebruikt de indeling als
+      algemene beslishulp; alleen de verdeling over de patronen kan bij CP anders liggen dan in
+      die populatie.
+    </div>
+  </div>
+
+  <!-- ================= STAND -> SPIEREN ================= -->
+  <div class="dm-sectie">
+    <h2>Van stand naar spier</h2>
+    <p class="dm-sectie-uitleg">
+      Welke spieren maken elke stand uit de patronen? Dit is gewone anatomie, geen voorschrift:
+      welke van deze spieren de naald verdient, volgt uit de vijf vragen bovenaan.
+    </p>
+    <div class="dm-tabel-scroll">
+      <table class="dm-tabel">
+        <thead><tr><th>Stand</th><th>Spieren die deze stand maken</th></tr></thead>
+        <tbody>
+          <tr><td class="gew">Schouder endorotatie / adductie</td>
+              <td>Pectoralis major, subscapularis, latissimus dorsi, teres major</td></tr>
+          <tr><td class="gew">Schouder retroversie</td>
+              <td>Latissimus dorsi, teres major, achterste deel van de deltoideus, caput longum van de triceps</td></tr>
+          <tr><td class="gew">Elleboog flexie</td>
+              <td>Biceps brachii, brachialis, brachioradialis</td></tr>
+          <tr><td class="gew">Onderarm pronatie</td>
+              <td>Pronator teres, pronator quadratus</td></tr>
+          <tr><td class="gew">Onderarm supinatie</td>
+              <td>Biceps brachii, supinator — de biceps doet dus mee aan twee standen tegelijk</td></tr>
+          <tr><td class="gew">Pols flexie</td>
+              <td>Flexor carpi radialis, flexor carpi ulnaris, palmaris longus; bij gebogen vingers ook flexor digitorum superficialis en profundus</td></tr>
+          <tr><td class="gew">Pols extensie</td>
+              <td>Extensor carpi radialis longus en brevis, extensor carpi ulnaris — in patroon II zelden het doel</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dm-vlag blauw">
+      <strong>Eén spier, twee gewrichten.</strong>
+      De biceps flecteert de elleboog én supineert de onderarm. In patroon I en II — elleboog
+      gebogen, onderarm gesupineerd — is hij daardoor twee keer verdacht. In patroon IV, met
+      pronatie, draagt hij aan de pronatie juist niet bij en zijn de pronatoren een apart doel naast
+      de elleboogflexoren.
+    </div>
+  </div>
+
+  <div class="dm-sectie">
+    <h2>Verder</h2>
+    <a class="dm-link" href="spasticiteit-dystonie.html">
+      ⚡ Spastische parese — stap één
+      <span class="sub">Eerst de indicatie: is dit spasticiteit, en reageert het op botulinetoxine?</span>
+    </a>
+    <a class="dm-link" href="zenuwen.html">
+      🖐️ Perifere zenuwen van de arm
+      <span class="sub">Welke zenuw en welk wortelniveau bij elk van deze spieren hoort</span>
+    </a>
+  </div>
+
+  <div class="dm-bron">
+    <p>
+      <strong>Bron.</strong> Twee dia's uit een POBOT-cursus (postacademische training
+      spasticiteitsbehandeling met botulinetoxine): <em>Improvement of passive function =
+      enhancement of pROM</em> en <em>Five typical patterns</em>. Die laatste is figuur 1 uit Hefter
+      H e.a., <em>Classification of posture in poststroke upper limb spasticity: a potential decision
+      tool for botulinum toxin A treatment?</em>, Int J Rehabil Res 2012;35:227–33.
+    </p>
+    <p>
+      De vijf vragen en de patronentabel zijn letterlijk overgenomen en vertaald. De tekeningetjes
+      bij de patronen zijn eigen schetsen die alleen de buiging van elleboog en pols suggereren;
+      rotatie van schouder en onderarm is in een plat figuurtje niet af te beelden en staat daarom
+      in de tekst. De tabel &ldquo;van stand naar spier&rdquo; is standaardanatomie, niet uit de
+      cursus; de toelichtingen bij vraag 4 en 5 en de vlaggen zijn mijn samenvatting.
+    </p>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
