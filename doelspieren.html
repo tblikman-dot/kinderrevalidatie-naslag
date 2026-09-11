@@ -147,6 +147,32 @@
     font-style: normal; font-size: 12.5px; color: var(--muted);
   }
 
+  .dm-lagen {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 12px 10px;
+    margin-top: 12px;
+  }
+  .dm-lagen svg { width: 100%; height: auto; display: block; }
+  .dm-lagen .bij {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.6; margin: 10px 4px 0;
+  }
+
+  .dm-dosis {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0;
+  }
+  .dm-dosis div {
+    flex: 1 1 140px;
+    background: #F3F3F0; border-radius: 10px;
+    padding: 10px 12px;
+    font-family: system-ui, sans-serif;
+  }
+  .dm-dosis .eh { font-size: 1.15rem; font-weight: 800; color: var(--inkt); }
+  .dm-dosis .pre { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin-top: 2px; }
+
   .dm-vlag {
     border-radius: 10px; padding: 13px 15px; margin-top: 14px;
     font-family: system-ui, sans-serif;
@@ -155,6 +181,7 @@
   .dm-vlag strong { display: block; margin-bottom: 3px; }
   .dm-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
   .dm-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+  .dm-vlag.rood   { background: #FBEAE5; color: #8E3617; }
 
   .dm-link {
     display: block;
@@ -393,6 +420,9 @@
           <tr><td class="gew">Schouder endorotatie / adductie</td>
               <td><b>Latissimus dorsi</b> en <b>pectoralis major</b> — de twee die ertoe doen;
               daarnaast dragen teres major en subscapularis bij, maar die zijn geen doel (zie hieronder)</td></tr>
+          <tr><td class="gew">Schouder protractie</td>
+              <td>Pectoralis minor, serratus anterior — alleen een doel als de schouder daadwerkelijk
+              naar voren getrokken staat</td></tr>
           <tr><td class="gew">Schouder retroversie</td>
               <td>Latissimus dorsi, teres major, achterste deel van de deltoideus, caput longum van de triceps</td></tr>
           <tr><td class="gew">Elleboog flexie</td>
@@ -443,6 +473,81 @@
           dosis aan te besteden.</em></div>
         <div class="spier"><b>Subscapularis</b>
           <em>Niet doen.</em></div>
+      </div>
+    </div>
+
+    <div class="dm-kies">
+      <h3>Schouder in protractie — een apart geval</h3>
+      <div class="groep">
+        <span class="merk wel">alleen bij protractie</span>
+        <div class="spier"><b>Pectoralis minor</b>
+          <em>Zijn werking is protractie van de scapula. Staat de schouder niet naar voren
+          getrokken, dan is hij geen doel — ook niet als de pectoralis major dat wel is. Hij hoort
+          dus niet bij het endorotatie- en adductiepatroon hierboven, maar is een eigen
+          indicatie.</em></div>
+      </div>
+    </div>
+
+    <div class="dm-vlag rood">
+      <strong>Onder deze spier ligt de pleura. Echogeleid prikken.</strong>
+      De pectoralis minor ligt direct op de intercostale ruimte, en daaronder de pleura en de long.
+      Je passeert eerst de pectoralis major. Op de mediale aanprikplaats liggen bovendien de vaten
+      en de zenuw in beeld. Dit is geen spier om op anatomische oriëntatie alleen te prikken: het
+      risico is een pneumothorax.
+    </div>
+
+    <div class="dm-lagen">
+      <svg viewBox="0 0 340 190" role="img" aria-label="Dwarsdoorsnede van de lagen boven de pleura bij de pectoralis minor">
+        <!-- huid en subcutis -->
+        <rect x="14" y="18" width="312" height="16" rx="3" fill="#F6E7DC" stroke="#c9ab93"/>
+        <text x="20" y="30" font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680">huid en subcutis</text>
+        <!-- pectoralis major -->
+        <rect x="14" y="38" width="312" height="30" rx="3" fill="#E8C6C0" stroke="#b5837c"/>
+        <text x="20" y="57" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#7a4a44">pectoralis major</text>
+        <!-- pectoralis minor -->
+        <rect x="14" y="72" width="312" height="30" rx="3" fill="#D9B7AF" stroke="#a2706a"/>
+        <text x="20" y="91" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#6b3c36">pectoralis minor — hier de naald</text>
+        <!-- ribben en intercostaal -->
+        <rect x="14" y="106" width="312" height="24" rx="3" fill="#EFE4C4" stroke="#8a7f60"/>
+        <ellipse cx="52" cy="118" rx="26" ry="11" fill="#E3D5AC" stroke="#8a7f60"/>
+        <ellipse cx="288" cy="118" rx="26" ry="11" fill="#E3D5AC" stroke="#8a7f60"/>
+        <text x="150" y="122" font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680">intercostaal</text>
+        <text x="40" y="122" font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">costa</text>
+        <text x="276" y="122" font-family="system-ui, sans-serif" font-size="9" fill="#6b7680">costa</text>
+        <!-- pleura -->
+        <line x1="14" y1="136" x2="326" y2="136" stroke="#8E3617" stroke-width="3"/>
+        <text x="20" y="149" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#8E3617">pleura — hier niet voorbij</text>
+        <!-- long -->
+        <rect x="14" y="154" width="312" height="26" rx="3" fill="#1d1f23"/>
+        <text x="20" y="171" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#cfd4d8">long</text>
+        <!-- naald -->
+        <line x1="250" y1="6" x2="214" y2="86" stroke="#0f4c5c" stroke-width="2.4"/>
+        <polygon points="214,90 211,80 219,82" fill="#0f4c5c"/>
+        <text x="256" y="12" font-family="system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#0f4c5c">naald</text>
+      </svg>
+      <div class="bij">
+        De lagen die je op de echo onder elkaar ziet, van oppervlakkig naar diep. De naald stopt in
+        de pectoralis minor; wat daaronder ligt is de reden om dit echogeleid te doen. Schematisch en
+        niet op schaal — de werkelijke diepte verschilt sterk per kind en per aanprikplaats.
+      </div>
+    </div>
+
+    <div class="dm-vlag oranje">
+      <strong>De dosis op de dia is een volwassenendosis.</strong>
+      Er staan drie getallen, in de kleurcodering van de cursus voor de drie preparaten:
+      <b>40</b>, <b>160</b> en <b>40</b> eenheden. Die verhouding van ongeveer 1 : 4 : 1 is de bekende
+      verhouding tussen de preparaten — 160 hoort dus bij het abobotulinumtoxine, de twee keer 40 bij
+      de andere twee.
+      <div class="dm-dosis">
+        <div><div class="eh">40 E</div><div class="pre">ona- of incobotulinumtoxineA</div></div>
+        <div><div class="eh">160 E</div><div class="pre">abobotulinumtoxineA</div></div>
+      </div>
+      <div style="margin-top:10px;">
+        <b>Eenheden zijn niet uitwisselbaar tussen preparaten</b> — noteer bij elke dosis welk
+        preparaat je bedoelt. En let op: dit zijn vaste doses uit een cursus die op volwassenen is
+        gericht. Bij kinderen wordt op lichaamsgewicht gedoseerd, met maxima per spier en per
+        sessie. Neem deze getallen dus niet over zonder ze tegen je eigen kinderprotocol te leggen;
+        ik heb er bewust geen kinderdoses bij gezet.
       </div>
     </div>
 
@@ -497,6 +602,15 @@
       praktijkinformatie uit de cursus, niet uit een richtlijn. Hetzelfde geldt voor het advies om
       grote spieren op meerdere plekken te injecteren; dat de verspreiding van toxine vanaf de
       injectieplaats beperkt is, is wel algemeen aanvaard.
+    </p>
+    <p>
+      <strong>De pectoralis minor</strong> komt van een aparte dia uit dezelfde cursus, met
+      echobeelden van twee aanprikplaatsen waarop de pectoralis major, de pectoralis minor, de
+      intercostale ruimte, de pleura en de long onder elkaar te zien zijn, plus vaten en zenuw op de
+      mediale plaats. De lagentekening hier is een eigen schets daarvan. De drie doses staan zo op de
+      dia; welke kleur bij welk preparaat hoort is afgeleid uit de gangbare verhouding tussen de
+      preparaten en niet van de dia zelf af te lezen. Het voorbehoud over kinderdoseringen is van
+      mij.
     </p>
   </div>
 </div>
