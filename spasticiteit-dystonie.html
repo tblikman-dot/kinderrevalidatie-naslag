@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Spasticiteit of dystonie?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .sd-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .sd-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .sd-terug:hover { text-decoration: underline; }
+
+  .sd-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .sd-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  .sd-sectie { margin-top: 32px; }
+  .sd-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .sd-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* --- twee kolommen die stapelen --- */
+  .sd-duo { display: flex; flex-wrap: wrap; gap: 12px; }
+  .sd-duo > div { flex: 1 1 300px; min-width: 0; }
+
+  .sd-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 16px 18px;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .sd-kaart.pyramidaal { border-left: 5px solid #0f4c5c; }
+  .sd-kaart.extra      { border-left: 5px solid #8E3617; }
+  .sd-kaart h3 { font-size: 1.05rem; margin: 0 0 2px; }
+  .sd-kaart .baan {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .sd-kaart ul {
+    font-family: system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    margin: 0; padding-left: 20px;
+  }
+  .sd-kaart li { margin-bottom: 6px; }
+  .sd-kaart li:last-child { margin-bottom: 0; }
+  .sd-kaart .kopje {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  /* --- respons op botulinetoxine --- */
+  .sd-type {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .sd-type > h3 {
+    font-size: 1rem; margin: 0 0 2px;
+  }
+  .sd-type .sub {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted); margin-bottom: 10px;
+  }
+  .sd-regel {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0;
+    border-top: 1px solid var(--lijn);
+    font-family: system-ui, sans-serif;
+  }
+  .sd-regel .wat { flex: 1; min-width: 0; font-size: 14px; line-height: 1.45; }
+  .sd-regel .wat em {
+    display: block; font-style: normal;
+    font-size: 12px; color: var(--muted); margin-top: 1px;
+  }
+  .sd-merk {
+    flex-shrink: 0;
+    font-size: 11.5px; font-weight: 800;
+    border-radius: 20px; padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .sd-merk.ja   { background: #E3F3EA; color: #0B5C38; }
+  .sd-merk.mis  { background: #FBF3DC; color: #6B4E06; }
+  .sd-merk.nee  { background: #FBEAE5; color: #8E3617; }
+
+  .sd-vlag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .sd-vlag strong { display: block; margin-bottom: 3px; }
+  .sd-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .sd-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .sd-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 16px 18px 16px 34px;
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .sd-lijst li { margin-bottom: 9px; }
+  .sd-lijst li:last-child { margin-bottom: 0; }
+
+  .sd-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    background: #F3F3F0;
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 24px; line-height: 1.6;
+  }
+  .sd-bron p { margin: 0 0 9px; }
+  .sd-bron p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Spasticiteit of dystonie?</div>
+</header>
+
+<div class="sd-wrap">
+  <a class="sd-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="sd-kop">Spasticiteit of dystonie — en reageert het op botulinetoxine?</h1>
+  <p class="sd-intro">
+    De vraag die vóór de naald komt. Botulinetoxine grijpt aan op de neuromusculaire overgang en
+    verlaagt daarmee de spieractiviteit; dat helpt bij wat vanuit de piramidebaan komt, maar niet bij
+    alles wat er hypertoon of onrustig uitziet. Het onderscheid bepaalt dus of je überhaupt moet
+    injecteren, niet alleen waar.
+  </p>
+
+  <!-- ================= ONDERSCHEID ================= -->
+  <div class="sd-sectie">
+    <h2>Klinisch onderscheid</h2>
+    <p class="sd-sectie-uitleg">
+      Het bruikbaarste verschil aan het bed: spasticiteit is <em>voorspelbaar</em> en
+      snelheidsafhankelijk, dystonie is <em>wisselend</em> en wordt door de situatie gestuurd.
+    </p>
+
+    <div class="sd-duo">
+      <div>
+        <div class="sd-kaart pyramidaal">
+          <h3>Spasticiteit</h3>
+          <div class="baan">Corticospinale tractus — piramidaal</div>
+          <div class="kopje">Een vrij consistent patroon van:</div>
+          <ul>
+            <li>toegenomen gewrichtsweerstand</li>
+            <li>afwijkende gewrichtsstand</li>
+            <li>afgenomen bewegingsuitslag</li>
+            <li>hyperreflexie</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="sd-kaart extra">
+          <h3>Dystonie</h3>
+          <div class="baan">Extrapiramidaal</div>
+          <ul>
+            <li>geen duidelijke snelheids- of lengteafhankelijkheid</li>
+            <li>vaak een complexer patroon van gewrichtsvervorming — draaiend of wisselend</li>
+            <li>vaak uitgelokt of verergerd door willekeurige actie; cognitief-motorische processen spelen mee</li>
+            <li>vaak beïnvloed door interne en externe prikkels: blaas, darm, stemming</li>
+            <li>laag risico op afname van de bewegingsuitslag</li>
+            <li>een <em>higher level deficit</em>, vooral op het niveau van de basale kernen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-vlag blauw">
+      <strong>Drie dingen die je aan het bed meteen kunt toetsen.</strong>
+      Rek je snel en langzaam: wordt de weerstand groter bij snel rekken, dan wijst dat naar
+      spasticiteit. Kijk of het patroon hetzelfde blijft over meerdere onderzoeksmomenten, of juist
+      per keer verschilt. En vraag of het toeneemt bij inspanning, opwinding, een volle blaas of
+      obstipatie — dat laatste hoort bij dystonie en is bovendien behandelbaar zónder naald.
+    </div>
+
+    <div class="sd-vlag oranje">
+      <strong>Het contractuurrisico verschilt, en dus de urgentie.</strong>
+      Bij spasticiteit hoort een afnemende bewegingsuitslag bij het beeld; daar is tijdswinst een
+      argument om te behandelen. Dystonie geeft juist een laag risico op verlies van
+      bewegingsuitslag. Wie dystonie behandelt met het argument "anders krijgt het kind een
+      contractuur", gebruikt een reden die daar minder geldt.
+    </div>
+  </div>
+
+  <!-- ================= RESPONS ================= -->
+  <div class="sd-sectie">
+    <h2>Reageert het op botulinetoxine?</h2>
+    <p class="sd-sectie-uitleg">
+      Per type cerebrale parese en per verschijnsel. Let op dat het onderscheid niet tussen de
+      CP-typen loopt maar tussen de verschijnselen: binnen het dyskinetische type zit het verschil
+      tussen afwijkende <em>houding</em> en afwijkende <em>beweging</em>.
+    </p>
+
+    <div class="sd-type">
+      <h3>Spastisch type</h3>
+      <div class="sub">Piramidaal</div>
+      <div class="sd-regel">
+        <span class="wat">Spasticiteit</span>
+        <span class="sd-merk ja">reageert</span>
+      </div>
+      <div class="sd-regel">
+        <span class="wat">Spastische dystonie</span>
+        <span class="sd-merk ja">reageert</span>
+      </div>
+    </div>
+
+    <div class="sd-type">
+      <h3>Dyskinetisch type</h3>
+      <div class="sub">Extrapiramidaal</div>
+      <div class="sd-regel">
+        <span class="wat">Extrapiramidale dystonie<em>afwijkende houding</em></span>
+        <span class="sd-merk mis">niet eenduidig</span>
+      </div>
+      <div class="sd-regel">
+        <span class="wat">Choreoathetose<em>afwijkende beweging</em></span>
+        <span class="sd-merk nee">reageert niet</span>
+      </div>
+    </div>
+
+    <div class="sd-type">
+      <h3>Atactisch type</h3>
+      <div class="sub">Cerebellair</div>
+      <div class="sd-regel">
+        <span class="wat">Ataxie</span>
+        <span class="sd-merk nee">reageert niet</span>
+      </div>
+    </div>
+
+    <div class="sd-vlag oranje">
+      <strong>Over die middelste categorie ben ik expliciet.</strong>
+      Op de dia staat een smiley bij spasticiteit en een bliksemschicht bij choreoathetose en bij
+      ataxie. Bij extrapiramidale dystonie staat géén van beide. Ik heb dat hier weergegeven als
+      "niet eenduidig" in plaats van er zelf een ja of nee van te maken — dat is wat de bron laat
+      zien, en het is ook de eerlijke stand van zaken in de praktijk.
+    </div>
+  </div>
+
+  <!-- ================= WAT HET BETEKENT ================= -->
+  <div class="sd-sectie">
+    <h2>Wat dat betekent voor de indicatie</h2>
+    <ul class="sd-lijst">
+      <li><strong>Spastische dystonie is geen contra-indicatie.</strong> Ondanks het woord dystonie valt die onder het spastische type en reageert hij wél. Het onderscheid dat telt is niet het wóórd, maar of het uit de piramidebaan komt.</li>
+      <li><strong>Bij een gemengd beeld: bepaal wat het probleem veroorzaakt.</strong> Veel kinderen hebben beide. De vraag is niet of er spasticiteit is, maar of de spasticiteit degene is die het gestelde doel in de weg zit. Is het de dystonie, dan levert een injectie op die plek weinig op en kost hij wel kracht.</li>
+      <li><strong>Zoek eerst de uitlokkers.</strong> Neemt de tonus toe bij een volle blaas, obstipatie, pijn of spanning, dan is dát de eerste behandeling. Datzelfde geldt voor een infectie of een fractuur, die de spinale spasticiteit kunnen opdrijven.</li>
+      <li><strong>Leg het doel vooraf vast, en hoe je het meet.</strong> Bij een wisselend beeld is de kans groot dat het na de injectie toevallig beter of slechter is. Zonder een vooraf benoemd doel is achteraf niet vast te stellen of het geholpen heeft.</li>
+    </ul>
+  </div>
+
+  <div class="sd-bron">
+    <p>
+      <strong>Bron.</strong> Twee dia's uit een POBOT-cursus (postacademische training
+      spasticiteitsbehandeling met botulinetoxine): <em>Clinical discrimination spasticity vs
+      dystonia</em> en <em>Responsiveness to botulinum toxin</em>. Daarop vermeld als bronnen:
+      Lance, <em>Neurology</em> 1980; Pandyan e.a., <em>Disability and Rehabilitation</em> 2005;
+      Monbaliu e.a., <em>Lancet Neurology</em> 2017 — die laatste voor beide dia's.
+    </p>
+    <p>
+      De inhoud is vertaald en herschikt naar een indeling die op een telefoon leesbaar is; de
+      kenmerken en de responsindeling zijn ongewijzigd overgenomen. De praktische gevolgtrekkingen
+      onderaan zijn mijn samenvatting van wat er uit volgt, niet letterlijk van de dia's.
+    </p>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

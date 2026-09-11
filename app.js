@@ -66,7 +66,11 @@ const DEFAULT_CATS = [
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
-  { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Techniek, spierlokalisatie, onderwijsvideo\'s' },
+  { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Techniek, spierlokalisatie, onderwijsvideo\'s',
+    zoekwoorden: 'spasticiteit dystonie spastische dystonie choreoathetose ataxie piramidaal extrapiramidaal basale kernen corticospinaal Lance Pandyan Monbaliu respons botulinetoxine indicatie snelheidsafhankelijk hyperreflexie',
+    directLinks: [
+      { label: '⚡ Spasticiteit of dystonie — en reageert het?', url: 'spasticiteit-dystonie.html' },
+    ] },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: 'MMC, spina bifida occulta, tethered cord',
