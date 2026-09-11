@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Doseringsplanner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .do-wrap { max-width: 820px; margin: 0 auto; padding: 20px 16px 70px; }
+
+  .do-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .do-terug:hover { text-decoration: underline; }
+
+  .do-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .do-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 20px;
+  }
+
+  .do-sectie { margin-top: 34px; }
+  .do-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .do-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* --- de zes regels --- */
+  .do-regels {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 4px 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .do-regels .rij {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--lijn);
+  }
+  .do-regels .rij:last-child { border-bottom: none; }
+  .do-regels .nr {
+    flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .do-regels .wat { flex: 1; min-width: 0; font-size: 14px; line-height: 1.5; }
+  .do-regels .wat b { display: block; }
+  .do-regels .waar {
+    display: inline-block; margin-top: 4px;
+    font-size: 11.5px; font-weight: 700;
+    border-radius: 20px; padding: 3px 9px;
+    background: var(--accent-zacht); color: var(--accent);
+  }
+
+  /* --- panelen / velden --- */
+  .do-paneel {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .do-veld { margin-bottom: 13px; }
+  .do-veld:last-child { margin-bottom: 0; }
+  .do-veld label {
+    display: block;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--inkt); margin-bottom: 5px;
+  }
+  .do-veld .hint {
+    display: block; font-weight: 400;
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 3px; line-height: 1.5;
+  }
+  .do-veld input, .do-veld select {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif; font-size: 15px;
+    padding: 9px 11px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--papier); color: var(--inkt);
+  }
+  .do-veld input:focus, .do-veld select:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .do-tweekolom { display: flex; gap: 12px; flex-wrap: wrap; }
+  .do-tweekolom > * { flex: 1 1 150px; min-width: 0; }
+
+  .do-snel { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+  .do-snel button {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 700;
+    padding: 6px 11px; border-radius: 20px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--accent); cursor: pointer;
+  }
+  .do-snel button:hover { border-color: var(--accent); }
+
+  /* --- dosistabel --- */
+  .do-tabelwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.do-matrix {
+    border-collapse: collapse; width: 100%; min-width: 340px;
+    font-family: system-ui, sans-serif; font-size: 13px;
+  }
+  table.do-matrix th, table.do-matrix td {
+    border: 1px solid var(--lijn); padding: 7px 8px; text-align: left;
+  }
+  table.do-matrix th {
+    background: var(--accent-zacht); color: var(--accent);
+    font-size: 12px; font-weight: 800;
+  }
+  table.do-matrix td:first-child { font-weight: 700; white-space: nowrap; }
+  table.do-matrix input {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif; font-size: 14px;
+    padding: 6px 7px; text-align: right;
+    border: 1.5px solid var(--lijn); border-radius: 7px;
+    background: var(--papier); color: var(--inkt);
+  }
+  table.do-matrix input:focus { outline: none; border-color: var(--accent); }
+  table.do-matrix input.leeg { border-color: #E0B44A; background: #FDF8EC; }
+
+  /* --- spierkaarten --- */
+  .do-spier {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 12px 14px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+  }
+  .do-spier .titel {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14.5px; font-weight: 800; margin-bottom: 9px;
+  }
+  .do-spier .titel .naam { flex: 1; min-width: 0; }
+  .do-spier .weg {
+    flex-shrink: 0;
+    border: none; background: none; cursor: pointer;
+    font-size: 17px; line-height: 1; color: var(--muted);
+    padding: 2px 4px;
+  }
+  .do-spier .weg:hover { color: #8E3617; }
+  .do-raster { display: flex; gap: 9px; flex-wrap: wrap; }
+  .do-raster > * { flex: 1 1 130px; min-width: 0; }
+  .do-raster label {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .do-raster select {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif; font-size: 13.5px;
+    padding: 7px 8px;
+    border: 1.5px solid var(--lijn); border-radius: 8px;
+    background: var(--papier); color: var(--inkt);
+  }
+  .do-check {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; margin-top: 10px; cursor: pointer;
+  }
+  .do-check input { width: 17px; height: 17px; flex-shrink: 0; }
+
+  .do-leeg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    padding: 18px 4px; text-align: center; line-height: 1.6;
+  }
+
+  /* --- uitkomst --- */
+  .do-uit {
+    background: var(--paneel);
+    border: 1.5px solid var(--accent);
+    border-radius: 12px;
+    padding: 15px 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .do-budget {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .do-budget .cel {
+    flex: 1 1 110px; min-width: 0;
+    background: var(--papier);
+    border: 1px solid var(--lijn); border-radius: 10px;
+    padding: 9px 11px;
+  }
+  .do-budget .cel .k {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .do-budget .cel .v {
+    font-size: 19px; font-weight: 800; color: var(--inkt);
+    margin-top: 2px;
+  }
+  .do-budget .cel .s { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .do-budget .cel.krap { border-color: #E0B44A; background: #FDF8EC; }
+  .do-budget .cel.over { border-color: #C9553A; background: #FBEAE5; }
+
+  .do-rij {
+    display: flex; gap: 10px; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid var(--lijn);
+    font-size: 13.5px;
+  }
+  .do-rij:last-of-type { border-bottom: none; }
+  .do-rij .sp { flex: 1 1 auto; min-width: 0; }
+  .do-rij .sp b { display: block; font-size: 14px; }
+  .do-rij .sp .sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .do-rij .ee {
+    flex-shrink: 0; text-align: right;
+    font-size: 17px; font-weight: 800; white-space: nowrap;
+  }
+  .do-rij .ee small { display: block; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .do-rij.uit .sp b, .do-rij.uit .ee { color: #8E3617; }
+  .do-rij.krap .ee { color: #7A5A08; }
+
+  .do-strategie {
+    display: flex; gap: 7px; margin: 4px 0 14px;
+  }
+  .do-strategie button {
+    flex: 1; font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    padding: 9px 8px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .do-strategie button.aan {
+    border-color: var(--accent); background: var(--accent);
+    color: #fff;
+  }
+
+  .do-vlag {
+    border-radius: 10px; padding: 13px 15px; margin-top: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+  }
+  .do-vlag strong { display: block; margin-bottom: 3px; }
+  .do-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .do-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+  .do-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+
+  .do-vouw {
+    background: var(--paneel);
+    border: 1px solid var(--lijn); border-radius: 11px;
+    margin-top: 12px; font-family: system-ui, sans-serif;
+  }
+  .do-vouw summary {
+    cursor: pointer; padding: 12px 15px;
+    font-size: 13.5px; font-weight: 700; color: var(--accent);
+  }
+  .do-vouw .inhoud {
+    padding: 0 15px 14px;
+    font-size: 13px; line-height: 1.65; color: var(--inkt);
+  }
+  .do-vouw .inhoud p { margin: 0 0 9px; }
+  .do-vouw .inhoud ul { margin: 0 0 9px; padding-left: 20px; }
+  .do-vouw .inhoud li { margin-bottom: 5px; }
+
+  .do-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.65; margin-top: 10px;
+  }
+  .do-bron p { margin: 0 0 7px; }
+
+  .do-knoprij { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 13px; }
+  .do-knoprij button {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 15px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--accent); cursor: pointer;
+  }
+  .do-knoprij button:hover { border-color: var(--accent); }
+
+  .do-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+  }
+  .do-link:hover { border-color: var(--accent); }
+  .do-link span {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px; line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="do-wrap">
+
+  <a class="do-terug" href="index.html">‹ Terug naar de naslag</a>
+
+  <h1 class="do-kop">Doseringsplanner</h1>
+  <p class="do-intro">
+    Van de zes doseerregels naar een concreet schema, en dan afgezet tegen twee
+    heel verschillende grenzen: het <b>plafond</b> dat je om veiligheidsredenen
+    niet passeert, en de <b>eenheden die je feitelijk in huis hebt</b>. Die twee
+    lopen door elkaar in de praktijk, maar ze betekenen iets anders — dus deze
+    pagina houdt ze uit elkaar.
+  </p>
+
+  <div class="do-vlag rood">
+    <strong>De getallen zet jij erin, niet ik.</strong>
+    Ik kon de doseringstabellen van de UK-richtlijn en de SmPC's hier niet
+    inzien — het netwerk van deze omgeving blokkeert die bronnen. Ik heb daarom
+    <b>geen enkele eenheid ingevuld</b>. De tabel hieronder is leeg tot jij hem
+    vult uit je eigen bron: de richtlijn, de POBOT-tabel of je afdelingsprotocol.
+    Wat de pagina doet is rekenen en bewaken — niet voorschrijven.
+  </div>
+
+  <!-- ================= de zes regels ================= -->
+  <section class="do-sectie">
+    <h2>Waar elke doseerregel terechtkomt</h2>
+    <p class="do-sectie-uitleg">
+      De zes punten van de dia zijn geen lijstje om te onthouden maar zes
+      knoppen. Hieronder staat per punt waar hij in deze rekenmodule ingrijpt.
+    </p>
+    <div class="do-regels">
+      <div class="rij"><div class="nr">1</div><div class="wat">
+        <b>Spiergrootte</b>
+        Een grote spier vraagt meer eenheden dan een kleine, bij gelijke ernst.
+        <span class="waar">kiest de rij in je dosistabel</span>
+      </div></div>
+      <div class="rij"><div class="nr">2</div><div class="wat">
+        <b>Aantal spieren</b>
+        Hoe meer doelen, hoe kleiner het deel dat elk doel krijgt. Dit is de
+        enige regel die niet over één spier gaat maar over het totaal.
+        <span class="waar">bepaalt de verdeling van het budget</span>
+      </div></div>
+      <div class="rij"><div class="nr">3</div><div class="wat">
+        <b>Ernst van de spasticiteit</b>
+        Binnen dezelfde spier: laag, midden of hoog in de bandbreedte.
+        <span class="waar">kiest de kolom in je dosistabel</span>
+      </div></div>
+      <div class="rij"><div class="nr">4</div><div class="wat">
+        <b>Aanwezige spierzwakte</b>
+        Verzwak je een spier die al te weinig kracht levert, dan lever je functie
+        in. Reden om naar beneden bij te stellen — of de spier niet te kiezen.
+        <span class="waar">correctie omlaag per spier</span>
+      </div></div>
+      <div class="rij"><div class="nr">5</div><div class="wat">
+        <b>Respons op eerdere behandeling</b>
+        Te weinig effect vorige keer is een reden om omhoog te gaan; te veel
+        zwakte een reden om omlaag te gaan. Zonder vorige ronde: geen correctie.
+        <span class="waar">correctie omhoog of omlaag per spier</span>
+      </div></div>
+      <div class="rij"><div class="nr">6</div><div class="wat">
+        <b>Bijwerkingen in de voorgeschiedenis</b>
+        Geldt voor de hele sessie, niet voor één spier — het gaat om de
+        totaalbelasting.
+        <span class="waar">correctie omlaag over alle spieren</span>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= preparaat en voorraad ================= -->
+  <section class="do-sectie">
+    <h2>1 · Preparaat en voorraad</h2>
+    <p class="do-sectie-uitleg">
+      Eenheden zijn <b>niet uitwisselbaar</b> tussen preparaten. Alles op deze
+      pagina — je tabel, je plafonds, je voorraad — hangt aan het preparaat dat
+      je hier kiest, en wisselt mee als je wisselt.
+    </p>
+    <div class="do-paneel">
+      <div class="do-veld">
+        <label for="doPrep">Preparaat</label>
+        <select id="doPrep">
+          <option value="ona">onabotulinumtoxineA</option>
+          <option value="inco">incobotulinumtoxineA</option>
+          <option value="abo">abobotulinumtoxineA</option>
+        </select>
+        <span class="hint" id="doPrepHint"></span>
+      </div>
+      <div class="do-veld">
+        <label for="doVoorraad">Beschikbare eenheden voor deze sessie</label>
+        <input type="number" id="doVoorraad" inputmode="numeric" min="0" step="1" placeholder="bijv. 300">
+        <div class="do-snel" id="doSnelVoorraad"></div>
+        <span class="hint" id="doVoorraadHint">Wat je feitelijk kunt optrekken. Laat leeg als de voorraad nu geen beperking is.</span>
+      </div>
+      <div class="do-veld">
+        <label for="doAfronding">Afronden op</label>
+        <select id="doAfronding">
+          <option value="1">1 E</option>
+          <option value="2.5">2,5 E</option>
+          <option value="5" selected>5 E</option>
+          <option value="10">10 E</option>
+          <option value="20">20 E</option>
+        </select>
+        <span class="hint">Praktische stapgrootte bij je verdunning. Raakt de klinische keuze niet — alleen wat optrekbaar is.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= plafonds ================= -->
+  <section class="do-sectie">
+    <h2>2 · Plafonds</h2>
+    <p class="do-sectie-uitleg">
+      De bovengrens die je niet passeert, ongeacht hoeveel je in huis hebt.
+      Bij kinderen is de maat per kilogram lichaamsgewicht leidend, met daarnaast
+      een absoluut maximum per sessie. Vul in wat in jouw bron staat.
+    </p>
+    <div class="do-paneel">
+      <div class="do-tweekolom">
+        <div class="do-veld">
+          <label for="doMaxKg">Maximum per kg per sessie</label>
+          <input type="number" id="doMaxKg" inputmode="decimal" min="0" step="0.5" placeholder="E/kg">
+        </div>
+        <div class="do-veld">
+          <label for="doMaxAbs">Absoluut maximum per sessie</label>
+          <input type="number" id="doMaxAbs" inputmode="numeric" min="0" step="1" placeholder="E">
+        </div>
+      </div>
+      <span class="hint" style="display:block;font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.5;">
+        Beide leeg? Dan rekent de pagina wel je schema uit maar bewaakt hij geen
+        veiligheidsgrens, en zegt dat er ook bij.
+      </span>
+    </div>
+
+    <details class="do-vouw">
+      <summary>Wat ik online vond over plafonds — ongeverifieerd, niet ingevuld</summary>
+      <div class="inhoud">
+        <p>
+          Ik kon geen enkele primaire bron openen: de RCP-richtlijn, de SmPC's op
+          de eMC, de EMA-documenten en de geneesmiddeleninformatiebank worden
+          allemaal door de netwerkfilter van deze omgeving geweigerd. Wat hier
+          staat komt uit <b>samenvattingen van zoekresultaten</b>, niet uit een
+          document dat ik zelf gelezen heb. Behandel het als een spoor om na te
+          kijken, niet als een getal om te gebruiken — daarom vult de pagina er
+          ook niets mee in.
+        </p>
+        <ul>
+          <li>Voor volwassen focale spasticiteit werden maxima per sessie
+              genoemd in de orde van enkele honderden eenheden voor de arm en
+              het been, met voor abobotulinumtoxineA een aanzienlijk hoger
+              getal — passend bij de verhouding tussen de preparaten.</li>
+          <li>Voor kinderen kwam de dosering per kilogram naar voren, met een
+              onderscheid tussen één en twee behandelde benen, en een absoluut
+              maximum dat daarnaast geldt: de laagste van de twee wint.</li>
+        </ul>
+        <p>
+          Ik noem hier bewust geen cijfers. Een half onthouden getal uit een
+          zoekfragment hoort niet in een rekenmodule waarmee je een kind
+          doseert. Sla de actuele SmPC van jouw preparaat erbij en type de twee
+          velden hierboven zelf in; daarna rekent de pagina er consequent mee.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ================= dosistabel ================= -->
+  <section class="do-sectie">
+    <h2>3 · Mijn dosistabel</h2>
+    <p class="do-sectie-uitleg">
+      Negen getallen: drie spiergroottes maal drie niveaus van ernst. Dat is de
+      kern van regel 1 en regel 3. De tabel hoort bij het gekozen preparaat en
+      blijft op dit toestel bewaard, dus je vult hem één keer.
+    </p>
+    <div class="do-paneel">
+      <div class="do-tabelwrap">
+        <table class="do-matrix">
+          <thead>
+            <tr>
+              <th>Spiergrootte</th>
+              <th>Laag</th>
+              <th>Midden</th>
+              <th>Hoog</th>
+            </tr>
+          </thead>
+          <tbody id="doMatrixBody"></tbody>
+        </table>
+      </div>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.55;margin:11px 0 0;">
+        De kolom <b>Laag</b> doet dubbel werk: hij is ook de ondergrens. Zakt een
+        spier daar bij het passen onderdoor, dan meldt de pagina dat, want onder
+        je eigen laagste dosis prikken is meestal niet minder maar niets.
+      </p>
+      <div class="do-knoprij">
+        <button type="button" id="doWisTabel">Tabel leegmaken</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= wegingen ================= -->
+  <section class="do-sectie">
+    <h2>4 · Wegingen</h2>
+    <p class="do-sectie-uitleg">
+      Regels 4, 5 en 6 zijn correcties in procenten op de dosis uit je tabel.
+      Hoe groot die correctie is, is een klinisch oordeel — geen richtlijngetal.
+    </p>
+    <div class="do-vlag oranje">
+      <strong>Deze percentages zijn van jou, niet uit een richtlijn.</strong>
+      Ik heb ze gevuld met ronde startwaarden zodat de module meteen werkt, maar
+      ik heb ze nergens aan ontleend. Zet ze naar wat jij verantwoordt; ze komen
+      zichtbaar terug in de uitkomst zodat de rekensom navolgbaar blijft.
+    </div>
+    <div class="do-paneel" style="margin-top:12px;">
+      <div class="do-tweekolom">
+        <div class="do-veld">
+          <label for="doWZwakte">Bij spierzwakte</label>
+          <input type="number" id="doWZwakte" inputmode="numeric" step="5" placeholder="%">
+          <span class="hint">Regel 4. Negatief = omlaag.</span>
+        </div>
+        <div class="do-veld">
+          <label for="doWOnvold">Vorige keer te weinig effect</label>
+          <input type="number" id="doWOnvold" inputmode="numeric" step="5" placeholder="%">
+          <span class="hint">Regel 5. Positief = omhoog.</span>
+        </div>
+      </div>
+      <div class="do-tweekolom">
+        <div class="do-veld">
+          <label for="doWTeveel">Vorige keer te veel zwakte</label>
+          <input type="number" id="doWTeveel" inputmode="numeric" step="5" placeholder="%">
+          <span class="hint">Regel 5, de andere kant op.</span>
+        </div>
+        <div class="do-veld">
+          <label for="doWBijw">Bijwerkingen in voorgeschiedenis</label>
+          <input type="number" id="doWBijw" inputmode="numeric" step="5" placeholder="%">
+          <span class="hint">Regel 6. Geldt over alle spieren tegelijk.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= kind en spieren ================= -->
+  <section class="do-sectie">
+    <h2>5 · Deze sessie</h2>
+    <p class="do-sectie-uitleg">
+      Gewicht, de doelspieren en per spier de twee regels die op die spier slaan.
+      Dit deel wordt <b>niet</b> bewaard: bij het sluiten van de pagina is het weg.
+    </p>
+
+    <div class="do-vlag blauw">
+      <strong>Geen patiëntgegevens.</strong>
+      Dit is een openbare pagina. Vul hier geen naam, geboortedatum of
+      patiëntnummer in — ook niet in een spiernaam. Het gewicht en de
+      spierkeuze blijven in het werkgeheugen van dit toestel staan en worden
+      nergens heen gestuurd, maar ook niet opgeslagen.
+    </div>
+
+    <div class="do-paneel" style="margin-top:12px;">
+      <div class="do-tweekolom">
+        <div class="do-veld">
+          <label for="doGewicht">Lichaamsgewicht (kg)</label>
+          <input type="number" id="doGewicht" inputmode="decimal" min="0" step="0.5" placeholder="kg">
+        </div>
+        <div class="do-veld">
+          <label for="doVoegToe">Spier toevoegen</label>
+          <select id="doVoegToe"></select>
+        </div>
+      </div>
+      <label class="do-check">
+        <input type="checkbox" id="doBijwerkingen">
+        <span>Bijwerkingen in de voorgeschiedenis <i style="color:var(--muted);font-style:normal;">(regel 6 — werkt op alle spieren)</i></span>
+      </label>
+    </div>
+
+    <div id="doSpieren"></div>
+
+    <div class="do-knoprij">
+      <button type="button" id="doWisSessie">Sessie leegmaken</button>
+    </div>
+  </section>
+
+  <!-- ================= uitkomst ================= -->
+  <section class="do-sectie">
+    <h2>6 · Het schema</h2>
+    <p class="do-sectie-uitleg">
+      Eerst wat je zou willen geven, dan wat er past. Past het niet, dan zijn er
+      twee manieren om te passen — en die verschillen klinisch wezenlijk.
+    </p>
+    <div class="do-uit" id="doUit"></div>
+  </section>
+
+  <!-- ================= niet in staat ================= -->
+  <section class="do-sectie">
+    <h2>Wat hier bewust níet in staat</h2>
+    <div class="do-vouw" open>
+      <div class="inhoud" style="padding-top:14px;">
+        <ul>
+          <li><b>Doseringen.</b> Geen enkele eenheid is voorgevuld, en de
+              pagina stelt er ook nooit een voor. Hij rekent alleen met wat jij
+              in je tabel zet.</li>
+          <li><b>Een maximum dat ik zelf verzin.</b> Staat er geen plafond in de
+              velden, dan bewaakt de pagina geen plafond en zegt dat er met
+              zoveel woorden bij, in plaats van stil een grens aan te nemen.</li>
+          <li><b>Omrekening tussen preparaten.</b> Er is geen knop die jouw
+              tabel van het ene naar het andere preparaat omzet. De gangbare
+              verhoudingen zijn benaderingen met een brede spreiding, en een
+              conversiefactor in een rekenmodule nodigt uit tot gebruik zonder
+              de spreiding erbij te denken.</li>
+          <li><b>Welke spier je moet kiezen.</b> Dat is een andere vraag, met
+              een eigen pagina — deze module gaat er vanuit dat de keuze al
+              gemaakt is.</li>
+          <li><b>Verdunning, volume en aantal injectieplaatsen.</b> Bepalen mee
+              hoe ver het toxine zich verspreidt, maar staan los van het aantal
+              eenheden en zijn hier niet gemodelleerd.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="do-sectie">
+    <h2>Verder</h2>
+    <a class="do-link" href="spasticiteit-dystonie.html">Spastische parese — is er een indicatie?
+      <span>Eerst de vraag of botulinetoxine hier het juiste middel is.</span></a>
+    <a class="do-link" href="doelspieren.html">Doelspieren kiezen
+      <span>Per gewricht redeneren, de vijf armpatronen, en welke spier de naald krijgt.</span></a>
+
+    <div class="do-bron">
+      <p><b>Bron van de zes regels:</b> dia <i>Dosing rules</i> uit de
+        POBOT-cursus (Postgraduate Training Spasticiteitsbehandeling met
+        Botulinetoxine). De zes punten zijn overgenomen van de dia; de vertaling
+        naar knoppen in deze module is van mij.</p>
+      <p><b>Niet geraadpleegd:</b> de doseringstabellen van de Britse richtlijn
+        <i>Spasticity in adults: management using botulinum toxin. National
+        guidelines, second edition</i> (Royal College of Physicians, 2018) staan
+        in een bijlage die ik hier niet kon openen. Diezelfde richtlijn gaat
+        bovendien over volwassenen — voor kinderen is de dosering per kilogram
+        leidend. Wat je ook als bron neemt: de tabel hierboven is de plek waar
+        hij binnenkomt.</p>
+      <p><b>De rekenwijze</b> — tabelwaarde, procentuele correcties, en het
+        passen binnen een budget — is mijn constructie, geen gepubliceerd
+        algoritme.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var MATEN   = [['klein','Klein'], ['middel','Middel'], ['groot','Groot']];
+  var NIVEAUS = [['laag','Laag'], ['midden','Midden'], ['hoog','Hoog']];
+
+  var PREPARATEN = {
+    ona:  { naam: 'onabotulinumtoxineA',  flacons: [50, 100, 200] },
+    inco: { naam: 'incobotulinumtoxineA', flacons: [50, 100, 200] },
+    abo:  { naam: 'abobotulinumtoxineA',  flacons: [300, 500] }
+  };
+
+  // Spiernamen en de indeling klein/middel/groot. De indeling is een
+  // anatomische inschatting van mij, geen richtlijnclassificatie — daarom per
+  // spier aanpasbaar in de kaart.
+  var SPIERGROEPEN = [
+    { groep: 'Schouder en bovenarm', items: [
+      { id: 'pecmaj',  naam: 'Pectoralis major',      maat: 'groot'  },
+      { id: 'latdor',  naam: 'Latissimus dorsi',      maat: 'groot'  },
+      { id: 'teresmaj',naam: 'Teres major',           maat: 'middel' },
+      { id: 'subscap', naam: 'Subscapularis',         maat: 'middel' },
+      { id: 'pecmin',  naam: 'Pectoralis minor',      maat: 'klein'  },
+      { id: 'biceps',  naam: 'Biceps brachii',        maat: 'groot'  },
+      { id: 'brachial',naam: 'Brachialis',            maat: 'middel' },
+      { id: 'brachrad',naam: 'Brachioradialis',       maat: 'middel' },
+      { id: 'triceps', naam: 'Triceps brachii',       maat: 'groot'  }
+    ]},
+    { groep: 'Onderarm en hand', items: [
+      { id: 'pronter', naam: 'Pronator teres',                maat: 'middel' },
+      { id: 'pronquad',naam: 'Pronator quadratus',            maat: 'klein'  },
+      { id: 'fcr',     naam: 'Flexor carpi radialis',         maat: 'middel' },
+      { id: 'fcu',     naam: 'Flexor carpi ulnaris',          maat: 'middel' },
+      { id: 'fds',     naam: 'Flexor digitorum superficialis',maat: 'middel' },
+      { id: 'fdp',     naam: 'Flexor digitorum profundus',    maat: 'middel' },
+      { id: 'fpl',     naam: 'Flexor pollicis longus',        maat: 'klein'  },
+      { id: 'addpol',  naam: 'Adductor pollicis',             maat: 'klein'  },
+      { id: 'thenar',  naam: 'Thenar (opponens / FPB)',       maat: 'klein'  },
+      { id: 'interos', naam: 'Interossei / lumbricales',      maat: 'klein'  }
+    ]},
+    { groep: 'Heup en bovenbeen', items: [
+      { id: 'psoas',   naam: 'Iliopsoas',                 maat: 'groot'  },
+      { id: 'addlong', naam: 'Adductor longus',           maat: 'middel' },
+      { id: 'addmag',  naam: 'Adductor magnus',           maat: 'groot'  },
+      { id: 'gracilis',naam: 'Gracilis',                  maat: 'middel' },
+      { id: 'hamstmed',naam: 'Mediale hamstrings',        maat: 'groot'  },
+      { id: 'hamstlat',naam: 'Laterale hamstring',        maat: 'groot'  },
+      { id: 'rectfem', naam: 'Rectus femoris',            maat: 'groot'  }
+    ]},
+    { groep: 'Onderbeen en voet', items: [
+      { id: 'gastmed', naam: 'Gastrocnemius mediaal',     maat: 'middel' },
+      { id: 'gastlat', naam: 'Gastrocnemius lateraal',    maat: 'middel' },
+      { id: 'soleus',  naam: 'Soleus',                    maat: 'groot'  },
+      { id: 'tibpost', naam: 'Tibialis posterior',        maat: 'middel' },
+      { id: 'tibant',  naam: 'Tibialis anterior',         maat: 'middel' },
+      { id: 'peronei', naam: 'Peronei',                   maat: 'middel' },
+      { id: 'fhl',     naam: 'Flexor hallucis longus',    maat: 'klein'  },
+      { id: 'fdl',     naam: 'Flexor digitorum longus',   maat: 'klein'  },
+      { id: 'ehl',     naam: 'Extensor hallucis longus',  maat: 'klein'  }
+    ]}
+  ];
+
+  var SLEUTEL_TABEL   = 'krnDoseringTabel';
+  var SLEUTEL_WEGING  = 'krnDoseringWeging';
+  var SLEUTEL_PLAFOND = 'krnDoseringPlafond';
+  var SLEUTEL_PREP    = 'krnDoseringPrep';
+  var SLEUTEL_AFROND  = 'krnDoseringAfronding';
+
+  // Startwaarden voor de wegingen. Ronde getallen zodat de module werkt;
+  // nadrukkelijk niet aan een bron ontleend. De pagina zegt dat er ook bij.
+  var WEGING_START = { zwakte: -25, onvold: 25, teveel: -25, bijw: -25 };
+
+  var prep      = lees(SLEUTEL_PREP) || 'ona';
+  var afronding = Number(lees(SLEUTEL_AFROND)) || 5;
+  var tabellen  = leesJson(SLEUTEL_TABEL)   || {};
+  var wegingen  = leesJson(SLEUTEL_WEGING)  || null;
+  var plafonds  = leesJson(SLEUTEL_PLAFOND) || {};
+  if (!wegingen) wegingen = { zwakte: WEGING_START.zwakte, onvold: WEGING_START.onvold,
+                              teveel: WEGING_START.teveel, bijw: WEGING_START.bijw };
+
+  // Sessiegegevens: bewust niet opgeslagen.
+  var gewicht = null;
+  var bijwerkingen = false;
+  var gekozen = [];
+  var strategie = 'prioriteit';
+
+  function lees(k)     { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function schrijf(k,v){ try { localStorage.setItem(k, v); } catch (e) {} }
+  function leesJson(k) { var r = lees(k); if (!r) return null; try { return JSON.parse(r); } catch (e) { return null; } }
+
+  function legeTabel() {
+    var t = {};
+    MATEN.forEach(function (m) {
+      t[m[0]] = {};
+      NIVEAUS.forEach(function (n) { t[m[0]][n[0]] = ''; });
+    });
+    return t;
+  }
+  function tabelVan(p) {
+    if (!tabellen[p]) tabellen[p] = legeTabel();
+    return tabellen[p];
+  }
+  function plafondVan(p) {
+    if (!plafonds[p]) plafonds[p] = { kg: '', abs: '' };
+    return plafonds[p];
+  }
+
+  function spierVan(id) {
+    for (var g = 0; g < SPIERGROEPEN.length; g++) {
+      var it = SPIERGROEPEN[g].items;
+      for (var i = 0; i < it.length; i++) if (it[i].id === id) return it[i];
+    }
+    return null;
+  }
+
+  function getal(v) {
+    if (v === '' || v === null || v === undefined) return null;
+    var n = Number(v);
+    return isFinite(n) ? n : null;
+  }
+  function ee(n) {
+    if (n === null) return '—';
+    return (Math.round(n * 10) / 10).toString().replace('.', ',');
+  }
+  function omlaag(x) { return Math.floor(x / afronding) * afronding; }
+  function rond(x)   { return Math.round(x / afronding) * afronding; }
+
+  // ---------------- opbouw van de bedieningsdelen ----------------
+
+  var elPrep     = document.getElementById('doPrep');
+  var elPrepHint = document.getElementById('doPrepHint');
+  var elVoorraad = document.getElementById('doVoorraad');
+  var elSnel     = document.getElementById('doSnelVoorraad');
+  var elAfrond   = document.getElementById('doAfronding');
+  var elMaxKg    = document.getElementById('doMaxKg');
+  var elMaxAbs   = document.getElementById('doMaxAbs');
+  var elMatrix   = document.getElementById('doMatrixBody');
+  var elGewicht  = document.getElementById('doGewicht');
+  var elVoegToe  = document.getElementById('doVoegToe');
+  var elSpieren  = document.getElementById('doSpieren');
+  var elBijw     = document.getElementById('doBijwerkingen');
+  var elUit      = document.getElementById('doUit');
+
+  function bouwMatrix() {
+    var t = tabelVan(prep);
+    elMatrix.innerHTML = '';
+    MATEN.forEach(function (m) {
+      var tr = document.createElement('tr');
+      var td0 = document.createElement('td');
+      td0.textContent = m[1];
+      tr.appendChild(td0);
+      NIVEAUS.forEach(function (n) {
+        var td = document.createElement('td');
+        var inp = document.createElement('input');
+        inp.type = 'number';
+        inp.inputMode = 'numeric';
+        inp.min = '0';
+        inp.step = '1';
+        inp.placeholder = 'E';
+        inp.value = t[m[0]][n[0]];
+        if (inp.value === '') inp.className = 'leeg';
+        inp.addEventListener('input', function () {
+          tabelVan(prep)[m[0]][n[0]] = inp.value;
+          inp.className = inp.value === '' ? 'leeg' : '';
+          schrijf(SLEUTEL_TABEL, JSON.stringify(tabellen));
+          herteken();
+        });
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+      elMatrix.appendChild(tr);
+    });
+  }
+
+  function bouwSnelknoppen() {
+    elSnel.innerHTML = '';
+    PREPARATEN[prep].flacons.forEach(function (f) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = '+ ' + f + ' E';
+      b.addEventListener('click', function () {
+        var huidig = getal(elVoorraad.value) || 0;
+        elVoorraad.value = huidig + f;
+        herteken();
+      });
+      elSnel.appendChild(b);
+    });
+    var nul = document.createElement('button');
+    nul.type = 'button';
+    nul.textContent = 'op nul';
+    nul.addEventListener('click', function () { elVoorraad.value = ''; herteken(); });
+    elSnel.appendChild(nul);
+  }
+
+  function bouwSpierkeuze() {
+    elVoegToe.innerHTML = '';
+    var leeg = document.createElement('option');
+    leeg.value = '';
+    leeg.textContent = 'kies een spier…';
+    elVoegToe.appendChild(leeg);
+    SPIERGROEPEN.forEach(function (g) {
+      var og = document.createElement('optgroup');
+      og.label = g.groep;
+      g.items.forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s.id;
+        o.textContent = s.naam;
+        og.appendChild(o);
+      });
+      elVoegToe.appendChild(og);
+    });
+  }
+
+  function voegSpierToe(id) {
+    var s = spierVan(id);
+    if (!s) return;
+    gekozen.push({
+      id: id,
+      sleutel: id + '-' + Date.now() + '-' + Math.round(Math.random() * 1e6),
+      maat: s.maat,
+      niveau: 'midden',
+      zwakte: false,
+      respons: 'nvt',
+      prio: 'midden'
+    });
+    tekenSpieren();
+    herteken();
+  }
+
+  function tekenSpieren() {
+    elSpieren.innerHTML = '';
+    if (!gekozen.length) {
+      var p = document.createElement('div');
+      p.className = 'do-leeg';
+      p.textContent = 'Nog geen doelspieren gekozen. Voeg er hierboven een toe.';
+      elSpieren.appendChild(p);
+      return;
+    }
+    gekozen.forEach(function (g) {
+      var s = spierVan(g.id);
+      var kaart = document.createElement('div');
+      kaart.className = 'do-spier';
+
+      var titel = document.createElement('div');
+      titel.className = 'titel';
+      var naam = document.createElement('span');
+      naam.className = 'naam';
+      naam.textContent = s.naam;
+      var weg = document.createElement('button');
+      weg.type = 'button';
+      weg.className = 'weg';
+      weg.setAttribute('aria-label', s.naam + ' verwijderen');
+      weg.textContent = '✕';
+      weg.addEventListener('click', function () {
+        gekozen = gekozen.filter(function (x) { return x.sleutel !== g.sleutel; });
+        tekenSpieren();
+        herteken();
+      });
+      titel.appendChild(naam);
+      titel.appendChild(weg);
+      kaart.appendChild(titel);
+
+      var raster = document.createElement('div');
+      raster.className = 'do-raster';
+      raster.appendChild(keuze('Grootte', MATEN, g.maat, function (v) { g.maat = v; herteken(); }));
+      raster.appendChild(keuze('Ernst', NIVEAUS, g.niveau, function (v) { g.niveau = v; herteken(); }));
+      raster.appendChild(keuze('Vorige ronde', [
+        ['nvt', 'geen / n.v.t.'],
+        ['goed', 'goed effect'],
+        ['onvoldoende', 'te weinig effect'],
+        ['teveel', 'te veel zwakte']
+      ], g.respons, function (v) { g.respons = v; herteken(); }));
+      raster.appendChild(keuze('Prioriteit', [
+        ['hoog', 'hoog'], ['midden', 'midden'], ['laag', 'laag']
+      ], g.prio, function (v) { g.prio = v; herteken(); }));
+      kaart.appendChild(raster);
+
+      var lab = document.createElement('label');
+      lab.className = 'do-check';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = g.zwakte;
+      cb.addEventListener('change', function () { g.zwakte = cb.checked; herteken(); });
+      var sp = document.createElement('span');
+      sp.textContent = 'Deze spier is zwak';
+      lab.appendChild(cb);
+      lab.appendChild(sp);
+      kaart.appendChild(lab);
+
+      elSpieren.appendChild(kaart);
+    });
+  }
+
+  function keuze(label, opties, waarde, bij) {
+    var wrap = document.createElement('div');
+    var l = document.createElement('label');
+    l.textContent = label;
+    var sel = document.createElement('select');
+    opties.forEach(function (o) {
+      var op = document.createElement('option');
+      op.value = o[0];
+      op.textContent = o[1];
+      if (o[0] === waarde) op.selected = true;
+      sel.appendChild(op);
+    });
+    sel.addEventListener('change', function () { bij(sel.value); });
+    wrap.appendChild(l);
+    wrap.appendChild(sel);
+    return wrap;
+  }
+
+  // ---------------- de rekensom ----------------
+
+  var PRIO_RANG = { hoog: 0, midden: 1, laag: 2 };
+
+  function berekenRegels() {
+    var t = tabelVan(prep);
+    return gekozen.map(function (g, index) {
+      var basis = getal(t[g.maat][g.niveau]);
+      var vloer = getal(t[g.maat]['laag']);
+      var pct = 0;
+      var redenen = [];
+      if (g.zwakte && wegingen.zwakte) {
+        pct += wegingen.zwakte;
+        redenen.push('zwakte ' + (wegingen.zwakte > 0 ? '+' : '') + wegingen.zwakte + '%');
+      }
+      if (g.respons === 'onvoldoende' && wegingen.onvold) {
+        pct += wegingen.onvold;
+        redenen.push('te weinig effect ' + (wegingen.onvold > 0 ? '+' : '') + wegingen.onvold + '%');
+      }
+      if (g.respons === 'teveel' && wegingen.teveel) {
+        pct += wegingen.teveel;
+        redenen.push('te veel zwakte ' + (wegingen.teveel > 0 ? '+' : '') + wegingen.teveel + '%');
+      }
+      if (bijwerkingen && wegingen.bijw) {
+        pct += wegingen.bijw;
+        redenen.push('bijwerkingen ' + (wegingen.bijw > 0 ? '+' : '') + wegingen.bijw + '%');
+      }
+      var gewenst = basis === null ? null : Math.max(0, basis * (1 + pct / 100));
+      return {
+        g: g,
+        index: index,
+        naam: spierVan(g.id).naam,
+        basis: basis,
+        vloer: vloer,
+        pct: pct,
+        redenen: redenen,
+        gewenst: gewenst === null ? null : rond(gewenst)
+      };
+    });
+  }
+
+  function verdeelPrioriteit(regels, budget) {
+    var volgorde = regels.slice().sort(function (a, b) {
+      var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
+      return d !== 0 ? d : a.index - b.index;
+    });
+    var rest = budget;
+    volgorde.forEach(function (r) {
+      if (r.gewenst === null) { r.krijgt = null; return; }
+      if (rest >= r.gewenst) {
+        r.krijgt = r.gewenst;
+        rest -= r.gewenst;
+      } else {
+        var mogelijk = omlaag(rest);
+        if (r.vloer !== null && mogelijk >= r.vloer && mogelijk > 0) {
+          r.krijgt = mogelijk;
+          rest -= mogelijk;
+          r.geknepen = true;
+        } else {
+          r.krijgt = 0;
+          r.gedropt = true;
+        }
+      }
+    });
+    return rest;
+  }
+
+  function verdeelEvenredig(regels, budget, totaal) {
+    var factor = totaal > 0 ? Math.min(1, budget / totaal) : 1;
+    regels.forEach(function (r) {
+      if (r.gewenst === null) { r.krijgt = null; return; }
+      var v = omlaag(r.gewenst * factor);
+      r.krijgt = v;
+      if (factor < 1) r.geknepen = true;
+      if (r.vloer !== null && v < r.vloer) r.onderVloer = true;
+    });
+    return factor;
+  }
+
+  function herteken() {
+    // invoer overnemen
+    afronding = Number(elAfrond.value) || 5;
+    schrijf(SLEUTEL_AFROND, String(afronding));
+    gewicht = getal(elGewicht.value);
+    bijwerkingen = elBijw.checked;
+    var pl = plafondVan(prep);
+    pl.kg = elMaxKg.value;
+    pl.abs = elMaxAbs.value;
+    schrijf(SLEUTEL_PLAFOND, JSON.stringify(plafonds));
+
+    var voorraad = getal(elVoorraad.value);
+    var maxKg = getal(pl.kg);
+    var maxAbs = getal(pl.abs);
+
+    var plafondKg = (maxKg !== null && gewicht !== null) ? maxKg * gewicht : null;
+    var plafond = null;
+    if (plafondKg !== null) plafond = plafondKg;
+    if (maxAbs !== null) plafond = (plafond === null) ? maxAbs : Math.min(plafond, maxAbs);
+
+    var budget = null;
+    if (voorraad !== null) budget = voorraad;
+    if (plafond !== null) budget = (budget === null) ? plafond : Math.min(budget, plafond);
+
+    var regels = berekenRegels();
+    var totaalGewenst = 0;
+    var ontbreekt = false;
+    regels.forEach(function (r) {
+      if (r.gewenst === null) ontbreekt = true; else totaalGewenst += r.gewenst;
+    });
+
+    var rest = null, factor = null;
+    if (budget !== null) {
+      if (strategie === 'prioriteit') rest = verdeelPrioriteit(regels, budget);
+      else factor = verdeelEvenredig(regels, budget, totaalGewenst);
+    } else {
+      regels.forEach(function (r) { r.krijgt = r.gewenst; });
+    }
+
+    var totaalGeeft = 0;
+    regels.forEach(function (r) { if (r.krijgt) totaalGeeft += r.krijgt; });
+
+    toon(regels, {
+      voorraad: voorraad, plafond: plafond, plafondKg: plafondKg, maxAbs: maxAbs,
+      maxKg: maxKg, budget: budget, totaalGewenst: totaalGewenst,
+      totaalGeeft: totaalGeeft, rest: rest, factor: factor, ontbreekt: ontbreekt
+    });
+  }
+
+  // ---------------- de uitkomst tekenen ----------------
+
+  function el(tag, cls, tekst) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
+  function vlag(soort, kop, tekst) {
+    var d = el('div', 'do-vlag ' + soort);
+    d.appendChild(el('strong', null, kop));
+    d.appendChild(document.createTextNode(tekst));
+    return d;
+  }
+
+  function toon(regels, c) {
+    elUit.innerHTML = '';
+
+    if (!regels.length) {
+      elUit.appendChild(el('div', 'do-leeg',
+        'Kies hierboven doelspieren. Zodra er één staat en je tabel gevuld is, verschijnt hier het schema.'));
+      return;
+    }
+
+    // keuze van strategie
+    if (c.budget !== null && c.totaalGewenst > c.budget) {
+      var strook = el('div', 'do-strategie');
+      [['prioriteit', 'Op prioriteit'], ['evenredig', 'Evenredig krimpen']].forEach(function (o) {
+        var b = el('button', o[0] === strategie ? 'aan' : '', o[1]);
+        b.type = 'button';
+        b.addEventListener('click', function () { strategie = o[0]; herteken(); });
+        strook.appendChild(b);
+      });
+      elUit.appendChild(strook);
+    }
+
+    // budgetcellen
+    var bud = el('div', 'do-budget');
+    bud.appendChild(cel('Gewenst', ee(c.totaalGewenst) + ' E',
+      regels.length + ' ' + (regels.length === 1 ? 'spier' : 'spieren'), ''));
+    if (c.budget !== null) {
+      var klasse = c.totaalGewenst > c.budget ? 'krap' : '';
+      bud.appendChild(cel('Budget', ee(c.budget) + ' E', budgetUitleg(c), klasse));
+      bud.appendChild(cel('In het schema', ee(c.totaalGeeft) + ' E',
+        c.rest !== null && c.rest > 0 ? ee(c.rest) + ' E over' : '', ''));
+    } else {
+      bud.appendChild(cel('Budget', '—', 'geen voorraad en geen plafond ingevuld', ''));
+    }
+    elUit.appendChild(bud);
+
+    // per spier
+    var lijst = el('div');
+    var volgorde = regels.slice().sort(function (a, b) {
+      var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
+      return d !== 0 ? d : a.index - b.index;
+    });
+    volgorde.forEach(function (r) {
+      var rij = el('div', 'do-rij' + (r.gedropt ? ' uit' : (r.geknepen || r.onderVloer ? ' krap' : '')));
+      var sp = el('div', 'sp');
+      sp.appendChild(el('b', null, r.naam));
+      var sub = el('div', 'sub');
+      var delen = [maatNaam(r.g.maat) + ' · ' + niveauNaam(r.g.niveau) + ' · prio ' + r.g.prio];
+      if (r.basis === null) delen.push('tabelwaarde ontbreekt');
+      else {
+        var s = 'tabel ' + ee(r.basis) + ' E';
+        if (r.redenen.length) s += ' → ' + r.redenen.join(', ');
+        delen.push(s);
+      }
+      if (r.gedropt) delen.push('valt af: er is minder over dan je laagste dosis (' + ee(r.vloer) + ' E)');
+      else if (r.onderVloer) delen.push('onder je laagste dosis van ' + ee(r.vloer) + ' E');
+      else if (r.geknepen) delen.push('teruggebracht om binnen het budget te blijven');
+      sub.textContent = delen.join(' — ');
+      sp.appendChild(sub);
+      rij.appendChild(sp);
+
+      var eeD = el('div', 'ee');
+      eeD.appendChild(document.createTextNode(r.krijgt === null ? '—' : ee(r.krijgt) + ' E'));
+      if (r.krijgt !== null && r.gewenst !== null && r.krijgt !== r.gewenst) {
+        eeD.appendChild(el('small', null, 'wilde ' + ee(r.gewenst) + ' E'));
+      }
+      rij.appendChild(eeD);
+      lijst.appendChild(rij);
+    });
+    elUit.appendChild(lijst);
+
+    // meldingen
+    if (c.ontbreekt) {
+      elUit.appendChild(vlag('oranje', 'Je dosistabel is nog niet compleet.',
+        'Voor minstens één gekozen combinatie van grootte en ernst staat er geen getal in de tabel. Die spier telt niet mee in het totaal zolang het veld leeg is.'));
+    }
+
+    if (c.plafond !== null && c.totaalGeeft > c.plafond) {
+      elUit.appendChild(vlag('rood', 'Boven je plafond.',
+        'Het schema komt op ' + ee(c.totaalGeeft) + ' E en je plafond is ' + ee(c.plafond) + ' E. Dat is geen budgetkwestie maar een veiligheidsgrens.'));
+    }
+
+    if (c.budget !== null && c.totaalGewenst > c.budget) {
+      var limiet = grenzendDoor(c);
+      if (limiet === 'voorraad') {
+        elUit.appendChild(vlag('blauw', 'De voorraad is hier de grens, niet de veiligheid.',
+          'Je wilt ' + ee(c.totaalGewenst) + ' E geven en je hebt ' + ee(c.voorraad) + ' E. Dat is een logistiek tekort: bijbestellen of de sessie verplaatsen zijn echte opties, naast schrappen in de lijst.'));
+      } else if (limiet === 'plafond') {
+        elUit.appendChild(vlag('rood', 'Het plafond is hier de grens.',
+          'Je wilt ' + ee(c.totaalGewenst) + ' E en je plafond ligt op ' + ee(c.plafond) + ' E. Bijbestellen helpt niet: er moeten doelen af, of de doelen moeten lager.'));
+      } else {
+        elUit.appendChild(vlag('rood', 'Voorraad én plafond komen tekort.',
+          'Beide grenzen liggen onder wat je wilt geven. De laagste van de twee is ' + ee(c.budget) + ' E.'));
+      }
+    }
+
+    var onder = regels.filter(function (r) { return r.onderVloer; });
+    if (onder.length) {
+      elUit.appendChild(vlag('oranje', 'Evenredig krimpen zet ' + onder.length + ' ' + (onder.length === 1 ? 'spier' : 'spieren') + ' onder je eigen ondergrens.',
+        'Alles een beetje minder geven klinkt eerlijk, maar onder je laagste tabelwaarde is de kans groot dat je nergens effect ziet in plaats van overal een beetje. Minder spieren goed behandelen is dan meestal de betere ruil — kijk wat de verdeling op prioriteit doet.'));
+    }
+
+    var gedropt = regels.filter(function (r) { return r.gedropt; });
+    if (gedropt.length) {
+      elUit.appendChild(vlag('blauw', 'Niet alles past.',
+        (gedropt.length === 1 ? 'Buiten het schema gevallen: ' : 'Buiten het schema gevallen: ') +
+        gedropt.map(function (r) { return r.naam; }).join(', ') + '. ' +
+        (gedropt.length === 1
+          ? 'Zet de prioriteit hoger als deze spier toch voor moet gaan.'
+          : 'Zet hun prioriteit hoger als een van deze spieren toch voor moet gaan.')));
+    }
+
+    if (c.plafondKg === null && c.maxKg === null) {
+      elUit.appendChild(vlag('oranje', 'Er wordt geen grens per kilogram bewaakt.',
+        'Vul bij stap 2 het maximum per kg uit je bron in, en bij stap 5 het gewicht. Zonder die twee rekent de pagina wel, maar toetst hij niets.'));
+    } else if (c.maxKg !== null && gewicht === null) {
+      elUit.appendChild(vlag('oranje', 'Gewicht ontbreekt.',
+        'Je hebt een maximum per kg ingevuld, maar zonder gewicht kan de pagina daar niets mee. De grens per kg telt nu niet mee.'));
+    }
+
+    // flaconregel
+    if (c.totaalGeeft > 0) {
+      var f = flaconAdvies(c.totaalGeeft);
+      var b = el('div', 'do-bron');
+      var p = el('p');
+      p.innerHTML = '<b>Optrekken:</b> ' + ee(c.totaalGeeft) + ' E ' + PREPARATEN[prep].naam +
+        ' is minimaal ' + f.tekst + '. Afgerond op ' + String(afronding).replace('.', ',') + ' E per spier.';
+      b.appendChild(p);
+      elUit.appendChild(b);
+    }
+  }
+
+  function cel(kop, waarde, sub, klasse) {
+    var d = el('div', 'cel' + (klasse ? ' ' + klasse : ''));
+    d.appendChild(el('div', 'k', kop));
+    d.appendChild(el('div', 'v', waarde));
+    if (sub) d.appendChild(el('div', 's', sub));
+    return d;
+  }
+
+  function budgetUitleg(c) {
+    if (c.voorraad !== null && c.plafond !== null) {
+      return c.voorraad <= c.plafond ? 'voorraad is het laagst' : 'plafond is het laagst';
+    }
+    if (c.voorraad !== null) return 'alleen voorraad ingevuld';
+    return 'alleen plafond ingevuld';
+  }
+
+  function grenzendDoor(c) {
+    if (c.voorraad !== null && c.plafond !== null) {
+      if (c.voorraad < c.totaalGewenst && c.plafond < c.totaalGewenst) return 'beide';
+      return c.voorraad <= c.plafond ? 'voorraad' : 'plafond';
+    }
+    return c.voorraad !== null ? 'voorraad' : 'plafond';
+  }
+
+  function flaconAdvies(totaal) {
+    var maten = PREPARATEN[prep].flacons.slice().sort(function (a, b) { return b - a; });
+    var rest = totaal, delen = [];
+    maten.forEach(function (m, i) {
+      var isLaatste = i === maten.length - 1;
+      var n = isLaatste ? Math.ceil(rest / m) : Math.floor(rest / m);
+      if (n > 0) { delen.push(n + ' × ' + m + ' E'); rest -= n * m; }
+    });
+    if (!delen.length) delen.push('1 × ' + maten[maten.length - 1] + ' E');
+    return { tekst: delen.join(' + ') };
+  }
+
+  function maatNaam(k)   { var f = MATEN.filter(function (m) { return m[0] === k; });   return f.length ? f[0][1].toLowerCase() : k; }
+  function niveauNaam(k) { var f = NIVEAUS.filter(function (n) { return n[0] === k; }); return f.length ? f[0][1].toLowerCase() : k; }
+
+  // ---------------- koppelen ----------------
+
+  function vulPreparaat() {
+    elPrep.value = prep;
+    elPrepHint.textContent = 'Flacons: ' + PREPARATEN[prep].flacons.map(function (f) { return f + ' E'; }).join(', ') +
+      '. Eenheden van dit preparaat zijn niet om te rekenen naar een ander.';
+    var pl = plafondVan(prep);
+    elMaxKg.value = pl.kg;
+    elMaxAbs.value = pl.abs;
+    bouwMatrix();
+    bouwSnelknoppen();
+  }
+
+  function vulWegingen() {
+    document.getElementById('doWZwakte').value = wegingen.zwakte;
+    document.getElementById('doWOnvold').value = wegingen.onvold;
+    document.getElementById('doWTeveel').value = wegingen.teveel;
+    document.getElementById('doWBijw').value   = wegingen.bijw;
+  }
+
+  ['doWZwakte', 'doWOnvold', 'doWTeveel', 'doWBijw'].forEach(function (id) {
+    var sleutel = { doWZwakte: 'zwakte', doWOnvold: 'onvold', doWTeveel: 'teveel', doWBijw: 'bijw' }[id];
+    document.getElementById(id).addEventListener('input', function (e) {
+      var v = getal(e.target.value);
+      wegingen[sleutel] = v === null ? 0 : v;
+      schrijf(SLEUTEL_WEGING, JSON.stringify(wegingen));
+      herteken();
+    });
+  });
+
+  elPrep.addEventListener('change', function () {
+    prep = elPrep.value;
+    schrijf(SLEUTEL_PREP, prep);
+    vulPreparaat();
+    herteken();
+  });
+
+  [elVoorraad, elMaxKg, elMaxAbs, elGewicht].forEach(function (e) {
+    e.addEventListener('input', herteken);
+  });
+  elAfrond.addEventListener('change', herteken);
+  elBijw.addEventListener('change', herteken);
+
+  elVoegToe.addEventListener('change', function () {
+    if (elVoegToe.value) {
+      voegSpierToe(elVoegToe.value);
+      elVoegToe.value = '';
+    }
+  });
+
+  document.getElementById('doWisTabel').addEventListener('click', function () {
+    tabellen[prep] = legeTabel();
+    schrijf(SLEUTEL_TABEL, JSON.stringify(tabellen));
+    bouwMatrix();
+    herteken();
+  });
+
+  document.getElementById('doWisSessie').addEventListener('click', function () {
+    gekozen = [];
+    elGewicht.value = '';
+    elBijw.checked = false;
+    strategie = 'prioriteit';
+    tekenSpieren();
+    herteken();
+  });
+
+  elAfrond.value = String(afronding);
+  vulPreparaat();
+  vulWegingen();
+  bouwSpierkeuze();
+  tekenSpieren();
+  herteken();
+})();
+</script>
+</body>
+</html>
