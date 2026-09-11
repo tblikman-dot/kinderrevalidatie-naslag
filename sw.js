@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v32';
+const CACHE_VERSIE = 'krn-v33';
 
 const APP_BESTANDEN = [
   './',
