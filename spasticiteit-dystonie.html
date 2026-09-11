@@ -131,6 +131,49 @@
   .sd-lijst li { margin-bottom: 9px; }
   .sd-lijst li:last-child { margin-bottom: 0; }
 
+  .sd-fig {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 12px 10px;
+    margin-bottom: 12px;
+  }
+  .sd-fig svg { width: 100%; height: auto; display: block; }
+  .sd-fig-titel {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    margin: 0 4px 8px;
+  }
+  .sd-fig-bij {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.6; margin: 10px 4px 0;
+  }
+
+  .sd-schuif { margin: 4px 4px 0; font-family: system-ui, sans-serif; }
+  .sd-schuif label {
+    display: block; font-size: 12.5px; font-weight: 700; margin: 12px 0 2px;
+  }
+  .sd-schuif .uiteinden {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-top: 1px;
+  }
+  .sd-schuif input[type=range] { width: 100%; margin: 0; }
+  .sd-knoppen { display: flex; gap: 8px; margin: 14px 4px 0; flex-wrap: wrap; }
+  .sd-knop {
+    padding: 9px 13px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--paneel);
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700; color: var(--inkt); cursor: pointer;
+  }
+  .sd-knop:hover { border-color: var(--accent); background: var(--accent-zacht); }
+  .sd-uitlezing {
+    background: var(--accent-zacht);
+    border-radius: 10px; padding: 11px 13px; margin: 14px 4px 0;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+  }
+
   .sd-bron {
     font-family: system-ui, sans-serif;
     font-size: 12px; color: var(--muted);
@@ -207,6 +250,72 @@
       of gipsen mogelijk, maar een bestaande contractuur verdwijnt er niet door. Dat verklaart waarom
       een technisch geslaagde injectie toch teleur kan stellen: als het probleem in de tweede of
       derde groep zat, was er niets te winnen.
+    </div>
+  </div>
+
+  <!-- ================= WEEFSEL ================= -->
+  <div class="sd-sectie">
+    <h2>Waarom een spier weerstand geeft</h2>
+    <p class="sd-sectie-uitleg">
+      De derde groep van hierboven — het weefsel zelf — uitgelegd. Een spier levert kracht op twee
+      manieren, en alleen de eerste heeft met aansturing te maken. Dat verklaart waarom je bij een
+      passief onderzoek weerstand voelt in een spier die helemaal niet aanstaat.
+    </p>
+
+    <div class="sd-fig">
+      <div class="sd-fig-titel">1 · Kracht tegen lengte</div>
+      <svg id="sdKrachtLengte" role="img" aria-label="Actieve, passieve en totale spierkracht uitgezet tegen de spierlengte"></svg>
+      <div class="sd-fig-bij">
+        <b>Actief</b> (blauw) is de kracht die de spier zelf maakt. Die is maximaal bij de
+        <b>optimale lengte</b> en zakt naar beide kanten weg: te kort of te lang overlappen actine en
+        myosine minder goed. <b>Passief</b> (rood) is de kracht van het weefsel zelf — bindweefsel,
+        titine, fascie. Die is <b>nul</b> tot de <b>slack-lengte</b> en loopt daarna steil op.
+        <b>Totaal</b> (zwart gestippeld) is de som. Let op de <b>kuil</b> ertussen: net voorbij de
+        optimale lengte kan de spier al minder zelf, terwijl het weefsel nog niet meedoet. Daar is
+        een spier op zijn zwakst.
+      </div>
+    </div>
+
+    <div class="sd-fig">
+      <div class="sd-fig-titel">2 · Wat er bij een spastische spier verandert</div>
+      <svg id="sdHoekKracht" role="img" aria-label="Passieve weerstand tegen gewrichtshoek, met instelbare stijfheid en slack-lengte"></svg>
+
+      <div class="sd-schuif">
+        <label for="sdStijf">Stijfheid van het weefsel</label>
+        <input type="range" id="sdStijf" min="0.7" max="1.8" step="0.05" value="1">
+        <div class="uiteinden"><span>soepel</span><span>stijf</span></div>
+
+        <label for="sdSlack">Slack-lengte</label>
+        <input type="range" id="sdSlack" min="-0.10" max="0.15" step="0.01" value="0">
+        <div class="uiteinden"><span>korter — eerder weerstand</span><span>langer — later</span></div>
+      </div>
+
+      <div class="sd-knoppen">
+        <button type="button" class="sd-knop" id="sdGezond">Gezond</button>
+        <button type="button" class="sd-knop" id="sdStijver">Alleen stijver</button>
+        <button type="button" class="sd-knop" id="sdSpastisch">Zoals in het model</button>
+      </div>
+
+      <div class="sd-uitlezing" id="sdUit"></div>
+
+      <div class="sd-fig-bij">
+        Twee knoppen, twee richtingen. <b>Stijfheid omhoog</b> tilt de curve op: bij dezelfde
+        gewrichtshoek meer weerstand. <b>Slack-lengte langer</b> schuift hem naar rechts: het weefsel
+        begint pas later te spannen. In het model van de dia gaan bij een spastische spier allebei
+        omhoog, en wint de stijfheid — netto dus meer weerstand dan gezond, maar minder dan de
+        stijfheid alleen zou geven. Schematisch weergegeven om de <em>richting</em> van beide
+        effecten te laten zien; de assen zijn relatief en het is geen patiëntberekening.
+      </div>
+    </div>
+
+    <div class="sd-vlag blauw">
+      <strong>Waarom dit voor de naald uitmaakt.</strong>
+      Botulinetoxine verlaagt alleen de actieve component. Voel je weerstand die er ook is als het
+      kind volledig ontspannen of onder narcose is, dan zit die in de rode curve — en daar doet een
+      injectie niets aan. Rekken, spalken en serieel gipsen mikken op de slack-lengte: het weefsel
+      later laten spannen, oftewel die curve naar rechts schuiven. Dat is een ander aangrijpingspunt
+      dan de naald, en de twee sluiten elkaar niet uit: minder overactiviteit maakt effectief rekken
+      pas mogelijk.
     </div>
   </div>
 
@@ -331,8 +440,9 @@
 
   <div class="sd-bron">
     <p>
-      <strong>Bron.</strong> Drie dia's uit een POBOT-cursus (postacademische training
-      spasticiteitsbehandeling met botulinetoxine): <em>Symptoms of the spastic paresis</em>,
+      <strong>Bron.</strong> Vier dia's uit een POBOT-cursus (postacademische training
+      spasticiteitsbehandeling met botulinetoxine): <em>Symptoms of the spastic paresis</em>, een dia
+      over weefseleigenschappen met <em>total muscle force vs. stretch</em>,
       <em>Clinical discrimination spasticity vs dystonia</em> en <em>Responsiveness to botulinum
       toxin</em>. Bij de laatste twee vermeld als bronnen:
       Lance, <em>Neurology</em> 1980; Pandyan e.a., <em>Disability and Rehabilitation</em> 2005;
@@ -348,6 +458,188 @@
 </div>
 
 <script>
+// ============================================================================
+// KRACHT-LENGTE EN HOEK-WEERSTAND
+//
+// Nagetekend naar een dia uit dezelfde POBOT-cursus. Bewust met eigen formules
+// getekend in plaats van de grafiek over te nemen: de VORM is wat telt, en die
+// volgt uit de standaardnatuurkunde van een spier.
+//
+//   actief   klokvorm rond de optimale lengte (actine-myosine-overlap)
+//   passief  nul tot de slack-lengte, daarna exponentieel
+//   totaal   de som van beide
+//
+// De tweede figuur is een schematisch model met twee knoppen, om de RICHTING
+// van beide effecten te tonen. De getallen zijn relatief; er staat geen
+// patient achter en de assen dragen bewust geen echte newtons.
+// ============================================================================
+(function () {
+  const INKT = '#0f2733', MUTED = '#6b7680', LIJN = '#E4E4E0';
+  const BLAUW = '#1f6f9c', ROOD = '#8E3617', ACCENT = '#0f4c5c';
+
+  function pad(punten) {
+    return punten.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  }
+  function tekst(x, y, t, opties) {
+    const o = opties || {};
+    return '<text x="' + x + '" y="' + y + '" font-family="system-ui, sans-serif" font-size="' +
+      (o.size || 9) + '"' + (o.anchor ? ' text-anchor="' + o.anchor + '"' : '') +
+      (o.bold ? ' font-weight="700"' : '') + ' fill="' + (o.fill || MUTED) + '">' + t + '</text>';
+  }
+
+  // ---------- figuur 1: kracht tegen lengte ----------
+  function krachtLengte() {
+    const B = 340, H = 215, L = 34, R = 10, T = 16, O = 34;
+    const x0 = 0.4, x1 = 1.8, yMax = 2.0;
+    const X = l => L + (l - x0) / (x1 - x0) * (B - L - R);
+    const Y = f => (H - O) - Math.min(f, yMax) / yMax * (H - O - T);
+
+    const actief  = l => Math.exp(-Math.pow((l - 1) / 0.40, 2));
+    const SLACK = 1.05;
+    const passief = l => (l <= SLACK ? 0 : (Math.exp(6 * (l - SLACK)) - 1) / 30);
+
+    const pA = [], pP = [], pT = [];
+    for (let l = x0; l <= x1 + 1e-9; l += 0.01) {
+      pA.push([X(l), Y(actief(l))]);
+      pP.push([X(l), Y(passief(l))]);
+      pT.push([X(l), Y(actief(l) + passief(l))]);
+    }
+
+    let s = '';
+    // assen
+    s += '<line x1="' + L + '" y1="' + (H - O) + '" x2="' + (B - R) + '" y2="' + (H - O) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+    s += '<line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (H - O) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+    [[0.4, '0,4'], [1.0, '1,0'], [1.8, '1,8']].forEach(t => {
+      s += '<line x1="' + X(t[0]).toFixed(1) + '" y1="' + (H - O) + '" x2="' + X(t[0]).toFixed(1) + '" y2="' + (H - O + 4) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+      s += tekst(X(t[0]), H - O + 14, t[1], { anchor: 'middle' });
+    });
+    s += tekst(X(0.65), H - O + 25, 'verkorten \u2190', { anchor: 'middle' });
+    s += tekst(X(1.45), H - O + 25, '\u2192 verlengen', { anchor: 'middle' });
+    s += tekst(4, T + 4, 'kracht', { size: 8.5 });
+
+    // optimale lengte en slack
+    s += '<line x1="' + X(1).toFixed(1) + '" y1="' + T + '" x2="' + X(1).toFixed(1) + '" y2="' + (H - O) + '" stroke="' + MUTED + '" stroke-width="0.9" stroke-dasharray="3 3"/>';
+    s += tekst(X(1) + 4, T + 9, 'optimale lengte', { size: 8.5 });
+    s += '<line x1="' + X(SLACK).toFixed(1) + '" y1="' + Y(0) + '" x2="' + X(SLACK).toFixed(1) + '" y2="' + (Y(0) - 16) + '" stroke="' + ROOD + '" stroke-width="0.9"/>';
+    s += tekst(X(SLACK) + 4, Y(0) - 18, 'slack-lengte', { fill: ROOD, size: 8.5, bold: true });
+
+    // curves
+    s += '<path d="' + pad(pP) + '" fill="none" stroke="' + ROOD + '" stroke-width="2.4"/>';
+    s += '<path d="' + pad(pA) + '" fill="none" stroke="' + BLAUW + '" stroke-width="2.4"/>';
+    s += '<path d="' + pad(pT) + '" fill="none" stroke="' + INKT + '" stroke-width="2" stroke-dasharray="4 3"/>';
+
+    // de kuil aanwijzen met een pijltje van boven; de uitleg staat in het bijschrift
+    const kuilL = 1.42, kuilY = Y(actief(kuilL) + passief(kuilL));
+    s += '<path d="M' + X(kuilL).toFixed(1) + ' ' + (kuilY - 22) + ' L' + X(kuilL).toFixed(1) + ' ' + (kuilY - 7) +
+      ' M' + (X(kuilL) - 3.5).toFixed(1) + ' ' + (kuilY - 12) + ' L' + X(kuilL).toFixed(1) + ' ' + (kuilY - 6) +
+      ' L' + (X(kuilL) + 3.5).toFixed(1) + ' ' + (kuilY - 12) + '" fill="none" stroke="' + INKT + '" stroke-width="1.1"/>';
+    s += tekst(X(kuilL), kuilY - 26, 'de kuil', { anchor: 'middle', fill: INKT, size: 8.5, bold: true });
+
+    // legenda
+    const lx = L + 6, ly = T + 6;
+    [[BLAUW, 'actief', 0], [ROOD, 'passief', 12], [INKT, 'totaal', 24]].forEach(g => {
+      s += '<line x1="' + lx + '" y1="' + (ly + g[2]) + '" x2="' + (lx + 16) + '" y2="' + (ly + g[2]) +
+        '" stroke="' + g[0] + '" stroke-width="2.4"' + (g[1] === 'totaal' ? ' stroke-dasharray="4 3"' : '') + '/>';
+      s += tekst(lx + 21, ly + g[2] + 3, g[1], { fill: INKT, size: 9 });
+    });
+
+    document.getElementById('sdKrachtLengte').setAttribute('viewBox', '0 0 ' + B + ' ' + H);
+    document.getElementById('sdKrachtLengte').innerHTML = s;
+  }
+
+  // ---------- figuur 2: weerstand tegen gewrichtshoek ----------
+  const SLACK0 = -0.85, STEIL = 3.2, SCHAAL = 10.6, DREMPEL = 150;
+  function weerstand(hoek, stijf, verschuif) {
+    const s = SLACK0 + verschuif;
+    return hoek <= s ? 0 : stijf * SCHAAL * (Math.exp(STEIL * (hoek - s)) - 1);
+  }
+  // Bij welke hoek wordt de weerstand merkbaar? Analytisch terug te rekenen.
+  function drempelHoek(stijf, verschuif) {
+    return SLACK0 + verschuif + Math.log(DREMPEL / (stijf * SCHAAL) + 1) / STEIL;
+  }
+  const graden = r => (r * 180 / Math.PI);
+
+  function hoekKracht() {
+    const svg = document.getElementById('sdHoekKracht');
+    const stijf = parseFloat(document.getElementById('sdStijf').value);
+    const verschuif = parseFloat(document.getElementById('sdSlack').value);
+
+    const B = 340, H = 225, L = 36, R = 10, T = 14, O = 38;
+    const x0 = -1.0, x1 = 0.4, yMax = 500;
+    const X = a => L + (a - x0) / (x1 - x0) * (B - L - R);
+    const Y = f => (H - O) - Math.min(f, yMax) / yMax * (H - O - T);
+
+    function curve(k, v) {
+      const p = [];
+      for (let a = x0; a <= x1 + 1e-9; a += 0.01) p.push([X(a), Y(weerstand(a, k, v))]);
+      return p;
+    }
+
+    let s = '';
+    s += '<line x1="' + L + '" y1="' + (H - O) + '" x2="' + (B - R) + '" y2="' + (H - O) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+    s += '<line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (H - O) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+    [-0.8, -0.4, 0, 0.4].forEach(a => {
+      s += '<line x1="' + X(a).toFixed(1) + '" y1="' + (H - O) + '" x2="' + X(a).toFixed(1) + '" y2="' + (H - O + 4) + '" stroke="' + LIJN + '" stroke-width="1.2"/>';
+      s += tekst(X(a), H - O + 14, Math.round(graden(a)) + '\u00b0', { anchor: 'middle' });
+    });
+    s += tekst((L + B - R) / 2, H - O + 27, 'gewrichtshoek \u2014 naar rechts = verder rekken', { anchor: 'middle', size: 8.5 });
+    s += tekst(4, T + 4, 'weerstand', { size: 8.5 });
+
+    // drempel
+    s += '<line x1="' + L + '" y1="' + Y(DREMPEL) + '" x2="' + (B - R) + '" y2="' + Y(DREMPEL) + '" stroke="' + MUTED + '" stroke-width="0.9" stroke-dasharray="3 3"/>';
+    s += tekst(B - R - 2, Y(DREMPEL) - 4, 'merkbare weerstand', { anchor: 'end', size: 8.5 });
+
+    // gezonde referentie
+    s += '<path d="' + pad(curve(1, 0)) + '" fill="none" stroke="' + MUTED + '" stroke-width="2.4" stroke-dasharray="6 3"/>';
+    // huidige instelling
+    const anders = Math.abs(stijf - 1) > 0.001 || Math.abs(verschuif) > 0.001;
+    s += '<path d="' + pad(curve(stijf, verschuif)) + '" fill="none" stroke="' + (anders ? ROOD : ACCENT) + '" stroke-width="2.6"/>';
+
+    // waar snijden ze de drempel
+    [[1, 0, MUTED], [stijf, verschuif, anders ? ROOD : ACCENT]].forEach(g => {
+      const d = drempelHoek(g[0], g[1]);
+      if (d >= x0 && d <= x1) {
+        s += '<circle cx="' + X(d).toFixed(1) + '" cy="' + Y(DREMPEL) + '" r="3.4" fill="' + g[2] + '"/>';
+      }
+    });
+
+    s += tekst(L + 6, H - O - 8, 'gestippeld grijs = gezond', { size: 8.5 });
+
+    svg.setAttribute('viewBox', '0 0 ' + B + ' ' + H);
+    svg.innerHTML = s;
+
+    // uitlezing
+    const dG = graden(drempelHoek(1, 0));
+    const dH = graden(drempelHoek(stijf, verschuif));
+    const verschil = dH - dG;
+    let zin;
+    if (Math.abs(verschil) < 0.5) {
+      zin = 'Deze spier komt op vrijwel dezelfde hoek bij een merkbare weerstand als een gezonde.';
+    } else if (verschil < 0) {
+      zin = 'Deze spier geeft <b>' + Math.abs(verschil).toFixed(0) + '\u00b0 eerder</b> merkbare weerstand dan een gezonde \u2014 het eindgevoel komt vroeger in de beweging.';
+    } else {
+      zin = 'Deze spier geeft <b>' + verschil.toFixed(0) + '\u00b0 later</b> merkbare weerstand dan een gezonde.';
+    }
+    document.getElementById('sdUit').innerHTML =
+      zin + '<br><span style="color:#6b7680;font-size:12px;">Stijfheid ' +
+      (stijf * 100).toFixed(0) + '% van gezond, slack-lengte ' +
+      (verschuif === 0 ? 'gelijk aan gezond' : (verschuif > 0 ? verschuif.toFixed(2) + ' rad langer' : Math.abs(verschuif).toFixed(2) + ' rad korter')) + '.</span>';
+  }
+
+  function zet(stijf, slack) {
+    document.getElementById('sdStijf').value = stijf;
+    document.getElementById('sdSlack').value = slack;
+    hoekKracht();
+  }
+
+  krachtLengte();
+  ['sdStijf', 'sdSlack'].forEach(id => document.getElementById(id).addEventListener('input', hoekKracht));
+  document.getElementById('sdGezond').addEventListener('click', () => zet(1, 0));
+  document.getElementById('sdStijver').addEventListener('click', () => zet(1.5, 0));
+  document.getElementById('sdSpastisch').addEventListener('click', () => zet(1.5, 0.06));
+  hoekKracht();
+})();
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
