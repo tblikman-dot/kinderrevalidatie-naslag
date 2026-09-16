@@ -262,10 +262,15 @@
         </select>
       </div>
       <div>
-        <label class="gr-veldnaam" for="grLeeftijd">Leeftijd <em>(jaar — zie hierboven)</em></label>
-        <input type="number" id="grLeeftijd" class="gr-veld" inputmode="decimal" min="0" max="20" step="0.5" placeholder="bijv. 9">
+        <label class="gr-veldnaam" for="grJaar">Leeftijd <em>(jaar)</em></label>
+        <input type="number" id="grJaar" class="gr-veld" inputmode="numeric" min="0" max="20" step="1" placeholder="bijv. 10">
+      </div>
+      <div>
+        <label class="gr-veldnaam" for="grMnd">en <em>(maanden)</em></label>
+        <input type="number" id="grMnd" class="gr-veld" inputmode="numeric" min="0" max="11" step="1" placeholder="0">
       </div>
     </div>
+    <div class="gr-onder" id="grLeeftijdUit" style="margin-top:6px;"></div>
 
     <div id="grVerschilVeld">
       <label class="gr-veldnaam" for="grVerschil">Huidig beenlengteverschil <em>(cm)</em></label>
@@ -639,10 +644,22 @@ function leeg(bericht) {
 
 function rekenen() {
   const geslacht = document.getElementById('grGeslacht').value;
-  const leeftijd = getal('grLeeftijd');
+  // Leeftijd als jaren + maanden, zoals de Multiplier-app hem vraagt. Decimale
+  // jaren zelf uitrekenen is een onnodige foutenbron: 10 jaar 4 maanden is
+  // 10,33 en niet 10,4, en de multiplier hangt daaraan.
+  const jaarIn = getal('grJaar'), mndIn = getal('grMnd');
+  const leeftijd = (jaarIn === null && mndIn === null)
+    ? null : (jaarIn || 0) + (mndIn || 0) / 12;
+  const leeftijdVak = document.getElementById('grLeeftijdUit');
+  if (leeftijdVak) {
+    leeftijdVak.textContent = (leeftijd === null)
+      ? ''
+      : 'Dat is ' + komma(leeftijd, 2) + ' jaar decimaal — daarmee wordt gerekend.' +
+        ((mndIn !== null && mndIn > 11) ? ' Meer dan 11 maanden hoort bij het volgende jaar.' : '');
+  }
 
   if (leeftijd === null || leeftijd < 0) {
-    leeg('Vul de skeletleeftijd in, dan verschijnt hier de uitkomst.');
+    leeg('Vul de leeftijd in, dan verschijnt hier de uitkomst.');
     return;
   }
 
@@ -842,7 +859,7 @@ document.getElementById('grSchakel').addEventListener('click', e => {
   rekenen();
 });
 
-['grGeslacht', 'grLeeftijd', 'grVerschil', 'grToename', 'grVerlenging',
+['grGeslacht', 'grJaar', 'grMnd', 'grVerschil', 'grToename', 'grVerlenging',
  'grNuKort', 'grNuLang', 'grVorigKort', 'grVorigLang',
  'grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => {
   const el = document.getElementById(id);
