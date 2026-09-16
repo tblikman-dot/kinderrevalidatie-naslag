@@ -1732,7 +1732,13 @@ function toonEerdereOpname(inv, P, langNaam, kortNaam, langsIsL, ietsDicht) {
   const verwacht = langsIsL ? (nuR / nuL) : (nuL / nuR);
   const vorigVerschil = Math.abs(vorigL - vorigR), nuVerschil = Math.abs(nuL - nuR);
   const restLang = P.restFemLang + P.restTibLang;
-  const DmGemeten = nuVerschil - restLang * (1 - verhouding);
+  // Paley, ontwikkelingsverschil: verschil bij rijpheid = verschil nu plus de
+  // groeiremming maal de restgroei van het LANGE been. De remming is 1 minus de
+  // gemeten verhouding; een korte zijde die achterblijft laat het verschil dus
+  // groeien. Hier stond een min in plaats van een plus, waardoor het verschil
+  // juist kromp — gevonden door het doorgerekende voorbeeld uit het erratum van
+  // Sanders e.a. (J Child Orthop 2007;1:217) na te rekenen.
+  const DmGemeten = nuVerschil + restLang * (1 - verhouding);
 
   let h = '<div class="ep-tabel-scroll" style="margin-top:12px;"><table class="ep-tabel">' +
     '<thead><tr><th>Gemeten tussen beide opnames</th><th class="getal">Lang been (' + langNaam +
