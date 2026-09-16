@@ -51,11 +51,11 @@
     margin-bottom: 16px;
   }
   .gr-schakel button {
-    flex: 1; padding: 10px 8px;
+    flex: 1; min-width: 0; padding: 10px 4px;
     border: none; border-radius: 8px;
     background: transparent;
     font-family: system-ui, sans-serif;
-    font-size: 13.5px; font-weight: 700;
+    font-size: 13px; font-weight: 700;
     color: var(--muted); cursor: pointer;
     line-height: 1.25;
   }
@@ -160,6 +160,7 @@
   .gr-vlag.groen  { background: #E3F3EA; color: #0B5C38; }
   .gr-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
   .gr-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+  .gr-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
 
   .gr-sectie { margin-top: 32px; }
   .gr-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
@@ -236,10 +237,13 @@
 
   <div class="gr-schakel" id="grSchakel">
     <button type="button" data-modus="vuistregel" class="actief">
-      Vuistregel<span class="sub">rekent zelf, groeisnelheden instelbaar</span>
+      Vuistregel<span class="sub">zelf rekenen</span>
     </button>
     <button type="button" data-modus="multiplier">
-      Multiplier<span class="sub">factor uit de tabel</span>
+      Aangeboren<span class="sub">× multiplier</span>
+    </button>
+    <button type="button" data-modus="ontwikkeling">
+      Ontwikkeling<span class="sub">uit 2 metingen</span>
     </button>
   </div>
 
@@ -261,10 +265,53 @@
       </div>
     </div>
 
-    <label class="gr-veldnaam" for="grVerschil">Huidig beenlengteverschil <em>(cm)</em></label>
-    <input type="number" id="grVerschil" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 2,5">
+    <div id="grVerschilVeld">
+      <label class="gr-veldnaam" for="grVerschil">Huidig beenlengteverschil <em>(cm)</em></label>
+      <input type="number" id="grVerschil" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 2,5">
+    </div>
 
     <div id="grMultiplierVeld" hidden>
+      <label class="gr-veldnaam" for="grVerlenging">Eerdere verlenging(en) <em>(cm, optioneel)</em></label>
+      <input type="number" id="grVerlenging" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="leeg = nog niet verlengd">
+      <div class="gr-onder" style="margin-top:5px;">
+        Is er al verlengd, vul dan het totaal aantal gewonnen centimeters in. Die centimeters
+        groeien niet mee, dus ze vertekenen het verschil dat je nu meet.
+      </div>
+    </div>
+
+    <div id="grOntwikkelVeld" hidden>
+      <label class="gr-veldnaam">Huidige meting <em>(cm)</em></label>
+      <div class="gr-duo">
+        <div>
+          <label class="gr-veldnaam" for="grNuKort">Korte been</label>
+          <input type="number" id="grNuKort" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 31,0">
+        </div>
+        <div>
+          <label class="gr-veldnaam" for="grNuLang">Lange been</label>
+          <input type="number" id="grNuLang" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 33,0">
+        </div>
+      </div>
+
+      <label class="gr-veldnaam" style="margin-top:12px;">Vorige meting <em>(cm)</em></label>
+      <div class="gr-duo">
+        <div>
+          <label class="gr-veldnaam" for="grVorigKort">Korte been</label>
+          <input type="number" id="grVorigKort" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 30,1">
+        </div>
+        <div>
+          <label class="gr-veldnaam" for="grVorigLang">Lange been</label>
+          <input type="number" id="grVorigLang" class="gr-veld" inputmode="decimal" min="0" step="0.1" placeholder="bijv. 31,0">
+        </div>
+      </div>
+
+      <div class="gr-factor" id="grRemmingTonen"></div>
+      <div class="gr-onder" style="margin-top:8px;">
+        Meet aan beide zijden hetzelfde: femur, tibia of het hele been — als het maar consequent is.
+        De leeftijd bij de vorige meting is niet nodig: die valt in de formule weg.
+      </div>
+    </div>
+
+    <div id="grFactorVeld" hidden>
       <div class="gr-factor" id="grFactorTonen"></div>
     </div>
 
@@ -314,7 +361,25 @@
     <h2>Hoe je dit leest</h2>
     <ul class="gr-lijst">
       <li><strong>Epifysiodese is de gebruikelijke keuze bij een voorspeld verschil van ongeveer 2 tot 5 cm.</strong> Daarboven komt verlengen in beeld, met een veel langer traject. Dat sluit aan op de indeling die je al bij beenlengteverschil hebt staan.</li>
-      <li><strong>De multiplier gaat uit van een vaste verhouding.</strong> De methode neemt aan dat de verhouding tussen het korte en het lange been gelijk blijft — dat geldt voor aangeboren verschillen. Bij een verschil door een doorgemaakte fractuur, infectie of groeistoornis klopt die aanname vaak niet, en zegt de gemeten toename per jaar meer.</li>
+      <li><strong>Aangeboren of ontwikkeld is geen etiket maar een andere formule.</strong>
+        Bij een <em>aangeboren</em> verschil blijft het korte been dezelfde fractie van het lange.
+        De remming ligt dus vast, het verschil groeit evenredig mee, en één meting volstaat:
+        verschil × multiplier. Bij een <em>ontwikkelings- of verworven</em> verschil — na een
+        fractuur door de groeischijf, een infectie, Perthes, een halfzijdige groeistoornis — ligt
+        de remming juist niet vast. Die moet je meten, en daar heb je twee opnames voor nodig.
+        Kies het tabblad dat bij de oorzaak past; dezelfde centimeters leveren anders een heel
+        ander eindgetal op.</li>
+      <li><strong>Bij twee metingen valt de tussenpoos weg uit de som.</strong>
+        De remming is <em>1 − (toename kort ÷ toename lang)</em>: een verhouding van twee
+        toenames over dezelfde periode. Hoe lang die periode was, staat in teller én noemer en
+        valt dus weg — je hoeft de leeftijd bij de vorige opname niet te weten. Wat wél uitmaakt
+        is hoe <em>groot</em> de toenames zijn: bij een korte tussenpoos deel je door een klein
+        getal en wordt de uitkomst overgevoelig voor meetfouten. Minstens een jaar ertussen.</li>
+      <li><strong>Een eerdere verlenging vertekent het verschil dat je meet.</strong>
+        Gewonnen centimeters groeien niet mee. Ze horen dus buiten de vermenigvuldiging: eerst
+        terug optellen bij het huidige verschil, dan vermenigvuldigen, en er daarna weer af.
+        Vergeet je die correctie, dan valt de voorspelling te laag uit — precies de kant waarop
+        je te laat verwijst.</li>
       <li><strong>Remmen kan aan femur, tibia of allebei.</strong> Rond de knie levert de distale femur het meeste op. Bij een grotere correctie wordt vaak allebei geremd, wat ook de verhouding tussen boven- en onderbeen verandert.</li>
       <li><strong>Een epifysiodese maakt het lange been niet korter</strong> — het houdt op met groeien terwijl het andere doorgaat. De correctie ontstaat dus geleidelijk, over de resterende groeijaren.</li>
       <li><strong>Groeisturing met plaatjes is iets anders.</strong> Een hemi-epifysiodese met een achtplaatje corrigeert een standsafwijking zoals genu valgum of varum, niet een lengteverschil. Zelfde principe, andere indicatie.</li>
@@ -416,10 +481,15 @@ const TEKSTEN = {
     uitleg: 'Deze pagina rekent zelf, met instelbare groeisnelheden rond de knie.',
   },
   multiplier: {
-    titel: 'Rekenen met de multiplier',
-    uitleg: 'De factor wordt opgezocht bij dit geslacht en deze skeletleeftijd.',
+    titel: 'Aangeboren verschil',
+    uitleg: 'De remming is een vast percentage: het korte been blijft dezelfde fractie van het lange. Het verschil groeit dus evenredig mee, en één meting volstaat.',
+  },
+  ontwikkeling: {
+    titel: 'Ontwikkelingsverschil',
+    uitleg: 'De remming ligt niet vast en wordt daarom gemeten: uit twee opnames volgt hoeveel het korte been achterbleef, en dat percentage wordt over de resterende groei geprojecteerd.',
   },
 };
+const MODI = ['vuistregel', 'multiplier', 'ontwikkeling'];
 
 function getal(id) {
   const el = document.getElementById(id);
@@ -441,7 +511,7 @@ function laadKeuze() {
     const rauw = localStorage.getItem(SLEUTEL);
     if (!rauw) return;
     const b = JSON.parse(rauw);
-    if (b.modus === 'vuistregel' || b.modus === 'multiplier') modus = b.modus;
+    if (MODI.indexOf(b.modus) !== -1) modus = b.modus;
     ['grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => {
       if (b[id] !== undefined && b[id] !== null && b[id] !== '') document.getElementById(id).value = b[id];
     });
@@ -463,7 +533,27 @@ function tekenSchakel() {
   document.getElementById('grKaartTitel').textContent = TEKSTEN[modus].titel;
   document.getElementById('grKaartUitleg').textContent = TEKSTEN[modus].uitleg;
   document.getElementById('grMultiplierVeld').hidden = (modus !== 'multiplier');
+  document.getElementById('grOntwikkelVeld').hidden = (modus !== 'ontwikkeling');
   document.getElementById('grVuistregelVeld').hidden = (modus !== 'vuistregel');
+  document.getElementById('grFactorVeld').hidden = (modus === 'vuistregel');
+  // bij een ontwikkelingsverschil komt het huidige verschil uit de twee lengtes
+  document.getElementById('grVerschilVeld').hidden = (modus === 'ontwikkeling');
+}
+
+// De multiplierfactor met het voorbehoud dat bij deze leeftijd hoort. Wordt in
+// beide multipliermodi gebruikt.
+function toonFactor(leeftijd, geslacht, factor) {
+  const tot = multiplierTot(geslacht);
+  let let_op = '';
+  if (leeftijd > tot) {
+    let_op = `<span class="let">De tabel loopt voor ${geslacht === 'jongen' ? 'jongens' : 'meisjes'} tot ${komma(tot)} jaar. Daarboven is er geen groei meer, dus factor 1,00.</span>`;
+  } else if (Math.abs(leeftijd - 3.08) < 0.001 && geslacht !== 'jongen') {
+    let_op = `<span class="let">Let op: in de gepubliceerde tabel staat hier ${MULT_ZETFOUT.gedrukt} afgedrukt. Dat is een zetfout — de buren zijn 2,05 en 2,01, en de Multiplier-app zelf geeft hier 2,032 — dus hier wordt ${MULT_ZETFOUT.gebruikt} gebruikt.</span>`;
+  } else if (Math.abs(leeftijd - 12.75) < 0.001) {
+    let_op = `<span class="let">Let op: ${MULT_ONTBRAK.leeftijd} ontbreekt in de gepubliceerde tabel; deze factor is het midden tussen de buren.</span>`;
+  }
+  document.getElementById('grFactorTonen').innerHTML =
+    `Multiplier bij ${geslacht === 'jongen' ? 'een jongen' : 'een meisje'} van ${komma(leeftijd)} jaar: <b>${komma(factor, 2)}</b>${let_op}`;
 }
 
 function leeg(bericht) {
@@ -474,10 +564,9 @@ function leeg(bericht) {
 function rekenen() {
   const geslacht = document.getElementById('grGeslacht').value;
   const leeftijd = getal('grLeeftijd');
-  const huidig = getal('grVerschil');
 
-  if (leeftijd === null || huidig === null || leeftijd < 0 || huidig < 0) {
-    leeg('Vul de leeftijd en het huidige verschil in, dan verschijnt hier de uitkomst.');
+  if (leeftijd === null || leeftijd < 0) {
+    leeg('Vul de skeletleeftijd in, dan verschijnt hier de uitkomst.');
     return;
   }
 
@@ -492,25 +581,106 @@ function rekenen() {
   const jarenGroei = Math.max(0, eindeGroei - leeftijd);
 
   // voorspeld verschil bij einde groei
-  let voorspeld, hoe;
-  if (modus === 'multiplier') {
-    const factor = multiplierVoor(leeftijd, geslacht);
-    voorspeld = huidig * factor;
-    hoe = `${komma(huidig)} cm × multiplier ${komma(factor, 2)}`;
+  let huidig, voorspeld, hoe;
+  let extraRegels = '';
+  let extraVlag = '';
 
-    // de gebruikte factor laten zien, inclusief het voorbehoud waar dat speelt
-    const tot = multiplierTot(geslacht);
-    let let_op = '';
-    if (leeftijd > tot) {
-      let_op = `<span class="let">De tabel loopt voor ${geslacht === 'jongen' ? 'jongens' : 'meisjes'} tot ${komma(tot)} jaar. Daarboven is er geen groei meer, dus factor 1,00.</span>`;
-    } else if (Math.abs(leeftijd - 3.08) < 0.001 && geslacht !== 'jongen') {
-      let_op = `<span class="let">Let op: in de gepubliceerde tabel staat hier ${MULT_ZETFOUT.gedrukt} afgedrukt. Dat is een zetfout — de buren zijn 2,05 en 2,01, en de Multiplier-app zelf geeft hier 2,032 — dus hier wordt ${MULT_ZETFOUT.gebruikt} gebruikt.</span>`;
-    } else if (Math.abs(leeftijd - 12.75) < 0.001) {
-      let_op = `<span class="let">Let op: ${MULT_ONTBRAK.leeftijd} ontbreekt in de gepubliceerde tabel; deze factor is het midden tussen de buren.</span>`;
+  if (modus === 'ontwikkeling') {
+    // Paley, ontwikkelingsverschil: de remming volgt uit twee metingen en wordt
+    // daarna over de resterende groei van het lange been geprojecteerd.
+    //   remming = 1 - (toename kort / toename lang)
+    //   verschil bij rijpheid = verschil nu + remming x lengte lang x (M - 1)
+    // De leeftijd bij de vorige meting is niet nodig: die valt weg in de deling.
+    const nuKort = getal('grNuKort'), nuLang = getal('grNuLang');
+    const vorigKort = getal('grVorigKort'), vorigLang = getal('grVorigLang');
+    document.getElementById('grRemmingTonen').innerHTML = '';
+
+    if (nuKort === null || nuLang === null || vorigKort === null || vorigLang === null) {
+      leeg('Vul beide metingen in: het korte en het lange been, nu en de vorige keer.');
+      return;
     }
-    document.getElementById('grFactorTonen').innerHTML =
-      `Multiplier bij ${geslacht === 'jongen' ? 'een jongen' : 'een meisje'} van ${komma(leeftijd)} jaar: <b>${komma(factor, 2)}</b>${let_op}`;
+    huidig = nuLang - nuKort;
+    if (huidig < 0) {
+      leeg('Het "lange" been is hier korter dan het "korte". Controleer of de velden niet verwisseld staan.');
+      return;
+    }
+    const dLang = nuLang - vorigLang;
+    const dKort = nuKort - vorigKort;
+    if (dLang <= 0) {
+      leeg('Het lange been is tussen de twee metingen niet gegroeid. Zonder groei aan de lange kant valt er geen remming te berekenen — controleer de metingen, of wacht een controle af.');
+      return;
+    }
+
+    const remming = 1 - dKort / dLang;
+    const factor = multiplierVoor(leeftijd, geslacht);
+    toonFactor(leeftijd, geslacht, factor);
+    const restLang = nuLang * (factor - 1);
+    voorspeld = huidig + remming * restLang;
+    hoe = `${komma(huidig)} cm nu, plus ${komma(remming * 100, 0)}% remming over ${komma(restLang)} cm restgroei van het lange been`;
+
+    document.getElementById('grRemmingTonen').innerHTML =
+      `Groeiremming: <b>${komma(remming * 100, 0)}%</b><span class="let">Het korte been groeide ${komma(dKort)} cm terwijl het lange ${komma(dLang)} cm groeide.</span>`;
+
+    extraRegels = `
+      <div><span>Verschil nu</span><span>${esc(komma(huidig))} cm</span></div>
+      <div><span>Groeiremming</span><span>${esc(komma(remming * 100, 0))}%</span></div>
+      <div><span>Restgroei lange been</span><span>${esc(komma(restLang))} cm</span></div>`;
+
+    if (dLang < 1) {
+      extraVlag += `<div class="gr-vlag oranje">
+        <strong>De twee metingen liggen dicht bij elkaar</strong>
+        Het lange been groeide maar ${esc(komma(dLang))} cm ertussen. De remming is een deling
+        door dat getal, dus een meetfout van een paar millimeter slaat hier hard door. Neem bij
+        voorkeur opnames met minstens een jaar ertussen.</div>`;
+    }
+    if (remming < 0) {
+      extraVlag += `<div class="gr-vlag groen">
+        <strong>Het korte been loopt in</strong>
+        Het groeide in deze periode harder dan het lange. Bij een negatieve remming wordt het
+        verschil bij einde groei kleiner dan het nu is. Ga na of dat past bij het beloop, of dat
+        er een meetfout in zit.</div>`;
+    }
+    if (remming > 1) {
+      extraVlag += `<div class="gr-vlag rood">
+        <strong>Remming boven 100%</strong>
+        Dat zou betekenen dat het korte been korter is geworden, en dat kan niet door groei.
+        Controleer de metingen; bij een volledige groeistop hoort precies 100%.</div>`;
+    }
+  } else if (modus === 'multiplier') {
+    huidig = getal('grVerschil');
+    if (huidig === null || huidig < 0) {
+      leeg('Vul het huidige verschil in, dan verschijnt hier de uitkomst.');
+      return;
+    }
+    const verlenging = getal('grVerlenging') || 0;
+    const factor = multiplierVoor(leeftijd, geslacht);
+    toonFactor(leeftijd, geslacht, factor);
+
+    // Verlengde centimeters groeien niet mee. Ze horen dus buiten de
+    // vermenigvuldiging: eerst terug optellen bij het verschil, dan
+    // vermenigvuldigen, dan er weer af. Zonder verlenging blijft dit precies
+    // verschil x multiplier.
+    voorspeld = (huidig + verlenging) * factor - verlenging;
+    hoe = verlenging > 0
+      ? `(${komma(huidig)} + ${komma(verlenging)}) cm × multiplier ${komma(factor, 2)} − ${komma(verlenging)} cm`
+      : `${komma(huidig)} cm × multiplier ${komma(factor, 2)}`;
+
+    if (verlenging > 0) {
+      extraRegels = `
+        <div><span>Verschil zonder de verlenging</span><span>${esc(komma(huidig + verlenging))} cm</span></div>
+        <div><span>Eerder gewonnen</span><span>${esc(komma(verlenging))} cm</span></div>`;
+      extraVlag += `<div class="gr-vlag blauw">
+        <strong>De eerdere verlenging is meegerekend</strong>
+        De ${esc(komma(verlenging))} cm die al gewonnen is groeit niet mee, en zit dus niet in de
+        vermenigvuldiging. Zonder die correctie zou de uitkomst
+        ${esc(komma(huidig * factor))} cm zijn geweest — te laag.</div>`;
+    }
   } else {
+    huidig = getal('grVerschil');
+    if (huidig === null || huidig < 0) {
+      leeg('Vul het huidige verschil in, dan verschijnt hier de uitkomst.');
+      return;
+    }
     const toename = getal('grToename') || 0;
     voorspeld = huidig + toename * jarenGroei;
     hoe = toename > 0
@@ -527,7 +697,13 @@ function rekenen() {
   const uitersteBeide = eindeGroei - voorspeldMm / (femurMm + tibiaMm);
 
   let vlag;
-  if (jarenGroei <= 0) {
+  if (voorspeld <= 0) {
+    vlag = `<div class="gr-vlag groen">
+      <strong>Er blijft geen verschil over</strong>
+      Met deze cijfers haalt het korte been de achterstand in en gaat het er zelfs overheen.
+      Remmen is dan niet aan de orde — bij een negatieve remming is de vraag eerder of de
+      metingen kloppen en of de zijden niet verwisseld zijn.</div>`;
+  } else if (jarenGroei <= 0) {
     vlag = `<div class="gr-vlag rood">
       <strong>De groei is voorbij</strong>
       Er valt niets meer te remmen, dus een epifysiodese is geen optie meer. Wat overblijft is
@@ -553,7 +729,9 @@ function rekenen() {
 
   // waar het in de behandelindeling valt
   let plaats = '';
-  if (voorspeld < 2) {
+  if (voorspeld <= 0) {
+    plaats = '';
+  } else if (voorspeld < 2) {
     plaats = 'Onder de 2 cm wordt meestal niet geopereerd; een schoenverhoging volstaat vaak.';
   } else if (voorspeld <= 5) {
     plaats = 'Tussen ongeveer 2 en 5 cm is een epifysiodese de gebruikelijke keuze.';
@@ -567,6 +745,7 @@ function rekenen() {
     <div class="gr-onder">${esc(hoe)}</div>
 
     <div class="gr-regels">
+      ${extraRegels}
       <div><span>Resterende groei</span><span>${esc(komma(jarenGroei))} jaar</span></div>
       <div><span>Correctie via femur</span><span>${esc(komma(correctieFemur))} cm</span></div>
       <div><span>Via femur + tibia</span><span>${esc(komma(correctieBeide))} cm</span></div>
@@ -574,6 +753,7 @@ function rekenen() {
     </div>
 
     ${vlag}
+    ${extraVlag}
     <div class="gr-onder" style="margin-top:12px;">${esc(plaats)}</div>`;
 }
 
@@ -586,7 +766,8 @@ document.getElementById('grSchakel').addEventListener('click', e => {
   rekenen();
 });
 
-['grGeslacht', 'grLeeftijd', 'grVerschil', 'grToename',
+['grGeslacht', 'grLeeftijd', 'grVerschil', 'grToename', 'grVerlenging',
+ 'grNuKort', 'grNuLang', 'grVorigKort', 'grVorigLang',
  'grEindeM', 'grEindeJ', 'grFemur', 'grTibia'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', () => {
