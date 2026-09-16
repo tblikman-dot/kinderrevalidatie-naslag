@@ -366,9 +366,10 @@
       <label><input type="radio" name="epBasis" value="k"> Kalenderleeftijd</label>
     </div>
     <div class="ep-hint">
-      De multipliertabel is op kalenderleeftijd gepubliceerd, maar bij een kind dat voor- of
-      achterloopt in rijping is de skeletleeftijd fysiologisch de juistere invoer. Lopen beide ver
-      uiteen, dan verschijnt hieronder wat de andere basis zou opleveren.
+      De multipliertabel is afgeleid uit gegevens op kalenderleeftijd, en Paley prefereert die in
+      de meeste gevallen ook. Vanaf ongeveer tien jaar draait dat om: rond de puberteitsgroeispurt
+      lopen kalender- en skeletleeftijd uiteen, en dan is de botleeftijd de betere invoer. Beide
+      basissen staan altijd naast elkaar in de uitkomst, zodat je ziet hoeveel het scheelt.
     </div>
 
     <div class="ep-groep">Segmentlengtes op de langebeenopname</div>
@@ -498,6 +499,28 @@
           <label class="ep-veldnaam" for="epJTp">Proximale tibia <em>(fractie)</em></label>
           <input type="number" id="epJTp" class="ep-veld" inputmode="decimal" min="0.05" max="0.95" step="0.01" value="0.57">
         </div>
+      </div>
+      <div class="ep-duo">
+        <div>
+          <label class="ep-veldnaam" for="epJTF">Beide fysen samen <em>(fractie)</em></label>
+          <input type="number" id="epJTF" class="ep-veld" inputmode="decimal" min="0.05" max="0.95" step="0.01" value="0.67">
+        </div>
+        <div>
+          <label class="ep-veldnaam" for="epBeideModel">Beide fysen rekenen als</label>
+          <select id="epBeideModel" class="ep-keuze">
+            <option value="samen">één fractie op de som</option>
+            <option value="apart">de twee fracties apart</option>
+          </select>
+        </div>
+      </div>
+      <div class="ep-hint">
+        Voor de gecombineerde ingreep lopen de bronnen uiteen. De Multiplier-app en de Paley
+        Growth-app gebruiken <b>één fractie van 0,67</b> op de opgetelde lengte van femur en tibia;
+        het werkblad van Sanders telt de twee afzonderlijke fracties op. Dat scheelt hier een paar
+        procent capaciteit, omdat 0,67 niet precies het gewogen gemiddelde van 0,71 en 0,57 is bij
+        de verhouding femur–tibia van dit kind. De standaard volgt de app. Staat er een plaatje of
+        een gesloten fyse in het spel, dan kan één gezamenlijke fractie dat niet uitdrukken en valt
+        de pagina automatisch terug op de twee fracties apart.
       </div>
       <div class="ep-duo">
         <div>
@@ -785,7 +808,7 @@ const EP_SLEUTEL = 'krnEpifysiodese';
 
 // Welke velden mogen onthouden worden. Alles wat hier niet in staat is
 // patientgebonden en verdwijnt bij het verversen van de pagina.
-const EP_BEWAARD = ['epJFd', 'epJTp', 'epSnelFem', 'epSnelTib', 'epRemFem', 'epRemTib', 'epDoel', 'epMarge', 'epIngreep'];
+const EP_BEWAARD = ['epJFd', 'epJTp', 'epJTF', 'epBeideModel', 'epSnelFem', 'epSnelTib', 'epRemFem', 'epRemTib', 'epDoel', 'epMarge', 'epIngreep'];
 
 const OPTIES = [
   { id: 'tib',   naam: 'Proximale tibia' },
@@ -913,7 +936,8 @@ function tekenen() {
     tibiaR: getal('epTibiaR'), tibiaL: getal('epTibiaL'),
     doel: getal('epDoel'),
     marge: Math.max(0.5, getal('epMarge') || 5),
-    jFd: getal('epJFd'), jTp: getal('epJTp'),
+    jFd: getal('epJFd'), jTp: getal('epJTp'), jTF: getal('epJTF'),
+    beideModel: el('epBeideModel').value,
     snelFem: getal('epSnelFem'), snelTib: getal('epSnelTib'),
   };
 
@@ -1071,8 +1095,22 @@ function tekenen() {
   const beideKan = !dichtLangFemur && !dichtLangTibia;
   const ctxS = contextBij(inv.leeftijdS);
   const ctxK = contextBij(inv.leeftijdK);
-  ctxS.Sbeide = beideKan ? ctxS.Sfem + ctxS.Stib : 0;
-  ctxK.Sbeide = beideKan ? ctxK.Sfem + ctxK.Stib : 0;
+
+  // De gecombineerde ingreep: de Multiplier-app rekent met een enkele fractie
+  // (0,67) over de opgetelde lengte van femur en tibia, het werkblad van
+  // Sanders telt de twee afzonderlijke fracties op. Mills en Nelson benoemen
+  // dat verschil expliciet. Een fractie over de som kan een plaatje of een
+  // gesloten fyse niet uitdrukken, dus daar valt de som automatisch terug op
+  // de twee fracties apart.
+  const alleenOpen = standLangFemur === 'open' && standLangTibia === 'open';
+  const samenKan = inv.beideModel === 'samen' && alleenOpen && isFinite(inv.jTF) && inv.jTF > 0;
+  ctxS.Sbeide = beideKan
+    ? (samenKan ? inv.jTF * (langFemur + langTibia) * ctxS.M : ctxS.Sfem + ctxS.Stib) : 0;
+  ctxK.Sbeide = beideKan
+    ? (samenKan ? inv.jTF * (langFemur + langTibia) * ctxK.M : ctxK.Sfem + ctxK.Stib) : 0;
+  ctxS.beideSamen = samenKan; ctxK.beideSamen = samenKan;
+  ctxS.beideTeruggevallen = ctxK.beideTeruggevallen =
+    (inv.beideModel === 'samen' && beideKan && !alleenOpen);
 
   const P = (basis === 's') ? ctxS : ctxK;
   const basisNaam = (basis === 's') ? 'skeletleeftijd' : 'kalenderleeftijd';
@@ -1152,7 +1190,18 @@ function tekenen() {
     komma(inv.snelFem, 1) + ' mm/jaar voor de distale femur, over de resterende ' +
     komma(Math.max(0, inv.einde - leeftijdNu), 1) + ' jaar op ' + basisNaam + '. De multiplier schaalt ' +
     'mee met de botlengte en geeft bij lange botten structureel meer capaciteit.' +
-    (beideKan ? '' : ' Omdat één van beide fysen al gesloten is, bestaat de gecombineerde ingreep hier niet meer.');
+    (beideKan ? '' : ' Omdat één van beide fysen al gesloten is, bestaat de gecombineerde ingreep hier niet meer.') +
+    (!beideKan ? '' : P.beideSamen
+      ? ' Voor <b>beide fysen</b> wordt één fractie van ' + komma(inv.jTF, 2) +
+        ' over de opgetelde lengte gebruikt, zoals de Multiplier-app doet. Apart optellen van ' +
+        komma(inv.jFd, 2) + ' en ' + komma(inv.jTp, 2) + ' zou hier ' +
+        mm((P.Sfem + P.Stib) * (1 - 1 / P.M)) + ' geven.'
+      : P.beideTeruggevallen
+        ? ' Voor <b>beide fysen</b> is teruggevallen op de twee fracties apart: met een plaatje of ' +
+          'een gesloten fyse in het spel kan één gezamenlijke fractie die toestand niet uitdrukken.'
+        : ' Voor <b>beide fysen</b> worden de twee fracties apart opgeteld, zoals het werkblad van ' +
+          'Sanders doet. Eén fractie van ' + komma(inv.jTF, 2) + ' over de som zou hier ' +
+          mm(inv.jTF * (langFemur + langTibia) * (P.M - 1)) + ' geven.');
 
   function merk(toestand, wat) {
     if (toestand === 'dicht') return ' <span style="font-weight:400;color:var(--danger)">— ' + wat + ' gesloten</span>';
@@ -1782,7 +1831,7 @@ const ALLE_VELDEN = [
   'epGeslacht', 'epEinde', 'epLeeftijdS', 'epLeeftijdK',
   'epFemurR', 'epFemurL', 'epTibiaR', 'epTibiaL',
   'epDoel', 'epMarge', 'epGeboorte', 'epOpname', 'epIngreep',
-  'epJFd', 'epJTp', 'epSnelFem', 'epSnelTib',
+  'epJFd', 'epJTp', 'epJTF', 'epBeideModel', 'epSnelFem', 'epSnelTib',
   'epVFemurR', 'epVFemurL', 'epVTibiaR', 'epVTibiaL', 'epInterval',
   'epFyseFemurR', 'epFyseFemurL', 'epFyseTibiaR', 'epFyseTibiaL',
   'epPlaatUit', 'epRemFem', 'epRemTib',

@@ -227,12 +227,14 @@
   </p>
 
   <div class="gr-waarschuwing">
-    <strong>Reken met de skeletleeftijd, niet met de kalenderleeftijd.</strong>
-    Deze methodes gaan uit van botleeftijd, bepaald op een handfoto. Bij een kind dat voor- of
-    achterloopt in rijping schuift de hele uitkomst mee. Weet je de skeletleeftijd niet, gebruik dan
-    de kalenderleeftijd en lees het antwoord als een grove schatting. De uitkomst is een hulpmiddel
-    om te zien of verwijzen nog zin heeft — de operatieplanning is aan de orthopeed. Vul hier geen
-    patiëntgegevens in; de pagina bewaart alleen je eigen instellingen.
+    <strong>Onder de tien jaar de kalenderleeftijd, daarboven de skeletleeftijd.</strong>
+    De multipliertabel is afgeleid uit gegevens op <em>kalenderleeftijd</em>, en Paley schrijft dat
+    hij die in de meeste gevallen ook prefereert. Pas vanaf ongeveer tien jaar wordt de
+    skeletleeftijd de betere invoer: rond de puberteitsgroeispurt lopen beide uiteen, en dan is de
+    botleeftijd wat telt. Eerder in deze app stond het omgekeerde — dat is hier gecorrigeerd naar
+    wat de bron zegt. De uitkomst is een hulpmiddel om te zien of verwijzen nog zin heeft; de
+    operatieplanning is aan de orthopeed. Vul hier geen patiëntgegevens in; de pagina bewaart
+    alleen je eigen instellingen.
   </div>
 
   <div class="gr-schakel" id="grSchakel">
@@ -260,7 +262,7 @@
         </select>
       </div>
       <div>
-        <label class="gr-veldnaam" for="grLeeftijd">Skeletleeftijd <em>(jaar)</em></label>
+        <label class="gr-veldnaam" for="grLeeftijd">Leeftijd <em>(jaar — zie hierboven)</em></label>
         <input type="number" id="grLeeftijd" class="gr-veld" inputmode="decimal" min="0" max="20" step="0.5" placeholder="bijv. 9">
       </div>
     </div>
@@ -387,42 +389,56 @@
   </div>
 
   <div class="gr-sectie">
-    <h2>Waarom deze twee formules bij elkaar horen</h2>
+    <h2>Getoetst aan de bron</h2>
     <p class="gr-onder" style="margin-bottom:10px;">
-      De twee tabbladen zien eruit als twee losse methodes, maar het is één model.
-      Dat is te laten zien, en het is de reden dat je ze naast elkaar kunt vertrouwen.
+      De formules hieronder zijn niet door mij bedacht en ook niet afgeleid: ze staan zo in het
+      oorspronkelijke artikel. Beide doorgerekende voorbeelden uit de literatuur komen er tot op
+      de getoonde decimaal uit.
     </p>
     <ul class="gr-lijst">
-      <li><strong>De ontwikkelingsformule volgt dwingend uit één aanname.</strong>
-        Neem aan dat het korte been een fractie <em>(1 − remming)</em> haalt van wat het lange been
-        nog groeit. Dan is het korte been bij rijpheid <em>S + (1−I)·L·(M−1)</em> en het lange
-        <em>L·M</em>. Trek af, en de lengtes vallen tegen elkaar weg: er blijft
-        <em>(L − S) + I·L·(M−1)</em> over — precies de formule in het tabblad. Er is dus niets
-        gekozen; hij is afgedwongen.</li>
-      <li><strong>En hij valt samen met de aangeboren formule zodra de verhouding vastligt.</strong>
-        Is het korte been altijd fractie <em>f</em> van het lange, dan is de gemeten remming
-        <em>1 − f</em> en het verschil <em>L(1−f)</em>. Invullen geeft
-        <em>L(1−f) + (1−f)·L·(M−1) = L(1−f)·M</em>, oftewel <em>verschil × multiplier</em>.
-        De aangeboren methode is dus geen andere methode maar het bijzondere geval waarin de
-        remming niet verandert.</li>
-      <li><strong>Dat is in de app zelf nagerekend.</strong>
-        Twaalf combinaties — vier vaste verhoudingen (0,50 / 0,65 / 0,80 / 0,90) bij drie
-        leeftijden — door beide tabbladen gehaald. De twee tabbladen gaven in alle twaalf gevallen
-        tot op de getoonde decimaal hetzelfde antwoord, en de berekende remming kwam telkens
-        precies uit op <em>1 − f</em>. Klopte er iets niet aan het ene tabblad, dan zouden ze
-        uiteenlopen.</li>
-      <li><strong>Ook de correctie voor een eerdere verlenging is afgedwongen, niet bedacht.</strong>
-        Gewonnen centimeters <em>A</em> zijn een vaste toevoeging die niet meegroeit, dus het
-        eigen verschil van het bot is <em>D + A</em>. Dat deel schaalt met de multiplier, de
-        verlenging niet: <em>(D + A)·M − A</em>. Bij <em>A = 0</em> staat daar weer gewoon
-        <em>D·M</em>.</li>
+      <li><strong>Aangeboren: <code>Dm = D × M</code>.</strong>
+        Letterlijk zo in Paley e.a. (2000). En voor een kind dat al verlengd is staat in de
+        appendix van Mills en Nelson (2016) precies de variant die hier gebruikt wordt:
+        <code>Dm = M × (D + P) − P</code>, met <em>P</em> de eerder gewonnen centimeters. Die had
+        ik eerder zelf afgeleid uit de aanname dat verlengde centimeters niet meegroeien; het
+        blijkt dezelfde formule.</li>
+      <li><strong>Ontwikkeling: <code>Dm = D + I × G</code>.</strong>
+        Met <code>I = 1 − (S−S′)/(L−L′)</code> en <code>G = L(M−1)</code>. Ook dat staat zo
+        gedrukt. De sleutelregel in Paley's notatielijst is <em>„L = current length of long
+        limb"</em>: de restgroei wordt dus over het <b>lange</b> been gerekend. Dat was mijn
+        openstaande vraag, en het antwoord is het lange been.</li>
+      <li><strong>Twee voorbeelden uit de literatuur, allebei gereproduceerd.</strong>
+        Paley's eigen casus — meisje van 8, femur 28 tegen 25,3 cm, een jaar eerder 26 tegen
+        24,4 — geeft in deze app remming 55 %, multiplier 1,33, restgroei 9,2 cm en eindverschil
+        7,8 cm; precies de gepubliceerde getallen. En de casus uit het erratum van Sanders e.a.
+        (2007) — jongen van 10 jaar 4 maanden, 65,6 tegen 62,1 cm nu en 53,0 tegen 50,0 eerder —
+        geeft 4 % remming, multiplier 1,29 en 4,3 cm. Ook exact.</li>
+      <li><strong>Eén tabel voor femur, tibia en het hele been.</strong>
+        Paley vond de multipliers voor femur en tibia vrijwel gelijk en middelde ze tot één
+        onderste-extremiteitstabel; hij schrijft er expliciet bij dat <code>Lm = L × M</code>
+        geldt voor femur, tibia, femur plus tibia én het hele been inclusief voethoogte. De
+        segmentkeuze in de app is dus een etiket, geen andere tabel — en de zorg die ik eerder
+        noemde, dat mijn app een tabel zou missen, is ongegrond.</li>
+      <li><strong>De tabel zelf nagelopen, cel voor cel.</strong>
+        De tabel in deze app komt uit tabel 1 van Mills en Nelson. Met het artikel er nu naast
+        zijn alle 204 leeftijden vergeleken: <b>203 komen exact overeen</b>. De enige afwijking is
+        de cel waar 3,03 gedrukt staat en waar deze app 2,03 gebruikt — de buren zijn 2,05 en
+        2,01, en de app zelf geeft daar 2,032. Dat de zetfout óók in dit artikel staat, bevestigt
+        dat beide dezelfde bron afdrukken. Hetzelfde geldt voor de ontbrekende rij bij 12,75 jaar:
+        die ontbreekt in de gedrukte tabel, niet in mijn overname.</li>
+      <li><strong>Het blijft één model, geen twee.</strong>
+        Ligt de verhouding vast op fractie <em>f</em>, dan is de gemeten remming <em>1 − f</em> en
+        valt de ontwikkelingsformule algebraïsch samen met <code>D × M</code>. Twaalf combinaties
+        — vier vaste verhoudingen bij drie leeftijden — door beide tabbladen gehaald: alle twaalf
+        identiek. Abdi e.a. (2023) laten hetzelfde langs een andere weg zien en geven een
+        gelijkwaardige verhoudingsvorm, <code>ΔLm/ΔL = ΔSm/ΔS</code>, waarmee je de remming
+        helemaal niet hoeft uit te rekenen.</li>
     </ul>
     <p class="gr-onder" style="margin-top:12px;">
-      <strong>Wat hiermee niet bewezen is.</strong> Dit toont aan dat de algebra klopt en dat de
-      twee tabbladen één consistent model zijn. Het toont niet aan dat de Multiplier-app dezelfde
-      aannames maakt, en evenmin welke multiplierwaarde die app op een gegeven leeftijd hanteert —
-      we weten al dat die app meer decimalen meeneemt dan de gedrukte tabel. Dat laatste is alleen
-      te controleren door de app zelf een som voor te leggen.
+      <strong>Wat hiermee nog steeds niet vaststaat.</strong> Dat de Multiplier-app intern precies
+      deze formules draait, is hiermee aannemelijk maar niet bewezen — de app is closed source.
+      Wel weten we dat hij met meer decimalen rekent dan de gedrukte tabel, want bij 3 jaar
+      1 maand geeft hij 2,032 waar de tabel 2,03 afdrukt.
     </p>
   </div>
 
@@ -470,6 +486,23 @@
       rekent hetzelfde als de app.
     </p>
     <p>
+      <strong>De formules</strong> komen uit Paley D, Bhave A, Herzenberg JE, Bowen JR,
+      <em>Multiplier method for predicting limb-length discrepancy</em>, J Bone Joint Surg Am
+      2000;82(10):1432–46 — daar staan zowel <code>Dm = D × M</code> als
+      <code>Dm = D + I × G</code> met <code>I = 1 − (S−S′)/(L−L′)</code> en <code>G = L(M−1)</code>,
+      en de notatielijst bepaalt dat <em>L</em> de huidige lengte van het lange been is. De
+      variant voor een eerder verlengd been, <code>Dm = M × (D + P) − P</code>, staat in de
+      appendix van Mills en Nelson. De twee doorgerekende voorbeelden waarmee deze pagina getoetst
+      is komen uit datzelfde artikel van Paley en uit het erratum van Sanders JO, Khoury JG,
+      Kishan S, J Child Orthop 2007;1:217.
+    </p>
+    <p>
+      <strong>Kalender- of skeletleeftijd.</strong> Paley leidde de multipliers af uit gegevens op
+      kalenderleeftijd en prefereert die in de meeste gevallen; vanaf ongeveer tien jaar wordt de
+      skeletleeftijd de betere invoer. Een eerdere versie van deze pagina adviseerde onverkort de
+      skeletleeftijd — dat was in strijd met de bron en is gecorrigeerd.
+    </p>
+    <p>
       <strong>De vuistregel</strong> gebruikt de klassieke groeisnelheden rond de knie (distale femur
       ongeveer 10 mm per jaar, proximale tibia ongeveer 6 mm per jaar) en einde groei rond 14 jaar bij
       meisjes en 16 jaar bij jongens. Dat zijn breed gedeelde benaderingen, geen richtlijnwaarden — ze
@@ -493,10 +526,13 @@
 // en is er nog genoeg groei over om het met een epifysiodese te corrigeren.
 //
 // 1. MULTIPLIER (Paley e.a. 2000)
-//    verschil bij einde groei = huidig verschil x multiplier
-//    De multipliertabellen (per geslacht en skeletleeftijd) staan hier bewust
-//    NIET in: die ken ik niet met voldoende zekerheid, en een verzonnen tabel
-//    is hier schadelijker dan geen tabel. De gebruiker levert de factor.
+//    aangeboren:   Dm = D x M           (met eerdere verlenging P: (D+P)xM - P)
+//    ontwikkeling: Dm = D + I x G,  I = 1 - (S-S')/(L-L'),  G = L(M-1)
+//    Beide formules staan zo in Paley e.a., JBJS Am 2000;82(10):1432-46; de
+//    verlengingsvariant in de appendix van Mills en Nelson, J Child Orthop
+//    2016;10:313-19. G gebruikt L = de huidige lengte van het LANGE been.
+//    De tabel staat in multiplier.js, overgenomen uit tabel 1 van datzelfde
+//    artikel van Mills en Nelson.
 //
 // 2. VUISTREGEL
 //    resterende groei = einde groei - skeletleeftijd
