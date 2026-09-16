@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Heupecho volgens Graf</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .he-wrap { max-width: 820px; margin: 0 auto; padding: 18px 16px 70px; }
+
+  .he-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .he-terug:hover { text-decoration: underline; }
+
+  .he-kop { font-size: 1.45rem; margin: 0 0 4px; }
+  .he-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  .he-sectie { margin-top: 34px; }
+  .he-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .he-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* ---------- rekenblok ---------- */
+  .he-reken {
+    background: var(--paneel);
+    border: 1.5px solid var(--accent);
+    border-radius: 13px;
+    padding: 14px 15px;
+    font-family: system-ui, sans-serif;
+  }
+  .he-invoer { display: flex; gap: 10px; }
+  .he-invoer > div { flex: 1 1 0; min-width: 0; }
+  .he-invoer label {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .he-invoer input {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+    font-size: 19px; font-weight: 700; text-align: center;
+    padding: 9px 4px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--papier); color: var(--inkt);
+  }
+  .he-invoer input:focus { outline: none; border-color: var(--accent); }
+
+  .he-extra { margin-top: 12px; }
+  .he-extra > div { margin-top: 10px; }
+  .he-extra label {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 5px;
+  }
+  .he-keuze { display: flex; gap: 7px; }
+  .he-keuze button {
+    flex: 1; font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    padding: 9px 6px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer; line-height: 1.35;
+  }
+  .he-keuze button.aan {
+    border-color: var(--accent); background: var(--accent); color: #fff;
+  }
+
+  .he-uitslag {
+    margin-top: 14px; border-radius: 11px;
+    padding: 14px 15px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+  }
+  .he-uitslag .type {
+    font-size: 27px; font-weight: 800; line-height: 1.1;
+  }
+  .he-uitslag .eng {
+    font-size: 12.5px; font-weight: 600; margin-top: 3px; opacity: .85;
+  }
+  .he-uitslag .reden {
+    font-size: 13px; line-height: 1.6; margin-top: 9px;
+  }
+  .he-uitslag .reden b { font-weight: 800; }
+  .he-uitslag.groen  { background: #E8F3EC; border-color: #7FAE92; color: #1C4F33; }
+  .he-uitslag.oranje { background: #FBF3DC; border-color: #E0B44A; color: #6B4E06; }
+  .he-uitslag.rood   { background: #FBEAE5; border-color: #C9553A; color: #8E3617; }
+  .he-uitslag.grijs  { background: var(--papier); border-color: var(--lijn); color: var(--muted); }
+
+  .he-vervolg {
+    display: block; margin-top: 11px;
+    border-radius: 9px; padding: 11px 13px;
+    background: rgba(255,255,255,.7);
+    border: 1px solid rgba(0,0,0,.09);
+    font-size: 13px; font-weight: 700; line-height: 1.5;
+    color: inherit; text-decoration: none;
+  }
+  .he-vervolg span {
+    display: block; font-weight: 400; font-size: 12px;
+    margin-top: 3px; opacity: .85;
+  }
+  .he-vervolg:hover { border-color: currentColor; }
+
+  /* ---------- figuur ---------- */
+  .he-fig {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 12px 12px 14px;
+  }
+  .he-fig svg { display: block; width: 100%; height: auto; }
+  /* het hidden-attribuut van HTML werkt niet binnen een SVG: daar geldt de
+     UA-regel alleen voor de HTML-namespace. Zelf regelen dus. */
+  .he-fig svg [hidden] { display: none; }
+  .he-figknop { display: flex; gap: 7px; margin-bottom: 10px; }
+  .he-figknop button {
+    flex: 1; font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 700;
+    padding: 8px 6px; border-radius: 8px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .he-figknop button.aan {
+    border-color: var(--accent); background: var(--accent); color: #fff;
+  }
+
+  .he-punten {
+    list-style: none; margin: 12px 0 0; padding: 0;
+    font-family: system-ui, sans-serif;
+  }
+  .he-punten li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 9px 0; border-bottom: 1px solid var(--lijn);
+    font-size: 13px; line-height: 1.55;
+  }
+  .he-punten li:last-child { border-bottom: none; }
+  .he-punten .bol {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .he-punten .bol.let { background: #6b7680; }
+  .he-punten b { display: block; }
+
+  /* ---------- tabel ---------- */
+  .he-tabelwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.he-graf {
+    border-collapse: collapse; width: 100%; min-width: 620px;
+    font-family: system-ui, sans-serif; font-size: 12px;
+  }
+  table.he-graf th, table.he-graf td {
+    border: 1px solid var(--lijn); padding: 7px 8px;
+    text-align: left; vertical-align: top;
+  }
+  table.he-graf th {
+    background: var(--accent); color: #fff;
+    font-size: 11.5px; font-weight: 800;
+    position: sticky; top: 0;
+  }
+  table.he-graf td.t { font-weight: 800; white-space: nowrap; }
+  table.he-graf td.t i {
+    display: block; font-weight: 400; font-style: normal;
+    font-size: 11px; color: var(--muted); margin-top: 2px;
+  }
+  table.he-graf td.hk { white-space: nowrap; font-weight: 700; }
+  table.he-graf tr.raak td {
+    background: #FDF6E0;
+    border-top: 2px solid #E0B44A; border-bottom: 2px solid #E0B44A;
+  }
+  table.he-graf tr.raak td.t { background: #F8EDCB; }
+
+  /* ---------- verslag ---------- */
+  .he-verslag {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 4px 15px 14px;
+  }
+  .he-verslag pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px; line-height: 1.7;
+    white-space: pre-wrap; word-break: break-word;
+    margin: 12px 0 0; color: var(--inkt);
+  }
+  .he-verslag .inv { color: var(--accent); font-weight: 700; }
+  .he-verslag .keuze { color: var(--muted); }
+  .he-knoprij { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 13px; }
+  .he-knoprij button {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 15px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--accent); cursor: pointer;
+  }
+  .he-knoprij button:hover { border-color: var(--accent); }
+
+  .he-vlag {
+    border-radius: 10px; padding: 12px 15px; margin-top: 13px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+  }
+  .he-vlag strong { display: block; margin-bottom: 3px; }
+  .he-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .he-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .he-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+  }
+  .he-link:hover { border-color: var(--accent); }
+  .he-link span {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px; line-height: 1.5;
+  }
+
+  .he-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.65; margin-top: 12px;
+  }
+  .he-bron p { margin: 0 0 7px; }
+  .he-bron a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="he-wrap">
+
+  <a class="he-terug" href="index.html">‹ Terug naar de naslag</a>
+
+  <h1 class="he-kop">Heupecho volgens Graf</h1>
+  <p class="he-intro">
+    Twee hoeken en een leeftijd in, het type eruit — en daarna welke tak van
+    het WKO-schema erbij hoort. De tabel, de meetpunten en het standaardverslag
+    staan eronder.
+  </p>
+
+  <!-- ================= calculator ================= -->
+  <div class="he-reken">
+    <div class="he-invoer">
+      <div>
+        <label for="heA">α-hoek °</label>
+        <input type="number" id="heA" inputmode="decimal" step="1" min="0" max="120" placeholder="—">
+      </div>
+      <div>
+        <label for="heB">β-hoek °</label>
+        <input type="number" id="heB" inputmode="decimal" step="1" min="0" max="140" placeholder="—">
+      </div>
+      <div>
+        <label for="heW">Leeftijd (wk)</label>
+        <input type="number" id="heW" inputmode="numeric" step="1" min="0" max="120" placeholder="—">
+      </div>
+    </div>
+
+    <div class="he-extra" id="heExtra"></div>
+    <div class="he-uitslag grijs" id="heUit"></div>
+  </div>
+
+  <!-- ================= meetpunten ================= -->
+  <section class="he-sectie">
+    <h2>Waar je de punten zet</h2>
+    <p class="he-sectie-uitleg">
+      Drie punten, twee lijnen, twee hoeken. Alles hangt aan de basislijn: die
+      loopt langs de os ilium, en die moet je horizontaal in beeld hebben staan.
+    </p>
+
+    <div class="he-fig">
+      <div class="he-figknop">
+        <button type="button" id="heFigMeet" class="aan">Meetlijnen</button>
+        <button type="button" id="heFigAnat">Anatomie</button>
+      </div>
+
+      <svg viewBox="0 0 360 290" role="img" aria-label="Schema van de coronale heupcoupe met de drie meetpunten en de hoeken alfa en beta">
+        <!-- gedeelde anatomie -->
+        <g>
+          <!-- oppervlakkige weke delen -->
+          <rect x="30" y="34" width="300" height="34" rx="6" fill="#EDEAE3"/>
+          <!-- femurkop -->
+          <circle cx="230" cy="160" r="65" fill="#F1F0EC" stroke="#B9B7AF" stroke-width="1.5"/>
+          <!-- benige contour: os ilium en acetabulaire kom -->
+          <path d="M 48 139 L 168 139 C 166 171 181 201 217 224 C 236 236 256 234 270 225"
+                fill="none" stroke="#5A5852" stroke-width="5.5" stroke-linecap="round"/>
+          <!-- labrum -->
+          <polygon points="200,99 222,72 229,93" fill="#C8D9DE" stroke="#7FA1AB" stroke-width="1.3"/>
+          <!-- Y-voeg -->
+          <circle cx="238" cy="229" r="5" fill="#C8D9DE" stroke="#7FA1AB" stroke-width="1.3"/>
+        </g>
+
+        <!-- ---- laag: meetlijnen ---- -->
+        <g id="heLaagMeet">
+          <!-- basislijn -->
+          <line x1="168" y1="139" x2="336" y2="139" stroke="#0f4c5c" stroke-width="1.6" stroke-dasharray="5 4"/>
+          <line x1="48" y1="139" x2="168" y2="139" stroke="#0f4c5c" stroke-width="2.4"/>
+          <!-- benige dakrandlijn P3 -> P2, iets doorgetrokken -->
+          <line x1="217" y1="224" x2="158" y2="122" stroke="#B4472C" stroke-width="2.4"/>
+          <!-- kraakbenige daklijn P2 -> P1 -->
+          <line x1="168" y1="139" x2="223" y2="74" stroke="#1C6E4A" stroke-width="2.4"/>
+          <!-- hoekbogen -->
+          <path d="M 210 139 A 42 42 0 0 1 189 175" fill="none" stroke="#B4472C" stroke-width="1.6"/>
+          <path d="M 202 139 A 34 34 0 0 0 190 113" fill="none" stroke="#1C6E4A" stroke-width="1.6"/>
+          <text x="219" y="173" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#B4472C">α</text>
+          <text x="209" y="119" font-family="system-ui, sans-serif" font-size="15" font-weight="800" fill="#1C6E4A">β</text>
+          <!-- tekstlabels -->
+          <text x="50" y="131" font-family="system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#0f4c5c">os ilium</text>
+          <text x="334" y="132" text-anchor="end" font-family="system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#0f4c5c">basislijn</text>
+          <text x="180" y="268" font-family="system-ui, sans-serif" font-size="9.5" fill="#B4472C">benige daklijn</text>
+          <line x1="205" y1="258" x2="196" y2="205" stroke="#B4472C" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="258" y="60" font-family="system-ui, sans-serif" font-size="9.5" fill="#1C6E4A">kraakbenige daklijn</text>
+          <line x1="256" y1="56" x2="212" y2="86" stroke="#1C6E4A" stroke-width="1" stroke-dasharray="3 3"/>
+          <!-- meetpunten -->
+          <g font-family="system-ui, sans-serif" font-size="11.5" font-weight="800" text-anchor="middle">
+            <circle cx="213" cy="85"  r="10.5" fill="#0f4c5c"/><text x="213" y="89" fill="#fff">1</text>
+            <circle cx="168" cy="139" r="10.5" fill="#0f4c5c"/><text x="168" y="143" fill="#fff">2</text>
+            <circle cx="217" cy="224" r="10.5" fill="#0f4c5c"/><text x="217" y="228" fill="#fff">3</text>
+          </g>
+        </g>
+
+        <!-- ---- laag: anatomie ---- -->
+        <g id="heLaagAnat" hidden>
+          <g font-family="system-ui, sans-serif" font-size="11.5" font-weight="800" text-anchor="middle">
+            <circle cx="100" cy="139" r="10.5" fill="#6b7680"/><text x="100" y="143" fill="#fff">A</text>
+            <circle cx="168" cy="139" r="10.5" fill="#6b7680"/><text x="168" y="143" fill="#fff">B</text>
+            <circle cx="190" cy="112" r="10.5" fill="#6b7680"/><text x="190" y="116" fill="#fff">C</text>
+            <circle cx="216" cy="84"  r="10.5" fill="#6b7680"/><text x="216" y="88" fill="#fff">D</text>
+            <circle cx="253" cy="163" r="10.5" fill="#6b7680"/><text x="253" y="167" fill="#fff">E</text>
+            <circle cx="238" cy="229" r="10.5" fill="#6b7680"/><text x="238" y="233" fill="#fff">F</text>
+            <circle cx="186" cy="192" r="10.5" fill="#6b7680"/><text x="186" y="196" fill="#fff">G</text>
+            <circle cx="180" cy="51"  r="10.5" fill="#6b7680"/><text x="180" y="55" fill="#fff">H</text>
+          </g>
+        </g>
+      </svg>
+
+      <ul class="he-punten" id="heLegMeet">
+        <li><span class="bol">1</span><span><b>Midden in het labrum.</b>
+          Het eindpunt van de kraakbenige daklijn.</span></li>
+        <li><span class="bol">2</span><span><b>Waar de concaviteit van het acetabulum overgaat in de convexiteit van de pandakrand.</b>
+          De benige pandakrand — het draaipunt van beide hoeken.</span></li>
+        <li><span class="bol">3</span><span><b>Op de overgang os ilium / Y-voeg.</b>
+          Het diepe eindpunt van de benige daklijn.</span></li>
+      </ul>
+
+      <ul class="he-punten" id="heLegAnat" hidden>
+        <li><span class="bol let">A</span><span><b>Os ilium</b> — de basislijn; horizontaal afbeelden.</span></li>
+        <li><span class="bol let">B</span><span><b>Benige pandakrand</b></span></li>
+        <li><span class="bol let">C</span><span><b>Kraakbenige pandakrand</b></span></li>
+        <li><span class="bol let">D</span><span><b>Labrum</b></span></li>
+        <li><span class="bol let">E</span><span><b>Femurkop</b> — met het gewrichtskraakbeen van het acetabulum eromheen.</span></li>
+        <li><span class="bol let">F</span><span><b>Y-voeg</b></span></li>
+        <li><span class="bol let">G</span><span><b>Acetabulum</b> — de benige kom.</span></li>
+        <li><span class="bol let">H</span><span><b>Weke delen</b> — m. gluteus medius en minimus, pees van de m. rectus femoris, kapsel; lateraal daarvan de trochanter major.</span></li>
+      </ul>
+
+      <div class="he-vlag oranje">
+        <strong>Deze meetpunten moeten als scherpe pixels zichtbaar zijn.</strong>
+        Staat de os ilium niet horizontaal, of is een van de drie punten niet
+        scherp, dan meet je een hoek die er wel uitziet als een getal maar het
+        niet is.
+      </div>
+
+      <p class="he-bron" style="margin-top:10px;">
+        Eigen schema, nagetekend naar de coronale coupe op de poster. Niet op
+        schaal; de hoeken in de tekening staan op ongeveer α 60° en β 50°.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= tabel ================= -->
+  <section class="he-sectie">
+    <h2>De typering van Graf</h2>
+    <p class="he-sectie-uitleg">
+      De rij die bij je invoer hoort licht op zodra hierboven een type uitkomt.
+      Schuif de tabel opzij voor de kolommen die niet passen.
+    </p>
+    <div class="he-tabelwrap">
+      <table class="he-graf">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Modellering acetabulum</th>
+            <th>α-hoek</th>
+            <th>Benige pandakrand</th>
+            <th>Kraakbenige pandakrand / labrum</th>
+            <th>β-hoek</th>
+            <th>Leeftijd</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-rij="I">
+            <td class="t">Type I<i>Mature hip</i></td>
+            <td>goede modellering</td>
+            <td class="hk">α ≥ 60°</td>
+            <td>hoekig of iets afgerond</td>
+            <td>goede overkapping</td>
+            <td class="hk">β &lt; 55° → Ia<br>β &gt; 55° → Ib</td>
+            <td>alle</td>
+          </tr>
+          <tr data-rij="IIa+">
+            <td class="t">Type II a+<i>Immature but appropriate for age</i></td>
+            <td>adequate modellering</td>
+            <td class="hk">α = 50–59°</td>
+            <td>afgerond</td>
+            <td>redelijke overkapping</td>
+            <td class="hk">β &lt; 77°</td>
+            <td>0–12 weken</td>
+          </tr>
+          <tr data-rij="IIa-">
+            <td class="t">Type II a−<i>Immature but inappropriate for age</i></td>
+            <td>deficiënte modellering</td>
+            <td class="hk">α = 50–59°</td>
+            <td>afgerond</td>
+            <td>redelijke overkapping</td>
+            <td class="hk">β &lt; 77°</td>
+            <td>6–12 weken</td>
+          </tr>
+          <tr data-rij="IIb">
+            <td class="t">Type II b<i>Delay in development</i></td>
+            <td>deficiënte modellering</td>
+            <td class="hk">α = 50–59°</td>
+            <td>afgerond</td>
+            <td>redelijke overkapping</td>
+            <td class="hk">β &lt; 77°</td>
+            <td>≥ 12 weken</td>
+          </tr>
+          <tr data-rij="IIc">
+            <td class="t">Type II c<i>stable or unstable — critical</i></td>
+            <td>zeer deficiënte modellering</td>
+            <td class="hk">α = 43–49°</td>
+            <td>afgerond / afgevlakt</td>
+            <td>nog overkapping</td>
+            <td class="hk">β &lt; 77°</td>
+            <td>alle</td>
+          </tr>
+          <tr data-rij="D">
+            <td class="t">Type D<i>Decentrering</i></td>
+            <td>zeer deficiënte modellering</td>
+            <td class="hk">α = 43–49°</td>
+            <td>afgerond / afgevlakt</td>
+            <td>verplaatst</td>
+            <td class="hk">β &gt; 77°</td>
+            <td>alle</td>
+          </tr>
+          <tr data-rij="III">
+            <td class="t">Type III<i>Eccentric hip</i></td>
+            <td>slechte modellering</td>
+            <td class="hk">α &lt; 43°</td>
+            <td>afgevlakt</td>
+            <td>verplaatst naar craniaal</td>
+            <td class="hk">—</td>
+            <td>alle</td>
+          </tr>
+          <tr data-rij="IV">
+            <td class="t">Type IV<i>Eccentric hip</i></td>
+            <td>slechte modellering</td>
+            <td class="hk">α &lt; 43°</td>
+            <td>afgevlakt</td>
+            <td>verplaatst naar caudaal<br>(labruminterpositie)</td>
+            <td class="hk">—</td>
+            <td>alle</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="he-vlag blauw">
+      <strong>Twee plaatsen waar de hoek het niet alleen beslist.</strong>
+      Tussen II a+ en II a− beslist niet de hoek maar of de modellering past
+      bij de leeftijd — beide staan op α 50–59°. En tussen III en IV beslist de
+      richting waarin het labrum verplaatst is, craniaal of caudaal; de α-hoek
+      is bij allebei &lt; 43°. De rekenmodule hierboven vraagt daarom door in
+      plaats van te gokken.
+    </div>
+  </section>
+
+  <!-- ================= verslag ================= -->
+  <section class="he-sectie">
+    <h2>Standaardverslag</h2>
+    <p class="he-sectie-uitleg">
+      De structuur van de poster, met je ingevulde hoeken en het berekende type
+      er al in. De rest kies je bij het dicteren.
+    </p>
+    <div class="he-verslag">
+      <pre id="heVerslag"></pre>
+      <div class="he-knoprij">
+        <button type="button" id="heKopieer">Kopieer verslag</button>
+        <button type="button" id="heWis">Invoer leegmaken</button>
+      </div>
+    </div>
+    <div class="he-vlag blauw">
+      <strong>Geen patiëntgegevens.</strong>
+      Dit is een openbare pagina. Er wordt niets opgeslagen en niets verstuurd —
+      wat je intypt staat alleen in het werkgeheugen van dit toestel en is weg
+      zodra je de pagina sluit. Zet er geen naam, geboortedatum of
+      patiëntnummer in.
+    </div>
+  </section>
+
+  <!-- ================= verder ================= -->
+  <section class="he-sectie">
+    <h2>Verder</h2>
+    <a class="he-link" href="ddh-stroomschema.html">Stroomschema DDH — wat volgt op dit type
+      <span>Het behandelprotocol van de Werkgroep Kinderorthopedie, stap voor stap.</span></a>
+    <a class="he-link" href="heupdysplasie.html">Heupdysplasie bij kinderen
+      <span>Achtergrond, risicofactoren en beloop.</span></a>
+    <a class="he-link" href="heupfoto.html">Heupfoto beoordelen
+      <span>Na ongeveer een half jaar neemt de röntgenfoto het over van de echo.</span></a>
+
+    <div class="he-bron">
+      <p><b>Bron:</b> poster <i>Dysplastische Heupontwikkeling — Echografie</i>,
+        S. Robben (Maastricht UMC+) en M. Dremmen (Erasmus MC), via
+        <a href="https://radiologen.nl" target="_blank" rel="noopener">radiologen.nl</a>.
+        De tabel, de drie meetpunten en het standaardverslag zijn daarvan
+        overgenomen.</p>
+      <p><b>Niet overgenomen:</b> de echobeelden per Graf-type en de
+        oriëntatiefoto's van de poster. Die zijn hier niet na te tekenen, en een
+        foto van een poster op een telefoonscherm leest slechter dan het
+        origineel — kijk daarvoor naar de poster zelf.</p>
+      <p><b>Van mij:</b> de rekenmodule en het schema van de coupe. De
+        beslisregels zijn één op één uit de tabel afgeleid; waar de tabel geen
+        uitsluitsel geeft, vraagt de module door in plaats van te kiezen.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var elA = document.getElementById('heA');
+  var elB = document.getElementById('heB');
+  var elW = document.getElementById('heW');
+  var elExtra = document.getElementById('heExtra');
+  var elUit = document.getElementById('heUit');
+  var elVerslag = document.getElementById('heVerslag');
+
+  // Extra antwoorden die de tabel nodig heeft waar de hoek niet beslist.
+  var model = null;   // 'adequaat' | 'deficient'  (II a+ vs II a-)
+  var labrum = null;  // 'craniaal' | 'caudaal'    (III vs IV)
+
+  function getal(v) {
+    if (v === '' || v === null || v === undefined) return null;
+    var n = Number(v);
+    return isFinite(n) ? n : null;
+  }
+  function graden(n) {
+    return (Math.round(n * 10) / 10).toString().replace('.', ',') + '°';
+  }
+
+  // Tak van het WKO-stroomschema waar dit type binnenkomt.
+  var TAKKEN = {
+    I:     ['Graf I', 'In het stroomschema de knop “Graf I — normale heup”.'],
+    IIa:   ['Graf IIA', 'In het stroomschema de knop “Graf IIA — fysiologisch onrijp voor de leeftijd”.'],
+    IIbc:  ['Graf IIB of IIC', 'In het stroomschema de knop “Graf IIB of IIC”.'],
+    d34:   ['Graf D, III of IV', 'In het stroomschema de knop “Graf D, III of IV — decentrering tot luxatie”.']
+  };
+
+  function bepaal() {
+    var a = getal(elA.value), b = getal(elB.value), w = getal(elW.value);
+
+    if (a === null) return { kleur: 'grijs', type: null, reden: 'Vul de α-hoek in. Die bepaalt als eerste in welke band je zit.' };
+    if (a < 20 || a > 100) return { kleur: 'grijs', type: null, reden: 'Een α-hoek van ' + graden(a) + ' valt buiten alles wat de tabel beschrijft. Controleer de invoer.' };
+
+    // --- α ≥ 60: type I ---
+    if (a >= 60) {
+      if (b === null) return { kleur: 'groen', type: 'Type I', rij: 'I', tak: 'I',
+        reden: 'α ' + graden(a) + ' is ≥ 60°: goede modellering, rijpe heup. De β-hoek bepaalt nog of het Ia of Ib is.' };
+      if (b === 55) return { kleur: 'groen', type: 'Type I', rij: 'I', tak: 'I',
+        reden: 'α ' + graden(a) + ' is ≥ 60°, dus type I. Bij β precies 55° kiest de tabel niet: hij noemt β < 55° voor Ia en β > 55° voor Ib. Het onderscheid Ia/Ib verandert het beleid niet.' };
+      var sub = b < 55 ? 'a' : 'b';
+      return { kleur: 'groen', type: 'Type I ' + sub, rij: 'I', tak: 'I',
+        reden: 'α ' + graden(a) + ' is ≥ 60° en β ' + graden(b) + ' is ' + (sub === 'a' ? '< 55°' : '> 55°') + '. Rijpe heup.' };
+    }
+
+    // --- gat tussen de banden ---
+    if (a > 59) return { kleur: 'oranje', type: null,
+      reden: 'α ' + graden(a) + ' valt tussen de banden van de tabel: die loopt tot 59° en begint weer bij 60°. Rond af of meet opnieuw.' };
+
+    // --- α 50–59: type II a+/a−/b ---
+    if (a >= 50) {
+      var bOpm = (b !== null && b >= 77)
+        ? ' Let op: de tabel houdt bij dit type β < 77° aan, en je vulde ' + graden(b) + ' in — controleer of de kraakbenige daklijn goed staat.'
+        : '';
+      if (w === null) return { kleur: 'oranje', type: 'Type II', rij: null, tak: 'IIa',
+        reden: 'α ' + graden(a) + ' ligt in de band 50–59°. Welk type II het is hangt volledig aan de leeftijd — vul die in.' + bOpm };
+      if (w >= 12) return { kleur: 'oranje', type: 'Type II b', rij: 'IIb', tak: 'IIbc',
+        reden: 'α ' + graden(a) + ' met ' + w + ' weken: vanaf 12 weken heet deze band II b, delay in development.' + bOpm };
+      if (w < 6) return { kleur: 'groen', type: 'Type II a+', rij: 'IIa+', tak: 'IIa',
+        reden: 'α ' + graden(a) + ' met ' + w + ' weken: onrijp maar passend bij de leeftijd. II a− begint pas bij 6 weken.' + bOpm };
+      // 6–12 weken: de tabel beslist hier op modellering, niet op de hoek
+      if (model === 'adequaat') return { kleur: 'groen', type: 'Type II a+', rij: 'IIa+', tak: 'IIa',
+        reden: 'α ' + graden(a) + ' met ' + w + ' weken en een modellering die past bij de leeftijd: II a+.' + bOpm };
+      if (model === 'deficient') return { kleur: 'oranje', type: 'Type II a−', rij: 'IIa-', tak: 'IIa',
+        reden: 'α ' + graden(a) + ' met ' + w + ' weken en een modellering die achterloopt op de leeftijd: II a−.' + bOpm };
+      return { kleur: 'oranje', type: 'Type II a+ of a−', rij: null, tak: 'IIa', vraag: 'model',
+        reden: 'α ' + graden(a) + ' met ' + w + ' weken valt in de overlap: II a+ loopt 0–12 weken, II a− 6–12 weken. Beide staan op α 50–59°, dus de hoek beslist hier niet — de modellering wel.' + bOpm };
+    }
+
+    if (a > 49) return { kleur: 'oranje', type: null,
+      reden: 'α ' + graden(a) + ' valt tussen de banden van de tabel: die loopt tot 49° en begint weer bij 50°. Rond af of meet opnieuw.' };
+
+    // --- α 43–49: IIc of D ---
+    if (a >= 43) {
+      if (b === null) return { kleur: 'rood', type: 'Type II c of D', rij: null, tak: 'IIbc', vraag: null,
+        reden: 'α ' + graden(a) + ' ligt in de kritieke band 43–49°. De β-hoek beslist: < 77° is II c, > 77° is type D. Vul β in.' };
+      if (b === 77) return { kleur: 'rood', type: 'Type II c of D', rij: null, tak: 'IIbc',
+        reden: 'α ' + graden(a) + ' met β precies 77°: de tabel kiest hier niet, die noemt β < 77° voor II c en β > 77° voor D. Kijk naar de kraakbenige pandakrand — nog overkapping wijst op II c, verplaatst op D.' };
+      if (b < 77) return { kleur: 'rood', type: 'Type II c', rij: 'IIc', tak: 'IIbc',
+        reden: 'α ' + graden(a) + ' met β ' + graden(b) + ': zeer deficiënte modellering, kraakbenige pandakrand nog overkappend. Kritiek — stabiel of instabiel.' };
+      return { kleur: 'rood', type: 'Type D', rij: 'D', tak: 'd34',
+        reden: 'α ' + graden(a) + ' met β ' + graden(b) + ' (> 77°): de kraakbenige pandakrand is verplaatst. Decentrering.' };
+    }
+
+    // --- α < 43: III of IV ---
+    var basis = 'α ' + graden(a) + ' is < 43°: slechte modellering, afgevlakte pandakrand, excentrische heup. ';
+    if (labrum === 'craniaal') return { kleur: 'rood', type: 'Type III', rij: 'III', tak: 'd34',
+      reden: basis + 'Het labrum is naar craniaal verplaatst.' };
+    if (labrum === 'caudaal') return { kleur: 'rood', type: 'Type IV', rij: 'IV', tak: 'd34',
+      reden: basis + 'Het labrum is naar caudaal verplaatst, met labruminterpositie.' };
+    return { kleur: 'rood', type: 'Type III of IV', rij: null, tak: 'd34', vraag: 'labrum',
+      reden: basis + 'Welke van de twee het is, beslist de hoeken niet: het hangt aan de richting waarin het labrum verplaatst is.' };
+  }
+
+  function tekenExtra(uit) {
+    elExtra.innerHTML = '';
+    if (!uit) return;
+    if (uit.vraag === 'model' || (uit.rij === 'IIa+' && model) || (uit.rij === 'IIa-' && model)) {
+      elExtra.appendChild(keuzeblok(
+        'Modellering ten opzichte van de leeftijd',
+        [['adequaat', 'adequaat<br>voor de leeftijd'], ['deficient', 'deficiënt<br>voor de leeftijd']],
+        model, function (v) { model = (model === v) ? null : v; herteken(); }
+      ));
+    }
+    if (uit.vraag === 'labrum' || uit.rij === 'III' || uit.rij === 'IV') {
+      elExtra.appendChild(keuzeblok(
+        'Het labrum is verplaatst naar',
+        [['craniaal', 'craniaal<br>→ type III'], ['caudaal', 'caudaal<br>→ type IV']],
+        labrum, function (v) { labrum = (labrum === v) ? null : v; herteken(); }
+      ));
+    }
+  }
+
+  function keuzeblok(titel, opties, waarde, bij) {
+    var wrap = document.createElement('div');
+    var l = document.createElement('label');
+    l.textContent = titel;
+    wrap.appendChild(l);
+    var rij = document.createElement('div');
+    rij.className = 'he-keuze';
+    opties.forEach(function (o) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = o[1];
+      if (o[0] === waarde) b.className = 'aan';
+      b.addEventListener('click', function () { bij(o[0]); });
+      rij.appendChild(b);
+    });
+    wrap.appendChild(rij);
+    return wrap;
+  }
+
+  function herteken() {
+    var uit = bepaal();
+    tekenExtra(uit);
+
+    elUit.className = 'he-uitslag ' + uit.kleur;
+    elUit.innerHTML = '';
+
+    if (uit.type) {
+      var t = document.createElement('div');
+      t.className = 'type';
+      t.textContent = uit.type;
+      elUit.appendChild(t);
+    }
+    var r = document.createElement('div');
+    r.className = 'reden';
+    r.textContent = uit.reden;
+    elUit.appendChild(r);
+
+    if (uit.tak && TAKKEN[uit.tak]) {
+      var a = document.createElement('a');
+      a.className = 'he-vervolg';
+      a.href = 'ddh-stroomschema.html';
+      a.innerHTML = 'Verder in het WKO-stroomschema — tak ' + TAKKEN[uit.tak][0] +
+        '<span>' + TAKKEN[uit.tak][1] + '</span>';
+      elUit.appendChild(a);
+    }
+
+    // tabelrij markeren
+    var rijen = document.querySelectorAll('table.he-graf tbody tr');
+    for (var i = 0; i < rijen.length; i++) {
+      rijen[i].classList.toggle('raak', !!uit.rij && rijen[i].getAttribute('data-rij') === uit.rij);
+    }
+
+    tekenVerslag(uit);
+  }
+
+  function tekenVerslag(uit) {
+    var a = getal(elA.value), b = getal(elB.value);
+    function inv(x) { return '<span class="inv">' + x + '</span>'; }
+    function kz(x) { return '<span class="keuze">[ ' + x + ' ]</span>'; }
+
+    var regels = [
+      '<b>Techniek</b>',
+      '· Echografie van de heupen',
+      '· Kwaliteit onderzoek: ' + kz('anatomische landmarks geïdentificeerd'),
+      '',
+      'Onderzoek ter vergelijking: ' + kz('geen / datum'),
+      '',
+      '<b>Rechter / linker heup (separaat)</b>',
+      '· Modellering acetabulum: ' + kz('adequaat / inadequaat'),
+      '· Benige acetabulumrand: ' + kz('hoekig / afgerond / afgevlakt'),
+      '· α-hoek: ' + (a === null ? kz('… graden') : inv(graden(a))),
+      '· Positie labrum: ' + kz('adequate overkapping / verplaatst'),
+      '· β-hoek: ' + (b === null ? kz('… graden') : inv(graden(b))),
+      '· Positie heupkop: ' + kz('centraal / decentraal'),
+      '· Ossificatie heupkop: ' + kz('geen / symmetrisch / asymmetrisch'),
+      '',
+      '<b>Conclusie</b>',
+      '· Heupontwikkeling: ' + kz('normaal') + ' ' + kz('dysplastisch: links / rechts / beiderzijds'),
+      '· Graf-classificatie: ' + (uit && uit.rij ? inv(uit.type) : kz('I – IV'))
+    ];
+    elVerslag.innerHTML = regels.join('\n');
+  }
+
+  function platteTekst() {
+    return elVerslag.textContent;
+  }
+
+  document.getElementById('heKopieer').addEventListener('click', function () {
+    var knop = this;
+    var tekst = platteTekst();
+    function klaar(ok) {
+      knop.textContent = ok ? 'Gekopieerd' : 'Kopiëren lukte niet';
+      setTimeout(function () { knop.textContent = 'Kopieer verslag'; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tekst).then(function () { klaar(true); }, function () { klaar(false); });
+    } else {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = tekst;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        klaar(ok);
+      } catch (e) { klaar(false); }
+    }
+  });
+
+  document.getElementById('heWis').addEventListener('click', function () {
+    elA.value = ''; elB.value = ''; elW.value = '';
+    model = null; labrum = null;
+    herteken();
+  });
+
+  // figuurwissel
+  var kMeet = document.getElementById('heFigMeet');
+  var kAnat = document.getElementById('heFigAnat');
+  // el.hidden = ... werkt alleen op HTML-elementen; op een SVG-groep zet dat
+  // slechts een losse JS-eigenschap en verandert er niets in de DOM. Daarom
+  // hier het attribuut zelf zetten en weghalen.
+  function verberg(id, aan) {
+    var el = document.getElementById(id);
+    if (aan) el.setAttribute('hidden', '');
+    else el.removeAttribute('hidden');
+  }
+  function toonLaag(meet) {
+    verberg('heLaagMeet', !meet);
+    verberg('heLaagAnat', meet);
+    verberg('heLegMeet', !meet);
+    verberg('heLegAnat', meet);
+    kMeet.className = meet ? 'aan' : '';
+    kAnat.className = meet ? '' : 'aan';
+  }
+  kMeet.addEventListener('click', function () { toonLaag(true); });
+  kAnat.addEventListener('click', function () { toonLaag(false); });
+
+  [elA, elB, elW].forEach(function (e) { e.addEventListener('input', herteken); });
+  herteken();
+})();
+</script>
+</body>
+</html>
