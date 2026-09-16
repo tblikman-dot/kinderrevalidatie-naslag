@@ -141,6 +141,70 @@
   }
   .hf-vlag strong { display: block; margin-bottom: 3px; }
   .hf-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .hf-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  /* --- AC-rekenhulp --- */
+  .hf-reken {
+    background: var(--paneel);
+    border: 1.5px solid var(--accent);
+    border-radius: 13px;
+    padding: 14px 15px;
+    font-family: system-ui, sans-serif;
+  }
+  .hf-rij { display: flex; gap: 10px; margin-bottom: 12px; }
+  .hf-rij > div { flex: 1 1 0; min-width: 0; }
+  .hf-rij:last-of-type { margin-bottom: 0; }
+  .hf-reken label {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .hf-reken input {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+    font-size: 18px; font-weight: 700; text-align: center;
+    padding: 9px 4px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--papier); color: var(--inkt);
+  }
+  .hf-reken input:focus { outline: none; border-color: var(--accent); }
+  .hf-keuze { display: flex; gap: 7px; }
+  .hf-keuze button {
+    flex: 1; font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 6px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .hf-keuze button.aan { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+  .hf-zijden { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .hf-zijde {
+    flex: 1 1 150px; min-width: 0;
+    border-radius: 11px; padding: 12px 13px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+  }
+  .hf-zijde .kant {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .04em; opacity: .75;
+  }
+  .hf-zijde .oordeel { font-size: 17px; font-weight: 800; margin-top: 3px; line-height: 1.2; }
+  .hf-zijde .grens { font-size: 11.5px; margin-top: 6px; line-height: 1.5; opacity: .9; }
+  .hf-zijde.groen  { background: #E8F3EC; border-color: #7FAE92; color: #1C4F33; }
+  .hf-zijde.oranje { background: #FBF3DC; border-color: #E0B44A; color: #6B4E06; }
+  .hf-zijde.rood   { background: #FBEAE5; border-color: #C9553A; color: #8E3617; }
+  .hf-zijde.grijs  { color: var(--muted); }
+
+  .hf-band {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.55; margin-top: 12px;
+  }
+  table.hf-tonnis { min-width: 640px; }
+  table.hf-tonnis th.grp { background: var(--accent); color: #fff; }
+  table.hf-tonnis td.g { text-align: right; white-space: nowrap; }
+  table.hf-tonnis tr.raak td { background: #FDF6E0; }
+  table.hf-tonnis tr.raak td:first-child { background: #F8EDCB; font-weight: 800; }
+  table.hf-tonnis td.mark { outline: 2px solid #C9553A; outline-offset: -2px; font-weight: 800; }
   .hf-vlag.rood   { background: #FBEAE5; color: #8E3617; }
 
   .hf-link {
@@ -344,52 +408,86 @@
   <div class="hf-sectie">
     <h2>De AC-hoek per leeftijd</h2>
     <p class="hf-sectie-uitleg">
-      Gemiddelden bij gezonde heupen. Let op het verschil tussen jongens en meisjes: dat is groter
-      dan je zou denken, en meisjes starten steiler.
+      Vul geslacht, leeftijd en beide gemeten hoeken in. De grenswaarden verschillen per leeftijd,
+      per geslacht <em>en per zijde</em> — links ligt normaal gesproken hoger dan rechts.
     </p>
-    <div class="hf-tabel-scroll">
-      <table class="hf-tabel">
-        <thead><tr><th>Leeftijd</th><th class="getal">Meisjes</th><th class="getal">Jongens</th></tr></thead>
-        <tbody>
-          <tr><td>Pasgeborene</td><td class="getal">30° ± 4°</td><td class="getal">26° ± 5°</td></tr>
-          <tr><td>3 – 4 maanden</td><td class="getal" colspan="2" style="text-align:center">gemiddeld ± 25°</td></tr>
-          <tr><td>1 jaar</td><td class="getal">20° ± 3°</td><td class="getal">18° ± 4°</td></tr>
-        </tbody>
-      </table>
+
+    <div class="hf-reken">
+      <div class="hf-rij">
+        <div>
+          <label>Geslacht</label>
+          <div class="hf-keuze" id="hfGeslacht">
+            <button type="button" data-g="m" class="aan">Meisje</button>
+            <button type="button" data-g="j">Jongen</button>
+          </div>
+        </div>
+      </div>
+      <div class="hf-rij">
+        <div>
+          <label for="hfJaar">Leeftijd — jaar</label>
+          <input type="number" id="hfJaar" inputmode="numeric" min="0" max="12" step="1" placeholder="0">
+        </div>
+        <div>
+          <label for="hfMnd">maanden</label>
+          <input type="number" id="hfMnd" inputmode="numeric" min="0" max="11" step="1" placeholder="0">
+        </div>
+      </div>
+      <div class="hf-rij">
+        <div>
+          <label for="hfAcR">AC-hoek rechts °</label>
+          <input type="number" id="hfAcR" inputmode="decimal" min="0" max="80" step="0.5" placeholder="—">
+        </div>
+        <div>
+          <label for="hfAcL">AC-hoek links °</label>
+          <input type="number" id="hfAcL" inputmode="decimal" min="0" max="80" step="0.5" placeholder="—">
+        </div>
+      </div>
+
+      <div class="hf-zijden" id="hfZijden"></div>
+      <div class="hf-band" id="hfBand"></div>
     </div>
 
-    <p class="hf-sectie-uitleg" style="margin-top:16px;">
-      Afkapwaarden voor dysplasie, volgens de indeling van Tönnis: licht = 1 tot 2 standaarddeviaties
-      boven het gemiddelde, ernstig = meer dan 2 standaarddeviaties.
+    <p class="hf-sectie-uitleg" style="margin-top:20px;">
+      De tabel waar dit uit komt. <strong>s</strong> is de grens van één standaarddeviatie boven het
+      gemiddelde (lichte dysplasie), <strong>2s</strong> die van twee (ernstige dysplasie).
+      De rij bij jouw leeftijd licht op.
     </p>
     <div class="hf-tabel-scroll">
-      <table class="hf-tabel">
-        <thead><tr><th>Leeftijd</th><th>Normaal</th><th>Lichte dysplasie</th><th>Ernstige dysplasie</th></tr></thead>
-        <tbody>
+      <table class="hf-tabel hf-tonnis">
+        <thead>
           <tr>
-            <td>± 10 maanden</td>
-            <td class="ok">≤ 30°</td><td class="let">30 – 35°</td><td class="stop">≥ 35°</td>
+            <th rowspan="2">Leeftijd</th>
+            <th class="grp" colspan="4">Meisjes</th>
+            <th class="grp" colspan="4">Jongens</th>
           </tr>
           <tr>
-            <td>± 2 jaar</td>
-            <td class="ok">≤ 25°</td><td class="let">25 – 30°</td><td class="stop">≥ 30°</td>
+            <th>s&nbsp;rechts</th><th>s&nbsp;links</th><th>2s&nbsp;rechts</th><th>2s&nbsp;links</th>
+            <th>s&nbsp;rechts</th><th>s&nbsp;links</th><th>2s&nbsp;rechts</th><th>2s&nbsp;links</th>
           </tr>
-        </tbody>
+        </thead>
+        <tbody id="hfTonnisBody"></tbody>
       </table>
     </div>
 
     <div class="hf-vlag oranje">
-      <strong>Dezelfde 30°, twee verschillende antwoorden.</strong>
-      Op de leeftijd van 6 tot 7 maanden valt een AC-hoek van 30° nog binnen twee standaarddeviaties
-      — dus normaal. Op de leeftijd van 1 jaar valt diezelfde 30° daar juist buiten. Dat is precies
-      waarom een getal zonder leeftijd niets waard is, en waarom "de hoek is 30, dat kan nog" een
-      antwoord is dat je alleen bij een baby mag geven.
+      <strong>Dezelfde 30°, drie verschillende antwoorden.</strong>
+      Bij een meisje, rechterheup: op de leeftijd van 1 tot 2 maanden is 30° <em>normaal</em> — de
+      grens ligt daar op 36°. Op 5 tot 6 maanden is diezelfde 30° <em>lichte dysplasie</em>, want de
+      grens is gezakt naar 27,5°. Vanaf 7 maanden is het <em>ernstige dysplasie</em>, want dan ligt
+      zelfs de 2s-grens op 29,5°. Een AC-hoek zonder leeftijd is geen bevinding.
     </div>
 
     <ul class="hf-lijst" style="margin-top:14px;">
-      <li><strong>Meet aan beide kanten en vergelijk.</strong> Een links-rechtsverschil is een bevinding op zich, ook als beide hoeken binnen de norm vallen.</li>
-      <li><strong>Een AC-hoek van 30° of meer</strong> wordt in de literatuur gebruikt als drempel waarboven een bekkenosteotomie (Salter) in beeld komt — bij de leeftijd waarop die hoek ook echt afwijkend is.</li>
-      <li><strong>Rotatie op de opname verandert de hoek.</strong> Een scheve of gekantelde AP maakt de ene kant steiler en de andere vlakker. Beoordeel eerst de opname, dan pas de heup.</li>
+      <li><strong>Links en rechts hebben eigen grenswaarden.</strong> Dat is geen meetartefact: in
+        deze tabel ligt de linkergrens vrijwel overal enkele graden hoger dan de rechter. Beoordeel
+        een linkerheup dus niet tegen de rechternorm, en omgekeerd.</li>
+      <li><strong>Meet aan beide kanten en vergelijk.</strong> Een links-rechtsverschil is een
+        bevinding op zich, ook als beide hoeken binnen de norm vallen.</li>
+      <li><strong>Rotatie op de opname verandert de hoek.</strong> Een scheve of gekantelde AP maakt
+        de ene kant steiler en de andere vlakker. Beoordeel eerst de opname, dan pas de heup.</li>
+      <li><strong>Dit zijn grenswaarden, geen gemiddelden.</strong> De tabel zegt waar de
+        afkapwaarden liggen, niet hoe ver een hoek van het gemiddelde af ligt. Een hoek precies op
+        een grens telt hier mee met de afwijkende categorie.</li>
     </ul>
   </div>
 
@@ -468,9 +566,9 @@
   <div class="hf-sectie">
     <h2>Wat hier bewust níet in staat</h2>
     <ul class="hf-lijst">
-      <li><strong>De volledige tabel van Tönnis, leeftijd voor leeftijd.</strong> Die geeft per maand en per geslacht het gemiddelde met de 1SD- en 2SD-grens. Ik kon het origineel niet inzien — de bronnen staan achter een betaalmuur of zijn vanaf hier geblokkeerd — dus staan hier alleen de ankerpunten die ik in secundaire bronnen bevestigd kreeg. Heb je die tabel bij de hand, stuur hem dan; dan zet ik hem er compleet in, net als bij het CP-screeningsschema.</li>
+      <li><strong>De gemiddelden per leeftijd.</strong> De tabel hierboven geeft alleen de grenzen bij 1 en 2 standaarddeviaties, niet het gemiddelde en niet de standaarddeviatie zelf. Je kunt er dus aflezen in welke categorie een hoek valt, maar niet hoe ver hij van het gemiddelde af ligt.</li>
       <li><strong>Afkapwaarden voor de CE-hoek van Wiberg per leeftijd.</strong> Genoemd als opvolger van de AC-hoek bij oudere kinderen, maar zonder getallen omdat ik ze niet kon verifiëren.</li>
-      <li><strong>Een rekenhulp die de AC-hoek per willekeurige leeftijd beoordeelt.</strong> Dat zou tussen twee ankerpunten moeten interpoleren en daarmee een precisie suggereren die er niet is. Zodra de echte tabel er ligt, kan dat wel.</li>
+      <li><strong>Interpolatie tussen de leeftijdsbanden.</strong> De rekenhulp zoekt de band op waar de leeftijd in valt en rekent niet tussen twee banden door. De bron geeft banden, geen curve; tussenwaarden zouden een precisie suggereren die er niet is.</li>
     </ul>
   </div>
 
@@ -492,13 +590,22 @@
 
   <div class="hf-bron">
     <p>
-      <strong>Waar de getallen vandaan komen.</strong> De AC-hoekwaarden gaan terug op Tönnis,
-      <em>Normal values of the hip joint for the evaluation of X-rays in children and adults</em>,
-      Clin Orthop Relat Res 1976;119:39–47 — de bron waar vrijwel alle latere tabellen op teruggrijpen.
-      Ik heb dat artikel zelf niet kunnen inzien; de gemiddelden en de afkapwaarden hierboven komen uit
-      secundaire publicaties die die tabel citeren, en ze zijn onderling consistent. Beschouw ze als
-      betrouwbaar op de genoemde ankerpunten en niet als een volledige tabel.
-    </p>
+      <strong>Waar de getallen vandaan komen.</strong> De tabel met grenswaarden is
+      <em>Tönnis en Brunken (1968)</em>, overgenomen uit de tabel <em>Valores límites normales del
+      Índice Acetabular</em> in de <em>Guía Clínica Displasia Luxante de Cadera</em> van het
+      Chileense Ministerio de Salud (2008, p. 27), die daarvoor citeert naar González G J,
+      <em>Pesquisa radiológica de la luxación congénita de cadera</em>, Rev Chil Ortop Traumatol
+      1990;XXXI:91–95. Ik heb het oorspronkelijke artikel van Tönnis
+      (Clin Orthop Relat Res 1976;119:39–47) niet zelf kunnen inzien; de waarden hier zijn cel voor
+      cel overgenomen uit die gereproduceerde tabel, en de twee helften zijn kruislings
+      gecontroleerd op de kolom die in beide uitsneden zichtbaar was.
+      <br><br>
+      Eerdere versies van deze pagina toonden losse ankerpunten uit secundaire bronnen — een
+      gemiddelde bij de pasgeborene, een afkapwaarde rond 10 maanden en rond 2 jaar. Die zijn
+      vervangen door de volledige tabel. Eén van die ankerpunten bleek er ook naast te zitten: er
+      stond dat 30° op de leeftijd van 6 tot 7 maanden binnen twee standaarddeviaties valt en
+      daarom normaal is. Binnen 2s klopt voor een meisje rechts (grens 32°), maar normaal is het
+      niet — de 1s-grens ligt daar op 27,5°, dus het is lichte dysplasie</p>
     <p>
       <strong>De keuze van beeldvorming per leeftijd</strong> volgt de richtlijn
       <em>DDH — dysplastische heupontwikkeling bij kinderen onder één jaar</em> (NOV, via de
@@ -517,6 +624,181 @@
 </div>
 
 <script>
+
+/* ===================== AC-hoek volgens Tonnis & Brunken (1968) =====================
+   Grenswaarden van de acetabulaire index, overgenomen uit de tabel
+   "Valores limites normales del Indice Acetabular (Tonnis y Brunken 1968)" in de
+   Guia Clinica Displasia Luxante de Cadera (Ministerio de Salud, Chili, 2008, p. 27),
+   die citeert naar Gonzalez G J, Rev Chil Ortop Traumatol 1990;XXXI:91-95.
+
+   Per leeftijdsband, per geslacht en per zijde twee grenzen:
+     s  = 1 standaarddeviatie boven het gemiddelde -> lichte dysplasie
+     2s = 2 standaarddeviaties                     -> ernstige dysplasie
+   De tabel geeft grenswaarden, geen gemiddelden.
+   Let op: links ligt vrijwel overal hoger dan rechts. Dat staat zo in de bron.
+   De banden overlappen op 24, 36 en 60 maanden; daar toont de pagina beide.        */
+const TONNIS = [
+  ['1 – 2 maanden',    1,  2,  { m: { R:[36,41.5],   L:[36,41.5]   }, j: { R:[29,33],     L:[31,35]     } }],
+  ['3 – 4 maanden',    3,  4,  { m: { R:[31.5,36.5], L:[33,38.5]   }, j: { R:[28,32.5],   L:[29,33.5]   } }],
+  ['5 – 6 maanden',    5,  6,  { m: { R:[27.5,32],   L:[29.5,34]   }, j: { R:[24.5,29],   L:[27,31.5]   } }],
+  ['7 – 9 maanden',    7,  9,  { m: { R:[25.5,29.5], L:[27,31.5]   }, j: { R:[24.5,29],   L:[25.5,29.5] } }],
+  ['10 – 12 maanden', 10, 12,  { m: { R:[24.5,29],   L:[27,31.5]   }, j: { R:[23.5,27],   L:[25,29]     } }],
+  ['13 – 15 maanden', 13, 15,  { m: { R:[24.5,29],   L:[27,31.5]   }, j: { R:[23,27.5],   L:[24,27.5]   } }],
+  ['16 – 18 maanden', 16, 18,  { m: { R:[24.5,28],   L:[26,30.5]   }, j: { R:[23,26.5],   L:[24,27.5]   } }],
+  ['19 – 24 maanden', 19, 24,  { m: { R:[24,28],     L:[25.5,30.5] }, j: { R:[21.5,26.5], L:[23,27]     } }],
+  ['2 – 3 jaar',      24, 36,  { m: { R:[22,25.5],   L:[23.5,27]   }, j: { R:[21,25],     L:[22.5,27]   } }],
+  ['3 – 5 jaar',      36, 60,  { m: { R:[18,25.5],   L:[21,25.5]   }, j: { R:[19,23.5],   L:[20,24]     } }],
+  ['5 – 7 jaar',      60, 84,  { m: { R:[18,23],     L:[20,23.5]   }, j: { R:[17,21],     L:[19,23]     } }],
+];
+
+let hfGeslacht = 'm';
+
+function hfGetal(id) {
+  const el = document.getElementById(id);
+  if (!el || el.value.trim() === '') return null;
+  const v = parseFloat(el.value.replace(',', '.'));
+  return isNaN(v) ? null : v;
+}
+function hfGr(n) { return String(n).replace('.', ',') + '°'; }
+
+function hfBanden(mnd) {
+  if (mnd === null) return [];
+  return TONNIS.filter(r => mnd >= r[1] && mnd <= r[2]);
+}
+
+function hfOordeel(hoek, grenzen) {
+  if (hoek === null) return null;
+  const [s1, s2] = grenzen;
+  if (hoek >= s2) return { kleur: 'rood',   tekst: 'Ernstige dysplasie', kort: 'ernstig' };
+  if (hoek >= s1) return { kleur: 'oranje', tekst: 'Lichte dysplasie',   kort: 'licht'   };
+  return { kleur: 'groen', tekst: 'Binnen de norm', kort: 'normaal' };
+}
+
+function hfTekenTabel(raakBanden, zijdeMark) {
+  const body = document.getElementById('hfTonnisBody');
+  if (!body) return;
+  body.innerHTML = '';
+  const namen = raakBanden.map(r => r[0]);
+  TONNIS.forEach(r => {
+    const tr = document.createElement('tr');
+    if (namen.indexOf(r[0]) !== -1) tr.className = 'raak';
+    const cellen = [
+      r[0],
+      r[3].m.R[0], r[3].m.L[0], r[3].m.R[1], r[3].m.L[1],
+      r[3].j.R[0], r[3].j.L[0], r[3].j.R[1], r[3].j.L[1],
+    ];
+    cellen.forEach((c, i) => {
+      const td = document.createElement('td');
+      if (i > 0) td.className = 'g';
+      td.textContent = i === 0 ? c : String(c).replace('.', ',');
+      // de cel die het oordeel bepaalde omranden
+      if (i > 0 && tr.className === 'raak' && zijdeMark) {
+        // markeer de grens die het oordeel bepaalde: 2s bij ernstig, anders 1s
+        const kolom = (hfGeslacht === 'm' ? 0 : 4) + (zijdeMark.twee ? 2 : 0) + zijdeMark.i;
+        if (i - 1 === kolom) td.className = 'g mark';
+      }
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+function hfRekenAc() {
+  const jaar = hfGetal('hfJaar') || 0;
+  const mnd0 = hfGetal('hfMnd');
+  const heeftLeeftijd = (hfGetal('hfJaar') !== null) || (mnd0 !== null);
+  const mnd = heeftLeeftijd ? Math.round(jaar * 12 + (mnd0 || 0)) : null;
+
+  const acR = hfGetal('hfAcR');
+  const acL = hfGetal('hfAcL');
+  const zijden = document.getElementById('hfZijden');
+  const band = document.getElementById('hfBand');
+  if (!zijden || !band) return;
+
+  const treffers = hfBanden(mnd);
+  zijden.innerHTML = '';
+  band.innerHTML = '';
+
+  if (!heeftLeeftijd) {
+    band.textContent = 'Vul de leeftijd in — zonder leeftijd zegt een AC-hoek niets.';
+    hfTekenTabel([], null);
+    return;
+  }
+  if (!treffers.length) {
+    band.textContent = mnd < 1
+      ? 'De tabel begint bij 1 maand. Voor een pasgeborene staan er geen grenswaarden in; bij die leeftijd is de echo het onderzoek van keuze, niet de foto.'
+      : 'De tabel loopt tot 7 jaar. Daarboven staan er geen grenswaarden in; dan neemt de CE-hoek van Wiberg het over — die staat hier bewust niet, omdat ik de afkapwaarden daarvan niet heb kunnen verifiëren.';
+    hfTekenTabel([], null);
+    return;
+  }
+
+  const rij = treffers[0];
+  const g = rij[3][hfGeslacht];
+
+  [['Rechts', 'R', acR, 0], ['Links', 'L', acL, 1]].forEach(([naam, k, hoek, idx]) => {
+    const o = hfOordeel(hoek, g[k]);
+    const d = document.createElement('div');
+    d.className = 'hf-zijde ' + (o ? o.kleur : 'grijs');
+    const kant = document.createElement('div');
+    kant.className = 'kant';
+    kant.textContent = naam;
+    d.appendChild(kant);
+    const oo = document.createElement('div');
+    oo.className = 'oordeel';
+    oo.textContent = o ? o.tekst : '—';
+    d.appendChild(oo);
+    const gr = document.createElement('div');
+    gr.className = 'grens';
+    gr.textContent = (hoek === null ? 'geen hoek ingevuld. ' : 'Gemeten ' + hfGr(hoek) + '. ')
+      + 'Grens licht ' + hfGr(g[k][0]) + ', ernstig ' + hfGr(g[k][1]) + '.';
+    d.appendChild(gr);
+    zijden.appendChild(d);
+  });
+
+  let uitleg = 'Grenswaarden voor ' + (hfGeslacht === 'm' ? 'een meisje' : 'een jongen')
+    + ' van ' + rij[0].toLowerCase() + '.';
+
+  if (treffers.length > 1) {
+    const tweede = treffers[1];
+    const g2 = tweede[3][hfGeslacht];
+    uitleg += ' Let op: op precies deze leeftijd overlappen twee rijen in de tabel — '
+      + rij[0].toLowerCase() + ' en ' + tweede[0].toLowerCase()
+      + '. Hierboven staan de waarden van de eerste; de tweede geeft rechts '
+      + hfGr(g2.R[0]) + ' en ' + hfGr(g2.R[1]) + ', links ' + hfGr(g2.L[0]) + ' en ' + hfGr(g2.L[1])
+      + '. De bron kiest daar niet, dus deze pagina ook niet.';
+  }
+
+  const oR = hfOordeel(acR, g.R), oL = hfOordeel(acL, g.L);
+  if (oR && oL && oR.kort !== oL.kort) {
+    uitleg += ' De twee heupen vallen in verschillende categorieën — een links-rechtsverschil is zelf een bevinding.';
+  }
+  band.textContent = uitleg;
+
+  // de zwaarste zijde omranden in de tabel
+  let mark = null;
+  const rang = { normaal: 0, licht: 1, ernstig: 2 };
+  const zwaarste = (oR && oL) ? (rang[oR.kort] >= rang[oL.kort] ? oR : oL) : (oR || oL);
+  if (oR && oL) mark = { i: (rang[oR.kort] >= rang[oL.kort]) ? 0 : 1 };
+  else if (oR) mark = { i: 0 };
+  else if (oL) mark = { i: 1 };
+  if (mark) mark.twee = !!(zwaarste && zwaarste.kort === 'ernstig');
+  hfTekenTabel(treffers, mark);
+}
+
+document.getElementById('hfGeslacht').addEventListener('click', e => {
+  const knop = e.target.closest('button');
+  if (!knop) return;
+  hfGeslacht = knop.dataset.g;
+  document.querySelectorAll('#hfGeslacht button').forEach(b => {
+    b.classList.toggle('aan', b.dataset.g === hfGeslacht);
+  });
+  hfRekenAc();
+});
+['hfJaar', 'hfMnd', 'hfAcR', 'hfAcL'].forEach(id => {
+  document.getElementById(id).addEventListener('input', hfRekenAc);
+});
+hfRekenAc();
+
 // Afvinklijst: pas als alles aan staat is "normaal" een afgerond antwoord.
 // Bewust geen opslag - dit is een denkhulp bij één foto, geen dossier.
 (function () {
