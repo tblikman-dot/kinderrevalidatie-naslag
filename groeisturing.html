@@ -387,6 +387,46 @@
   </div>
 
   <div class="gr-sectie">
+    <h2>Waarom deze twee formules bij elkaar horen</h2>
+    <p class="gr-onder" style="margin-bottom:10px;">
+      De twee tabbladen zien eruit als twee losse methodes, maar het is één model.
+      Dat is te laten zien, en het is de reden dat je ze naast elkaar kunt vertrouwen.
+    </p>
+    <ul class="gr-lijst">
+      <li><strong>De ontwikkelingsformule volgt dwingend uit één aanname.</strong>
+        Neem aan dat het korte been een fractie <em>(1 − remming)</em> haalt van wat het lange been
+        nog groeit. Dan is het korte been bij rijpheid <em>S + (1−I)·L·(M−1)</em> en het lange
+        <em>L·M</em>. Trek af, en de lengtes vallen tegen elkaar weg: er blijft
+        <em>(L − S) + I·L·(M−1)</em> over — precies de formule in het tabblad. Er is dus niets
+        gekozen; hij is afgedwongen.</li>
+      <li><strong>En hij valt samen met de aangeboren formule zodra de verhouding vastligt.</strong>
+        Is het korte been altijd fractie <em>f</em> van het lange, dan is de gemeten remming
+        <em>1 − f</em> en het verschil <em>L(1−f)</em>. Invullen geeft
+        <em>L(1−f) + (1−f)·L·(M−1) = L(1−f)·M</em>, oftewel <em>verschil × multiplier</em>.
+        De aangeboren methode is dus geen andere methode maar het bijzondere geval waarin de
+        remming niet verandert.</li>
+      <li><strong>Dat is in de app zelf nagerekend.</strong>
+        Twaalf combinaties — vier vaste verhoudingen (0,50 / 0,65 / 0,80 / 0,90) bij drie
+        leeftijden — door beide tabbladen gehaald. De twee tabbladen gaven in alle twaalf gevallen
+        tot op de getoonde decimaal hetzelfde antwoord, en de berekende remming kwam telkens
+        precies uit op <em>1 − f</em>. Klopte er iets niet aan het ene tabblad, dan zouden ze
+        uiteenlopen.</li>
+      <li><strong>Ook de correctie voor een eerdere verlenging is afgedwongen, niet bedacht.</strong>
+        Gewonnen centimeters <em>A</em> zijn een vaste toevoeging die niet meegroeit, dus het
+        eigen verschil van het bot is <em>D + A</em>. Dat deel schaalt met de multiplier, de
+        verlenging niet: <em>(D + A)·M − A</em>. Bij <em>A = 0</em> staat daar weer gewoon
+        <em>D·M</em>.</li>
+    </ul>
+    <p class="gr-onder" style="margin-top:12px;">
+      <strong>Wat hiermee niet bewezen is.</strong> Dit toont aan dat de algebra klopt en dat de
+      twee tabbladen één consistent model zijn. Het toont niet aan dat de Multiplier-app dezelfde
+      aannames maakt, en evenmin welke multiplierwaarde die app op een gegeven leeftijd hanteert —
+      we weten al dat die app meer decimalen meeneemt dan de gedrukte tabel. Dat laatste is alleen
+      te controleren door de app zelf een som voor te leggen.
+    </p>
+  </div>
+
+  <div class="gr-sectie">
     <h2>Waar deze rekensom ophoudt</h2>
     <ul class="gr-lijst">
       <li><strong>De uitkomst is zo goed als de leeftijd die je invult.</strong> Botleeftijd kan bij een tiener een jaar of meer afwijken van de kalenderleeftijd, en dat scheelt zo een centimeter correctiepotentieel.</li>
