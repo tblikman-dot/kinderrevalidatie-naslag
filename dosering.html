@@ -191,6 +191,32 @@
     font-size: 13px; margin-top: 10px; cursor: pointer;
   }
   .do-check input { width: 17px; height: 17px; flex-shrink: 0; }
+  .do-check.nadruk { font-weight: 700; color: #8E3617; }
+
+  /* kant: links / rechts / beide */
+  .do-kant { margin-bottom: 9px; }
+  .do-kant .kop {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .do-kantknoppen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .do-kantknoppen button {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 8px 4px; border-radius: 8px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .do-kantknoppen button.aan {
+    border-color: var(--accent); background: var(--accent-zacht); color: var(--accent);
+  }
+
+  .do-rcp {
+    font-size: 11.5px; line-height: 1.55; color: var(--muted);
+    margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--lijn);
+  }
+  .do-rcp b { color: var(--inkt); }
+  .do-rcp .let { color: #6B4E06; }
 
   .do-leeg {
     font-family: system-ui, sans-serif;
@@ -583,6 +609,16 @@
 
     <div id="doSpieren"></div>
 
+    <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.6;margin:12px 2px 0;">
+      De dosis uit je tabel geldt <b>per kant</b>. Zet je een spier op <b>beide</b>,
+      dan telt hij dubbel mee in het totaal, tegen de voorraad en tegen het plafond —
+      en krijgen links en rechts hetzelfde getal. Wil je links en rechts
+      <em>verschillend</em> doseren, voeg de spier dan twee keer toe en zet hem
+      één keer op links en één keer op rechts.
+      Het vinkje <b>limiteert</b> zet een spier vooraan als er te weinig is; de
+      prioriteit bepaalt daarna de volgorde.
+    </p>
+
     <div class="do-knoprij">
       <button type="button" id="doWisSessie">Sessie leegmaken</button>
     </div>
@@ -653,9 +689,67 @@
 
 </div>
 
+<script src="rcp-data.js"></script>
 <script>
 (function () {
   'use strict';
+
+  var KANTEN = [['L', 'Links'], ['R', 'Rechts'], ['LR', 'Beide']];
+
+  // Koppeling naar Appendix 2 van de RCP (rcp-data.js). Alleen waar de spier
+  // in die tabel ook echt staat; waar hij er niet in staat, staat hier niets
+  // en zegt de kaart dat ook. Sommige keuzes hier vatten twee rijen van de
+  // bron samen — dan worden beide getoond.
+  var RCP_KOPPEL = {
+    pecmaj:  ['Pectoralis major'],
+    latdor:  ['Latissimus dorsi'],
+    teresmaj:['Teres major'],
+    subscap: ['Subscapularis'],
+    pecmin:  ['Pectoralis minor'],
+    biceps:  ['Biceps brachii'],
+    brachial:['Brachialis'],
+    brachrad:['Brachioradialis'],
+    triceps: ['Triceps brachii'],
+    pronter: ['Pronator teres'],
+    pronquad:['Pronator quadratus'],
+    fcr:     ['Flexor carpi radialis'],
+    fcu:     ['Flexor carpi ulnaris'],
+    fds:     ['Flexor digitorum superficialis'],
+    fdp:     ['Flexor digitorum profoundus'],
+    fpl:     ['Flexor pollicis longus'],
+    psoas:   ['Psoas major', 'Iliacus'],
+    addlong: ['Adductor longus'],
+    addmag:  ['Adductor magnus'],
+    gracilis:['Gracilis'],
+    hamstmed:['Semi membranosus', 'Semi tendinosus'],
+    hamstlat:['Biceps femoris'],
+    rectfem: ['Rectus femoris'],
+    gastmed: ['Gastrocnemius – medial head'],
+    gastlat: ['Gastrocnemius – lateral head'],
+    soleus:  ['Soleus'],
+    tibpost: ['Tibialis posterior'],
+    tibant:  ['Tibialis anterior'],
+    peronei: ['Peroneus longus', 'Peroneus brevis'],
+    fhl:     ['Flexor hallucis longus'],
+    fdl:     ['Flexor digitorum longus'],
+    ehl:     ['Extensor hallucis longus']
+    // addpol, thenar en interos staan niet in Appendix 2 — bewust geen regel.
+  };
+  var RCP_MERK = { ona: 'b', inco: 'x', abo: 'd' };
+  var RCP_MERKNAAM = { ona: 'BOTOX', inco: 'Xeomin', abo: 'Dysport' };
+
+  function rcpRijen(id) {
+    var namen = RCP_KOPPEL[id];
+    if (!namen || typeof RCP_APPENDIX2 === 'undefined') return [];
+    return RCP_APPENDIX2.spieren.filter(function (r) {
+      return namen.indexOf(r.m) !== -1;
+    });
+  }
+  function rcpBereik(rij) {
+    var v = rij[RCP_MERK[prep]];
+    if (!v) return null;
+    return v.length === 1 ? v[0] + ' E' : v[0] + '–' + v[1] + ' E';
+  }
 
   var MATEN   = [['klein','Klein'], ['middel','Middel'], ['groot','Groot']];
   var NIVEAUS = [['laag','Laag'], ['midden','Midden'], ['hoog','Hoog']];
@@ -886,9 +980,15 @@
       sleutel: id + '-' + Date.now() + '-' + Math.round(Math.random() * 1e6),
       maat: s.maat,
       niveau: 'midden',
+      // Standaard beide kanten. Dat is de veilige kant om fout te staan: wie
+      // vergeet te kiezen krijgt een te hoog totaal te zien en merkt het,
+      // terwijl 'één kant' als standaard het totaal stilletjes zou halveren
+      // en het plafond ten onrechte zou laten slagen.
+      kant: 'LR',
       zwakte: false,
       respons: 'nvt',
-      prio: 'midden'
+      prio: 'midden',
+      limiterend: false
     });
     tekenSpieren();
     herteken();
@@ -927,6 +1027,32 @@
       titel.appendChild(weg);
       kaart.appendChild(titel);
 
+      var kantWrap = document.createElement('div');
+      kantWrap.className = 'do-kant';
+      var kantKop = document.createElement('span');
+      kantKop.className = 'kop';
+      kantKop.textContent = 'Welke kant';
+      kantWrap.appendChild(kantKop);
+      var kantKnop = document.createElement('div');
+      kantKnop.className = 'do-kantknoppen';
+      kantKnop.setAttribute('role', 'group');
+      kantKnop.setAttribute('aria-label', s.naam + ' — welke kant');
+      KANTEN.forEach(function (k) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = k[1];
+        if (g.kant === k[0]) b.className = 'aan';
+        b.setAttribute('aria-pressed', g.kant === k[0] ? 'true' : 'false');
+        b.addEventListener('click', function () {
+          g.kant = k[0];
+          tekenSpieren();
+          herteken();
+        });
+        kantKnop.appendChild(b);
+      });
+      kantWrap.appendChild(kantKnop);
+      kaart.appendChild(kantWrap);
+
       var raster = document.createElement('div');
       raster.className = 'do-raster';
       raster.appendChild(keuze('Grootte', MATEN, g.maat, function (v) { g.maat = v; herteken(); }));
@@ -954,8 +1080,50 @@
       lab.appendChild(sp);
       kaart.appendChild(lab);
 
+      var labLim = document.createElement('label');
+      labLim.className = 'do-check' + (g.limiterend ? ' nadruk' : '');
+      var cbLim = document.createElement('input');
+      cbLim.type = 'checkbox';
+      cbLim.checked = g.limiterend;
+      cbLim.addEventListener('change', function () {
+        g.limiterend = cbLim.checked;
+        tekenSpieren();
+        herteken();
+      });
+      var spLim = document.createElement('span');
+      spLim.textContent = 'Deze spier limiteert — gaat voor op de rest';
+      labLim.appendChild(cbLim);
+      labLim.appendChild(spLim);
+      kaart.appendChild(labLim);
+
+      var rcp = rcpRegel(g.id);
+      if (rcp) kaart.appendChild(rcp);
+
       elSpieren.appendChild(kaart);
     });
+  }
+
+  // Wat Appendix 2 over deze spier zegt: het aantal injectieplaatsen en het
+  // bereik voor het gekozen preparaat. Het bereik staat er nadrukkelijk als
+  // VOLWASSENwaarde bij — het is een ijkpunt, geen voorstel voor een kind.
+  function rcpRegel(id) {
+    var rijen = rcpRijen(id);
+    if (!rijen.length) return null;
+    var d = document.createElement('div');
+    d.className = 'do-rcp';
+    rijen.forEach(function (r) {
+      var p = document.createElement('div');
+      var bereik = rcpBereik(r);
+      var stukken = [];
+      stukken.push('<b>' + r.m + '</b>');
+      if (r.zelden) stukken.push('RCP: „Rarely injected"');
+      else if (!bereik) stukken.push('RCP geeft hier geen eigen dosis');
+      else stukken.push('RCP ' + RCP_MERKNAAM[prep] + ' <b>' + bereik + '</b> <span class="let">(volwassenen)</span>');
+      stukken.push(r.n ? '💉 ' + r.n : '💉 aantal plaatsen niet vermeld');
+      p.innerHTML = stukken.join(' · ');
+      d.appendChild(p);
+    });
+    return d;
   }
 
   function keuze(label, opties, waarde, bij) {
@@ -1003,38 +1171,47 @@
         pct += wegingen.bijw;
         redenen.push('bijwerkingen ' + (wegingen.bijw > 0 ? '+' : '') + wegingen.bijw + '%');
       }
-      var gewenst = basis === null ? null : Math.max(0, basis * (1 + pct / 100));
+      var perKant = basis === null ? null : rond(Math.max(0, basis * (1 + pct / 100)));
+      // De dosis uit de tabel geldt PER KANT. Bij 'beide' is de belasting van
+      // het kind dus het dubbele, en dat is wat tegen de voorraad en tegen het
+      // plafond moet worden gehouden.
+      var kanten = g.kant === 'LR' ? 2 : 1;
       return {
         g: g,
         index: index,
         naam: spierVan(g.id).naam,
         basis: basis,
         vloer: vloer,
+        kanten: kanten,
         pct: pct,
         redenen: redenen,
-        gewenst: gewenst === null ? null : rond(gewenst)
+        gewenstPerKant: perKant,
+        gewenst: perKant === null ? null : perKant * kanten
       };
     });
   }
 
+  // Verdelen gebeurt in totalen (dus inclusief de tweede kant), maar wat een
+  // spier krijgt wordt per kant afgerond en dan vermenigvuldigd. Zo staat er
+  // links en rechts hetzelfde ronde getal en klopt het totaal precies.
   function verdeelPrioriteit(regels, budget) {
-    var volgorde = regels.slice().sort(function (a, b) {
-      var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
-      return d !== 0 ? d : a.index - b.index;
-    });
+    var volgorde = regels.slice().sort(vergelijkVolgorde);
     var rest = budget;
     volgorde.forEach(function (r) {
-      if (r.gewenst === null) { r.krijgt = null; return; }
+      if (r.gewenst === null) { r.krijgt = null; r.krijgtPerKant = null; return; }
       if (rest >= r.gewenst) {
+        r.krijgtPerKant = r.gewenstPerKant;
         r.krijgt = r.gewenst;
         rest -= r.gewenst;
       } else {
-        var mogelijk = omlaag(rest);
-        if (r.vloer !== null && mogelijk >= r.vloer && mogelijk > 0) {
-          r.krijgt = mogelijk;
-          rest -= mogelijk;
+        var perKant = omlaag(rest / r.kanten);
+        if (r.vloer !== null && perKant >= r.vloer && perKant > 0) {
+          r.krijgtPerKant = perKant;
+          r.krijgt = perKant * r.kanten;
+          rest -= r.krijgt;
           r.geknepen = true;
         } else {
+          r.krijgtPerKant = 0;
           r.krijgt = 0;
           r.gedropt = true;
         }
@@ -1046,13 +1223,23 @@
   function verdeelEvenredig(regels, budget, totaal) {
     var factor = totaal > 0 ? Math.min(1, budget / totaal) : 1;
     regels.forEach(function (r) {
-      if (r.gewenst === null) { r.krijgt = null; return; }
-      var v = omlaag(r.gewenst * factor);
-      r.krijgt = v;
+      if (r.gewenst === null) { r.krijgt = null; r.krijgtPerKant = null; return; }
+      var perKant = omlaag(r.gewenstPerKant * factor);
+      r.krijgtPerKant = perKant;
+      r.krijgt = perKant * r.kanten;
       if (factor < 1) r.geknepen = true;
-      if (r.vloer !== null && v < r.vloer) r.onderVloer = true;
+      if (r.vloer !== null && perKant < r.vloer) r.onderVloer = true;
     });
     return factor;
+  }
+
+  // Limiterende spieren eerst, daarna op prioriteit, daarna op volgorde van
+  // toevoegen. Zo betekent het vinkje 'limiteert' ook echt iets bij krapte.
+  function vergelijkVolgorde(a, b) {
+    var l = (b.g.limiterend ? 1 : 0) - (a.g.limiterend ? 1 : 0);
+    if (l !== 0) return l;
+    var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
+    return d !== 0 ? d : a.index - b.index;
   }
 
   function herteken() {
@@ -1091,7 +1278,10 @@
       if (strategie === 'prioriteit') rest = verdeelPrioriteit(regels, budget);
       else factor = verdeelEvenredig(regels, budget, totaalGewenst);
     } else {
-      regels.forEach(function (r) { r.krijgt = r.gewenst; });
+      regels.forEach(function (r) {
+        r.krijgt = r.gewenst;
+        r.krijgtPerKant = r.gewenstPerKant;
+      });
     }
 
     var totaalGeeft = 0;
@@ -1142,8 +1332,11 @@
 
     // budgetcellen
     var bud = el('div', 'do-budget');
+    var zijden = 0;
+    regels.forEach(function (r) { zijden += r.kanten; });
     bud.appendChild(cel('Gewenst', ee(c.totaalGewenst) + ' E',
-      regels.length + ' ' + (regels.length === 1 ? 'spier' : 'spieren'), ''));
+      regels.length + ' ' + (regels.length === 1 ? 'spier' : 'spieren') +
+      ' · ' + zijden + ' ' + (zijden === 1 ? 'kant' : 'kanten'), ''));
     if (c.budget !== null) {
       var klasse = c.totaalGewenst > c.budget ? 'krap' : '';
       bud.appendChild(cel('Budget', ee(c.budget) + ' E', budgetUitleg(c), klasse));
@@ -1156,24 +1349,28 @@
 
     // per spier
     var lijst = el('div');
-    var volgorde = regels.slice().sort(function (a, b) {
-      var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
-      return d !== 0 ? d : a.index - b.index;
-    });
+    var volgorde = regels.slice().sort(vergelijkVolgorde);
     volgorde.forEach(function (r) {
       var rij = el('div', 'do-rij' + (r.gedropt ? ' uit' : (r.geknepen || r.onderVloer ? ' krap' : '')));
       var sp = el('div', 'sp');
-      sp.appendChild(el('b', null, r.naam));
+      sp.appendChild(el('b', null, r.naam + ' — ' + kantNaam(r.g.kant)));
       var sub = el('div', 'sub');
-      var delen = [maatNaam(r.g.maat) + ' · ' + niveauNaam(r.g.niveau) + ' · prio ' + r.g.prio];
+      var delen = [];
+      if (r.g.limiterend) delen.push('limiterend, gaat voor');
+      delen.push(maatNaam(r.g.maat) + ' · ' + niveauNaam(r.g.niveau) + ' · prio ' + r.g.prio);
       if (r.basis === null) delen.push('tabelwaarde ontbreekt');
       else {
-        var s = 'tabel ' + ee(r.basis) + ' E';
+        var s = 'tabel ' + ee(r.basis) + ' E per kant';
         if (r.redenen.length) s += ' → ' + r.redenen.join(', ');
         delen.push(s);
       }
-      if (r.gedropt) delen.push('valt af: er is minder over dan je laagste dosis (' + ee(r.vloer) + ' E)');
-      else if (r.onderVloer) delen.push('onder je laagste dosis van ' + ee(r.vloer) + ' E');
+      if (r.kanten === 2 && r.krijgtPerKant) {
+        delen.push(ee(r.krijgtPerKant) + ' E links + ' + ee(r.krijgtPerKant) + ' E rechts');
+      }
+      var plaatsen = plaatsenTekst(r);
+      if (plaatsen) delen.push(plaatsen);
+      if (r.gedropt) delen.push('valt af: er is minder over dan je laagste dosis (' + ee(r.vloer) + ' E per kant)');
+      else if (r.onderVloer) delen.push('onder je laagste dosis van ' + ee(r.vloer) + ' E per kant');
       else if (r.geknepen) delen.push('teruggebracht om binnen het budget te blijven');
       sub.textContent = delen.join(' — ');
       sp.appendChild(sub);
@@ -1181,6 +1378,9 @@
 
       var eeD = el('div', 'ee');
       eeD.appendChild(document.createTextNode(r.krijgt === null ? '—' : ee(r.krijgt) + ' E'));
+      if (r.kanten === 2 && r.krijgtPerKant) {
+        eeD.appendChild(el('small', null, '2 × ' + ee(r.krijgtPerKant) + ' E'));
+      }
       if (r.krijgt !== null && r.gewenst !== null && r.krijgt !== r.gewenst) {
         eeD.appendChild(el('small', null, 'wilde ' + ee(r.gewenst) + ' E'));
       }
@@ -1190,6 +1390,23 @@
     elUit.appendChild(lijst);
 
     // meldingen
+    var dubbel = dubbeleKanten(regels);
+    if (dubbel.length) {
+      elUit.appendChild(vlag('rood', 'Een spier staat er twee keer in voor dezelfde kant.',
+        dubbel.join(', ') + '. Die doses worden nu bij elkaar opgeteld. Klopt dat — bijvoorbeeld twee' +
+        ' depots in één spierbuik — laat het dan staan; anders haal er één weg.'));
+    }
+
+    var limi = regels.filter(function (r) { return r.g.limiterend; });
+    if (limi.length) {
+      elUit.appendChild(vlag('blauw',
+        limi.length === 1 ? 'Eén spier staat als limiterend aangemerkt.'
+                          : limi.length + ' spieren staan als limiterend aangemerkt.',
+        limi.map(function (r) { return r.naam + ' (' + kantNaam(r.g.kant) + ')'; }).join(', ') +
+        '. Bij krapte krijgen die eerst hun volle dosis, vóór de prioriteitsvolgorde. ' +
+        'Zet je ze allemaal aan, dan valt dat onderscheid weg.'));
+    }
+
     if (c.ontbreekt) {
       elUit.appendChild(vlag('oranje', 'Je dosistabel is nog niet compleet.',
         'Voor minstens één gekozen combinatie van grootte en ernst staat er geen getal in de tabel. Die spier telt niet mee in het totaal zolang het veld leeg is.'));
@@ -1286,6 +1503,47 @@
     return { tekst: delen.join(' + ') };
   }
 
+  // Dezelfde spier twee keer aan dezelfde kant: 'beide' overlapt met links én
+  // met rechts. Links naast rechts is juist de manier om per kant een andere
+  // dosis te geven, dus dat is géén melding.
+  function dubbeleKanten(regels) {
+    var gezien = {}, meldingen = [];
+    regels.forEach(function (r) {
+      var zijden = r.g.kant === 'LR' ? ['L', 'R'] : [r.g.kant];
+      zijden.forEach(function (z) {
+        var sleutel = r.g.id + '|' + z;
+        if (gezien[sleutel]) {
+          var tekst = r.naam + ' ' + (z === 'L' ? 'links' : 'rechts');
+          if (meldingen.indexOf(tekst) === -1) meldingen.push(tekst);
+        }
+        gezien[sleutel] = true;
+      });
+    });
+    return meldingen;
+  }
+
+  function kantNaam(k) {
+    return k === 'LR' ? 'beide kanten' : (k === 'L' ? 'links' : 'rechts');
+  }
+
+  // Het aantal injectieplaatsen komt uit Appendix 2 en nergens anders. Staat
+  // er een getal in, dan wordt de dosis per kant erdoor gedeeld; staat er
+  // "meerdere", dan blijft het bij "meerdere". Zelf een aantal verzinnen doet
+  // deze functie niet.
+  function plaatsenTekst(r) {
+    var rijen = rcpRijen(r.g.id).filter(function (x) { return x.n; });
+    if (!rijen.length) return '';
+    var n = rijen[0].n;
+    var m = n.match(/^(\d+)\s/);
+    if (m && r.krijgtPerKant) {
+      var aantal = Number(m[1]);
+      var per = Math.round(r.krijgtPerKant / aantal * 10) / 10;
+      return 'RCP: over ' + aantal + ' plaatsen — ongeveer ' + ee(per) + ' E per plaats';
+    }
+    if (m) return 'RCP: over ' + m[1] + ' plaatsen';
+    return 'RCP: ' + n.split(' — ')[0];
+  }
+
   function maatNaam(k)   { var f = MATEN.filter(function (m) { return m[0] === k; });   return f.length ? f[0][1].toLowerCase() : k; }
   function niveauNaam(k) { var f = NIVEAUS.filter(function (n) { return n[0] === k; }); return f.length ? f[0][1].toLowerCase() : k; }
 
@@ -1323,6 +1581,10 @@
     prep = elPrep.value;
     schrijf(SLEUTEL_PREP, prep);
     vulPreparaat();
+    // De spierkaarten tonen het RCP-bereik van het gekozen preparaat, dus die
+    // moeten mee veranderen — anders blijft er een bereik van het vorige merk
+    // staan, en eenheden zijn niet uitwisselbaar.
+    tekenSpieren();
     herteken();
   });
 
