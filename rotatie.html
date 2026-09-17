@@ -598,6 +598,99 @@
     return d[d.length - 1][1];
   }
 
+  // Omgekeerde opzoeking: bij welke leeftijd is DEZE waarde het gemiddelde?
+  // Beide curves dalen monotoon, dus dat is eenduidig. Buiten het bereik van
+  // de curvewaarden geeft hij null terug; dan wordt er niet geextrapoleerd.
+  function leeftijdBijAnteversie(waarde, g) {
+    var d = ANTEVERSIE[g];
+    if (waarde > d[0][1] || waarde < d[d.length - 1][1]) return null;
+    for (var i = 0; i < d.length - 1; i++) {
+      var a = d[i][1], b = d[i + 1][1];
+      if (waarde <= a && waarde >= b) {
+        var t = (a === b) ? 0 : (a - waarde) / (a - b);
+        return d[i][0] + t * (d[i + 1][0] - d[i][0]);
+      }
+    }
+    return null;
+  }
+
+  // Plaatst een gemeten anteversie tegen de curve. Bewust GEEN oordeel
+  // "afwijkend": bij de curve staat geen spreiding, dus dat kan hij niet
+  // dragen. Wat hij wel kan: afstand tot het gemiddelde voor deze leeftijd,
+  // en bij welke leeftijd deze waarde het gemiddelde zou zijn. Buiten
+  // 3-10 jaar vallen we terug op de twee ankers die wel in de bron staan:
+  // 30-40 graden bij de geboorte en +/- 15 graden bij volgroeidheid.
+  function anteversieDuiding(av, leeftijd, g) {
+    var d = ANTEVERSIE[g];
+    var eersteL = d[0][0], laatsteL = d[d.length - 1][0];
+    var eersteW = d[0][1], laatsteW = d[d.length - 1][1];
+    var kind = (g === 'meisje' ? 'een meisje' : 'een jongen');
+    var regels = [];
+    var gem = gemAnteversie(leeftijd, g);
+
+    if (gem !== null) {
+      var v = av - gem;
+      regels.push('Het gemiddelde voor ' + kind + ' van ' + komma(leeftijd) + ' jaar is ' +
+        gr(gem) + ' — deze meting ligt daar ' +
+        (Math.abs(v) < 0.5 ? 'vrijwel op.'
+          : gr(Math.abs(v)) + (v > 0 ? ' boven.' : ' onder.')));
+    } else if (leeftijd === null) {
+      regels.push('Vul de leeftijd in om met de curve te vergelijken.');
+    } else if (leeftijd < eersteL) {
+      regels.push('De curve begint pas bij ' + komma(eersteL) + ' jaar, dus een gemiddelde voor ' +
+        komma(leeftijd) + ' jaar heb ik niet. De ankers eromheen: bij de geboorte is 30–40° normaal, ' +
+        'en op ' + komma(eersteL) + ' jaar is het gemiddelde voor ' + kind + ' ' + gr(eersteW) + '.');
+    } else {
+      regels.push('De curve stopt bij ' + komma(laatsteL) + ' jaar — daar is het gemiddelde voor ' +
+        kind + ' ' + gr(laatsteW) + ' — en bij volgroeidheid is ± 15° de referentie. ' +
+        'Na ongeveer 8 jaar verandert er nauwelijks nog iets, dus dat is het bereik waartegen deze meting hoort.');
+    }
+
+    var eq = leeftijdBijAnteversie(av, g);
+    if (eq !== null) {
+      regels.push('Op de curve is ' + gr(av) + ' het gemiddelde rond ' + komma(eq) + ' jaar' +
+        (leeftijd === null ? '.'
+          : (Math.abs(eq - leeftijd) < 0.5 ? ' — dat past bij deze leeftijd.'
+            : '; dit kind is ' + komma(leeftijd) + ' jaar.')));
+    } else if (av > eersteW) {
+      regels.push(gr(av) + ' ligt boven het hoogste punt van de curve (' + gr(eersteW) + ' op ' +
+        komma(eersteL) + ' jaar)' +
+        (av > 40 ? ', en ook boven de 30–40° die bij de geboorte normaal is.'
+          : '; ter vergelijking: bij de geboorte is 30–40° normaal.'));
+    } else {
+      regels.push(gr(av) + ' ligt onder het laagste punt van de curve (' + gr(laatsteW) + ' op ' +
+        komma(laatsteL) + ' jaar)' +
+        (av >= 10 && av <= 20 ? ' en in de orde van de ± 15° die bij volgroeidheid hoort.'
+          : ' en onder de ± 15° die bij volgroeidheid hoort.'));
+    }
+    return regels;
+  }
+
+  // De vraag "is dit afwijkend?" wordt niet door de curve beantwoord maar
+  // door de klinische afkapwaarden uit de bron: endorotatie > 70 graden
+  // SAMEN MET exorotatie < 20 graden.
+  function anteversieVerdict(d) {
+    var irHoog = d.ir !== null && d.ir > HEUP.irVerhoogd;
+    var erLaag = d.er !== null && d.er < HEUP.erVerminderd;
+    if (irHoog && erLaag) {
+      return 'Ja — endorotatie ' + gr(d.ir) + ' (> 70°) mét exorotatie ' + gr(d.er) +
+        ' (< 20°). Dat is het patroon van verhoogde femorale anteversie. Dat oordeel komt van deze ' +
+        'afkapwaarden, niet van de curve.';
+    }
+    if (irHoog || erLaag) {
+      return 'Nog niet te zeggen: één van de twee criteria is gehaald (' +
+        (irHoog ? 'endorotatie > 70°' : 'exorotatie < 20°') + '), de andere niet of niet gemeten. ' +
+        'Het patroon van verhoogde anteversie vraagt beide. De curve kan het niet beslissen — daar staat geen spreiding bij.';
+    }
+    if (d.ir !== null && d.er !== null) {
+      return 'Niet volgens de klinische criteria: die vragen endorotatie > 70° mét exorotatie < 20°, ' +
+        'en daar voldoen deze rotaties niet aan. Afstand tot het curvegemiddelde is op zichzelf geen afwijking; ' +
+        'bij de curve staat geen spreiding.';
+    }
+    return 'Dat bepaalt de curve niet — daar staat geen spreiding bij, dus „naast het gemiddelde" is niet ' +
+      '„afwijkend". Wat het wél bepaalt zijn de heuprotaties: endorotatie > 70° mét exorotatie < 20°. Vul die in.';
+  }
+
   var GX0 = 42, GX1 = 306, GY0 = 16, GY1 = 164, GMAX = 45;
   function px(l) { return GX0 + (l - 3) / 7 * (GX1 - GX0); }
   function py(d) { return GY1 - d / GMAX * (GY1 - GY0); }
@@ -712,30 +805,33 @@
         kaart.appendChild(r2);
       }
       if (d.av !== null) {
-        var gem = gemAnteversie(leeftijd, geslacht);
         var r3 = document.createElement('div');
         r3.className = 'regel';
-        if (gem === null) {
-          r3.textContent = 'Anteversie ' + gr(d.av) + '. De curve loopt van 3 tot 10 jaar; ' +
-            (leeftijd === null ? 'vul de leeftijd in om te vergelijken.' : 'daarbuiten trek ik hem niet door.');
-        } else {
-          var v = d.av - gem;
-          r3.textContent = 'Anteversie ' + gr(d.av) + ' — het gemiddelde voor ' +
-            (geslacht === 'meisje' ? 'een meisje' : 'een jongen') + ' van ' + komma(leeftijd) +
-            ' jaar is ' + gr(Math.round(gem * 10) / 10) + ', dus ' +
-            (Math.abs(v) < 0.5 ? 'vrijwel gelijk aan het gemiddelde.'
-              : gr(Math.abs(Math.round(v * 10) / 10)) + (v > 0 ? ' erboven.' : ' eronder.'));
-          punten.push({ kant: p[0].charAt(0), waarde: d.av });
-        }
+        var kop = document.createElement('b');
+        kop.textContent = 'Anteversie ' + gr(d.av);
+        r3.appendChild(kop);
+        r3.appendChild(document.createTextNode(anteversieDuiding(d.av, leeftijd, geslacht).join(' ')));
         kaart.appendChild(r3);
+
+        var r4 = document.createElement('div');
+        r4.className = 'regel';
+        var kop2 = document.createElement('b');
+        kop2.textContent = 'Afwijkend?';
+        r4.appendChild(kop2);
+        r4.appendChild(document.createTextNode(anteversieVerdict(d)));
+        kaart.appendChild(r4);
+
+        if (gemAnteversie(leeftijd, geslacht) !== null) punten.push({ kant: p[0].charAt(0), waarde: d.av });
       }
       zijden.appendChild(kaart);
     });
     tekenGrafiek(leeftijd, punten);
-    if (punten.length) {
+    if (data.R.av !== null || data.L.av !== null) {
       meld.appendChild(vlag('blauw', 'De curve is een gemiddelde, geen normaalwaarde',
         'Er staat geen spreiding bij, dus „boven het gemiddelde" is niet hetzelfde als „afwijkend". ' +
-        'Gebruik hem om te zien of een waarde past bij de leeftijd, niet om een diagnose op te hangen.'));
+        'Daarom plaatst de curve de waarde wel — hoe ver van het gemiddelde, en bij welke leeftijd hij ' +
+        'het gemiddelde zou zijn — maar komt het oordeel „afwijkend" uit de heuprotaties: endorotatie ' +
+        '> 70° mét exorotatie < 20°.'));
     }
 
     // --- asymmetrie ---
