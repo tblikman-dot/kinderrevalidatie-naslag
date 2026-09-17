@@ -76,10 +76,11 @@ const DEFAULT_CATS = [
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
   { id: 'nma', label: 'Neuromusculaire aandoeningen', scope: 'O.a. SMA, spierdystrofieën' },
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: 'MMC, spina bifida occulta, tethered cord',
-    zoekwoorden: 'spina bifida myelomeningocele MMC SBO occulta tethered cord retethering filum terminale conus medullaris lipoom syringomyelie hydromyelie neurale buisdefect uitvalsniveau blaasfunctie kyfoscoliose',
+    zoekwoorden: 'spina bifida myelomeningocele MMC SBO occulta tethered cord retethering filum terminale conus medullaris lipoom syringomyelie hydromyelie neurale buisdefect uitvalsniveau blaasfunctie kyfoscoliose neurogene blaas detrusor onderactief overactief NDO detrusoroveractiviteit areflex slappe blaas outletweerstand sfincter DSD detrusor-sfincter-dyssynergie compliance opslagdruk ledigingsdruk residu capaciteit incontinentie CIC clean intermittent catheterisation zelfkatheterisatie antimuscarinica botulinetoxine detrusor sfincter UUT hogere urinewegen hydronefrose VUR vesico-ureterale reflux nierfunctie urineweginfectie blaasstenen onveilige blaas urodynamica',
     directLinks: [
       { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html' },
       { label: '🦵 Spieruitvalsniveaus', url: 'myotomen.html' },
+      { label: '💧 Neurogene blaas — de vier combinaties', url: 'neurogene-blaas.html' },
     ] },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
     zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
