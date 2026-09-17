@@ -153,6 +153,45 @@
     .do-mcellen { flex: 1 1 auto; }
   }
 
+  /* --- spierkiezer ---
+     Stond als native <select>. Daarin is niet te zien welke spieren al in de
+     sessie zitten, en dat is juist wat je tijdens het kiezen wilt weten. Nu
+     een raster van knoppen met de stand erop. */
+  .do-keuzegroep { margin-top: 12px; }
+  .do-keuzegroep .kop {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+    display: flex; align-items: baseline; gap: 7px;
+  }
+  .do-keuzegroep .kop .telt {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0; text-transform: none;
+    background: var(--accent); color: #fff;
+    border-radius: 999px; padding: 1px 7px;
+  }
+  .do-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .do-chip {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 600;
+    padding: 7px 11px; border-radius: 999px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--inkt); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-align: left;
+  }
+  .do-chip:hover { border-color: var(--accent); }
+  .do-chip.gekozen {
+    background: #E8F3EC; border-color: #2E7D4F; color: #1C5F38;
+  }
+  .do-chip .kant {
+    font-size: 10.5px; font-weight: 800;
+    background: #2E7D4F; color: #fff;
+    border-radius: 999px; padding: 1px 6px;
+  }
+  .do-chip .plus { color: var(--muted); font-weight: 800; }
+  .do-chip.gekozen .plus { display: none; }
+
   /* --- spierkaarten --- */
   .do-spier {
     background: var(--paneel);
@@ -664,11 +703,13 @@
           <label for="doGewicht">Lichaamsgewicht (kg)</label>
           <input type="number" id="doGewicht" inputmode="decimal" min="0" step="0.5" placeholder="kg">
         </div>
-        <div class="do-veld">
-          <label for="doVoegToe">Spier toevoegen</label>
-          <select id="doVoegToe"></select>
-        </div>
       </div>
+      <div class="do-veld" style="margin-top:13px;">
+        <label for="doSpierZoek">Spier toevoegen</label>
+        <input type="search" id="doSpierZoek" placeholder="zoek: gastroc, adductor, pronator …" autocomplete="off">
+        <span class="hint" id="doKeuzeTeller"></span>
+      </div>
+      <div id="doKeuze"></div>
       <label class="do-check">
         <input type="checkbox" id="doBijwerkingen">
         <span>Bijwerkingen in de voorgeschiedenis <i style="color:var(--muted);font-style:normal;">(regel 6 — werkt op alle spieren)</i></span>
@@ -1079,7 +1120,9 @@
   var elMaxPlaats= document.getElementById('doMaxPlaats');
   var elMatrix   = document.getElementById('doMatrixBody');
   var elGewicht  = document.getElementById('doGewicht');
-  var elVoegToe  = document.getElementById('doVoegToe');
+  var elKeuze    = document.getElementById('doKeuze');
+  var elZoek     = document.getElementById('doSpierZoek');
+  var elKeuzeTel = document.getElementById('doKeuzeTeller');
   var elSpieren  = document.getElementById('doSpieren');
   var elBijw     = document.getElementById('doBijwerkingen');
   var elUit      = document.getElementById('doUit');
@@ -1147,23 +1190,101 @@
     elSnel.appendChild(nul);
   }
 
-  function bouwSpierkeuze() {
-    elVoegToe.innerHTML = '';
-    var leeg = document.createElement('option');
-    leeg.value = '';
-    leeg.textContent = 'kies een spier…';
-    elVoegToe.appendChild(leeg);
-    SPIERGROEPEN.forEach(function (g) {
-      var og = document.createElement('optgroup');
-      og.label = g.groep;
-      g.items.forEach(function (s) {
-        var o = document.createElement('option');
-        o.value = s.id;
-        o.textContent = s.naam;
-        og.appendChild(o);
-      });
-      elVoegToe.appendChild(og);
+  // Welke kanten van deze spier al in de sessie zitten. Dat is wat de
+  // oude keuzelijst niet kon laten zien.
+  function kantenVan(id) {
+    var z = {};
+    gekozen.forEach(function (g) {
+      if (g.id !== id) return;
+      if (g.kant === 'LR') { z.L = true; z.R = true; }
+      else z[g.kant] = true;
     });
+    if (z.L && z.R) return 'L+R';
+    if (z.L) return 'L';
+    if (z.R) return 'R';
+    return null;
+  }
+
+  function normSpier(t) {
+    return (t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  function bouwSpierkeuze() {
+    var zoek = normSpier(elZoek ? elZoek.value : '');
+    elKeuze.innerHTML = '';
+    var getoond = 0, totaal = 0;
+
+    SPIERGROEPEN.forEach(function (g) {
+      var items = g.items.filter(function (s) {
+        totaal++;
+        return !zoek || normSpier(s.naam).indexOf(zoek) !== -1;
+      });
+      if (!items.length) return;
+      getoond += items.length;
+
+      var sec = document.createElement('div');
+      sec.className = 'do-keuzegroep';
+      var kop = document.createElement('div');
+      kop.className = 'kop';
+      kop.appendChild(document.createTextNode(g.groep));
+      var aantalGekozen = g.items.filter(function (s) { return kantenVan(s.id); }).length;
+      if (aantalGekozen) {
+        var t = document.createElement('span');
+        t.className = 'telt';
+        t.textContent = aantalGekozen + ' gekozen';
+        kop.appendChild(t);
+      }
+      sec.appendChild(kop);
+
+      var chips = document.createElement('div');
+      chips.className = 'do-chips';
+      items.forEach(function (s) {
+        var kanten = kantenVan(s.id);
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'do-chip' + (kanten ? ' gekozen' : '');
+        var plus = document.createElement('span');
+        plus.className = 'plus';
+        plus.textContent = '+';
+        b.appendChild(plus);
+        b.appendChild(document.createTextNode(s.naam));
+        if (kanten) {
+          var k = document.createElement('span');
+          k.className = 'kant';
+          k.textContent = kanten;
+          b.appendChild(k);
+          b.setAttribute('aria-label', s.naam + ' staat al in de sessie: ' + kanten + '. Nogmaals toevoegen.');
+          b.title = 'Staat al in de sessie (' + kanten + '). Tikken voegt hem nog een keer toe.';
+        } else {
+          b.setAttribute('aria-label', s.naam + ' toevoegen');
+        }
+        b.addEventListener('click', function () { voegSpierToe(s.id); });
+        chips.appendChild(b);
+      });
+      sec.appendChild(chips);
+      elKeuze.appendChild(sec);
+    });
+
+    if (!getoond) {
+      var leeg = document.createElement('div');
+      leeg.className = 'do-leeg';
+      leeg.textContent = 'Geen spier met die naam. De lijst gebruikt Latijnse namen.';
+      elKeuze.appendChild(leeg);
+    }
+
+    var inSessie = {};
+    gekozen.forEach(function (g) { inSessie[g.id] = true; });
+    var n = Object.keys(inSessie).length;
+    elKeuzeTel.textContent = n
+      ? n + ' van de ' + totaal + ' spieren staan in deze sessie, groen gemarkeerd. Tikken voegt toe; een spier die er al staat kun je nogmaals toevoegen voor de andere kant.'
+      : 'Tik een spier aan om hem toe te voegen. Wat al in de sessie zit wordt groen.';
+  }
+
+  function nieuweKant(id) {
+    var al = kantenVan(id);
+    if (al === 'L') return 'R';
+    if (al === 'R') return 'L';
+    return 'LR';
   }
 
   function voegSpierToe(id) {
@@ -1178,7 +1299,10 @@
       // vergeet te kiezen krijgt een te hoog totaal te zien en merkt het,
       // terwijl 'één kant' als standaard het totaal stilletjes zou halveren
       // en het plafond ten onrechte zou laten slagen.
-      kant: 'LR',
+      //
+      // Staat deze spier er al voor één kant, dan is de andere kant wat je
+      // bedoelt — dat is de manier om links en rechts verschillend te doseren.
+      kant: nieuweKant(id),
       zwakte: false,
       respons: 'nvt',
       prio: 'midden',
@@ -1188,12 +1312,19 @@
     herteken();
   }
 
+  // Elke keer dat de lijst met doelspieren verandert moet ook de kiezer
+  // hierboven bijwerken, want daar staat welke spieren al gekozen zijn.
   function tekenSpieren() {
+    tekenSpierKaarten();
+    bouwSpierkeuze();
+  }
+
+  function tekenSpierKaarten() {
     elSpieren.innerHTML = '';
     if (!gekozen.length) {
       var p = document.createElement('div');
       p.className = 'do-leeg';
-      p.textContent = 'Nog geen doelspieren gekozen. Voeg er hierboven een toe.';
+      p.textContent = 'Nog geen doelspieren gekozen. Tik er hierboven een aan.';
       elSpieren.appendChild(p);
       return;
     }
@@ -2092,12 +2223,7 @@
   elAfrond.addEventListener('change', herteken);
   elBijw.addEventListener('change', herteken);
 
-  elVoegToe.addEventListener('change', function () {
-    if (elVoegToe.value) {
-      voegSpierToe(elVoegToe.value);
-      elVoegToe.value = '';
-    }
-  });
+  elZoek.addEventListener('input', bouwSpierkeuze);
 
   document.getElementById('doWisTabel').addEventListener('click', function () {
     tabellen[prep] = legeTabel();
@@ -2121,7 +2247,6 @@
   elAfrond.value = String(afronding);
   vulPreparaat();
   vulWegingen();
-  bouwSpierkeuze();
   tekenSpieren();
   tekenCI();
   tekenRichtlijn();
