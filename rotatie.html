@@ -71,6 +71,17 @@
     border-top: 1px solid var(--lijn);
   }
   .ro-groep:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .ro-keuze { display: flex; gap: 7px; margin-bottom: 11px; }
+  .ro-keuze button {
+    flex: 1; font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 6px; border-radius: 9px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .ro-keuze button.aan { border-color: var(--accent); background: var(--accent); color: #fff; }
+  #roGrafiek svg { display: block; width: 100%; height: auto; }
+
   .ro-hint {
     font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 5px;
   }
@@ -205,6 +216,12 @@
         </div>
       </div>
 
+      <div class="ro-groep">Geslacht</div>
+      <div class="ro-keuze" id="roGeslacht">
+        <button type="button" data-g="meisje" class="aan">Meisje</button>
+        <button type="button" data-g="jongen">Jongen</button>
+      </div>
+
       <div class="ro-groep">Heuprotatie in buikligging (°)</div>
       <div class="ro-rij">
         <div><label for="roIrR">endorotatie rechts</label>
@@ -231,7 +248,26 @@
         betekent dus 15° endotorsie van de tibia.
       </div>
 
+      <div class="ro-groep">Geschatte anteversie (°) <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);">— optioneel</span></div>
+      <div class="ro-rij">
+        <div><label for="roAvR">rechts</label>
+          <input type="number" id="roAvR" inputmode="numeric" min="0" max="80" step="1" placeholder="—"></div>
+        <div><label for="roAvL">links</label>
+          <input type="number" id="roAvL" inputmode="numeric" min="0" max="80" step="1" placeholder="—"></div>
+      </div>
+      <div class="ro-hint">
+        Uit de trochanter-prominentiehoektest, of gemeten op CT of MRI. Laat leeg als je het niet
+        hebt — de rest van de rekenhulp werkt ook zonder.
+      </div>
+
       <div class="ro-zijden" id="roZijden"></div>
+      <div id="roGrafiek" hidden>
+        <div class="ro-groep">Ten opzichte van het gemiddelde voor de leeftijd</div>
+        <svg viewBox="0 0 320 200" role="img" aria-labelledby="roGrTitel">
+          <title id="roGrTitel">Gemiddelde femorale anteversie in graden, van 3 tot 10 jaar, apart voor meisjes en jongens, met de ingevulde waarden erin.</title>
+          <g id="roGrInhoud"></g>
+        </svg>
+      </div>
       <div id="roMeldingen"></div>
     </div>
   </section>
@@ -314,7 +350,7 @@
         <tbody>
           <tr><td>Anteversie bij de geboorte</td><td class="g">30 – 40°</td></tr>
           <tr><td>Anteversie bij volgroeidheid</td><td class="g">± 15°</td></tr>
-          <tr><td>Na deze leeftijd verandert er nauwelijks nog iets</td><td class="g">8 jaar</td></tr>
+          <tr><td>Na deze leeftijd verandert er nauwelijks nog iets <em>— zie de kanttekening hieronder</em></td><td class="g">8 jaar</td></tr>
           <tr><td>Endorotatie heup — normaal</td><td class="g">20 – 60°</td></tr>
           <tr><td>Endorotatie heup — verhoogd</td><td class="g">&gt; 70°</td></tr>
           <tr><td>Exorotatie heup — normaal</td><td class="g">30 – 60°</td></tr>
@@ -341,6 +377,16 @@
       <li><strong>Denk aan de andere packaging disorders.</strong> DDH, metatarsus adductus en
         congenitale musculaire torticollis komen er in combinatie mee voor.</li>
     </ul>
+
+    <div class="ro-vlag oranje">
+      <strong>„Na 8 jaar verandert er nauwelijks nog iets" klopt voor jongens, niet voor meisjes.</strong>
+      Die uitspraak staat in Orthobullets, maar de leeftijdscurve waar de rekenhulp mee rekent laat
+      iets anders zien. Tussen 8 en 10 jaar daalt het gemiddelde bij <b>jongens 2,8°</b> — dat is
+      inderdaad weinig. Bij <b>meisjes 10,0°</b>, van 26,3° naar 16,3°. Juist in de groep waarin
+      verhoogde anteversie twee keer zo vaak voorkomt, gebeurt er na het achtste jaar dus nog volop
+      iets. Dat is een reden om bij een meisje van acht niet te concluderen dat het beeld nu wel
+      blijft zoals het is.
+    </div>
 
     <div class="ro-vlag blauw">
       <strong>Beeldvorming is meestal niet nodig.</strong>
@@ -411,8 +457,18 @@
         <i>Metatarsus Adductus</i>. Daaruit komen de normaalwaarden, de drempels, de
         differentiaaltabel, de vijf redenen voor verder uitzoeken en de formule (IR−ER)/2.
         Waar de twee onderwerpen elkaar tegenspreken staat dat er hierboven bij.</p>
-      <p><b>Van mij:</b> de rekenhulp en de indeling van de pagina. De rekenhulp doet niets anders
-        dan jouw meting tegen die drempels leggen — hij interpoleert niet en vult geen gaten.</p>
+      <p><b>De leeftijdscurve</b> voor de gemiddelde femorale anteversie komt uit de figuur bij het
+        hoofdstuk <i>In-Toeing and Out-Toeing Gait</i> (Springer Nature). Die figuur is geen tabel,
+        dus ik heb hem <b>digitaal uitgelezen</b>: de pixels van beide curves zijn per beeldkolom
+        opgezocht en de assen zijn gekalibreerd op de aslabels — niet met het oog afgelezen. De
+        onzekerheid zit in de dikte van de lijn en is ongeveer een halve graad. De curve loopt van
+        3 tot 10 jaar en wordt daarbuiten niet doorgetrokken.</p>
+      <p><b>Wat de curve niet is:</b> een normaalwaarde. Er staat alleen een gemiddelde in, geen
+        spreiding, dus je kunt er niet mee vaststellen dát iets afwijkt. In dezelfde publicatie
+        staat een figuur mét ±1 SD; heb je die, dan zet ik de banden erbij en kan de rekenhulp wél
+        zeggen of een waarde buiten het normale bereik valt.</p>
+      <p><b>Van mij:</b> de rekenhulp en de indeling van de pagina. De rekenhulp legt jouw meting
+        tegen de drempels en tegen de curve — hij extrapoleert niet en vult geen gaten.</p>
     </div>
   </section>
 
@@ -423,10 +479,22 @@
   'use strict';
 
   // Drempels uit Orthobullets, onderwerp Femoral Anteversion.
+  var geslacht = 'meisje';
   var HEUP = { irNormLaag: 20, irNormHoog: 60, irVerhoogd: 70,
                erNormLaag: 30, erNormHoog: 60, erVerminderd: 20, erOperatie: 10 };
   // Dij-voethoek: de bron geeft twee ankers, geen doorlopende curve. Min is
   // naar binnen, plus naar buiten.
+  // Gemiddelde femorale anteversie per leeftijd, digitaal uitgelezen uit de
+  // grafiek in het hoofdstuk In-Toeing and Out-Toeing Gait (Springer Nature).
+  // Niet met de hand afgelezen: de curvepixels zijn per kolom opgezocht en de
+  // assen zijn op de aslabels gekalibreerd. De grafiek loopt van 3 tot 10 jaar;
+  // daarbuiten wordt niet doorgetrokken. Dit zijn GEMIDDELDEN, geen
+  // normaalwaarden - zonder spreiding kun je er geen afwijking mee vaststellen.
+  var ANTEVERSIE = {
+  meisje: [[3,39.5], [3.25,39.2], [3.5,39], [3.75,38.7], [4,38.4], [4.25,38], [4.5,37.5], [4.75,36.8], [5,35.9], [5.25,34.9], [5.5,33.9], [5.75,33.1], [6,32.5], [6.25,31.9], [6.5,31.4], [6.75,30.8], [7,30.2], [7.25,29.4], [7.5,28.5], [7.75,27.5], [8,26.3], [8.25,24.6], [8.5,22.5], [8.75,20.5], [9,19], [9.25,18], [9.5,17.2], [9.75,16.7], [10,16.3]],
+  jongen: [[3,28.9], [3.25,28.4], [3.5,28], [3.75,27.4], [4,26.8], [4.25,26.2], [4.5,25.5], [4.75,24.8], [5,23.9], [5.25,23], [5.5,22.1], [5.75,21], [6,19.9], [6.25,18.8], [6.5,17.7], [6.75,16.5], [7,15.4], [7.25,14.5], [7.5,13.8], [7.75,13.2], [8,12.8], [8.25,12.5], [8.5,12.2], [8.75,11.9], [9,11.6], [9.25,11.3], [9.5,10.9], [9.75,10.5], [10,10]]
+};
+
   var TFA = { zuigeling: { gem: -5, laag: -30, hoog: 20 },
               achtJaar:  { gem: 10, laag: -5,  hoog: 30 },
               torsieDrempel: -10, normLaag: 0, normHoog: 20 };
@@ -437,6 +505,7 @@
     var v = parseFloat(el.value.replace(',', '.'));
     return isFinite(v) ? v : null;
   }
+  function komma(n) { return (Math.round(n * 10) / 10).toString().replace('.', ','); }
   function gr(n) { return (Math.round(n * 10) / 10).toString().replace('.', ',') + '°'; }
 
   function oordeelHeup(ir, er, leeftijd) {
@@ -505,23 +574,99 @@
     return uit;
   }
 
+  // Lineair tussen de uitgelezen punten; dat is interpoleren binnen mijn eigen
+  // digitalisering van een gladde curve, niet het verzinnen van een getal.
+  function gemAnteversie(leeftijd, g) {
+    var d = ANTEVERSIE[g];
+    if (leeftijd === null || leeftijd < d[0][0] || leeftijd > d[d.length - 1][0]) return null;
+    for (var i = 0; i < d.length - 1; i++) {
+      if (leeftijd >= d[i][0] && leeftijd <= d[i + 1][0]) {
+        var t = (leeftijd - d[i][0]) / (d[i + 1][0] - d[i][0]);
+        return d[i][1] + t * (d[i + 1][1] - d[i][1]);
+      }
+    }
+    return d[d.length - 1][1];
+  }
+
+  var GX0 = 42, GX1 = 306, GY0 = 16, GY1 = 164, GMAX = 45;
+  function px(l) { return GX0 + (l - 3) / 7 * (GX1 - GX0); }
+  function py(d) { return GY1 - d / GMAX * (GY1 - GY0); }
+  function svgEl(naam, attrs, tekst) {
+    var e = document.createElementNS('http://www.w3.org/2000/svg', naam);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
+
+  function tekenGrafiek(leeftijd, punten) {
+    var vak = document.getElementById('roGrafiek');
+    var inh = document.getElementById('roGrInhoud');
+    inh.innerHTML = '';
+    if (!punten.length) { vak.setAttribute('hidden', ''); return; }
+    vak.removeAttribute('hidden');
+
+    [0, 10, 20, 30, 40].forEach(function (d) {
+      inh.appendChild(svgEl('line', { x1: GX0, y1: py(d), x2: GX1, y2: py(d),
+        stroke: '#E4E4E0', 'stroke-width': 1 }));
+      inh.appendChild(svgEl('text', { x: GX0 - 6, y: py(d) + 3.5, 'text-anchor': 'end',
+        'font-family': 'system-ui, sans-serif', 'font-size': 8.5, fill: '#6b7680' }, d));
+    });
+    for (var L = 3; L <= 10; L++) {
+      inh.appendChild(svgEl('text', { x: px(L), y: GY1 + 13, 'text-anchor': 'middle',
+        'font-family': 'system-ui, sans-serif', 'font-size': 8.5, fill: '#6b7680' }, L));
+    }
+    inh.appendChild(svgEl('text', { x: (GX0 + GX1) / 2, y: GY1 + 27, 'text-anchor': 'middle',
+      'font-family': 'system-ui, sans-serif', 'font-size': 8.5, fill: '#6b7680' }, 'leeftijd in jaren'));
+    inh.appendChild(svgEl('text', { x: GX0 - 6, y: GY0 - 5, 'text-anchor': 'end',
+      'font-family': 'system-ui, sans-serif', 'font-size': 8.5, fill: '#6b7680' }, '°'));
+
+    ['jongen', 'meisje'].forEach(function (g) {
+      var actief = (g === geslacht);
+      var pad = ANTEVERSIE[g].map(function (p, i) {
+        return (i ? 'L ' : 'M ') + px(p[0]).toFixed(1) + ' ' + py(p[1]).toFixed(1);
+      }).join(' ');
+      inh.appendChild(svgEl('path', { d: pad, fill: 'none',
+        stroke: actief ? (g === 'meisje' ? '#B4472C' : '#2B4C6F') : '#C9C7C0',
+        'stroke-width': actief ? 2.6 : 1.4 }));
+      var laatste = ANTEVERSIE[g][ANTEVERSIE[g].length - 1];
+      inh.appendChild(svgEl('text', { x: px(laatste[0]) + 4, y: py(laatste[1]) + 3,
+        'font-family': 'system-ui, sans-serif', 'font-size': 8.5, 'font-weight': actief ? 800 : 400,
+        fill: actief ? (g === 'meisje' ? '#B4472C' : '#2B4C6F') : '#9C9A94' },
+        g === 'meisje' ? 'M' : 'J'));
+    });
+
+    punten.forEach(function (p) {
+      inh.appendChild(svgEl('line', { x1: px(leeftijd), y1: py(p.waarde),
+        x2: px(leeftijd), y2: py(gemAnteversie(leeftijd, geslacht)),
+        stroke: '#0f4c5c', 'stroke-width': 1, 'stroke-dasharray': '3 2' }));
+      inh.appendChild(svgEl('circle', { cx: px(leeftijd), cy: py(p.waarde), r: 5,
+        fill: '#0f4c5c' }));
+      inh.appendChild(svgEl('text', { x: px(leeftijd) + (leeftijd > 8 ? -9 : 9),
+        y: py(p.waarde) + 3, 'text-anchor': leeftijd > 8 ? 'end' : 'start',
+        'font-family': 'system-ui, sans-serif', 'font-size': 9, 'font-weight': 800,
+        fill: '#0f4c5c' }, p.kant));
+    });
+  }
+
   function teken() {
     var jaar = getal('roJaar'), mnd = getal('roMnd');
     var leeftijd = (jaar === null && mnd === null) ? null : (jaar || 0) + (mnd || 0) / 12;
 
+    var punten = [];
     var zijden = document.getElementById('roZijden');
     var meld = document.getElementById('roMeldingen');
     zijden.innerHTML = ''; meld.innerHTML = '';
 
     var data = {
-      R: { ir: getal('roIrR'), er: getal('roErR'), tfa: getal('roTfaR') },
-      L: { ir: getal('roIrL'), er: getal('roErL'), tfa: getal('roTfaL') }
+      R: { ir: getal('roIrR'), er: getal('roErR'), tfa: getal('roTfaR'), av: getal('roAvR') },
+      L: { ir: getal('roIrL'), er: getal('roErL'), tfa: getal('roTfaL'), av: getal('roAvL') }
     };
     var iets = false;
     ['R', 'L'].forEach(function (k) {
-      if (data[k].ir !== null || data[k].er !== null || data[k].tfa !== null) iets = true;
+      if (data[k].ir !== null || data[k].er !== null || data[k].tfa !== null || data[k].av !== null) iets = true;
     });
     if (!iets) {
+      tekenGrafiek(leeftijd, []);
       var leeg = document.createElement('div');
       leeg.className = 'ro-hint';
       leeg.style.marginTop = '14px';
@@ -556,8 +701,32 @@
         r2.textContent = t.tekst;
         kaart.appendChild(r2);
       }
+      if (d.av !== null) {
+        var gem = gemAnteversie(leeftijd, geslacht);
+        var r3 = document.createElement('div');
+        r3.className = 'regel';
+        if (gem === null) {
+          r3.textContent = 'Anteversie ' + gr(d.av) + '. De curve loopt van 3 tot 10 jaar; ' +
+            (leeftijd === null ? 'vul de leeftijd in om te vergelijken.' : 'daarbuiten trek ik hem niet door.');
+        } else {
+          var v = d.av - gem;
+          r3.textContent = 'Anteversie ' + gr(d.av) + ' — het gemiddelde voor ' +
+            (geslacht === 'meisje' ? 'een meisje' : 'een jongen') + ' van ' + komma(leeftijd) +
+            ' jaar is ' + gr(Math.round(gem * 10) / 10) + ', dus ' +
+            (Math.abs(v) < 0.5 ? 'vrijwel gelijk aan het gemiddelde.'
+              : gr(Math.abs(Math.round(v * 10) / 10)) + (v > 0 ? ' erboven.' : ' eronder.'));
+          punten.push({ kant: p[0].charAt(0), waarde: d.av });
+        }
+        kaart.appendChild(r3);
+      }
       zijden.appendChild(kaart);
     });
+    tekenGrafiek(leeftijd, punten);
+    if (punten.length) {
+      meld.appendChild(vlag('blauw', 'De curve is een gemiddelde, geen normaalwaarde',
+        'Er staat geen spreiding bij, dus „boven het gemiddelde" is niet hetzelfde als „afwijkend". ' +
+        'Gebruik hem om te zien of een waarde past bij de leeftijd, niet om een diagnose op te hangen.'));
+    }
 
     // --- asymmetrie ---
     var asym = [];
@@ -612,7 +781,18 @@
     return d;
   }
 
-  ['roJaar', 'roMnd', 'roIrR', 'roIrL', 'roErR', 'roErL', 'roTfaR', 'roTfaL'].forEach(function (id) {
+  document.getElementById('roGeslacht').addEventListener('click', function (e) {
+    var knop = e.target.closest('button');
+    if (!knop) return;
+    geslacht = knop.dataset.g;
+    document.querySelectorAll('#roGeslacht button').forEach(function (k) {
+      k.classList.toggle('aan', k.dataset.g === geslacht);
+    });
+    teken();
+  });
+
+  ['roJaar', 'roMnd', 'roIrR', 'roIrL', 'roErR', 'roErL', 'roTfaR', 'roTfaL',
+   'roAvR', 'roAvL'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', teken);
   });
   teken();
