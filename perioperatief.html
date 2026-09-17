@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Perioperatieve checklist</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .po-wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .po-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .po-terug:hover { text-decoration: underline; }
+
+  .po-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .po-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 16px;
+  }
+
+  .po-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.65;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 12px;
+  }
+  .po-vlag strong { display: block; margin-bottom: 3px; }
+  .po-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+  .po-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .po-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  /* --- bedieningspaneel --- */
+  .po-bedien {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 13px;
+    margin: 16px 0;
+  }
+  .po-label {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .po-modules { display: flex; flex-direction: column; gap: 6px; }
+  .po-modules label {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.45; cursor: pointer;
+  }
+  .po-modules input { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; }
+  .po-modules .vast { color: var(--muted); }
+
+  .po-strook {
+    display: flex; gap: 6px; margin-top: 12px;
+    overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  }
+  .po-strook::-webkit-scrollbar { display: none; }
+  .po-strook button {
+    flex: 0 0 auto; white-space: nowrap;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 11px; border-radius: 999px;
+    border: 1px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .po-strook button.aan { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .po-voortgang { margin-top: 13px; }
+  .po-balk {
+    height: 8px; border-radius: 999px; background: var(--lijn);
+    overflow: hidden;
+  }
+  .po-balk i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+  .po-teller {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted); margin-top: 6px;
+  }
+
+  /* --- fases --- */
+  .po-fase { margin-top: 26px; }
+  .po-fase > h2 {
+    font-size: 1.1rem; margin: 0 0 2px;
+    display: flex; align-items: baseline; gap: 9px;
+  }
+  .po-fase > h2 .nr {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 800;
+    background: var(--accent); color: #fff;
+    border-radius: 999px; padding: 2px 9px; flex-shrink: 0;
+  }
+  .po-fase > .wanneer {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    margin: 0 0 11px 0;
+  }
+
+  .po-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 11px;
+    padding: 11px 12px; margin-bottom: 7px;
+    font-family: system-ui, sans-serif;
+    cursor: pointer;
+  }
+  .po-item input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  .po-item .inh { min-width: 0; flex: 1; }
+  .po-item .tekst { font-size: 13.5px; line-height: 1.5; color: var(--inkt); }
+  .po-item.af { background: #F4F7F4; border-color: #CFE0D4; }
+  .po-item.af .tekst { color: var(--muted); text-decoration: line-through; }
+  .po-item .waarom {
+    font-size: 12px; line-height: 1.55; color: var(--muted); margin-top: 4px;
+  }
+  .po-merken { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .po-merk {
+    font-size: 10.5px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px;
+    background: var(--accent-zacht); color: #0f2733;
+  }
+  .po-merk.aanvulling { background: #FBF3DC; color: #6B4E06; }
+  .po-merk.kern       { background: #FBEAE5; color: #8E3617; }
+  .po-merk.module     { background: #EDE7F4; color: #4A3670; }
+
+  .po-leeg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    text-align: center; padding: 24px 0;
+  }
+
+  .po-knoprij { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .po-knoprij button {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 9px 14px; border-radius: 9px;
+    border: 1px solid var(--lijn); background: var(--paneel);
+    color: var(--accent); cursor: pointer;
+  }
+  .po-knoprij button:hover { border-color: var(--accent); }
+
+  /* --- tekstsecties --- */
+  .po-sectie { margin-top: 32px; }
+  .po-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .po-sectie .uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 14px;
+  }
+  .po-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 13px;
+    padding: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.65; color: var(--inkt);
+    margin-bottom: 10px;
+  }
+  .po-kaart h3 { font-family: inherit; font-size: 13.5px; margin: 0 0 6px; }
+  .po-kaart p { margin: 0 0 8px; }
+  .po-kaart p:last-child { margin-bottom: 0; }
+  .po-kaart .bron {
+    font-size: 11.5px; color: var(--muted); font-style: italic;
+  }
+  .po-kaart ul { margin: 6px 0 0; padding-left: 19px; }
+  .po-kaart li { margin-bottom: 5px; }
+  .po-kaart .oordeel {
+    background: #FBF3DC; color: #6B4E06;
+    border-radius: 9px; padding: 9px 11px; margin-top: 10px;
+    font-size: 12.5px; line-height: 1.6;
+  }
+  .po-kaart .oordeel b { color: #4E3904; }
+
+  .po-tweekolom { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 640px) { .po-tweekolom { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Perioperatieve checklist</div>
+</header>
+
+<div class="po-wrap">
+  <a class="po-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="po-kop">Rondom een operatie — wat moet ik regelen?</h1>
+  <p class="po-intro">
+    Een afvinklijst voor de revalidatiearts bij een grote ingreep aan een kind met een
+    complexe beperking: wat vooraf geregeld moet zijn, wat tijdens de opname loopt en
+    wat er vóór ontslag rond moet zijn. De <b>algemene laag</b> geldt voor elke ingreep;
+    daar kun je een <b>module</b> per ingreep bij aanzetten.
+  </p>
+
+  <div class="po-vlag rood">
+    <strong>Geen patiëntgegevens op deze pagina</strong>
+    Dit is een openbare pagina. Er zijn hier daarom geen invulvelden — alleen vinkjes.
+    Die blijven op dit toestel staan en gaan nergens heen, maar ze horen bij
+    <b>één traject tegelijk</b>. Begin je aan een ander kind, maak de lijst dan eerst leeg.
+  </div>
+
+  <div class="po-vlag oranje">
+    <strong>Dit is geen protocol en niet dat van het UMCG</strong>
+    De concrete tijdstippen hieronder — mobiliseren rond dag 2, ontslag als het kind
+    ongeveer een uur in de eigen rolstoel zit — komen uit één congrespresentatie van één
+    centrum. Ze staan er omdat ze een bruikbaar ijkpunt zijn, niet omdat ze algemeen
+    gelden. Leg ze naast de afspraken van je eigen orthopeden en afdeling voordat je ze
+    aan ouders vertelt.
+  </div>
+
+  <!-- ================= bediening ================= -->
+  <div class="po-bedien">
+    <span class="po-label">Welke lijst</span>
+    <div class="po-modules" id="poModules"></div>
+
+    <span class="po-label" style="margin-top:13px;">Wie</span>
+    <div class="po-strook" id="poRollen"></div>
+
+    <span class="po-label" style="margin-top:11px;">Tonen</span>
+    <div class="po-strook" id="poStatus"></div>
+
+    <div class="po-voortgang">
+      <div class="po-balk"><i id="poBalk"></i></div>
+      <div class="po-teller" id="poTeller"></div>
+    </div>
+  </div>
+
+  <div id="poLijst"></div>
+
+  <div class="po-knoprij">
+    <button type="button" id="poReset">Lijst leegmaken — nieuw traject</button>
+  </div>
+
+  <!-- ================= evidence ================= -->
+  <section class="po-sectie">
+    <h2>Wat de operatie oplevert — en wat niet</h2>
+    <p class="uitleg">
+      Twee studies die in de presentatie werden aangehaald. Ze horen in het gesprek
+      vóór het besluit thuis, niet alleen in de literatuurlijst.
+    </p>
+
+    <div class="po-kaart">
+      <h3>Spondylodese corrigeert de stand, maar verbetert de kwaliteit van leven niet aantoonbaar</h3>
+      <p class="bron">
+        Khoshbin A, Vivas L, et al. „The long-term outcome of patients treated operatively and
+        non-operatively for scoliosis deformity secondary to spina bifida." The Bone &amp; Joint
+        Journal, september 2014. — zoals weergegeven op de dia.
+      </p>
+      <ul>
+        <li>Scoliose treft tot <b>50%</b> van de patiënten met spina bifida cystica en kan
+          doorgroeien tot het de <b>zitbalans</b> aantast.</li>
+        <li>Spondylodese corrigeert de coronale deformiteit en stopt de progressie van de
+          bocht, <b>maar heeft geen duidelijk effect op de aan gezondheid gerelateerde
+          kwaliteit van leven</b>.</li>
+      </ul>
+      <div class="oordeel">
+        <b>Waarom dit ertoe doet voor jou.</b> De dia van het centrum zelf zegt het ook:
+        <em>„Better functioning doesn't come automatically."</em> De rechte rug is het
+        begin van het traject, niet het resultaat. Als het gesprek vooraf alleen over de
+        hoek gaat, meet je achteraf iets anders dan wat je beloofd hebt. Spreek daarom
+        vóór de operatie af <b>waaraan jullie het succes gaan afmeten</b> — zitduur,
+        transfers, verzorgbaarheid, pijn, huid, naar school kunnen — en leg de
+        uitgangswaarden vast.
+      </div>
+    </div>
+
+    <div class="po-kaart">
+      <h3>Custom-contoured zitting versus modulair: mogelijk minder progressie</h3>
+      <p class="bron">
+        Hosking Meng J. „Impact of Wheelchair Seating Systems on Scoliosis Progression for
+        Children With Neurologic and Neuromuscular Disorders: A Retrospective Study of
+        Custom-Contoured Wheelchair Seating (CCS) and Modular Wheelchair Seating (MWS)."
+        Archives of Physical Medicine and Rehabilitation, oktober 2024. — zoals weergegeven op de dia.
+      </p>
+      <ul>
+        <li>Kinderen met neurologische en neuromusculaire aandoeningen die <b>CCS</b> kregen
+          lieten over de tijd <b>minder progressie van de scoliose</b> zien dan kinderen met
+          <b>MWS</b>.</li>
+        <li><b>3%</b> van de deelnemers had spina bifida.</li>
+      </ul>
+      <div class="oordeel">
+        <b>Wees hier voorzichtig mee.</b> Het is retrospectief, en met 3% spina bifida in de
+        onderzoeksgroep gaat dit vrijwel niet over deze populatie. Het is een argument om
+        de zitting serieus te nemen, geen bewijs dat een custom zitting bij dít kind de
+        bocht afremt. Gebruik het zo in het gesprek met de leverancier en met de
+        zorgverzekeraar: als richting, niet als bewijs.
+      </div>
+    </div>
+
+    <div class="po-kaart">
+      <h3>Hoe vaak, en bij wie</h3>
+      <p class="bron">
+        Dia „Incidence of spinal deformities 50–90%", met als bron: Orthopedic management of
+        spina bifida, Thomson 2010.
+      </p>
+      <ul>
+        <li>Incidentie van wervelkolomdeformiteiten (scoliose en kyfose): <b>50–90%</b>.</li>
+        <li>Samenhangend met: het <b>niveau</b> van de spina bifida, <b>Chiari II</b> (90%),
+          <b>syringomyelie</b> (50%) en <b>tethered cord</b>.</li>
+        <li>Voorspellende factoren: <b>klinisch motorisch niveau</b>, <b>loopvermogen</b>
+          en de <b>laatste intacte wervelboog</b>.</li>
+      </ul>
+      <div class="oordeel">
+        <b>Praktisch gevolg.</b> Chiari II, syringomyelie en tethered cord zijn hier geen
+        losse rijtjes maar dingen die je vóór een wervelkolomoperatie wilt weten: ze
+        veranderen het beloop en soms het besluit. Zie ook
+        <a href="tetheredcord.html">tethered cord</a> en <a href="myotomen.html">uitvalsniveau</a>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ingreeptype ================= -->
+  <section class="po-sectie">
+    <h2>Wat het type ingreep voor jou betekent</h2>
+    <p class="uitleg">
+      De operatietechniek is niet aan jou, maar drie dingen eruit bepalen wel wat jij moet
+      regelen: hoe groot de wond is, hoeveel bloedverlies er is en hoe snel iemand
+      hersteld is. Hieronder staat wat de dia over kyfose en kyfectomie gaf — letterlijk,
+      inclusief een onduidelijkheid.
+    </p>
+    <div class="po-tweekolom">
+      <div class="po-kaart">
+        <h3>Posterior pedicle screws</h3>
+        <p>„+ Big wound · − Bloodloss · + Fixation points · − Infection risk"</p>
+        <p class="bron">Meer fixatiepunten, maar een grotere wond en infectierisico —
+          reken op een tragere start van het mobiliseren en scherpere wondbewaking.</p>
+      </div>
+      <div class="po-kaart">
+        <h3>Posterior bipolar</h3>
+        <p>„+ Less invasive · + Less bloodloss · + Faster recovery · − Failure fixation"</p>
+        <p class="bron">Sneller herstel, dus eerder zitten en eerder de zitting aanpassen —
+          maar houd rekening met falen van de fixatie in de follow-up.</p>
+      </div>
+    </div>
+    <div class="po-vlag oranje" style="margin-top:10px;">
+      <strong>Eén ding klopt niet op die dia</strong>
+      Bij de pedikelschroeven staat een <b>plus</b> vóór „Big wound". Als plus voordeel
+      betekent en min nadeel, dan valt dat item uit de toon. Ik heb het overgenomen zoals
+      het er staat en er niets van gemaakt; vraag het na als het verschil voor je uitmaakt.
+    </div>
+  </section>
+
+  <!-- ================= herbruikbaarheid ================= -->
+  <section class="po-sectie">
+    <h2>Deze lijst hergebruiken voor een andere ingreep</h2>
+    <div class="po-kaart">
+      <p>
+        De algemene laag is bewust niet over scoliose geschreven. Hij gaat over wat er bij
+        elke grote ingreep aan een kind met een complexe beperking misgaat: de
+        <b>thuissituatie</b> die niet klaar is, het <b>hulpmiddel</b> dat na de ingreep niet
+        meer past, de <b>verwachting</b> die niemand heeft uitgesproken, en de
+        <b>nulmeting</b> die ontbreekt zodat je achteraf niets kunt vergelijken.
+      </p>
+      <p>
+        Voor een volgende ingreep — een SEMLS, een heupreconstructie, een baclofenpomp,
+        een tethered-cordrelease — verandert alleen de module: welk hulpmiddel niet meer
+        past, welke functie tijdelijk wegvalt, wat er specifiek bewaakt moet worden.
+        Zeg welke ingreep en wat er in jouw centrum omheen hoort, dan zet ik die module erbij.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= bronnen ================= -->
+  <section class="po-sectie">
+    <h2>Waar dit vandaan komt</h2>
+    <div class="po-kaart">
+      <p>
+        De items met het label <span class="po-merk">uit de presentatie</span> komen uit een
+        congrespresentatie over perioperatieve revalidatie rond scoliosecorrectie bij een kind
+        met spina bifida dat een rolstoel gebruikt, met de dia's
+        <em>Collaborate before hospitalisation</em>, <em>Collaborate during hospitalisation</em>
+        en <em>Operation and first week recovery</em>.
+      </p>
+      <p>
+        De items met het label <span class="po-merk aanvulling">aanvulling</span> stonden
+        <b>niet</b> in die presentatie. Ik heb ze toegevoegd omdat een coördinatielijst zonder
+        die punten niet af is. Het zijn allemaal <b>vragen en regeltaken</b> — geen
+        behandeladviezen, geen doseringen, geen termijnen. Wat je moet uitvragen staat er;
+        wat het antwoord moet zijn niet, want dat hangt van je eigen protocollen af.
+      </p>
+      <p class="bron">
+        Sprekers en centrum staan hier bewust niet bij naam. De twee aangehaalde artikelen
+        staan hierboven met auteur en tijdschrift, zoals de dia's ze gaven.
+      </p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ------------------------------------------------------------------
+  // Opzet: één algemene laag die voor elke grote ingreep geldt, plus
+  // modules per ingreep. De algemene laag is bewust niet over scoliose
+  // geschreven, zodat hij herbruikbaar is.
+  //
+  // bron: 'presentatie' = stond letterlijk in de congresdia's
+  //       'aanvulling'  = door mij toegevoegd, stond er NIET in
+  // kern: true = als dit ontbreekt gaat het traject echt mis
+  // ------------------------------------------------------------------
+
+  var MODULES = [
+    { id: 'algemeen', naam: 'Algemeen — elke grote ingreep', vast: true },
+    { id: 'wk',       naam: 'Scoliose- of kyfosecorrectie bij een rolstoelgebruiker', vast: false }
+  ];
+
+  var ROLLEN = [
+    { id: 'alle',  naam: 'Alles' },
+    { id: 'rev',   naam: 'Revalidatiearts' },
+    { id: 'ouder', naam: 'Kind & ouders' },
+    { id: 'ergo',  naam: 'Ergotherapeut' },
+    { id: 'lev',   naam: 'Leverancier' },
+    { id: 'team',  naam: 'Afdeling & team' },
+    { id: 'thuis', naam: 'Thuis & school' }
+  ];
+
+  var FASES = [
+    { id: 'besluit', nr: '0', naam: 'Het besluit',            wanneer: 'vóór je ja zegt' },
+    { id: 'voor',    nr: '1', naam: 'Vóór de opname',         wanneer: 'weken tot dagen ervoor' },
+    { id: 'opname',  nr: '2', naam: 'Opname en eerste week',  wanneer: 'vanaf de operatie' },
+    { id: 'ontslag', nr: '3', naam: 'Naar ontslag',           wanneer: 'de dagen ervoor' },
+    { id: 'na',      nr: '4', naam: 'Na ontslag',             wanneer: 'weken tot maanden' }
+  ];
+
+  var ITEMS = [
+    // ---------- 0 · het besluit ----------
+    { id: 'b1', f: 'besluit', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Het doel van de ingreep staat in functionele termen, niet alleen radiologisch.',
+      w: 'Zitbalans, transfers, verzorgbaarheid, pijn, huid, naar school kunnen. Een hoek in graden is geen doel.' },
+    { id: 'b2', f: 'besluit', m: 'algemeen', r: ['rev', 'ouder'], bron: 'presentatie', kern: true,
+      t: 'De verwachtingen van het kind zelf en van de ouders zijn uitgevraagd.',
+      w: 'De dia noemt dit letterlijk: „Child’s needs and expectations of surgery". Vraag wat zíj denken dat er beter wordt.' },
+    { id: 'b3', f: 'besluit', m: 'algemeen', r: ['rev', 'ouder'], bron: 'aanvulling', kern: true,
+      t: 'Uitgesproken dat een geslaagde ingreep niet vanzelf beter functioneren betekent.',
+      w: 'Zie de twee studies onderaan. Dit gesprek nu voeren is makkelijker dan het achteraf uitleggen.' },
+    { id: 'b4', f: 'besluit', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: true,
+      t: 'Nulmeting vastgelegd: hoe lang zit dit kind nu comfortabel, hoe gaan transfers nu, wat doet het zelf.',
+      w: 'Zonder uitgangswaarde kun je na afloop niets vergelijken en blijft „het gaat goed" een indruk.' },
+    { id: 'b5', f: 'besluit', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Afgesproken waaraan jullie over een jaar gaan aflezen of dit geslaagd is.',
+      w: 'Kies twee of drie dingen en schrijf ze op. Anders verschuift de maatstaf mee met de uitkomst.' },
+    { id: 'b6', f: 'besluit', m: 'wk', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Chiari II, syringomyelie en tethered cord nagegaan vóór het besluit.',
+      w: 'De dia noemt ze als samenhangende factoren bij wervelkolomdeformiteit. Ze veranderen het beloop en soms het besluit.' },
+
+    // ---------- 1 · vóór de opname ----------
+    { id: 'v1', f: 'voor', m: 'algemeen', r: ['ouder'], bron: 'presentatie', kern: false,
+      t: 'Do’s en don’ts na de operatie zijn met kind en ouders doorgenomen.' },
+    { id: 'v2', f: 'voor', m: 'algemeen', r: ['ouder', 'ergo'], bron: 'presentatie', kern: true,
+      t: 'Mobiliseren, transfers en het gebruik van de tillift zijn vóóraf geoefend.',
+      w: 'De presentatie zet dit bewust vóór de opname. Na de operatie een tillift voor het eerst leren kennen is te laat.' },
+    { id: 'v3', f: 'voor', m: 'algemeen', r: ['ergo'], bron: 'presentatie', kern: false,
+      t: 'De eigen ergotherapeut, die het kind en de thuissituatie kent, is betrokken vóór de opname.',
+      w: 'De dia noemt dit de schakel tussen de ziekenhuiszorg en de eigen omgeving van het kind.' },
+    { id: 'v4', f: 'voor', m: 'algemeen', r: ['ergo'], bron: 'presentatie', kern: true,
+      t: 'Akkoord of machtiging voor tijdelijke aanpassingen is geregeld.',
+      w: 'Dit is meestal het traagste onderdeel. Start het eerder dan je denkt nodig te hebben.' },
+    { id: 'v5', f: 'voor', m: 'algemeen', r: ['ergo', 'lev'], bron: 'presentatie', kern: false,
+      t: 'De definitieve hulpmiddelaanpassing ná ontslag is alvast voorbereid.' },
+    { id: 'v6', f: 'voor', m: 'algemeen', r: ['lev'], bron: 'presentatie', kern: false,
+      t: 'De leverancier is in beeld en weet dat hij mogelijk nodig is.' },
+    { id: 'v7', f: 'voor', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: true,
+      t: 'Thuis: tillift, bed en badkamer passen bij hoe het kind ná de ingreep is.',
+      w: 'Een thuissituatie die op de oude situatie is ingericht, is de meest voorkomende reden dat ontslag strandt.' },
+    { id: 'v8', f: 'voor', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: false,
+      t: 'Vervoer naar huis geregeld en passend bij de nieuwe zit of houding.' },
+    { id: 'v9', f: 'voor', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: false,
+      t: 'Zorg thuis geregeld: wie tilt, met hoeveel handen, en is dat er ook overdag.' },
+    { id: 'v10', f: 'voor', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: false,
+      t: 'School is geïnformeerd; er is een richting voor terugkeer en voor wat tijdelijk niet kan.' },
+    { id: 'v11', f: 'voor', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: true,
+      t: 'Medicatie rond de opname: wie zorgt dat spasticiteitsmedicatie, baclofenpomp, laxeer- en blaasbeleid doorlopen.',
+      w: 'Juist deze middelen vallen bij een opname stil omdat iedereen denkt dat een ander ze regelt.' },
+    { id: 'v12', f: 'voor', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: true,
+      t: 'Latexallergie uitgevraagd en doorgegeven aan OK en afdeling.',
+      w: 'Standaard uitvragen bij spina bifida. Dit hoort vóór de OK-dag geregeld te zijn, niet op de dag zelf.' },
+    { id: 'v13', f: 'voor', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: false,
+      t: 'Is er een shunt, en wie bewaakt die rond de ingreep.' },
+    { id: 'v14', f: 'voor', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: true,
+      t: 'Huid in kaart: bestaande drukplekken en risicoplekken, en drukverdelend materiaal voor bed én zitting geregeld.',
+      w: 'Bij een gestoorde sensibiliteit is een drukplek de complicatie die het hele traject kan overnemen — en die je had kunnen voorkomen.' },
+    { id: 'v15', f: 'voor', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: false,
+      t: 'Voedingstoestand en gewicht bekend; bij twijfel diëtist vóór de ingreep.' },
+    { id: 'v16', f: 'voor', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Afgesproken wie tijdens de opname de revalidatiearts is en wanneer je in consult komt.',
+      w: 'Anders kom je pas in beeld als er al iets vastloopt.' },
+    { id: 'v17', f: 'voor', m: 'wk', r: ['ergo', 'lev'], bron: 'presentatie', kern: false,
+      t: 'De rolstoel is zo nodig tijdelijk aangepast, zodat de periode ná de operatie mogelijk is.',
+      w: 'Genoemd in de presentatie als iets dat vooraf gebeurt, niet pas als het kind al zit.' },
+
+    // ---------- 2 · opname en eerste week ----------
+    { id: 'o1', f: 'opname', m: 'algemeen', r: ['team'], bron: 'presentatie', kern: false,
+      t: 'Mobiliseren gaat stapsgewijs: eerst uit bed.' },
+    { id: 'o2', f: 'opname', m: 'wk', r: ['team', 'ergo'], bron: 'presentatie', kern: false,
+      t: 'Daarna terug in de eigen rolstoel — in het gepresenteerde protocol rond dag 2.',
+      w: 'Eén centrum, één protocol. Toets dit bij je eigen orthopeden voordat je het aan ouders belooft.' },
+    { id: 'o3', f: 'opname', m: 'algemeen', r: ['team', 'ouder'], bron: 'presentatie', kern: false,
+      t: 'Het team werkt gezamenlijk aan vertrouwen in het zitten en functioneren met de nieuwe houding.',
+      w: 'De dia noemt dit expliciet als teamtaak — niet als iets dat vanzelf terugkomt.' },
+    { id: 'o4', f: 'opname', m: 'algemeen', r: ['ouder', 'ergo'], bron: 'presentatie', kern: false,
+      t: 'Opnieuw leren omgaan met tillift en transfers, samen met de ouders.' },
+    { id: 'o5', f: 'opname', m: 'algemeen', r: ['ergo'], bron: 'presentatie', kern: false,
+      t: 'De ergotherapeut stemt af met het medisch team en met alle betrokkenen.' },
+    { id: 'o6', f: 'opname', m: 'wk', r: ['ergo', 'lev'], bron: 'presentatie', kern: false,
+      t: 'Tijdelijke rolstoelaanpassing tijdens de opname uitgevoerd.' },
+    { id: 'o7', f: 'opname', m: 'wk', r: ['lev'], bron: 'presentatie', kern: false,
+      t: 'Leverancier komt zo nodig naar het ziekenhuis om het zitsysteem aan te passen.' },
+    { id: 'o8', f: 'opname', m: 'wk', r: ['rev', 'ergo'], bron: 'aanvulling', kern: true,
+      t: 'Zithouding opnieuw beoordeeld ná de correctie: kantelhoek, rugleuning, hoofdsteun, voetsteunhoogte.',
+      w: 'De oude maatvoering klopt per definitie niet meer. Dat is geen detail: hierop strandt het zitten.' },
+    { id: 'o9', f: 'opname', m: 'algemeen', r: ['team', 'rev'], bron: 'aanvulling', kern: true,
+      t: 'Huid gecontroleerd bij en na de eerste zitmomenten.',
+      w: 'Nieuwe houding betekent nieuwe drukpunten, op plekken waar het kind niets voelt.' },
+    { id: 'o10', f: 'opname', m: 'algemeen', r: ['team'], bron: 'aanvulling', kern: false,
+      t: 'Zitduur wordt opgebouwd en bijgehouden — is er toename.',
+      w: 'Dit is ook je opmaat naar het ontslagcriterium verderop.' },
+    { id: 'o11', f: 'opname', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: true,
+      t: 'Pijnbeleid maakt zitten en mobiliseren daadwerkelijk mogelijk.',
+      w: 'Als de pijnstilling niet toereikend is, loopt het hele schema uit en lijkt het alsof het kind het niet aankan.' },
+    { id: 'o12', f: 'opname', m: 'algemeen', r: ['rev', 'team'], bron: 'aanvulling', kern: false,
+      t: 'Darm- en blaasbeleid weer op gang; katheterisatiehouding kan door de nieuwe zit veranderd zijn.' },
+    { id: 'o13', f: 'opname', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Spasticiteitsbeeld opnieuw bekeken; de stand is veranderd, de medicatie mogelijk ook.' },
+    { id: 'o14', f: 'opname', m: 'algemeen', r: ['team'], bron: 'aanvulling', kern: false,
+      t: 'Voeding en gewicht gevolgd tijdens de opname.' },
+    { id: 'o15', f: 'opname', m: 'wk', r: ['team'], bron: 'aanvulling', kern: false,
+      t: 'Ademhaling en houding gevolgd, zeker bij een hoge fusie.' },
+    { id: 'o16', f: 'opname', m: 'algemeen', r: ['team'], bron: 'aanvulling', kern: false,
+      t: 'Trombose- en wondbeleid lopen volgens de afspraken van de afdeling.' },
+
+    // ---------- 3 · naar ontslag ----------
+    { id: 'n1', f: 'ontslag', m: 'wk', r: ['team', 'rev'], bron: 'presentatie', kern: false,
+      t: 'Ontslagcriterium gehaald: het kind zit ongeveer een uur goed in de eigen rolstoel en het gaat verder goed.',
+      w: 'Uit de presentatie van dat ene centrum. Neem het als ijkpunt en check of jouw afdeling dezelfde grens hanteert.' },
+    { id: 'n2', f: 'ontslag', m: 'algemeen', r: ['ergo'], bron: 'presentatie', kern: false,
+      t: 'De eigen ergotherapeut is geïnformeerd over het beloop en over de aandachtspunten voor de komende periode.' },
+    { id: 'n3', f: 'ontslag', m: 'algemeen', r: ['ergo', 'lev'], bron: 'aanvulling', kern: true,
+      t: 'De definitieve hulpmiddelaanpassing is ingepland — met een datum, niet „binnenkort".' },
+    { id: 'n4', f: 'ontslag', m: 'algemeen', r: ['ouder'], bron: 'aanvulling', kern: true,
+      t: 'Tilinstructie aan ouders en verzorgers is afgerond en afgetekend.' },
+    { id: 'n5', f: 'ontslag', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: false,
+      t: 'Thuiszorg of pgb is opgestart of aangepast aan de nieuwe situatie.' },
+    { id: 'n6', f: 'ontslag', m: 'algemeen', r: ['thuis'], bron: 'aanvulling', kern: false,
+      t: 'School: datum van terugkeer, aangepast programma en vervoer zijn afgesproken.' },
+    { id: 'n7', f: 'ontslag', m: 'algemeen', r: ['ouder', 'rev'], bron: 'aanvulling', kern: true,
+      t: 'Ouders weten wie zij bellen bij problemen, en bij welke tekens zij dat meteen moeten doen.' },
+    { id: 'n8', f: 'ontslag', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: true,
+      t: 'Controleafspraken staan: wie ziet dit kind wanneer — orthopedie, revalidatie, ergotherapie.',
+      w: 'Als niemand expliciet eigenaar is van de nazorg, valt het kind tussen de poli’s.' },
+    { id: 'n9', f: 'ontslag', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: false,
+      t: 'Medicatie thuis klopt, inclusief de afbouw van de pijnstilling.' },
+    { id: 'n10', f: 'ontslag', m: 'algemeen', r: ['ouder'], bron: 'aanvulling', kern: false,
+      t: 'Op papier mee: wat mag wel en wat niet, en tot wanneer.' },
+
+    // ---------- 4 · na ontslag ----------
+    { id: 'a1', f: 'na', m: 'algemeen', r: ['ergo', 'lev'], bron: 'aanvulling', kern: false,
+      t: 'De definitieve aanpassing is uitgevoerd én daarna gecontroleerd terwijl het kind erin zit.' },
+    { id: 'a2', f: 'na', m: 'algemeen', r: ['rev', 'ergo'], bron: 'aanvulling', kern: false,
+      t: 'Huid gecontroleerd na de eerste weken in de nieuwe houding.' },
+    { id: 'a3', f: 'na', m: 'algemeen', r: ['rev'], bron: 'aanvulling', kern: true,
+      t: 'Zitduur en functioneren vergeleken met de nulmeting van vóór de ingreep.',
+      w: 'Dit is waarvoor je die nulmeting deed. Zonder deze stap blijft de hele lijst administratie.' },
+    { id: 'a4', f: 'na', m: 'algemeen', r: ['thuis'], bron: 'presentatie', kern: false,
+      t: 'Terugkeer naar school en deelname zijn gelukt — of je weet wat het blokkeert.',
+      w: 'De dia zet „School and participation" bewust in de cirkel: het doel is functioneren in de eigen omgeving.' },
+    { id: 'a5', f: 'na', m: 'algemeen', r: ['rev', 'ouder'], bron: 'aanvulling', kern: false,
+      t: 'De doelen van vóór de operatie zijn met kind en ouders geëvalueerd.',
+      w: 'Ook, en juist, wat níet verbeterd is. Koppel dat terug naar het besluitgesprek.' }
+  ];
+
+  var SLEUTEL = 'krn-periop-af';
+
+  var af = {};
+  try {
+    var bewaard = localStorage.getItem(SLEUTEL);
+    if (bewaard) af = JSON.parse(bewaard) || {};
+  } catch (e) { af = {}; }
+
+  var actieveModules = { algemeen: true, wk: true };
+  var rolFilter = 'alle';
+  var statusFilter = 'alles';
+
+  function bewaar() {
+    try { localStorage.setItem(SLEUTEL, JSON.stringify(af)); } catch (e) { /* geen opslag */ }
+  }
+
+  function el(tag, cls, tekst) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
+
+  function zichtbaar(it) {
+    if (!actieveModules[it.m]) return false;
+    if (rolFilter !== 'alle' && it.r.indexOf(rolFilter) === -1) return false;
+    if (statusFilter === 'open' && af[it.id]) return false;
+    if (statusFilter === 'kern' && !it.kern) return false;
+    return true;
+  }
+
+  function rolNaam(id) {
+    for (var i = 0; i < ROLLEN.length; i++) if (ROLLEN[i].id === id) return ROLLEN[i].naam;
+    return id;
+  }
+
+  function maakItem(it) {
+    var lab = el('label', 'po-item' + (af[it.id] ? ' af' : ''));
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = !!af[it.id];
+    cb.addEventListener('change', function () {
+      if (cb.checked) af[it.id] = true; else delete af[it.id];
+      bewaar();
+      teken();
+    });
+    lab.appendChild(cb);
+
+    var inh = el('div', 'inh');
+    inh.appendChild(el('div', 'tekst', it.t));
+    if (it.w) inh.appendChild(el('div', 'waarom', it.w));
+
+    var merken = el('div', 'po-merken');
+    if (it.kern) merken.appendChild(el('span', 'po-merk kern', 'kern'));
+    merken.appendChild(el('span', 'po-merk' + (it.bron === 'aanvulling' ? ' aanvulling' : ''),
+      it.bron === 'aanvulling' ? 'aanvulling' : 'uit de presentatie'));
+    if (it.m !== 'algemeen') merken.appendChild(el('span', 'po-merk module', 'wervelkolom'));
+    it.r.forEach(function (r) { merken.appendChild(el('span', 'po-merk', rolNaam(r))); });
+    inh.appendChild(merken);
+
+    lab.appendChild(inh);
+    return lab;
+  }
+
+  function teken() {
+    var lijst = document.getElementById('poLijst');
+    lijst.innerHTML = '';
+
+    var inModule = ITEMS.filter(function (it) { return actieveModules[it.m]; });
+    var getoond = ITEMS.filter(zichtbaar);
+
+    FASES.forEach(function (fa) {
+      var rijen = getoond.filter(function (it) { return it.f === fa.id; });
+      if (!rijen.length) return;
+      var sec = el('div', 'po-fase');
+      var h = el('h2');
+      h.appendChild(el('span', 'nr', fa.nr));
+      h.appendChild(document.createTextNode(fa.naam));
+      sec.appendChild(h);
+      sec.appendChild(el('p', 'wanneer', fa.wanneer));
+      rijen.forEach(function (it) { sec.appendChild(maakItem(it)); });
+      lijst.appendChild(sec);
+    });
+
+    if (!getoond.length) {
+      lijst.appendChild(el('div', 'po-leeg',
+        statusFilter === 'open'
+          ? 'Alles afgevinkt binnen dit filter.'
+          : 'Geen punten binnen deze combinatie van filters.'));
+    }
+
+    // voortgang over de hele actieve lijst, niet over wat je nu filtert
+    var klaar = inModule.filter(function (it) { return af[it.id]; }).length;
+    var totaal = inModule.length;
+    var kernOpen = inModule.filter(function (it) { return it.kern && !af[it.id]; }).length;
+    document.getElementById('poBalk').style.width =
+      (totaal ? Math.round(klaar / totaal * 100) : 0) + '%';
+    document.getElementById('poTeller').textContent =
+      klaar + ' van ' + totaal + ' afgevinkt' +
+      (kernOpen ? ' — ' + kernOpen + ' kernpunt' + (kernOpen === 1 ? '' : 'en') + ' nog open.'
+                : (totaal && klaar === totaal ? ' — alles rond.' : ' — geen kernpunten meer open.'));
+  }
+
+  function bouwBediening() {
+    var mods = document.getElementById('poModules');
+    MODULES.forEach(function (m) {
+      var lab = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!actieveModules[m.id];
+      cb.disabled = m.vast;
+      cb.addEventListener('change', function () {
+        actieveModules[m.id] = cb.checked;
+        teken();
+      });
+      lab.appendChild(cb);
+      var sp = el('span', m.vast ? 'vast' : '', m.naam + (m.vast ? ' (staat altijd aan)' : ''));
+      lab.appendChild(sp);
+      mods.appendChild(lab);
+    });
+
+    var rol = document.getElementById('poRollen');
+    ROLLEN.forEach(function (r) {
+      var b = el('button', r.id === rolFilter ? 'aan' : '', r.naam);
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        rolFilter = r.id;
+        rol.querySelectorAll('button').forEach(function (k, i) {
+          k.classList.toggle('aan', ROLLEN[i].id === rolFilter);
+        });
+        teken();
+      });
+      rol.appendChild(b);
+    });
+
+    var st = document.getElementById('poStatus');
+    [['alles', 'Alles'], ['open', 'Alleen open'], ['kern', 'Alleen kernpunten']].forEach(function (o) {
+      var b = el('button', o[0] === statusFilter ? 'aan' : '', o[1]);
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        statusFilter = o[0];
+        st.querySelectorAll('button').forEach(function (k) {
+          k.classList.toggle('aan', k.textContent === o[1]);
+        });
+        teken();
+      });
+      st.appendChild(b);
+    });
+  }
+
+  document.getElementById('poReset').addEventListener('click', function () {
+    if (!window.confirm('Alle vinkjes wissen en met een nieuw traject beginnen?')) return;
+    af = {};
+    bewaar();
+    teken();
+  });
+
+  bouwBediening();
+  teken();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

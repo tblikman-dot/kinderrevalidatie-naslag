@@ -82,6 +82,7 @@ const DEFAULT_CATS = [
       { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html' },
       { label: '🦵 Spieruitvalsniveaus', url: 'myotomen.html' },
       { label: '💧 Neurogene blaas — de vier combinaties', url: 'neurogene-blaas.html' },
+      { label: '🗓️ Rondom een operatie — perioperatieve checklist', url: 'perioperatief.html' },
     ] },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
     zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
@@ -122,6 +123,11 @@ const DEFAULT_CATS = [
   { id: 'ortho-ok', label: 'Orthopedische operaties bij kinderen', scope: 'Ingrepen, timing, SEMLS — techniek en beeldmateriaal',
     directLinks: [
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
+    ] },
+  { id: 'periop', label: 'Rondom een operatie of ingreep', scope: 'Perioperatieve regelzaken, postoperatieve zorg, checklist',
+    zoekwoorden: 'perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden scoliose scoliosecorrectie spondylodese kyfose kyfectomie wervelkolomchirurgie rolstoel zitsysteem zitting custom contoured modulair CCS MWS leverancier ergotherapeut tillift transfers mobiliseren zitbalans zitduur decubitus drukplek huid sensibiliteit latexallergie shunt baclofenpomp katheterisatie darmbeleid blaasbeleid pijnbeleid thuiszorg pgb machtiging school terugkeer participatie verwachtingen nulmeting kwaliteit van leven HRQOL Khoshbin Thomson Hosking Meng spina bifida cystica Chiari syringomyelie tethered cord',
+    directLinks: [
+      { label: '🗓️ Perioperatieve checklist — wat moet ik regelen?', url: 'perioperatief.html' },
     ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
