@@ -415,6 +415,23 @@
     </div>
   </section>
 
+  <!-- ================= mag het? ================= -->
+  <section class="do-sectie">
+    <h2>0 · Mag het?</h2>
+    <p class="do-sectie-uitleg">
+      De zes algemene contra-indicaties en interacties uit dezelfde richtlijn. Loop ze
+      langs vóór je gaat rekenen; dit staat los van de dosis.
+    </p>
+    <div class="do-paneel">
+      <div id="doCI"></div>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.55;margin:11px 0 0;">
+        De vinkjes blijven op dit toestel staan en horen bij één kind tegelijk.
+        <button type="button" id="doWisCI" style="background:none;border:none;padding:0;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;">Leegmaken</button>
+      </p>
+    </div>
+    <div id="doCIMelding"></div>
+  </section>
+
   <!-- ================= preparaat en voorraad ================= -->
   <section class="do-sectie">
     <h2>1 · Preparaat en voorraad</h2>
@@ -459,7 +476,8 @@
     <p class="do-sectie-uitleg">
       De bovengrens die je niet passeert, ongeacht hoeveel je in huis hebt.
       Bij kinderen is de maat per kilogram lichaamsgewicht leidend, met daarnaast
-      een absoluut maximum per sessie. Vul in wat in jouw bron staat.
+      een absoluut maximum per sessie. Vul hieronder in wat jij aanhoudt — of laat
+      de richtlijnwaarden invullen.
     </p>
     <div class="do-paneel">
       <div class="do-tweekolom">
@@ -478,35 +496,44 @@
       </span>
     </div>
 
-    <details class="do-vouw">
-      <summary>Wat ik online vond over plafonds — ongeverifieerd, niet ingevuld</summary>
-      <div class="inhoud">
-        <p>
-          Ik kon geen enkele primaire bron openen: de RCP-richtlijn, de SmPC's op
-          de eMC, de EMA-documenten en de geneesmiddeleninformatiebank worden
-          allemaal door de netwerkfilter van deze omgeving geweigerd. Wat hier
-          staat komt uit <b>samenvattingen van zoekresultaten</b>, niet uit een
-          document dat ik zelf gelezen heb. Behandel het als een spoor om na te
-          kijken, niet als een getal om te gebruiken — daarom vult de pagina er
-          ook niets mee in.
-        </p>
-        <ul>
-          <li>Voor volwassen focale spasticiteit werden maxima per sessie
-              genoemd in de orde van enkele honderden eenheden voor de arm en
-              het been, met voor abobotulinumtoxineA een aanzienlijk hoger
-              getal — passend bij de verhouding tussen de preparaten.</li>
-          <li>Voor kinderen kwam de dosering per kilogram naar voren, met een
-              onderscheid tussen één en twee behandelde benen, en een absoluut
-              maximum dat daarnaast geldt: de laagste van de twee wint.</li>
-        </ul>
-        <p>
-          Ik noem hier bewust geen cijfers. Een half onthouden getal uit een
-          zoekfragment hoort niet in een rekenmodule waarmee je een kind
-          doseert. Sla de actuele SmPC van jouw preparaat erbij en type de twee
-          velden hierboven zelf in; daarna rekent de pagina er consequent mee.
-        </p>
+    <div class="do-paneel" style="margin-top:12px;">
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;">
+        Richtlijnwaarden voor kinderen met CP
+      </p>
+      <div class="do-tweekolom">
+        <div class="do-veld">
+          <label for="doLeeftijd">Leeftijd (jaren)</label>
+          <input type="number" id="doLeeftijd" inputmode="decimal" min="0" max="25" step="0.5" placeholder="jaar">
+          <span class="hint">Alleen de grens bij 6 jaar doet ertoe.</span>
+        </div>
+        <div class="do-veld">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;font-size:13px;cursor:pointer;margin-top:22px;">
+            <input type="checkbox" id="doErnstig" style="width:17px;height:17px;flex-shrink:0;margin-top:1px;">
+            <span>Ernstige diplegie of tetraplegie</span>
+          </label>
+        </div>
       </div>
-    </details>
+      <div id="doRichtlijn"></div>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.6;margin:11px 0 0;">
+        Bron: het hoofdstuk over botulinetoxine A bij kinderen met cerebrale parese uit de
+        Nederlandse richtlijn, paragraaf <em>Overweging</em>. Letterlijk overgenomen; er is
+        niets bijgerekend of doorgetrokken. In de tekst genoemd:
+        Russman 1997, Awaad 2004, Molenaers 2001, Desloovere 2001, Scholtes 2006,
+        Wissel 1999, Pollack 2000, Boyd 1999.
+      </p>
+    </div>
+
+    <div class="do-vlag oranje" style="margin-top:12px;">
+      <strong>Drie dingen om te weten voordat je deze knop gebruikt</strong>
+      <b>Eén:</b> het werkgroepadvies voor Botox® (25–30 E/kg) is hoger dan wat de fabrikant
+      opgeeft (200 E per sessie). De richtlijn zegt zelf dat het daarvan afwijkt — dat is geen
+      fout in deze app.
+      <b>Twee:</b> voor Dysport® is er géén werkgroepadvies; daar staan alleen
+      fabrikantwaarden, omdat er volgens de richtlijn geen literatuur en geen ervaring is met
+      hoger doseren.
+      <b>Drie:</b> deze richtlijn is niet van vandaag. De aangehaalde studies lopen tot 2006.
+      Controleer of jouw versie nog dezelfde getallen geeft.
+    </div>
   </section>
 
   <!-- ================= dosistabel ================= -->
@@ -634,6 +661,37 @@
     <div class="do-uit" id="doUit"></div>
   </section>
 
+  <!-- ================= bijwerkingen & praktijk ================= -->
+  <section class="do-sectie">
+    <h2>Bijwerkingen, herhaling en anesthesie</h2>
+    <p class="do-sectie-uitleg">Uit dezelfde richtlijntekst, letterlijk weergegeven.</p>
+    <div class="do-paneel">
+      <p style="font-family:system-ui,sans-serif;font-size:13px;line-height:1.7;color:var(--inkt);margin:0 0 10px;">
+        „De bijwerkingen van BTX-A zijn mild en kortdurend. De meest frequente bijwerkingen
+        zijn <b>lokale pijn op de injectieplaats (2.5%)</b>, <b>griepachtige verschijnselen
+        (0.5%)</b> en <b>zwakte (0.5%)</b> (Boyd 1999). Excessieve zwakte van spieren met
+        gevolgen voor basisvaardigheden wordt niet gerapporteerd. Anafylactische reacties ten
+        gevolge van de behandeling met BTX-A zijn tot dusverre niet bekend, maar zoals
+        gebruikelijk bij alle biologische produkten dienen adequate maatregelen beschikbaar te
+        zijn. Bij herhaalde BTX injecties bestaat de kans op antilichaamvorming en aldus
+        verminderde werkzaamheid van het toxine."
+      </p>
+      <p style="font-family:system-ui,sans-serif;font-size:13px;line-height:1.7;color:var(--inkt);margin:0;">
+        „Vanwege de vaak belaste medische voorgeschiedenis, comorbiditeit, de kwaliteit van de
+        uitvoering van de ingreep, de belasting die de ingreep voor de kinderen vormt en het
+        feit dat de ingreep vaak herhaald moet worden, wordt de BTX-A toediening in de praktijk
+        vaak <b>onder algehele anesthesie</b> verricht."
+      </p>
+    </div>
+    <div class="do-vlag blauw" style="margin-top:10px;">
+      <strong>Waar het interval vandaan komt</strong>
+      De regel „in principe nooit binnen 3 maanden opnieuw" staat in de richtlijn onder de
+      contra-indicaties en wordt daar gemotiveerd met de kans op antilichaamvorming — niet
+      met uitgewerkte spierfysiologie. Het is dus één grens met één reden; dat is iets anders
+      dan een uitspraak over wanneer het effect is uitgewerkt.
+    </div>
+  </section>
+
   <!-- ================= niet in staat ================= -->
   <section class="do-sectie">
     <h2>Wat hier bewust níet in staat</h2>
@@ -737,6 +795,60 @@
   };
   var RCP_MERK = { ona: 'b', inco: 'x', abo: 'd' };
   var RCP_MERKNAAM = { ona: 'BOTOX', inco: 'Xeomin', abo: 'Dysport' };
+
+  // ------------------------------------------------------------------
+  // Nederlandse richtlijn, hoofdstuk botulinetoxine A bij kinderen met CP.
+  // Letterlijk overgenomen; er is niets bijgerekend of doorgetrokken.
+  //
+  // Botox: de werkgroep wijkt BEWUST af van de fabrikant (200 U/sessie)
+  // en geeft voor multi-level behandelingen 25 U/kg onder de 6 jaar,
+  // 30 U/kg vanaf 6 jaar, met een absoluut maximum van 700 U. Bij
+  // ernstige diplegie of tetraplegie geldt 25 U/kg.
+  // Dysport: GEEN werkgroepadvies. De richtlijn zegt uitdrukkelijk dat er
+  // in de literatuur niets bekend is en in de werkgroep geen ervaring met
+  // hogere doseringen dan die van de fabrikant. Alleen fabrikantwaarden.
+  // Xeomin: komt in deze tekst niet voor. Daarom hier ook niet.
+  // ------------------------------------------------------------------
+  var RICHTLIJN = {
+    ona: {
+      merk: 'Botox®',
+      werkgroep: true,
+      perKg: function (leeftijd, ernstig) {
+        if (ernstig) return { waarde: 25, reden: 'ernstige diplegie of tetraplegie' };
+        if (leeftijd === null) return null;
+        return leeftijd < 6
+          ? { waarde: 25, reden: 'jonger dan 6 jaar' }
+          : { waarde: 30, reden: '6 jaar of ouder' };
+      },
+      abs: 700,
+      absNoot: 'De richtlijn noemt dit absolute maximum in dezelfde zin als de 30 U/kg voor kinderen van 6 jaar en ouder. Of het ook onder de 6 jaar bedoeld is, staat er niet met zoveel woorden; hier wordt het als bovengrens aangehouden omdat dat de voorzichtige kant is.',
+      fabrikant: 'De fabrikant geeft 200 U per kind per sessie. De werkgroep wijkt daar uitdrukkelijk van af.',
+      context: 'Awaad et al. (2004) vond behandeling tot 40 U/kg Botox® bij kinderen met CP veilig en goed getolereerd. Dat is context uit de tekst, geen aanbeveling — de werkgroep houdt 25 en 30 U/kg aan.'
+    },
+    abo: {
+      merk: 'Dysport®',
+      werkgroep: false,
+      perKg: function () {
+        return { waarde: 30, reden: 'advies van de fabrikant: starten op 20 U/kg, zo nodig aanpassen tot 30 U/kg' };
+      },
+      abs: 1000,
+      absNoot: 'Uitzonderlijk kan de maximale dosering volgens de richtlijn verhoogd worden tot 1500 U per behandelsessie.',
+      fabrikant: 'Dit zijn de waarden van de fabrikant. De werkgroep geeft hier géén eigen advies: de richtlijn zegt dat er in de literatuur niets bekend is en in de werkgroep geen ervaring met hogere doseringen dan die van de fabrikant.',
+      context: ''
+    }
+    // inco (Xeomin) staat niet in deze richtlijntekst — bewust geen regel.
+  };
+
+  var CONTRA = [
+    { id: 'ci1', t: 'Bekende overgevoeligheid voor humaan albumine' },
+    { id: 'ci2', t: 'Generale spierzwakte of spierziekten' },
+    { id: 'ci3', t: 'Gebruik van lithium, aminoglycoside antibiotica of spectinomycine',
+      w: 'Tot 3 maanden na de injectie met BTX-A niet gebruiken.' },
+    { id: 'ci4', t: 'Ontsteking of infectie op de plaats van de injectie' },
+    { id: 'ci5', t: 'Korter dan 3 maanden geleden voor het laatst met BTX-A behandeld',
+      w: 'In verband met de kans op antilichaamvorming wordt in principe nooit binnen 3 maanden opnieuw behandeld.' },
+    { id: 'ci6', t: 'Tetanusvaccinatie binnen 3 maanden na de injectie' }
+  ];
 
   function rcpRijen(id) {
     var namen = RCP_KOPPEL[id];
@@ -1122,8 +1234,35 @@
       stukken.push(r.n ? '💉 ' + r.n : '💉 aantal plaatsen niet vermeld');
       p.innerHTML = stukken.join(' · ');
       d.appendChild(p);
+
+      // De RCP-tabel is voor volwassenen en de plafonds hier zijn voor een
+      // kind. Als de ONDERgrens van het volwassenbereik voor deze ene spier
+      // al boven het plafond voor de hele sessie ligt, is dat het vermelden
+      // waard — anders staat er een getal dat je nooit kunt geven.
+      var pl = sessiePlafond();
+      var v = r[RCP_MERK[prep]];
+      if (pl !== null && v && v[0] > pl) {
+        var w = document.createElement('div');
+        w.className = 'let';
+        w.style.marginTop = '3px';
+        w.textContent = '⚠ Dat volwassenbereik begint al boven je plafond voor de hele sessie (' +
+          ee(pl) + ' E). Bruikbaar als verhouding tussen de merken, niet als doelwaarde.';
+        d.appendChild(w);
+      }
     });
     return d;
+  }
+
+  // Het plafond voor deze sessie: de laagste van de grens per kilogram en het
+  // absolute maximum. Zelfde som als in herteken(), hier apart omdat de
+  // spierkaarten hem ook nodig hebben.
+  function sessiePlafond() {
+    var pl = plafondVan(prep);
+    var maxKg = getal(pl.kg), maxAbs = getal(pl.abs), gew = getal(elGewicht.value);
+    var plafondKg = (maxKg !== null && gew !== null) ? maxKg * gew : null;
+    var p = plafondKg;
+    if (maxAbs !== null) p = (p === null) ? maxAbs : Math.min(p, maxAbs);
+    return p;
   }
 
   function keuze(label, opties, waarde, bij) {
@@ -1241,6 +1380,157 @@
     var d = PRIO_RANG[a.g.prio] - PRIO_RANG[b.g.prio];
     return d !== 0 ? d : a.index - b.index;
   }
+
+  // ---------------- richtlijnplafonds ----------------
+
+  var elLeeftijd = document.getElementById('doLeeftijd');
+  var elErnstig  = document.getElementById('doErnstig');
+  var elRicht    = document.getElementById('doRichtlijn');
+
+  function richtlijnVoor() {
+    var R = RICHTLIJN[prep];
+    if (!R) return null;
+    var leeftijd = getal(elLeeftijd.value);
+    var ernstig = elErnstig.checked;
+    var pk = R.perKg(leeftijd, ernstig);
+    return { R: R, perKg: pk, abs: R.abs, leeftijd: leeftijd, ernstig: ernstig };
+  }
+
+  function tekenRichtlijn() {
+    elRicht.innerHTML = '';
+    var r = richtlijnVoor();
+
+    if (!r) {
+      var g = el('div', 'do-vlag oranje');
+      g.appendChild(el('strong', null, 'Deze richtlijntekst noemt ' + PREPARATEN[prep].naam + ' niet.'));
+      g.appendChild(document.createTextNode(
+        'Het hoofdstuk gaat over Botox® en Dysport®. Voor dit preparaat staan er geen ' +
+        'kinderdoseringen in, en ik reken ze niet om — eenheden zijn niet uitwisselbaar. ' +
+        'Vul de velden hierboven zelf met de waarden uit jouw bron.'));
+      elRicht.appendChild(g);
+      return;
+    }
+
+    var R = r.R;
+    var kaart = el('div', 'do-vlag blauw');
+    kaart.appendChild(el('strong', null,
+      R.merk + ' — ' + (R.werkgroep ? 'advies van de werkgroep' : 'waarden van de fabrikant')));
+
+    var lijst = document.createElement('div');
+    lijst.style.marginTop = '6px';
+
+    if (r.perKg) {
+      var pk = el('div', null, '• Per kg: ' + r.perKg.waarde + ' E/kg per sessie — ' + r.perKg.reden + '.');
+      lijst.appendChild(pk);
+    } else {
+      lijst.appendChild(el('div', null,
+        '• Per kg: vul de leeftijd in. De grens ligt bij 6 jaar (25 E/kg eronder, 30 E/kg erboven).'));
+    }
+    lijst.appendChild(el('div', null, '• Absoluut: ' + r.abs + ' E per kind per sessie.'));
+    kaart.appendChild(lijst);
+
+    var noot = el('div', null, R.fabrikant);
+    noot.style.marginTop = '7px';
+    kaart.appendChild(noot);
+    if (R.absNoot) {
+      var n2 = el('div', null, R.absNoot);
+      n2.style.marginTop = '5px';
+      kaart.appendChild(n2);
+    }
+    if (R.context) {
+      var n3 = el('div', null, R.context);
+      n3.style.marginTop = '5px';
+      kaart.appendChild(n3);
+    }
+    elRicht.appendChild(kaart);
+
+    if (r.perKg) {
+      var rij = el('div', 'do-knoprij');
+      var knop = el('button', null,
+        'Neem over: ' + r.perKg.waarde + ' E/kg en ' + r.abs + ' E');
+      knop.type = 'button';
+      knop.addEventListener('click', function () {
+        elMaxKg.value = String(r.perKg.waarde);
+        elMaxAbs.value = String(r.abs);
+        herteken();
+      });
+      rij.appendChild(knop);
+      elRicht.appendChild(rij);
+
+      var pl = plafondVan(prep);
+      var nuKg = getal(pl.kg), nuAbs = getal(pl.abs);
+      if ((nuKg !== null && nuKg > r.perKg.waarde) || (nuAbs !== null && nuAbs > r.abs)) {
+        var w = el('div', 'do-vlag rood');
+        w.style.marginTop = '10px';
+        w.appendChild(el('strong', null, 'Je ingevulde plafond ligt boven de richtlijn.'));
+        w.appendChild(document.createTextNode(
+          'Ingevuld: ' + (nuKg !== null ? nuKg + ' E/kg' : 'geen per kg') + ' en ' +
+          (nuAbs !== null ? nuAbs + ' E' : 'geen absoluut maximum') + '. De richtlijn geeft ' +
+          r.perKg.waarde + ' E/kg en ' + r.abs + ' E. Als dat bewust is, laat het staan; ' +
+          'anders neem de richtlijnwaarden over.'));
+        elRicht.appendChild(w);
+      }
+    }
+  }
+
+  // ---------------- contra-indicaties ----------------
+
+  var SLEUTEL_CI = 'krn-dos-ci';
+  var ciAan = {};
+  try {
+    var ciOpg = lees(SLEUTEL_CI);
+    if (ciOpg) ciAan = JSON.parse(ciOpg) || {};
+  } catch (e) { ciAan = {}; }
+
+  function tekenCI() {
+    var vak = document.getElementById('doCI');
+    vak.innerHTML = '';
+    CONTRA.forEach(function (c) {
+      var lab = document.createElement('label');
+      lab.className = 'do-check';
+      lab.style.alignItems = 'flex-start';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!ciAan[c.id];
+      cb.addEventListener('change', function () {
+        if (cb.checked) ciAan[c.id] = true; else delete ciAan[c.id];
+        schrijf(SLEUTEL_CI, JSON.stringify(ciAan));
+        tekenCI();
+      });
+      lab.appendChild(cb);
+      var sp = document.createElement('span');
+      sp.appendChild(document.createTextNode(c.t));
+      if (c.w) {
+        var kl = document.createElement('i');
+        kl.style.cssText = 'display:block;color:var(--muted);font-style:normal;font-size:11.5px;line-height:1.5;margin-top:2px;';
+        kl.textContent = c.w;
+        sp.appendChild(kl);
+      }
+      lab.appendChild(sp);
+      vak.appendChild(lab);
+    });
+
+    var meld = document.getElementById('doCIMelding');
+    meld.innerHTML = '';
+    var aan = CONTRA.filter(function (c) { return ciAan[c.id]; });
+    if (aan.length) {
+      meld.appendChild(vlag('rood',
+        aan.length === 1 ? 'Er is een contra-indicatie aangevinkt.'
+                         : 'Er zijn ' + aan.length + ' contra-indicaties aangevinkt.',
+        aan.map(function (c) { return c.t.toLowerCase(); }).join('; ') +
+        '. De richtlijn noemt dit als contra-indicatie of interactie voor BTX-A. ' +
+        'Het schema hieronder blijft gewoon rekenen — dat is rekenwerk, geen toestemming.'));
+    }
+  }
+
+  document.getElementById('doWisCI').addEventListener('click', function () {
+    ciAan = {};
+    schrijf(SLEUTEL_CI, JSON.stringify(ciAan));
+    tekenCI();
+  });
+
+  elLeeftijd.addEventListener('input', function () { tekenRichtlijn(); herteken(); });
+  elErnstig.addEventListener('change', function () { tekenRichtlijn(); herteken(); });
 
   function herteken() {
     // invoer overnemen
@@ -1583,13 +1873,19 @@
     vulPreparaat();
     // De spierkaarten tonen het RCP-bereik van het gekozen preparaat, dus die
     // moeten mee veranderen — anders blijft er een bereik van het vorige merk
-    // staan, en eenheden zijn niet uitwisselbaar.
+    // staan, en eenheden zijn niet uitwisselbaar. Hetzelfde geldt voor het
+    // richtlijnpaneel: Botox en Dysport hebben elk hun eigen plafonds.
     tekenSpieren();
+    tekenRichtlijn();
     herteken();
   });
 
-  [elVoorraad, elMaxKg, elMaxAbs, elGewicht].forEach(function (e) {
-    e.addEventListener('input', herteken);
+  elVoorraad.addEventListener('input', herteken);
+  // Gewicht en plafonds bepalen samen het sessieplafond, en dat plafond staat
+  // ook op de spierkaarten (waarschuwing bij het volwassenbereik). Dus die
+  // opnieuw tekenen, niet alleen herrekenen.
+  [elGewicht, elMaxKg, elMaxAbs].forEach(function (e) {
+    e.addEventListener('input', function () { herteken(); tekenRichtlijn(); tekenSpieren(); });
   });
   elAfrond.addEventListener('change', herteken);
   elBijw.addEventListener('change', herteken);
@@ -1611,9 +1907,12 @@
   document.getElementById('doWisSessie').addEventListener('click', function () {
     gekozen = [];
     elGewicht.value = '';
+    elLeeftijd.value = '';
+    elErnstig.checked = false;
     elBijw.checked = false;
     strategie = 'prioriteit';
     tekenSpieren();
+    tekenRichtlijn();
     herteken();
   });
 
@@ -1622,6 +1921,8 @@
   vulWegingen();
   bouwSpierkeuze();
   tekenSpieren();
+  tekenCI();
+  tekenRichtlijn();
   herteken();
 })();
 </script>
