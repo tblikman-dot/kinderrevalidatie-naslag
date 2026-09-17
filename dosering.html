@@ -491,6 +491,13 @@
           <input type="number" id="doMaxAbs" inputmode="numeric" min="0" step="1" placeholder="E">
         </div>
       </div>
+      <div class="do-veld">
+        <label for="doMaxPlaats">Maximum per injectieplaats</label>
+        <input type="number" id="doMaxPlaats" inputmode="numeric" min="0" step="1" placeholder="E per plaats">
+        <span class="hint">Wordt alleen getoetst bij spieren waarvan de RCP-tabel een aantal
+          plaatsen noemt. Staat daar „meerdere" of niets, dan valt er niets te delen en zegt de
+          pagina dat ook.</span>
+      </div>
       <span class="hint" style="display:block;font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.5;">
         Beide leeg? Dan rekent de pagina wel je schema uit maar bewaakt hij geen
         veiligheidsgrens, en zegt dat er ook bij.
@@ -525,10 +532,12 @@
       </p>
       <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.6;margin:8px 0 0;">
         <b>Tweede bron:</b> een lokaal behandelprotocol, Bijlage 1, gedateerd 2012–2013.
-        Daaruit zijn <b>alleen de drie leeftijdsbanden</b> overgenomen (2–4 jaar 20 E/kg,
-        4–6 jaar 25 E/kg, 6–10 jaar 30 E/kg). De dosis per spier, het maximum per
-        injectieplaats, het maximum per behandeling en het volumeadvies uit dat protocol
-        staan hier bewust <b>niet</b> in.
+        Daaruit zijn overgenomen: de drie <b>leeftijdsbanden</b> (2–4 jaar 20 E/kg,
+        4–6 jaar 25 E/kg, 6–10 jaar 30 E/kg), het <b>maximum per behandeling</b> van 500 E
+        en het <b>maximum per injectieplaats</b> van 50 E. Bij die 500 E hoort een
+        kanttekening: op het papier staat 400 gedrukt en doorgestreept, met 500 met de hand
+        in de marge. De <b>dosis per spier</b> en het <b>volumeadvies</b> uit dat protocol
+        staan hier bewust <b>niet</b> in — de planner rekent met je eigen dosistabel.
       </p>
     </div>
 
@@ -860,6 +869,9 @@
   // er niet, dus toont de pagina op die leeftijden allebei in plaats van
   // er zelf een regel van te maken.
   // ------------------------------------------------------------------
+  var LOKAAL_ABS = 500;     // gedrukt 400, met de hand doorgestreept en 500 in de marge
+  var LOKAAL_PLAATS = 50;   // maximaal 50 E per injectieplaats
+
   var LOKAAL_BANDEN = [
     { van: 2, tot: 4,  waarde: 20 },
     { van: 4, tot: 6,  waarde: 25 },
@@ -1008,7 +1020,8 @@
     return tabellen[p];
   }
   function plafondVan(p) {
-    if (!plafonds[p]) plafonds[p] = { kg: '', abs: '' };
+    if (!plafonds[p]) plafonds[p] = { kg: '', abs: '', plaats: '' };
+    if (plafonds[p].plaats === undefined) plafonds[p].plaats = '';
     return plafonds[p];
   }
 
@@ -1041,6 +1054,7 @@
   var elAfrond   = document.getElementById('doAfronding');
   var elMaxKg    = document.getElementById('doMaxKg');
   var elMaxAbs   = document.getElementById('doMaxAbs');
+  var elMaxPlaats= document.getElementById('doMaxPlaats');
   var elMatrix   = document.getElementById('doMatrixBody');
   var elGewicht  = document.getElementById('doGewicht');
   var elVoegToe  = document.getElementById('doVoegToe');
@@ -1503,51 +1517,75 @@
       rij.appendChild(knop);
       elRicht.appendChild(rij);
 
-      // Naast de richtlijn het lokale protocol, alleen voor Botox en alleen
-      // de leeftijdsgrens. Verschillen worden benoemd, niet weggewerkt.
-      var lok = (prep === 'ona') ? lokaalPerKg(r.leeftijd) : null;
-      if (lok) {
+      // Het lokale protocol staat naast de richtlijn, niet eroverheen. Alleen
+      // voor Botox: dat protocol gaat daarover, en eenheden zijn niet
+      // uitwisselbaar. Overgenomen zijn de drie leeftijdsbanden, het maximum
+      // per behandeling en het maximum per injectieplaats; de dosis per spier
+      // en het volumeadvies eruit staan bewust niet in deze app.
+      if (prep === 'ona') {
+        var lok = lokaalPerKg(r.leeftijd);
         var lk = el('div', 'do-vlag blauw');
         lk.style.marginTop = '10px';
-        lk.appendChild(el('strong', null, 'Lokaal behandelprotocol (2012–2013) — alleen de leeftijdsgrens'));
+        lk.appendChild(el('strong', null, 'Lokaal behandelprotocol (2012–2013)'));
 
-        if (lok.buiten) {
-          lk.appendChild(document.createTextNode(
-            'Dat protocol kent drie banden: 2–4 jaar 20 E/kg, 4–6 jaar 25 E/kg, ' +
-            '6–10 jaar 30 E/kg. Dit kind is ' + lok.buiten + ' en valt daarbuiten; ' +
-            'het protocol zegt daar niets over en ik trek de banden niet door.'));
+        var kanKg = null;
+        if (!lok) {
+          lk.appendChild(el('div', null,
+            'Leeftijdsbanden: 2–4 jaar 20 E/kg, 4–6 jaar 25 E/kg, 6–10 jaar 30 E/kg. ' +
+            'Vul de leeftijd in om te zien welke hier geldt.'));
+        } else if (lok.buiten) {
+          lk.appendChild(el('div', null,
+            'Per kg: het protocol kent drie banden — 2–4 jaar 20 E/kg, 4–6 jaar 25 E/kg, ' +
+            '6–10 jaar 30 E/kg. Dit kind is ' + lok.buiten + ' en valt daarbuiten; het protocol ' +
+            'zegt daar niets over en ik trek de banden niet door.'));
         } else if (lok.grens) {
-          lk.appendChild(document.createTextNode(
-            'Op precies ' + lok.grens + ' jaar raken twee banden elkaar: het protocol geeft daar ' +
+          lk.appendChild(el('div', null,
+            'Per kg: op precies ' + lok.grens + ' jaar raken twee banden elkaar — het protocol geeft daar ' +
             lok.waarden.join(' E/kg en ') + ' E/kg. Welke van de twee geldt staat er niet bij, ' +
-            'dus kies zelf — de laagste is de voorzichtige.'));
+            'dus kies zelf; de laagste is de voorzichtige.'));
         } else {
+          kanKg = lok.waarde;
           var zelfde = r.perKg && lok.waarde === r.perKg.waarde;
-          lk.appendChild(document.createTextNode(
-            'Band ' + lok.band + ': maximaal ' + lok.waarde + ' E/kg. ' +
+          lk.appendChild(el('div', null,
+            'Per kg: band ' + lok.band + ' geeft maximaal ' + lok.waarde + ' E/kg. ' +
             (zelfde
-              ? 'Gelijk aan wat de FMS-richtlijn hier geeft.'
+              ? 'Gelijk aan de FMS-richtlijn hier.'
               : 'De FMS-richtlijn geeft hier ' + (r.perKg ? r.perKg.waarde + ' E/kg' : 'geen waarde') +
-                '. Het lokale protocol is dus ' + (lok.waarde < (r.perKg ? r.perKg.waarde : 0) ? 'lager' : 'hoger') +
-                '; het onderscheidt 2–4 van 4–6 jaar, waar de richtlijn alleen een grens bij 6 jaar legt.')));
-          if (!zelfde) {
-            var rij2 = el('div', 'do-knoprij');
-            var knop2 = el('button', null, 'Neem alleen de ' + lok.waarde + ' E/kg over');
-            knop2.type = 'button';
-            knop2.addEventListener('click', function () {
-              elMaxKg.value = String(lok.waarde);
-              herteken();
-              tekenRichtlijn();
-              tekenSpieren();
-            });
-            rij2.appendChild(knop2);
-            lk.appendChild(rij2);
-            var uitleg = el('div', null,
-              'Dit vult alleen het veld per kilogram. Het absolute maximum uit dat protocol staat ' +
-              'bewust niet in deze app, dus dat veld blijft staan zoals het staat.');
-            uitleg.style.marginTop = '6px';
-            lk.appendChild(uitleg);
-          }
+                '; het protocol is dus ' + (lok.waarde < (r.perKg ? r.perKg.waarde : 0) ? 'lager' : 'hoger') +
+                ', want het onderscheidt 2–4 van 4–6 jaar waar de richtlijn alleen een grens bij 6 jaar legt.')));
+        }
+
+        lk.appendChild(el('div', null,
+          'Per behandeling: maximaal ' + LOKAAL_ABS + ' E. Op het papier staat 400 gedrukt, ' +
+          'doorgestreept, met 500 met de hand in de marge; die handgeschreven correctie is ' +
+          'op jouw aanwijzing overgenomen. Dit ligt onder de ' + r.abs + ' E van de FMS-richtlijn.'));
+        lk.appendChild(el('div', null,
+          'Per injectieplaats: maximaal ' + LOKAAL_PLAATS + ' E, afhankelijk van de grootte en ' +
+          'dikte van de spierbuik.'));
+
+        var rij2 = el('div', 'do-knoprij');
+        var delen = [];
+        if (kanKg !== null) delen.push(kanKg + ' E/kg');
+        delen.push(LOKAAL_ABS + ' E');
+        delen.push(LOKAAL_PLAATS + ' E/plaats');
+        var knop2 = el('button', null, 'Neem het lokale protocol over: ' + delen.join(', '));
+        knop2.type = 'button';
+        knop2.addEventListener('click', function () {
+          if (kanKg !== null) elMaxKg.value = String(kanKg);
+          elMaxAbs.value = String(LOKAAL_ABS);
+          elMaxPlaats.value = String(LOKAAL_PLAATS);
+          herteken();
+          tekenRichtlijn();
+          tekenSpieren();
+        });
+        rij2.appendChild(knop2);
+        lk.appendChild(rij2);
+        if (kanKg === null) {
+          var n = el('div', null,
+            'De waarde per kilogram zit hier niet bij, want die staat op deze leeftijd niet vast; ' +
+            'dat veld blijft staan zoals het staat.');
+          n.style.marginTop = '6px';
+          lk.appendChild(n);
         }
         elRicht.appendChild(lk);
       }
@@ -1636,6 +1674,7 @@
     var pl = plafondVan(prep);
     pl.kg = elMaxKg.value;
     pl.abs = elMaxAbs.value;
+    pl.plaats = elMaxPlaats.value;
     schrijf(SLEUTEL_PLAFOND, JSON.stringify(plafonds));
 
     var voorraad = getal(elVoorraad.value);
@@ -1782,6 +1821,21 @@
         ' depots in één spierbuik — laat het dan staan; anders haal er één weg.'));
     }
 
+    var pt = plaatsToets(regels);
+    if (pt && pt.boven.length) {
+      elUit.appendChild(vlag('oranje',
+        'Boven je grens van ' + ee(pt.grens) + ' E per injectieplaats.',
+        pt.boven.join('; ') + '. Verdeel over meer plaatsen of geef die spier minder. ' +
+        'Gerekend met het aantal plaatsen dat de RCP-tabel noemt; wijk je daarvan af, ' +
+        'dan klopt deze deling niet.'));
+    }
+    if (pt && pt.onbekend.length && pt.boven.length === 0) {
+      elUit.appendChild(vlag('blauw',
+        'Niet elke spier is te toetsen op de dosis per plaats.',
+        'Voor ' + pt.onbekend.join(', ') + ' noemt de RCP-tabel geen aantal injectieplaatsen, ' +
+        'dus valt er niets te delen. Die grens van ' + ee(pt.grens) + ' E per plaats bewaak je daar zelf.'));
+    }
+
     var limi = regels.filter(function (r) { return r.g.limiterend; });
     if (limi.length) {
       elUit.appendChild(vlag('blauw',
@@ -1923,10 +1977,38 @@
     if (m && r.krijgtPerKant) {
       var aantal = Number(m[1]);
       var per = Math.round(r.krijgtPerKant / aantal * 10) / 10;
-      return 'RCP: over ' + aantal + ' plaatsen — ongeveer ' + ee(per) + ' E per plaats';
+      var tekst = 'RCP: over ' + aantal + ' plaatsen — ongeveer ' + ee(per) + ' E per plaats';
+      var grens = getal(plafondVan(prep).plaats);
+      if (grens !== null && per > grens) {
+        tekst += ' — ⚠ boven je grens van ' + ee(grens) + ' E per plaats';
+      }
+      return tekst;
     }
     if (m) return 'RCP: over ' + m[1] + ' plaatsen';
     return 'RCP: ' + n.split(' — ')[0];
+  }
+
+  // Per injectieplaats toetsen kan alleen waar de RCP-tabel een AANTAL noemt.
+  // Staat er "meerdere plaatsen" of niets, dan valt er niets te delen; die
+  // spieren worden apart benoemd in plaats van stilzwijgend overgeslagen.
+  function plaatsToets(regels) {
+    var grens = getal(plafondVan(prep).plaats);
+    if (grens === null) return null;
+    var boven = [], onbekend = [];
+    regels.forEach(function (r) {
+      if (!r.krijgtPerKant) return;
+      var rijen = rcpRijen(r.g.id).filter(function (x) { return x.n; });
+      var m = rijen.length ? rijen[0].n.match(/^(\d+)\s/) : null;
+      if (m) {
+        var per = r.krijgtPerKant / Number(m[1]);
+        if (per > grens) {
+          boven.push(r.naam + ' ' + ee(Math.round(per * 10) / 10) + ' E over ' + m[1] + ' plaatsen');
+        }
+      } else {
+        onbekend.push(r.naam);
+      }
+    });
+    return { grens: grens, boven: boven, onbekend: onbekend };
   }
 
   function maatNaam(k)   { var f = MATEN.filter(function (m) { return m[0] === k; });   return f.length ? f[0][1].toLowerCase() : k; }
@@ -1941,6 +2023,7 @@
     var pl = plafondVan(prep);
     elMaxKg.value = pl.kg;
     elMaxAbs.value = pl.abs;
+    elMaxPlaats.value = pl.plaats;
     bouwMatrix();
     bouwSnelknoppen();
   }
@@ -1979,7 +2062,7 @@
   // Gewicht en plafonds bepalen samen het sessieplafond, en dat plafond staat
   // ook op de spierkaarten (waarschuwing bij het volwassenbereik). Dus die
   // opnieuw tekenen, niet alleen herrekenen.
-  [elGewicht, elMaxKg, elMaxAbs].forEach(function (e) {
+  [elGewicht, elMaxKg, elMaxAbs, elMaxPlaats].forEach(function (e) {
     e.addEventListener('input', function () { herteken(); tekenRichtlijn(); tekenSpieren(); });
   });
   elAfrond.addEventListener('change', herteken);
