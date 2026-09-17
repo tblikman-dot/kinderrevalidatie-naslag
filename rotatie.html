@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Rotatieafwijkingen en intoeing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .ro-wrap { max-width: 820px; margin: 0 auto; padding: 18px 16px 70px; }
+
+  .ro-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .ro-terug:hover { text-decoration: underline; }
+
+  .ro-kop { font-size: 1.45rem; margin: 0 0 4px; }
+  .ro-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  .ro-sectie { margin-top: 34px; }
+  .ro-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .ro-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* ---------- rekenblok ---------- */
+  .ro-reken {
+    background: var(--paneel);
+    border: 1.5px solid var(--accent);
+    border-radius: 13px;
+    padding: 14px 15px;
+    font-family: system-ui, sans-serif;
+  }
+  .ro-reken label {
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .ro-reken input {
+    width: 100%; box-sizing: border-box;
+    font-family: system-ui, sans-serif;
+    font-size: 17px; font-weight: 700; text-align: center;
+    padding: 9px 4px;
+    border: 1.5px solid var(--lijn); border-radius: 9px;
+    background: var(--papier); color: var(--inkt);
+  }
+  .ro-reken input:focus { outline: none; border-color: var(--accent); }
+  .ro-rij { display: flex; gap: 10px; margin-bottom: 11px; }
+  .ro-rij > div { flex: 1 1 0; min-width: 0; }
+  .ro-groep {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--accent);
+    margin: 14px 0 7px; padding-top: 11px;
+    border-top: 1px solid var(--lijn);
+  }
+  .ro-groep:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .ro-hint {
+    font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 5px;
+  }
+
+  .ro-zijden { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .ro-zijde {
+    flex: 1 1 150px; min-width: 0;
+    border-radius: 11px; padding: 12px 13px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+  }
+  .ro-zijde .kant {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .04em; opacity: .75; margin-bottom: 6px;
+  }
+  .ro-zijde .regel { font-size: 12.5px; line-height: 1.5; margin-bottom: 7px; }
+  .ro-zijde .regel:last-child { margin-bottom: 0; }
+  .ro-zijde .regel b { display: block; font-size: 13.5px; }
+  .ro-zijde.groen  { background: #E8F3EC; border-color: #7FAE92; color: #1C4F33; }
+  .ro-zijde.oranje { background: #FBF3DC; border-color: #E0B44A; color: #6B4E06; }
+  .ro-zijde.rood   { background: #FBEAE5; border-color: #C9553A; color: #8E3617; }
+  .ro-zijde.grijs  { color: var(--muted); }
+
+  .ro-vlag {
+    border-radius: 10px; padding: 12px 15px; margin-top: 13px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+  }
+  .ro-vlag strong { display: block; margin-bottom: 3px; }
+  .ro-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .ro-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+  .ro-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+
+  /* ---------- kaarten ---------- */
+  .ro-kaarten { display: flex; flex-direction: column; gap: 10px; }
+  .ro-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+  }
+  .ro-kaart .titel {
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    font-size: 14.5px; font-weight: 800; margin-bottom: 5px;
+  }
+  .ro-kaart .chip {
+    font-size: 11px; font-weight: 700; border-radius: 20px;
+    padding: 2px 9px; background: var(--accent-zacht); color: var(--accent);
+  }
+  .ro-kaart p { font-size: 13px; line-height: 1.6; margin: 0 0 7px; }
+  .ro-kaart p:last-child { margin-bottom: 0; }
+  .ro-kaart .meet { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+  /* ---------- tabel ---------- */
+  .ro-tabelwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.ro-tabel {
+    border-collapse: collapse; width: 100%; min-width: 440px;
+    font-family: system-ui, sans-serif; font-size: 12.5px;
+  }
+  table.ro-tabel th, table.ro-tabel td {
+    border: 1px solid var(--lijn); padding: 8px 9px;
+    text-align: left; vertical-align: top;
+  }
+  table.ro-tabel th { background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 800; }
+  table.ro-tabel td.g { white-space: nowrap; font-weight: 700; }
+
+  .ro-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 16px 14px 32px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .ro-lijst li { margin-bottom: 8px; }
+  .ro-lijst li:last-child { margin-bottom: 0; }
+
+  .ro-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+  }
+  .ro-link:hover { border-color: var(--accent); }
+  .ro-link span {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px; line-height: 1.5;
+  }
+
+  .ro-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.65; margin-top: 12px;
+  }
+  .ro-bron p { margin: 0 0 7px; }
+</style>
+</head>
+<body>
+<div class="ro-wrap">
+
+  <a class="ro-terug" href="index.html">‹ Terug naar de naslag</a>
+
+  <h1 class="ro-kop">Rotatieafwijkingen en intoeing</h1>
+  <p class="ro-intro">
+    Met de tenen naar binnen lopen heeft drie gebruikelijke oorzaken, en ze horen elk bij een
+    andere leeftijd. Het rotatieprofiel — in buikligging gemeten — wijst aan welke het is.
+  </p>
+
+  <!-- ================= rekenhulp ================= -->
+  <section class="ro-sectie" style="margin-top:0;">
+    <h2>Het rotatieprofiel</h2>
+    <p class="ro-sectie-uitleg">
+      Vul in wat je in buikligging meet. Links en rechts apart, want asymmetrie is zelf een
+      bevinding.
+    </p>
+
+    <div class="ro-reken">
+      <div class="ro-groep">Leeftijd</div>
+      <div class="ro-rij">
+        <div>
+          <label for="roJaar">jaar</label>
+          <input type="number" id="roJaar" inputmode="numeric" min="0" max="18" step="1" placeholder="—">
+        </div>
+        <div>
+          <label for="roMnd">maanden</label>
+          <input type="number" id="roMnd" inputmode="numeric" min="0" max="11" step="1" placeholder="0">
+        </div>
+      </div>
+
+      <div class="ro-groep">Heuprotatie in buikligging (°)</div>
+      <div class="ro-rij">
+        <div><label for="roIrR">endorotatie rechts</label>
+          <input type="number" id="roIrR" inputmode="numeric" min="0" max="120" step="5" placeholder="—"></div>
+        <div><label for="roIrL">endorotatie links</label>
+          <input type="number" id="roIrL" inputmode="numeric" min="0" max="120" step="5" placeholder="—"></div>
+      </div>
+      <div class="ro-rij">
+        <div><label for="roErR">exorotatie rechts</label>
+          <input type="number" id="roErR" inputmode="numeric" min="0" max="120" step="5" placeholder="—"></div>
+        <div><label for="roErL">exorotatie links</label>
+          <input type="number" id="roErL" inputmode="numeric" min="0" max="120" step="5" placeholder="—"></div>
+      </div>
+
+      <div class="ro-groep">Dij-voethoek (°)</div>
+      <div class="ro-rij">
+        <div><label for="roTfaR">rechts</label>
+          <input type="number" id="roTfaR" inputmode="numeric" min="-60" max="60" step="5" placeholder="—"></div>
+        <div><label for="roTfaL">links</label>
+          <input type="number" id="roTfaL" inputmode="numeric" min="-60" max="60" step="5" placeholder="—"></div>
+      </div>
+      <div class="ro-hint">
+        Tekenafspraak: <b>min is naar binnen</b>, plus is naar buiten. Een dij-voethoek van −15
+        betekent dus 15° endotorsie van de tibia.
+      </div>
+
+      <div class="ro-zijden" id="roZijden"></div>
+      <div id="roMeldingen"></div>
+    </div>
+  </section>
+
+  <!-- ================= drie oorzaken ================= -->
+  <section class="ro-sectie">
+    <h2>Drie oorzaken, drie leeftijden</h2>
+    <p class="ro-sectie-uitleg">
+      De leeftijd waarop het opvalt is het eerste onderscheid. Alle drie zijn
+      <em>packaging disorders</em> — gevolg van de houding in de baarmoeder.
+    </p>
+    <div class="ro-kaarten">
+      <div class="ro-kaart">
+        <div class="titel">Metatarsus adductus <span class="chip">zuigeling</span></div>
+        <p>Geadduceerde voorvoet. De laterale voetrand hoort recht te zijn; is die bol, dan staat de
+          voorvoet naar binnen.</p>
+        <p class="meet">Een mediale huidplooi wijst op een stuggere afwijking. De achtervoet en de
+          subtalaire beweeglijkheid horen normaal te zijn — is de achtervoet in valgus, dan heet het
+          een skewfoot en is het een ander verhaal.<br>
+          <a href="metatarsus.html" style="color:var(--accent);font-weight:700;">Naar de pagina over metatarsus adductus ›</a></p>
+      </div>
+      <div class="ro-kaart">
+        <div class="titel">Interne tibiatorsie <span class="chip">peuter</span></div>
+        <p>De tibia is naar binnen gedraaid. Te meten aan de dij-voethoek in buikligging.</p>
+        <p class="meet">Zuigeling: gemiddeld 5° naar binnen (spreiding −30° tot +20°).
+          Op 8-jarige leeftijd: gemiddeld 10° naar buiten (spreiding −5° tot +30°).</p>
+      </div>
+      <div class="ro-kaart">
+        <div class="titel">Femorale anteversie <span class="chip">3 – 6 jaar</span></div>
+        <p>De femurhals staat naar voren gedraaid ten opzichte van de femurcondylen; het been
+          compenseert met endorotatie.</p>
+        <p class="meet">Endorotatie van de heup meer dan 70° (normaal 20 – 60°) met exorotatie
+          onder de 20° (normaal 30 – 60°). Tweemaal zo vaak bij meisjes, vaak beiderzijds, kan
+          erfelijk zijn.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= differentiaal ================= -->
+  <section class="ro-sectie">
+    <h2>Welke van de drie — in één tabel</h2>
+    <div class="ro-tabelwrap">
+      <table class="ro-tabel">
+        <thead><tr><th>Oorzaak</th><th>Kernbevinding</th></tr></thead>
+        <tbody>
+          <tr><td class="g">Metatarsus adductus</td>
+              <td>Mediale afwijking van de voorvoet bij een <b>normaal gestelde achtervoet</b></td></tr>
+          <tr><td class="g">Interne tibiatorsie</td>
+              <td>Dij-voethoek meer dan <b>10° naar binnen</b></td></tr>
+          <tr><td class="g">Femorale anteversie</td>
+              <td>Endorotatie <b>&gt; 70°</b> en exorotatie <b>&lt; 20°</b>, in buikligging gemeten</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ro-vlag rood">
+      <strong>Wanneer naar binnen lopen géén geruststelling verdient maar uitzoekwerk.</strong>
+      Pijn · beenlengteverschil · een afwijking die toeneemt · een familieanamnese met rachitis,
+      skeletdysplasie of mucopolysacharidose · een rotatieprofiel dat meer dan twee
+      standaarddeviaties buiten normaal ligt. Bij elk van deze vijf is verder onderzoek
+      aangewezen, en verandert het gesprek van geruststellen naar uitzoeken.
+    </div>
+
+    <div class="ro-vlag oranje">
+      <strong>De bron spreekt zichzelf tegen over de normale endorotatie.</strong>
+      Het onderwerp <i>Femoral Anteversion</i> noemt 20 – 60° als normaal, het onderwerp
+      <i>Metatarsus Adductus</i> noemt 30 – 60°. De drempel voor verhóógd is in beide 70°, dus voor
+      de diagnose maakt het weinig uit; voor het label „nog normaal" bij een waarde tussen 20 en
+      30° wel. De rekenhulp gebruikt 20 – 60° en zegt het erbij zodra je in die marge terechtkomt.
+    </div>
+  </section>
+
+  <!-- ================= femorale anteversie ================= -->
+  <section class="ro-sectie">
+    <h2>Femorale anteversie</h2>
+
+    <div class="ro-tabelwrap">
+      <table class="ro-tabel">
+        <thead><tr><th>Wat</th><th>Waarde</th></tr></thead>
+        <tbody>
+          <tr><td>Anteversie bij de geboorte</td><td class="g">30 – 40°</td></tr>
+          <tr><td>Anteversie bij volgroeidheid</td><td class="g">± 15°</td></tr>
+          <tr><td>Na deze leeftijd verandert er nauwelijks nog iets</td><td class="g">8 jaar</td></tr>
+          <tr><td>Endorotatie heup — normaal</td><td class="g">20 – 60°</td></tr>
+          <tr><td>Endorotatie heup — verhoogd</td><td class="g">&gt; 70°</td></tr>
+          <tr><td>Exorotatie heup — normaal</td><td class="g">30 – 60°</td></tr>
+          <tr><td>Exorotatie heup — verminderd</td><td class="g">&lt; 20°</td></tr>
+          <tr><td>Operatiedrempel: exorotatie bij kind ouder dan 10 jaar</td><td class="g">&lt; 10°</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="ro-lijst" style="margin-top:14px;">
+      <li><strong>Hoe het zich meldt.</strong> Ouders komen met naar binnen lopen in de vroege
+        kinderjaren. Het kind zit klassiek in W-houding. Verder: een onhandige renstijl, en kniepijn
+        wanneer er ook tibiatorsie is. Bij gangbeeldbeoordeling staat de patella naar binnen
+        gedraaid.</li>
+      <li><strong>Wanneer het wél hindert.</strong> Bij een ouder kind met een extreme stand kunnen
+        er functionele beperkingen zijn bij sport en dagelijkse activiteiten, met struikelen tijdens
+        lopen en rennen. Het geeft méér klachten bij neuromusculaire aandoeningen en bij kinderen
+        die op een brace lopen — door <em>lever-arm dysfunction</em> en minder
+        compensatiemogelijkheden. Dat is de groep waar het voor ons toe doet.</li>
+      <li><strong>Schatten van de anteversie.</strong> De trochanter-prominentiehoektest: de
+        endorotatie waarbij de trochanter major het meest lateraal uitsteekt, is een schatting van
+        de anteversie.</li>
+      <li><strong>Vaak beiderzijds.</strong> Wees juist alert bij een asymmetrisch beeld.</li>
+      <li><strong>Denk aan de andere packaging disorders.</strong> DDH, metatarsus adductus en
+        congenitale musculaire torticollis komen er in combinatie mee voor.</li>
+    </ul>
+
+    <div class="ro-vlag blauw">
+      <strong>Beeldvorming is meestal niet nodig.</strong>
+      Er is geen standaard röntgenopname voor. CT of MRI kan zinvol zijn als je de werkelijke
+      anteversie wilt meten — niet om de diagnose te stellen, want die is klinisch.
+    </div>
+  </section>
+
+  <!-- ================= beleid ================= -->
+  <section class="ro-sectie">
+    <h2>Beleid</h2>
+    <div class="ro-kaarten">
+      <div class="ro-kaart">
+        <div class="titel">Afwachten en ouders geruststellen <span class="chip">vrijwel altijd</span></div>
+        <p>De meeste gevallen gaan vanzelf over rond het tiende jaar.</p>
+        <p class="meet"><b>Braces, inlegzolen, fysiotherapie en zitverboden veranderen het
+          natuurlijk beloop niet.</b> Dat is de kern van het gesprek met ouders: niet omdat er niets
+          te doen is, maar omdat wat er te doen lijkt aantoonbaar niets doet.</p>
+      </div>
+      <div class="ro-kaart">
+        <div class="titel">Derotatie-osteotomie van de femur <span class="chip">zelden nodig</span></div>
+        <p>Indicatie: minder dan 10° exorotatie bij onderzoek, bij een kind ouder dan 10 jaar.</p>
+        <p class="meet">Meestal op intertrochantair niveau. De benodigde correctie is te berekenen
+          als <b>(endorotatie − exorotatie) ÷ 2</b> — dat centreert de rotatieboog.</p>
+      </div>
+    </div>
+
+    <div class="ro-vlag oranje">
+      <strong>Blijvende anteversie is geen aangetoond artroserisico.</strong>
+      Meerdere studies hebben geen verband kunnen aantonen met degeneratieve veranderingen in heup
+      en knie wanneer verhoogde anteversie tot in de volwassenheid aanhoudt. Dat is bruikbaar in het
+      gesprek met ouders die bang zijn voor „slijtage later".
+    </div>
+  </section>
+
+  <!-- ================= niet in staat ================= -->
+  <section class="ro-sectie">
+    <h2>Wat hier nog niet in staat</h2>
+    <ul class="ro-lijst">
+      <li><strong>Standsafwijkingen in het frontale vlak.</strong> Genu varum en genu valgum horen
+        bij dit hoofdstuk, maar ik heb er geen geverifieerde normaalwaarden per leeftijd voor —
+        en zonder die getallen is een pagina erover meer schijn dan houvast. Stuur je de tabel
+        (bijvoorbeeld het beloop van de tibiofemorale hoek per leeftijd, of de afkapwaarden voor
+        het metafysair-diafysaire hoekverschil bij Blount), dan bouw ik hem er net zo in als de
+        Tönnis-tabel bij de heupfoto.</li>
+      <li><strong>Externe tibiatorsie en uittoeing.</strong> De bron hier gaat over naar binnen
+        lopen. Naar buiten lopen heeft een eigen differentiaaldiagnose die er niet in staat.</li>
+      <li><strong>Rotatie bij cerebrale parese.</strong> Femorale anteversie bij CP is een andere
+        situatie: daar gaat het samen met spasticiteit, heuplateralisatie en hefboomdisfunctie, en
+        wordt derotatie vaak onderdeel van een SEMLS. De getallen hierboven gaan over het overigens
+        gezonde kind.</li>
+    </ul>
+  </section>
+
+  <section class="ro-sectie">
+    <h2>Verder</h2>
+    <a class="ro-link" href="metatarsus.html">Metatarsus adductus
+      <span>Hielbissectrice, de indeling van Berg, en wat je wel en niet hoeft te behandelen.</span></a>
+    <a class="ro-link" href="heupfoto.html">Heupfoto beoordelen
+      <span>AC-hoek, de lijnen, en het migratiepercentage.</span></a>
+    <a class="ro-link" href="beslisboom-heup.html">Beslisboom heup bij CP
+      <span>Waar lateralisatie en hefboomdisfunctie samenkomen.</span></a>
+    <a class="ro-link" href="groeisturing.html">Groeisturing bij beenlengteverschil
+      <span>Een achtplaatje corrigeert een standsafwijking; een epifysiodese een lengteverschil.</span></a>
+
+    <div class="ro-bron">
+      <p><b>Bron:</b> Orthobullets, onderwerpen <i>Femoral Anteversion</i> en
+        <i>Metatarsus Adductus</i>. Daaruit komen de normaalwaarden, de drempels, de
+        differentiaaltabel, de vijf redenen voor verder uitzoeken en de formule (IR−ER)/2.
+        Waar de twee onderwerpen elkaar tegenspreken staat dat er hierboven bij.</p>
+      <p><b>Van mij:</b> de rekenhulp en de indeling van de pagina. De rekenhulp doet niets anders
+        dan jouw meting tegen die drempels leggen — hij interpoleert niet en vult geen gaten.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // Drempels uit Orthobullets, onderwerp Femoral Anteversion.
+  var HEUP = { irNormLaag: 20, irNormHoog: 60, irVerhoogd: 70,
+               erNormLaag: 30, erNormHoog: 60, erVerminderd: 20, erOperatie: 10 };
+  // Dij-voethoek: de bron geeft twee ankers, geen doorlopende curve. Min is
+  // naar binnen, plus naar buiten.
+  var TFA = { zuigeling: { gem: -5, laag: -30, hoog: 20 },
+              achtJaar:  { gem: 10, laag: -5,  hoog: 30 },
+              torsieDrempel: -10, normLaag: 0, normHoog: 20 };
+
+  function getal(id) {
+    var el = document.getElementById(id);
+    if (!el || el.value.trim() === '') return null;
+    var v = parseFloat(el.value.replace(',', '.'));
+    return isFinite(v) ? v : null;
+  }
+  function gr(n) { return (Math.round(n * 10) / 10).toString().replace('.', ',') + '°'; }
+
+  function oordeelHeup(ir, er, leeftijd) {
+    if (ir === null && er === null) return null;
+    var r = { kleur: 'grijs', kop: '—', tekst: [] };
+    var irHoog = false, erLaag = false;
+
+    if (ir !== null) {
+      if (ir > HEUP.irVerhoogd) { irHoog = true; r.tekst.push('Endorotatie ' + gr(ir) + ' — boven de 70°, dat is verhoogd.'); }
+      else if (ir >= HEUP.irNormLaag && ir <= HEUP.irNormHoog) {
+        r.tekst.push('Endorotatie ' + gr(ir) + ' — binnen 20–60°.' +
+          (ir < 30 ? ' Let op: de bron noemt op de ene plek 20–60° als normaal en op de andere 30–60°; met deze waarde maakt dat verschil uit.' : ''));
+      }
+      else if (ir > HEUP.irNormHoog) r.tekst.push('Endorotatie ' + gr(ir) + ' — tussen de bovengrens van normaal (60°) en de drempel voor verhoogd (70°). Daar beschrijft de bron niets.');
+      else r.tekst.push('Endorotatie ' + gr(ir) + ' — onder de ondergrens van normaal (20°). Dat past niet bij anteversie; zoek een andere verklaring.');
+    }
+    if (er !== null) {
+      if (er < HEUP.erVerminderd) { erLaag = true; r.tekst.push('Exorotatie ' + gr(er) + ' — onder de 20°, dat is verminderd.'); }
+      else if (er >= HEUP.erNormLaag && er <= HEUP.erNormHoog) r.tekst.push('Exorotatie ' + gr(er) + ' — binnen 30–60°.');
+      else if (er < HEUP.erNormLaag) r.tekst.push('Exorotatie ' + gr(er) + ' — tussen de drempel voor verminderd (20°) en de ondergrens van normaal (30°). Daar beschrijft de bron niets.');
+      else r.tekst.push('Exorotatie ' + gr(er) + ' — boven de bovengrens van normaal (60°).');
+    }
+
+    if (irHoog && erLaag) { r.kleur = 'rood'; r.kop = 'Past bij verhoogde femorale anteversie'; }
+    else if (irHoog || erLaag) { r.kleur = 'oranje'; r.kop = 'Eén van de twee criteria gehaald'; r.tekst.push('De bron noemt de combinatie van beide; met één ervan is het beeld niet compleet.'); }
+    else if (ir !== null && er !== null) { r.kleur = 'groen'; r.kop = 'Heuprotatie binnen de beschreven waarden'; }
+    else { r.kleur = 'grijs'; r.kop = 'Nog niet compleet'; }
+    return r;
+  }
+
+  // Twee referenties uit dezelfde bron, die elkaar aanvullen:
+  //  - het onderwerp Femoral Anteversion geeft leeftijdsankers (zuigeling en 8 jaar)
+  //  - het onderwerp Metatarsus Adductus geeft de klinische vuistregel:
+  //    meer dan 10 graden naar binnen wijst op tibiatorsie, normaal 0 tot 20
+  //    graden naar buiten. Die regel geldt niet voor een zuigeling, want daar
+  //    is naar binnen juist het gemiddelde.
+  function oordeelTfa(tfa, leeftijd) {
+    if (tfa === null) return null;
+    var naam = tfa < 0 ? gr(-tfa) + ' naar binnen' : (tfa > 0 ? gr(tfa) + ' naar buiten' : '0°');
+    var uit = { tekst: 'Dij-voethoek ' + naam + '. ', torsie: false };
+
+    if (leeftijd !== null && leeftijd < 1) {
+      var z = TFA.zuigeling;
+      uit.tekst += 'Bij een zuigeling is het gemiddelde 5° naar binnen, spreiding −30° tot +20° — ' +
+        (tfa >= z.laag && tfa <= z.hoog ? 'dit valt daarbinnen.' : 'dit valt daarbuiten.') +
+        ' De vuistregel „meer dan 10° naar binnen is tibiatorsie" geldt hier niet: op deze leeftijd is naar binnen juist normaal.';
+      return uit;
+    }
+
+    if (tfa < TFA.torsieDrempel) {
+      uit.torsie = true;
+      uit.tekst += 'Meer dan 10° naar binnen — dat wijst op interne tibiatorsie.';
+    } else if (tfa >= TFA.normLaag && tfa <= TFA.normHoog) {
+      uit.tekst += 'Binnen de genoemde normaalwaarde van 0° tot 20° naar buiten.';
+    } else if (tfa < TFA.normLaag) {
+      uit.tekst += 'Naar binnen, maar niet meer dan 10° — tussen de normaalwaarde (0° tot 20° naar buiten) en de drempel voor tibiatorsie. Daar beschrijft de bron niets.';
+    } else {
+      uit.tekst += 'Meer naar buiten dan de genoemde normaalwaarde van maximaal 20°.';
+    }
+
+    if (leeftijd !== null && leeftijd >= 8) {
+      var a = TFA.achtJaar;
+      uit.tekst += ' Vanaf 8 jaar geeft de bron daarnaast een gemiddelde van 10° naar buiten met spreiding −5° tot +30°; ' +
+        (tfa >= a.laag && tfa <= a.hoog ? 'daarbinnen valt deze hoek.' : 'daarbuiten valt deze hoek.');
+    }
+    return uit;
+  }
+
+  function teken() {
+    var jaar = getal('roJaar'), mnd = getal('roMnd');
+    var leeftijd = (jaar === null && mnd === null) ? null : (jaar || 0) + (mnd || 0) / 12;
+
+    var zijden = document.getElementById('roZijden');
+    var meld = document.getElementById('roMeldingen');
+    zijden.innerHTML = ''; meld.innerHTML = '';
+
+    var data = {
+      R: { ir: getal('roIrR'), er: getal('roErR'), tfa: getal('roTfaR') },
+      L: { ir: getal('roIrL'), er: getal('roErL'), tfa: getal('roTfaL') }
+    };
+    var iets = false;
+    ['R', 'L'].forEach(function (k) {
+      if (data[k].ir !== null || data[k].er !== null || data[k].tfa !== null) iets = true;
+    });
+    if (!iets) {
+      var leeg = document.createElement('div');
+      leeg.className = 'ro-hint';
+      leeg.style.marginTop = '14px';
+      leeg.textContent = 'Vul minstens één meting in.';
+      zijden.appendChild(leeg);
+      return;
+    }
+
+    [['Rechts', 'R'], ['Links', 'L']].forEach(function (p) {
+      var d = data[p[1]];
+      var h = oordeelHeup(d.ir, d.er, leeftijd);
+      var t = oordeelTfa(d.tfa, leeftijd);
+      var kaart = document.createElement('div');
+      kaart.className = 'ro-zijde ' + (h ? h.kleur : 'grijs');
+      var kant = document.createElement('div');
+      kant.className = 'kant';
+      kant.textContent = p[0];
+      kaart.appendChild(kant);
+
+      if (h) {
+        var r1 = document.createElement('div');
+        r1.className = 'regel';
+        var b = document.createElement('b');
+        b.textContent = h.kop;
+        r1.appendChild(b);
+        r1.appendChild(document.createTextNode(h.tekst.join(' ')));
+        kaart.appendChild(r1);
+      }
+      if (t) {
+        var r2 = document.createElement('div');
+        r2.className = 'regel';
+        r2.textContent = t.tekst;
+        kaart.appendChild(r2);
+      }
+      zijden.appendChild(kaart);
+    });
+
+    // --- asymmetrie ---
+    var asym = [];
+    [['endorotatie', 'ir'], ['exorotatie', 'er'], ['dij-voethoek', 'tfa']].forEach(function (p) {
+      var a = data.R[p[1]], b = data.L[p[1]];
+      if (a !== null && b !== null && a !== b) asym.push(p[0] + ' ' + gr(Math.abs(a - b)) + ' verschil');
+    });
+    if (asym.length) {
+      meld.appendChild(vlag('blauw', 'Links en rechts verschillen',
+        asym.join(', ') + '. Femorale anteversie is meestal beiderzijds; de bron zegt juist alert te zijn bij een asymmetrisch beeld. Een afkapwaarde voor „te veel verschil" geeft hij niet, dus die staat hier ook niet.'));
+    }
+
+    // --- operatiedrempel ---
+    ['R', 'L'].forEach(function (k) {
+      var d = data[k];
+      if (d.er === null) return;
+      if (d.er < HEUP.erOperatie && leeftijd !== null && leeftijd > 10) {
+        var extra = '';
+        if (d.ir !== null) {
+          extra = ' Met een endorotatie van ' + gr(d.ir) + ' komt de berekende correctie uit op (' +
+            gr(d.ir) + ' − ' + gr(d.er) + ') ÷ 2 = <b>' + gr((d.ir - d.er) / 2) + '</b>.';
+        } else {
+          extra = ' Vul ook de endorotatie in om de benodigde correctie te berekenen.';
+        }
+        meld.appendChild(vlag('rood', (k === 'R' ? 'Rechts' : 'Links') + ': operatiedrempel gehaald',
+          'Exorotatie ' + gr(d.er) + ' bij een kind ouder dan 10 jaar. Dat is de indicatie die de bron noemt voor een derotatie-osteotomie van de femur, doorgaans intertrochantair — en tegelijk: die ingreep is zelden nodig.' + extra, true));
+      } else if (d.er < HEUP.erOperatie && leeftijd !== null && leeftijd <= 10) {
+        meld.appendChild(vlag('oranje', (k === 'R' ? 'Rechts' : 'Links') + ': exorotatie onder de 10°, maar het kind is nog geen 10',
+          'De operatie-indicatie in de bron geldt pas boven de tien jaar, juist omdat het beeld tot dan vaak nog vanzelf verbetert. Afwachten en ouders geruststellen is hier het beleid.'));
+      }
+    });
+
+    if (leeftijd !== null && leeftijd < 8) {
+      meld.appendChild(vlag('blauw', 'Nog volop in beweging',
+        'Tot ongeveer 8 jaar verandert de femorale anteversie nog; daarna nauwelijks. De meeste gevallen gaan vanzelf over rond het tiende jaar.'));
+    }
+  }
+
+  function vlag(soort, kop, tekst, html) {
+    var d = document.createElement('div');
+    d.className = 'ro-vlag ' + soort;
+    var s = document.createElement('strong');
+    s.textContent = kop;
+    d.appendChild(s);
+    if (html) {
+      var sp = document.createElement('span');
+      sp.innerHTML = tekst;
+      d.appendChild(sp);
+    } else {
+      d.appendChild(document.createTextNode(tekst));
+    }
+    return d;
+  }
+
+  ['roJaar', 'roMnd', 'roIrR', 'roIrL', 'roErR', 'roErL', 'roTfaR', 'roTfaL'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', teken);
+  });
+  teken();
+})();
+</script>
+</body>
+</html>

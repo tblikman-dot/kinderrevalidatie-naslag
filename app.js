@@ -106,6 +106,12 @@ const DEFAULT_CATS = [
       { label: '🔊 Heupecho volgens Graf — α/β naar type', url: 'heupecho.html' },
       { label: '🧭 Stroomschema DDH — NOV-richtlijn stap voor stap', url: 'ddh-stroomschema.html' },
     ] },
+  { id: 'rotatie', label: 'Rotatie- en standsafwijkingen', scope: 'Intoeing, femorale anteversie, tibiatorsie',
+    zoekwoorden: 'rotatieafwijking standsafwijking intoeing naar binnen lopen tenengang femorale anteversie anteversie femurhals endorotatie exorotatie heuprotatie buikligging rotatieprofiel dij-voethoek thigh foot angle tibiatorsie interne tibiatorsie metatarsus adductus voorvoetadductie hielbissectrice heel bisector Bleck Berg skewfoot serpentine foot serieel gipsen corrigeerbaar mediale huidplooi cuneiforme packaging disorder W-zit W-houding trochanter prominentiehoek derotatie osteotomie intertrochantair lever-arm dysfunction hefboomdisfunctie genu varum genu valgum Blount torticollis DDH',
+    directLinks: [
+      { label: '\u{1F9B5} Rotatieprofiel & intoeing \u2014 welke van de drie?', url: 'rotatie.html' },
+      { label: '\u{1F9B6} Metatarsus adductus \u2014 hielbissectrice & beleid', url: 'metatarsus.html' },
+    ] },
   { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS',
     zoekwoorden: 'Hefter armpatronen spastische arm houding endorotatie pronatie supinatie polsflexie doelspieren',
     directLinks: [

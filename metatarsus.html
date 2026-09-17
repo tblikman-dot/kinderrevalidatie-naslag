@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Metatarsus adductus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .mt-wrap { max-width: 820px; margin: 0 auto; padding: 18px 16px 70px; }
+
+  .mt-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .mt-terug:hover { text-decoration: underline; }
+
+  .mt-kop { font-size: 1.45rem; margin: 0 0 4px; }
+  .mt-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 18px;
+  }
+
+  .mt-sectie { margin-top: 34px; }
+  .mt-sectie h2 { font-size: 1.18rem; margin: 0 0 4px; }
+  .mt-sectie-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 14px;
+  }
+
+  /* --- hielbissectrice --- */
+  .mt-fig {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 12px 12px 14px;
+  }
+  .mt-fig svg { display: block; width: 100%; height: auto; }
+  .mt-knoppen { display: flex; gap: 6px; margin-bottom: 11px; flex-wrap: wrap; }
+  .mt-knoppen button {
+    flex: 1 1 0; min-width: 0;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 700;
+    padding: 9px 4px; border-radius: 8px;
+    border: 1.5px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer; line-height: 1.25;
+  }
+  .mt-knoppen button.aan { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .mt-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+    border-radius: 10px; padding: 11px 13px; margin-top: 11px;
+  }
+  .mt-uitleg b { display: block; margin-bottom: 2px; }
+  .mt-uitleg.groen  { background: #E8F3EC; color: #1C4F33; }
+  .mt-uitleg.geel   { background: #FBF3DC; color: #6B4E06; }
+  .mt-uitleg.oranje { background: #FAEBDD; color: #8A4B12; }
+  .mt-uitleg.rood   { background: #FBEAE5; color: #8E3617; }
+
+  /* --- tabel --- */
+  .mt-tabelwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.mt-tabel {
+    border-collapse: collapse; width: 100%; min-width: 420px;
+    font-family: system-ui, sans-serif; font-size: 12.5px;
+  }
+  table.mt-tabel th, table.mt-tabel td {
+    border: 1px solid var(--lijn); padding: 8px 9px;
+    text-align: left; vertical-align: top;
+  }
+  table.mt-tabel th { background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 800; }
+  table.mt-tabel td.g { white-space: nowrap; font-weight: 700; }
+  table.mt-tabel tr.raak td { background: #FDF6E0; }
+
+  /* --- behandelkaarten --- */
+  .mt-kaarten { display: flex; flex-direction: column; gap: 10px; }
+  .mt-kaart {
+    border-radius: 12px; padding: 13px 15px;
+    font-family: system-ui, sans-serif;
+    border: 1.5px solid var(--lijn); background: var(--paneel);
+  }
+  .mt-kaart .titel { font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
+  .mt-kaart .wat { font-size: 13px; line-height: 1.6; }
+  .mt-kaart .doen {
+    font-size: 13px; font-weight: 700; margin-top: 7px;
+    padding-top: 7px; border-top: 1px dashed var(--lijn);
+  }
+  .mt-kaart.groen  { background: #E8F3EC; border-color: #7FAE92; color: #1C4F33; }
+  .mt-kaart.geel   { background: #FBF3DC; border-color: #E0B44A; color: #6B4E06; }
+  .mt-kaart.oranje { background: #FAEBDD; border-color: #D08A4A; color: #8A4B12; }
+
+  .mt-vlag {
+    border-radius: 10px; padding: 12px 15px; margin-top: 13px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.6;
+  }
+  .mt-vlag strong { display: block; margin-bottom: 3px; }
+  .mt-vlag.groen  { background: #E8F3EC; color: #1C4F33; }
+  .mt-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .mt-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .mt-lijst {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 14px 16px 14px 32px;
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.65;
+    margin: 0;
+  }
+  .mt-lijst li { margin-bottom: 8px; }
+  .mt-lijst li:last-child { margin-bottom: 0; }
+
+  .mt-link {
+    display: block;
+    background: var(--paneel);
+    border: 1.5px solid var(--lijn);
+    border-radius: 11px;
+    padding: 13px 16px; margin-top: 10px;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+  }
+  .mt-link:hover { border-color: var(--accent); }
+  .mt-link span {
+    display: block; font-weight: 400; font-size: 12.5px;
+    color: var(--muted); margin-top: 3px; line-height: 1.5;
+  }
+
+  .mt-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.65; margin-top: 12px;
+  }
+  .mt-bron p { margin: 0 0 7px; }
+</style>
+</head>
+<body>
+<div class="mt-wrap">
+
+  <a class="mt-terug" href="rotatie.html">‹ Terug naar rotatieafwijkingen</a>
+
+  <h1 class="mt-kop">Metatarsus adductus</h1>
+  <p class="mt-intro">
+    De voorvoet wijkt naar binnen af terwijl de achtervoet normaal staat. De jongste van de drie
+    oorzaken van naar binnen lopen, en de enige waarbij je de ernst met je duim langs de voetrand
+    kunt bepalen.
+  </p>
+
+  <div class="mt-vlag groen">
+    <strong>Negen van de tien zijn op hun vierde vanzelf over.</strong>
+    Nog eens 5% herstelt in de eerste loopjaren, tussen 1 en 4 jaar. Dat is het getal waar het
+    gesprek met ouders op rust.
+  </div>
+
+  <!-- ================= hielbissectrice ================= -->
+  <section class="mt-sectie">
+    <h2>De hielbissectrice</h2>
+    <p class="mt-sectie-uitleg">
+      Trek de lijn die de hiel in tweeën deelt door naar voren, en kijk waar hij uitkomt. Dat is de
+      indeling van Bleck. Tik een graad aan om te zien waar de lijn dan loopt.
+    </p>
+
+    <div class="mt-fig">
+      <div class="mt-knoppen" id="mtKnoppen">
+        <button type="button" data-g="normaal" class="aan">Normaal</button>
+        <button type="button" data-g="licht">Licht</button>
+        <button type="button" data-g="matig">Matig</button>
+        <button type="button" data-g="ernstig">Ernstig</button>
+      </div>
+
+      <svg viewBox="0 0 300 250" role="img" aria-labelledby="mtSvgTitel">
+        <title id="mtSvgTitel">Voetzool van boven gezien met de hielbissectrice doorgetrokken naar de tenen.</title>
+        <!-- voetzool, hiel onder en tenen boven. De laterale rand (rechts) is
+             expres bijna recht: dat is het ijkpunt bij het onderzoek. -->
+        <path d="M 150 234 C 124 234 112 218 112 200
+                 C 112 180 116 160 119 140
+                 C 122 120 120 96 126 80
+                 C 132 64 146 56 158 55
+                 C 174 54 190 58 195 72
+                 C 198 92 196 112 194 132
+                 C 192 154 190 176 189 198
+                 C 188 220 176 234 150 234 Z"
+              fill="#F1EFE9" stroke="#8C887E" stroke-width="2"/>
+        <!-- tenen, met zichtbare tussenruimte zodat de webspaces aanwijsbaar zijn -->
+        <g fill="#E6E3DA" stroke="#8C887E" stroke-width="1.6">
+          <ellipse cx="126" cy="57" rx="12" ry="14"/>
+          <ellipse cx="148" cy="46" rx="8" ry="10.5"/>
+          <ellipse cx="165" cy="44" rx="7.5" ry="9.5"/>
+          <ellipse cx="180" cy="47" rx="7" ry="9"/>
+          <ellipse cx="195" cy="55" rx="6.5" ry="8.5"/>
+        </g>
+        <!-- hiel -->
+        <ellipse cx="150" cy="208" rx="36" ry="25" fill="#E6E3DA" stroke="#8C887E" stroke-width="1.6"/>
+        <text x="150" y="213" text-anchor="middle" font-family="system-ui, sans-serif"
+              font-size="10" fill="#6b7680">hiel</text>
+        <!-- de bissectrice -->
+        <line id="mtLijn" x1="150" y1="216" x2="156.5" y2="50"
+              stroke="#0f4c5c" stroke-width="3" stroke-linecap="round"/>
+        <circle id="mtPunt" cx="156.5" cy="50" r="6.5" fill="#0f4c5c"/>
+        <!-- teennummers -->
+        <g font-family="system-ui, sans-serif" font-size="9.5" fill="#6b7680" text-anchor="middle">
+          <text x="126" y="34">1</text>
+          <text x="148" y="24">2</text>
+          <text x="165" y="22">3</text>
+          <text x="180" y="26">4</text>
+          <text x="195" y="35">5</text>
+        </g>
+        <text x="14" y="130" font-family="system-ui, sans-serif" font-size="10" fill="#6b7680">mediaal</text>
+        <text x="286" y="130" text-anchor="end" font-family="system-ui, sans-serif" font-size="10" fill="#6b7680">lateraal</text>
+        <text x="286" y="146" text-anchor="end" font-family="system-ui, sans-serif" font-size="9" fill="#8C887E">rand hoort recht</text>
+      </svg>
+
+      <div class="mt-uitleg groen" id="mtUitleg"></div>
+
+      <div class="mt-tabelwrap" style="margin-top:14px;">
+        <table class="mt-tabel">
+          <thead><tr><th>Graad</th><th>De hielbissectrice loopt door</th></tr></thead>
+          <tbody id="mtTabel"></tbody>
+        </table>
+      </div>
+      <p class="mt-bron" style="margin-top:9px;">
+        Indeling van Bleck volgens de hielbissectricemethode. De tekening is van mij, schematisch en
+        niet op schaal — bedoeld om te onthouden wáár de lijn uitkomt, niet om op af te meten.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= behandeling ================= -->
+  <section class="mt-sectie">
+    <h2>Wat je ermee doet</h2>
+    <p class="mt-sectie-uitleg">
+      Niet de graad bepaalt het beleid, maar de <em>corrigeerbaarheid</em>. Kietelen langs de
+      laterale voetrand laat zien of het kind zelf corrigeert.
+    </p>
+    <div class="mt-kaarten">
+      <div class="mt-kaart groen">
+        <div class="titel">Actief corrigeerbaar tot de middenlijn</div>
+        <div class="wat">Het kind trekt de voet zelf recht, bijvoorbeeld bij kietelen langs de
+          laterale rand.</div>
+        <div class="doen">Geen behandeling nodig.</div>
+      </div>
+      <div class="mt-kaart geel">
+        <div class="titel">Passief corrigeerbaar tot de middenlijn</div>
+        <div class="wat">Zelf komt de voet niet recht, maar met jouw hand wel.</div>
+        <div class="doen">Serieel rekken door de ouders thuis.</div>
+      </div>
+      <div class="mt-kaart oranje">
+        <div class="titel">Stug, met een mediale huidplooi</div>
+        <div class="wat">De voet komt ook passief niet tot de middenlijn. De plooi aan de
+          binnenzijde is het teken dat het stugger is.</div>
+        <div class="doen">Serieel gipsen, met als doel een rechte laterale voetrand.</div>
+      </div>
+    </div>
+
+    <div class="mt-vlag blauw">
+      <strong>Operatie komt zelden in beeld.</strong>
+      Bij een restafwijking wordt die vaak geaccepteerd en vervolgd. Er bestaan chirurgische
+      correcties, maar de techniek daarvan hoort bij de orthopeed en staat hier bewust niet — voor
+      ons telt dat de drempel hoog ligt en dat afwachten het gebruikelijke beleid is.
+    </div>
+  </section>
+
+  <!-- ================= berg ================= -->
+  <section class="mt-sectie">
+    <h2>Als het niet alleen de voorvoet is</h2>
+    <p class="mt-sectie-uitleg">
+      De indeling van Berg kijkt verder dan de voorvoet: schuift de middenvoet mee, en hoe staat de
+      achtervoet? Dat onderscheid bepaalt of je nog met metatarsus adductus te maken hebt.
+    </p>
+    <div class="mt-tabelwrap">
+      <table class="mt-tabel">
+        <thead><tr><th>Type</th><th>Voorvoet</th><th>Middenvoet</th><th>Achtervoet</th></tr></thead>
+        <tbody>
+          <tr><td class="g">Simpele MTA</td><td>adductie</td><td>—</td><td>normaal</td></tr>
+          <tr><td class="g">Complexe MTA</td><td>adductie</td><td>laterale verschuiving</td><td>normaal</td></tr>
+          <tr><td class="g">Skewfoot</td><td>adductie</td><td>—</td><td>valgus</td></tr>
+          <tr><td class="g">Complexe skewfoot<br><span style="font-weight:400;">(serpentine foot)</span></td>
+              <td>adductie</td><td>laterale verschuiving</td><td>valgus</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-vlag oranje">
+      <strong>De skewfoot is het belangrijkste onderscheid voor ons.</strong>
+      Bij de serpentine foot gaat het om een restadductie op tarsometatarsaal niveau, een laterale
+      subluxatie in het talonaviculaire gewricht en een valgus achtervoet. Het punt dat telt:
+      <b>bij deze voet werken niet-operatieve behandeling en gipsen níet</b> om de afwijking te
+      corrigeren — anders dan bij metatarsus adductus. Blijft gipsen zonder resultaat, dan is dat
+      een reden om de diagnose te heroverwegen in plaats van langer door te gaan.
+    </div>
+  </section>
+
+  <!-- ================= context ================= -->
+  <section class="mt-sectie">
+    <h2>Eromheen</h2>
+    <ul class="mt-lijst">
+      <li><strong>Hoe het zich meldt.</strong> Ouders komen met naar binnen lopen, meestal in het
+        eerste levensjaar.</li>
+      <li><strong>Waar het vandaan komt.</strong> Vermoedelijk een <em>packaging disorder</em> door
+        de houding in de baarmoeder — dezelfde familie als de femorale anteversie.</li>
+      <li><strong>Kijk ook naar de heupen.</strong> DDH komt bij 15 tot 20% mee, en torticollis
+        hoort ook in dit rijtje. Dat is de belangrijkste reden om bij een baby met een adducerende
+        voorvoet niet alleen naar de voet te kijken.</li>
+      <li><strong>Beeldvorming.</strong> Röntgenfoto's zijn alleen aangewezen bij oudere kinderen —
+        de diagnose stel je aan de voet zelf.</li>
+      <li><strong>Differentiaal aan de voet.</strong> Klompvoet, congenitale hallux varus
+        (<em>atavistic great toe</em>), skewfoot en serpentine foot.</li>
+    </ul>
+
+    <div class="mt-vlag groen">
+      <strong>Wat je ouders over de lange termijn kunt zeggen.</strong>
+      Langetermijnonderzoek laat zien dat een restafwijking van metatarsus adductus <b>niet</b>
+      samenhangt met pijn of met een slechtere voetfunctie. Er is wel een verband met een late
+      scheefstand van het os cuneiforme mediale — maar <b>niet</b> met hallux valgus. Die laatste
+      zorg komt vaak ter sprake en blijkt dus niet terecht.
+    </div>
+  </section>
+
+  <section class="mt-sectie">
+    <h2>Verder</h2>
+    <a class="mt-link" href="rotatie.html">Rotatieprofiel &amp; intoeing
+      <span>De drie oorzaken naast elkaar, met de rekenhulp voor heuprotatie en dij-voethoek.</span></a>
+    <a class="mt-link" href="heupecho.html">Heupecho volgens Graf
+      <span>Omdat DDH bij 15 tot 20% meekomt.</span></a>
+
+    <div class="mt-bron">
+      <p><b>Bron:</b> Orthobullets, onderwerp <i>Metatarsus Adductus</i>. Daaruit komen de indeling
+        van Bleck, de indeling van Berg, de drie behandelcategorieën, de percentages voor spontaan
+        herstel, de associatie met DDH en de uitspraken over de lange termijn.</p>
+      <p><b>Bewust weggelaten:</b> de operatietechnieken. Die staan wel in de bron, maar horen bij
+        de orthopeed — hier telt wanneer je verwijst, niet hoe er gesneden wordt.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // Indeling van Bleck volgens de hielbissectricemethode.
+  // x is waar de lijn bovenaan uitkomt in het tekeningcoordinatenstelsel:
+  // de webspaces liggen op ongeveer 144,5 / 165 / 181,5 / 195,5.
+  var GRADEN = [
+    { id: 'normaal', naam: 'Normaal', door: 'de webspace tussen de 2e en 3e teen',
+      x: 156.5, y: 50, kleur: 'groen',
+      zeg: 'Dit is de normale stand — hier valt niets te behandelen.' },
+    { id: 'licht', naam: 'Licht', door: 'de 3e teen',
+      x: 165, y: 46, kleur: 'geel',
+      zeg: 'Licht. Het beleid hangt niet aan de graad maar aan de corrigeerbaarheid; zie hieronder.' },
+    { id: 'matig', naam: 'Matig', door: 'de webspace tussen de 3e en 4e teen',
+      x: 172.5, y: 48, kleur: 'oranje',
+      zeg: 'Matig. Ook hier bepaalt de corrigeerbaarheid wat je doet.' },
+    { id: 'ernstig', naam: 'Ernstig', door: 'de webspace tussen de 4e en 5e teen',
+      x: 187.5, y: 55, kleur: 'rood',
+      zeg: 'Ernstig. Let extra op de achtervoet: staat die in valgus, dan is het geen simpele metatarsus adductus meer.' }
+  ];
+
+  var huidig = 'normaal';
+
+  function tekenTabel() {
+    var b = document.getElementById('mtTabel');
+    b.innerHTML = '';
+    GRADEN.forEach(function (g) {
+      var tr = document.createElement('tr');
+      if (g.id === huidig) tr.className = 'raak';
+      var td1 = document.createElement('td');
+      td1.className = 'g';
+      td1.textContent = g.naam;
+      var td2 = document.createElement('td');
+      td2.textContent = 'Door ' + g.door + '.';
+      tr.appendChild(td1); tr.appendChild(td2);
+      b.appendChild(tr);
+    });
+  }
+
+  function teken() {
+    var g = GRADEN.filter(function (x) { return x.id === huidig; })[0];
+    var lijn = document.getElementById('mtLijn');
+    var punt = document.getElementById('mtPunt');
+    lijn.setAttribute('x2', g.x);
+    punt.setAttribute('cx', g.x);
+    lijn.setAttribute('y2', g.y);
+    punt.setAttribute('cy', g.y);
+
+    var u = document.getElementById('mtUitleg');
+    u.className = 'mt-uitleg ' + g.kleur;
+    u.innerHTML = '';
+    var b = document.createElement('b');
+    b.textContent = g.naam + ' — de lijn loopt door ' + g.door + '.';
+    u.appendChild(b);
+    u.appendChild(document.createTextNode(g.zeg));
+
+    document.querySelectorAll('#mtKnoppen button').forEach(function (knop) {
+      knop.classList.toggle('aan', knop.dataset.g === huidig);
+    });
+    tekenTabel();
+  }
+
+  document.getElementById('mtKnoppen').addEventListener('click', function (e) {
+    var knop = e.target.closest('button');
+    if (!knop) return;
+    huidig = knop.dataset.g;
+    teken();
+  });
+
+  teken();
+})();
+</script>
+</body>
+</html>
