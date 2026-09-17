@@ -114,29 +114,44 @@
   }
   .do-snel button:hover { border-color: var(--accent); }
 
-  /* --- dosistabel --- */
-  .do-tabelwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table.do-matrix {
-    border-collapse: collapse; width: 100%; min-width: 340px;
-    font-family: system-ui, sans-serif; font-size: 13px;
+  /* --- dosistabel ---
+     Stond als tabel van vier kolommen met min-width 340px. Op een telefoon
+     van 360-390px is het paneel binnenin maar ~300-325px breed, dus de
+     kolom Hoog viel buiten beeld en je moest zijwaarts scrollen terwijl het
+     toetsenbord openstond. Nu: per spiergrootte een blok met de drie
+     niveaus eronder, dat past wel. Vanaf 560px weer op één rij. */
+  .do-matrix { display: flex; flex-direction: column; gap: 10px; }
+  .do-mrij {
+    border: 1px solid var(--lijn); border-radius: 11px;
+    padding: 9px 10px 10px; background: var(--papier);
   }
-  table.do-matrix th, table.do-matrix td {
-    border: 1px solid var(--lijn); padding: 7px 8px; text-align: left;
-  }
-  table.do-matrix th {
-    background: var(--accent-zacht); color: var(--accent);
+  .do-mrij .maat {
+    font-family: system-ui, sans-serif;
     font-size: 12px; font-weight: 800;
+    letter-spacing: .05em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 7px;
   }
-  table.do-matrix td:first-child { font-weight: 700; white-space: nowrap; }
-  table.do-matrix input {
+  .do-mcellen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .do-mcel { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .do-mcel span {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+  }
+  .do-mcel input {
     width: 100%; box-sizing: border-box;
-    font-family: system-ui, sans-serif; font-size: 14px;
-    padding: 6px 7px; text-align: right;
-    border: 1.5px solid var(--lijn); border-radius: 7px;
-    background: var(--papier); color: var(--inkt);
+    font-family: system-ui, sans-serif; font-size: 16px;
+    padding: 7px 8px; text-align: right;
+    border: 1.5px solid var(--lijn); border-radius: 8px;
+    background: var(--paneel); color: var(--inkt);
   }
-  table.do-matrix input:focus { outline: none; border-color: var(--accent); }
-  table.do-matrix input.leeg { border-color: #E0B44A; background: #FDF8EC; }
+  .do-mcel input:focus { outline: none; border-color: var(--accent); }
+  .do-mcel input.leeg { border-color: #E0B44A; background: #FDF8EC; }
+
+  @media (min-width: 560px) {
+    .do-mrij { display: flex; align-items: center; gap: 12px; }
+    .do-mrij .maat { margin-bottom: 0; flex: 0 0 76px; }
+    .do-mcellen { flex: 1 1 auto; }
+  }
 
   /* --- spierkaarten --- */
   .do-spier {
@@ -477,21 +492,12 @@
       blijft op dit toestel bewaard, dus je vult hem één keer.
     </p>
     <div class="do-paneel">
-      <div class="do-tabelwrap">
-        <table class="do-matrix">
-          <thead>
-            <tr>
-              <th>Spiergrootte</th>
-              <th>Laag</th>
-              <th>Midden</th>
-              <th>Hoog</th>
-            </tr>
-          </thead>
-          <tbody id="doMatrixBody"></tbody>
-        </table>
-      </div>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;font-weight:700;color:var(--muted);margin:0 0 9px;">
+        Alle negen getallen in eenheden (E) van <span id="doMatrixPrep">het gekozen preparaat</span>.
+      </p>
+      <div class="do-matrix" id="doMatrixBody"></div>
       <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.55;margin:11px 0 0;">
-        De kolom <b>Laag</b> doet dubbel werk: hij is ook de ondergrens. Zakt een
+        Het vakje <b>Laag</b> doet dubbel werk: het is ook de ondergrens. Zakt een
         spier daar bij het passen onderdoor, dan meldt de pagina dat, want onder
         je eigen laagste dosis prikken is meestal niet minder maar niets.
       </p>
@@ -793,19 +799,30 @@
   function bouwMatrix() {
     var t = tabelVan(prep);
     elMatrix.innerHTML = '';
+    var prepNaam = document.getElementById('doMatrixPrep');
+    if (prepNaam) prepNaam.textContent = PREPARATEN[prep].naam;
     MATEN.forEach(function (m) {
-      var tr = document.createElement('tr');
-      var td0 = document.createElement('td');
-      td0.textContent = m[1];
-      tr.appendChild(td0);
+      var rij = document.createElement('div');
+      rij.className = 'do-mrij';
+      var kop = document.createElement('div');
+      kop.className = 'maat';
+      kop.textContent = m[1];
+      rij.appendChild(kop);
+      var cellen = document.createElement('div');
+      cellen.className = 'do-mcellen';
       NIVEAUS.forEach(function (n) {
-        var td = document.createElement('td');
+        var cel = document.createElement('label');
+        cel.className = 'do-mcel';
+        var bijschrift = document.createElement('span');
+        bijschrift.textContent = n[1];
+        cel.appendChild(bijschrift);
         var inp = document.createElement('input');
         inp.type = 'number';
         inp.inputMode = 'numeric';
         inp.min = '0';
         inp.step = '1';
         inp.placeholder = 'E';
+        inp.setAttribute('aria-label', m[1] + ', ' + n[1] + ' — dosis in eenheden');
         inp.value = t[m[0]][n[0]];
         if (inp.value === '') inp.className = 'leeg';
         inp.addEventListener('input', function () {
@@ -814,10 +831,11 @@
           schrijf(SLEUTEL_TABEL, JSON.stringify(tabellen));
           herteken();
         });
-        td.appendChild(inp);
-        tr.appendChild(td);
+        cel.appendChild(inp);
+        cellen.appendChild(cel);
       });
-      elMatrix.appendChild(tr);
+      rij.appendChild(cellen);
+      elMatrix.appendChild(rij);
     });
   }
 
