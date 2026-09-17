@@ -41,7 +41,7 @@
     line-height: 1.6; margin: 0 0 14px;
   }
 
-  /* --- hielbissectrice --- */
+  /* --- voetlijn --- */
   .mt-fig {
     background: var(--paneel);
     border: 1px solid var(--lijn);
@@ -165,9 +165,9 @@
     gesprek met ouders op rust.
   </div>
 
-  <!-- ================= hielbissectrice ================= -->
+  <!-- ================= voetlijn ================= -->
   <section class="mt-sectie">
-    <h2>De hielbissectrice</h2>
+    <h2>De voetlijn</h2>
     <p class="mt-sectie-uitleg">
       Trek de lijn die de hiel in tweeën deelt door naar voren, en kijk waar hij uitkomt. Dat is de
       indeling van Bleck. Tik een graad aan om te zien waar de lijn dan loopt.
@@ -182,7 +182,7 @@
       </div>
 
       <svg viewBox="0 0 300 250" role="img" aria-labelledby="mtSvgTitel">
-        <title id="mtSvgTitel">Voetzool van boven gezien met de hielbissectrice doorgetrokken naar de tenen.</title>
+        <title id="mtSvgTitel">Voetzool van boven gezien met de voetlijn doorgetrokken naar de tenen.</title>
         <!-- voetzool, hiel onder en tenen boven. De laterale rand (rechts) is
              expres bijna recht: dat is het ijkpunt bij het onderzoek. -->
         <path d="M 150 234 C 124 234 112 218 112 200
@@ -206,7 +206,7 @@
         <ellipse cx="150" cy="208" rx="36" ry="25" fill="#E6E3DA" stroke="#8C887E" stroke-width="1.6"/>
         <text x="150" y="213" text-anchor="middle" font-family="system-ui, sans-serif"
               font-size="10" fill="#6b7680">hiel</text>
-        <!-- de bissectrice -->
+        <!-- de voetlijn -->
         <line id="mtLijn" x1="150" y1="216" x2="156.5" y2="50"
               stroke="#0f4c5c" stroke-width="3" stroke-linecap="round"/>
         <circle id="mtPunt" cx="156.5" cy="50" r="6.5" fill="#0f4c5c"/>
@@ -227,12 +227,12 @@
 
       <div class="mt-tabelwrap" style="margin-top:14px;">
         <table class="mt-tabel">
-          <thead><tr><th>Graad</th><th>De hielbissectrice loopt door</th></tr></thead>
+          <thead><tr><th>Graad</th><th>De voetlijn loopt door</th></tr></thead>
           <tbody id="mtTabel"></tbody>
         </table>
       </div>
       <p class="mt-bron" style="margin-top:9px;">
-        Indeling van Bleck volgens de hielbissectricemethode. De tekening is van mij, schematisch en
+        Indeling van Bleck volgens de voetlijnmethode. De tekening is van mij, schematisch en
         niet op schaal — bedoeld om te onthouden wáár de lijn uitkomt, niet om op af te meten.
       </p>
     </div>
@@ -351,7 +351,7 @@
 (function () {
   'use strict';
 
-  // Indeling van Bleck volgens de hielbissectricemethode.
+  // Indeling van Bleck volgens de voetlijnmethode.
   // x is waar de lijn bovenaan uitkomt in het tekeningcoordinatenstelsel:
   // de webspaces liggen op ongeveer 144,5 / 165 / 181,5 / 195,5.
   var GRADEN = [
