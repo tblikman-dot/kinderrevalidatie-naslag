@@ -445,12 +445,32 @@
       <div class="do-veld">
         <label for="doPrep">Preparaat</label>
         <select id="doPrep">
-          <option value="ona">onabotulinumtoxineA</option>
-          <option value="inco">incobotulinumtoxineA</option>
-          <option value="abo">abobotulinumtoxineA</option>
+          <option value="ona">Botox® — onabotulinumtoxineA</option>
+          <option value="inco">Xeomin® — incobotulinumtoxineA</option>
+          <option value="abo">Dysport® — abobotulinumtoxineA</option>
         </select>
         <span class="hint" id="doPrepHint"></span>
       </div>
+      <div class="do-tabelwrap" style="overflow-x:auto;margin-top:12px;">
+        <table style="border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:12.5px;">
+          <thead>
+            <tr>
+              <th style="border:1px solid var(--lijn);padding:6px 8px;text-align:left;background:var(--accent-zacht);color:var(--accent);font-size:11.5px;">Merknaam</th>
+              <th style="border:1px solid var(--lijn);padding:6px 8px;text-align:left;background:var(--accent-zacht);color:var(--accent);font-size:11.5px;">Stofnaam</th>
+              <th style="border:1px solid var(--lijn);padding:6px 8px;text-align:left;background:var(--accent-zacht);color:var(--accent);font-size:11.5px;">Firma</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="border:1px solid var(--lijn);padding:6px 8px;font-weight:700;">Botox®</td><td style="border:1px solid var(--lijn);padding:6px 8px;">onabotulinumtoxineA</td><td style="border:1px solid var(--lijn);padding:6px 8px;">Allergan / AbbVie</td></tr>
+            <tr><td style="border:1px solid var(--lijn);padding:6px 8px;font-weight:700;">Dysport®</td><td style="border:1px solid var(--lijn);padding:6px 8px;">abobotulinumtoxineA</td><td style="border:1px solid var(--lijn);padding:6px 8px;">Ipsen</td></tr>
+            <tr><td style="border:1px solid var(--lijn);padding:6px 8px;font-weight:700;">Xeomin®</td><td style="border:1px solid var(--lijn);padding:6px 8px;">incobotulinumtoxineA</td><td style="border:1px solid var(--lijn);padding:6px 8px;">Merz</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.6;margin:9px 0 0;">
+        Het ezelsbruggetje zit in de stofnaam: <b>ona</b> → Botox, <b>abo</b> → Dysport,
+        <b>inco</b> → Xeomin. Dat van Merz is <b>Xeomin</b>; Dysport is van Ipsen.
+      </p>
       <div class="do-veld">
         <label for="doVoorraad">Beschikbare eenheden voor deze sessie</label>
         <input type="number" id="doVoorraad" inputmode="numeric" min="0" step="1" placeholder="bijv. 300">
@@ -925,9 +945,9 @@
   var NIVEAUS = [['laag','Laag'], ['midden','Midden'], ['hoog','Hoog']];
 
   var PREPARATEN = {
-    ona:  { naam: 'onabotulinumtoxineA',  flacons: [50, 100, 200] },
-    inco: { naam: 'incobotulinumtoxineA', flacons: [50, 100, 200] },
-    abo:  { naam: 'abobotulinumtoxineA',  flacons: [300, 500] }
+    ona:  { merk: 'Botox®',   naam: 'onabotulinumtoxineA',  firma: 'Allergan/AbbVie', flacons: [50, 100, 200] },
+    inco: { merk: 'Xeomin®',  naam: 'incobotulinumtoxineA', firma: 'Merz',            flacons: [50, 100, 200] },
+    abo:  { merk: 'Dysport®', naam: 'abobotulinumtoxineA',  firma: 'Ipsen',           flacons: [300, 500] }
   };
 
   // Spiernamen en de indeling klein/middel/groot. De indeling is een
@@ -1066,7 +1086,7 @@
     var t = tabelVan(prep);
     elMatrix.innerHTML = '';
     var prepNaam = document.getElementById('doMatrixPrep');
-    if (prepNaam) prepNaam.textContent = PREPARATEN[prep].naam;
+    if (prepNaam) prepNaam.textContent = PREPARATEN[prep].merk;
     MATEN.forEach(function (m) {
       var rij = document.createElement('div');
       rij.className = 'do-mrij';
@@ -1462,7 +1482,7 @@
 
     if (!r) {
       var g = el('div', 'do-vlag oranje');
-      g.appendChild(el('strong', null, 'Deze richtlijntekst noemt ' + PREPARATEN[prep].naam + ' niet.'));
+      g.appendChild(el('strong', null, 'Deze richtlijntekst noemt ' + PREPARATEN[prep].merk + ' niet.'));
       g.appendChild(document.createTextNode(
         'Het hoofdstuk gaat over Botox® en Dysport®. Voor dit preparaat staan er geen ' +
         'kinderdoseringen in, en ik reken ze niet om — eenheden zijn niet uitwisselbaar. ' +
@@ -1899,7 +1919,7 @@
       var f = flaconAdvies(c.totaalGeeft);
       var b = el('div', 'do-bron');
       var p = el('p');
-      p.innerHTML = '<b>Optrekken:</b> ' + ee(c.totaalGeeft) + ' E ' + PREPARATEN[prep].naam +
+      p.innerHTML = '<b>Optrekken:</b> ' + ee(c.totaalGeeft) + ' E ' + PREPARATEN[prep].merk +
         ' is minimaal ' + f.tekst + '. Afgerond op ' + String(afronding).replace('.', ',') + ' E per spier.';
       b.appendChild(p);
       elUit.appendChild(b);
@@ -2018,7 +2038,9 @@
 
   function vulPreparaat() {
     elPrep.value = prep;
-    elPrepHint.textContent = 'Flacons: ' + PREPARATEN[prep].flacons.map(function (f) { return f + ' E'; }).join(', ') +
+    var P = PREPARATEN[prep];
+    elPrepHint.textContent = P.merk + ' is de merknaam, ' + P.naam + ' de stofnaam (' + P.firma + '). ' +
+      'Flacons: ' + P.flacons.map(function (f) { return f + ' E'; }).join(', ') +
       '. Eenheden van dit preparaat zijn niet om te rekenen naar een ander.';
     var pl = plafondVan(prep);
     elMaxKg.value = pl.kg;
