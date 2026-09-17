@@ -722,8 +722,8 @@
       De dosis uit je tabel geldt <b>per kant</b>. Zet je een spier op <b>beide</b>,
       dan telt hij dubbel mee in het totaal, tegen de voorraad en tegen het plafond —
       en krijgen links en rechts hetzelfde getal. Wil je links en rechts
-      <em>verschillend</em> doseren, voeg de spier dan twee keer toe en zet hem
-      één keer op links en één keer op rechts.
+      <em>verschillend</em> doseren, gebruik dan <b>links en rechts apart doseren</b>
+      op de kaart; die valt dan uiteen in twee kaarten die je los instelt.
       Het vinkje <b>limiteert</b> zet een spier vooraan als er te weinig is; de
       prioriteit bepaalt daarna de volgorde.
     </p>
@@ -1243,6 +1243,7 @@
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'do-chip' + (kanten ? ' gekozen' : '');
+        b.setAttribute('aria-pressed', kanten ? 'true' : 'false');
         var plus = document.createElement('span');
         plus.className = 'plus';
         plus.textContent = '+';
@@ -1253,12 +1254,14 @@
           k.className = 'kant';
           k.textContent = kanten;
           b.appendChild(k);
-          b.setAttribute('aria-label', s.naam + ' staat al in de sessie: ' + kanten + '. Nogmaals toevoegen.');
-          b.title = 'Staat al in de sessie (' + kanten + '). Tikken voegt hem nog een keer toe.';
+          b.setAttribute('aria-label', s.naam + ' staat in de sessie (' + kanten + '). Tikken haalt hem eruit.');
+          b.title = 'Staat in de sessie (' + kanten + '). Tikken haalt hem er weer uit.';
         } else {
           b.setAttribute('aria-label', s.naam + ' toevoegen');
         }
-        b.addEventListener('click', function () { voegSpierToe(s.id); });
+        b.addEventListener('click', function () {
+          if (kantenVan(s.id)) verwijderSpier(s.id); else voegSpierToe(s.id);
+        });
         chips.appendChild(b);
       });
       sec.appendChild(chips);
@@ -1276,8 +1279,33 @@
     gekozen.forEach(function (g) { inSessie[g.id] = true; });
     var n = Object.keys(inSessie).length;
     elKeuzeTel.textContent = n
-      ? n + ' van de ' + totaal + ' spieren staan in deze sessie, groen gemarkeerd. Tikken voegt toe; een spier die er al staat kun je nogmaals toevoegen voor de andere kant.'
-      : 'Tik een spier aan om hem toe te voegen. Wat al in de sessie zit wordt groen.';
+      ? n + ' van de ' + totaal + ' spieren staan in deze sessie, groen gemarkeerd. Nog een keer tikken haalt een spier er weer uit.'
+      : 'Tik een spier aan om hem toe te voegen; nog een keer tikken haalt hem er weer uit. Wat in de sessie zit wordt groen.';
+  }
+
+  function verwijderSpier(id) {
+    gekozen = gekozen.filter(function (g) { return g.id !== id; });
+    tekenSpieren();
+    herteken();
+  }
+
+  // Links en rechts apart doseren: de kaart met 'beide' valt uiteen in twee
+  // kaarten, één links en één rechts, met dezelfde instellingen. Dat verving
+  // het oude 'tik de spier nog een keer aan', want dubbel selecteren hoort
+  // gewoon niet te kunnen.
+  function splitsSpier(sleutel) {
+    var i = -1;
+    for (var k = 0; k < gekozen.length; k++) if (gekozen[k].sleutel === sleutel) i = k;
+    if (i === -1 || gekozen[i].kant !== 'LR') return;
+    var links = gekozen[i];
+    var rechts = {};
+    for (var v in links) rechts[v] = links[v];
+    links.kant = 'L';
+    rechts.kant = 'R';
+    rechts.sleutel = links.id + '-' + Date.now() + '-' + Math.round(Math.random() * 1e6);
+    gekozen.splice(i + 1, 0, rechts);
+    tekenSpieren();
+    herteken();
   }
 
   function nieuweKant(id) {
@@ -1376,6 +1404,16 @@
         kantKnop.appendChild(b);
       });
       kantWrap.appendChild(kantKnop);
+      if (g.kant === 'LR') {
+        var splits = document.createElement('button');
+        splits.type = 'button';
+        splits.style.cssText = 'background:none;border:none;padding:4px 0 0;margin:0;color:var(--accent);' +
+          'font-family:system-ui,sans-serif;font-size:11.5px;font-weight:700;text-decoration:underline;cursor:pointer;';
+        splits.textContent = 'links en rechts apart doseren';
+        splits.title = 'Splitst deze spier in twee kaarten, zodat je links en rechts een andere dosis kunt geven.';
+        splits.addEventListener('click', function () { splitsSpier(g.sleutel); });
+        kantWrap.appendChild(splits);
+      }
       kaart.appendChild(kantWrap);
 
       var raster = document.createElement('div');
