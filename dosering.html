@@ -523,6 +523,13 @@
         bijgerekend of doorgetrokken. In de tekst genoemd: Russman 1997, Awaad 2004,
         Molenaers 2001, Desloovere 2001, Scholtes 2006, Wissel 1999, Pollack 2000, Boyd 1999.
       </p>
+      <p style="font-family:system-ui,sans-serif;font-size:11.5px;color:var(--muted);line-height:1.6;margin:8px 0 0;">
+        <b>Tweede bron:</b> een lokaal behandelprotocol, Bijlage 1, gedateerd 2012–2013.
+        Daaruit zijn <b>alleen de drie leeftijdsbanden</b> overgenomen (2–4 jaar 20 E/kg,
+        4–6 jaar 25 E/kg, 6–10 jaar 30 E/kg). De dosis per spier, het maximum per
+        injectieplaats, het maximum per behandeling en het volumeadvies uit dat protocol
+        staan hier bewust <b>niet</b> in.
+      </p>
     </div>
 
     <div class="do-vlag oranje" style="margin-top:12px;">
@@ -842,6 +849,41 @@
     }
     // inco (Xeomin) staat niet in deze richtlijntekst — bewust geen regel.
   };
+
+  // ------------------------------------------------------------------
+  // Lokaal behandelprotocol, gedateerd 2012-2013, Bijlage 1. Hiervan zijn
+  // BEWUST alleen de leeftijdsgrenzen overgenomen; de dosis per spier, het
+  // maximum per injectieplaats, het maximum per behandeling en het
+  // volumeadvies staan er niet in deze app. Het protocol is over Botox.
+  //
+  // De banden raken elkaar op 4 en op 6 jaar. Welke band daar geldt staat
+  // er niet, dus toont de pagina op die leeftijden allebei in plaats van
+  // er zelf een regel van te maken.
+  // ------------------------------------------------------------------
+  var LOKAAL_BANDEN = [
+    { van: 2, tot: 4,  waarde: 20 },
+    { van: 4, tot: 6,  waarde: 25 },
+    { van: 6, tot: 10, waarde: 30 }
+  ];
+
+  function lokaalPerKg(leeftijd) {
+    if (leeftijd === null) return null;
+    if (leeftijd < 2)  return { buiten: 'jonger dan 2 jaar' };
+    if (leeftijd > 10) return { buiten: 'ouder dan 10 jaar' };
+    if (leeftijd === 4 || leeftijd === 6) {
+      var paar = LOKAAL_BANDEN.filter(function (b) { return b.van === leeftijd || b.tot === leeftijd; });
+      return { grens: leeftijd, waarden: paar.map(function (b) { return b.waarde; }) };
+    }
+    for (var i = 0; i < LOKAAL_BANDEN.length; i++) {
+      var b = LOKAAL_BANDEN[i];
+      if (leeftijd > b.van && leeftijd < b.tot) {
+        return { waarde: b.waarde, band: b.van + ' tot ' + b.tot + ' jaar' };
+      }
+    }
+    if (leeftijd === 2)  return { waarde: 20, band: '2 tot 4 jaar' };
+    if (leeftijd === 10) return { waarde: 30, band: '6 tot 10 jaar' };
+    return null;
+  }
 
   var CONTRA = [
     { id: 'ci1', t: 'Bekende overgevoeligheid voor humaan albumine' },
@@ -1460,6 +1502,55 @@
       });
       rij.appendChild(knop);
       elRicht.appendChild(rij);
+
+      // Naast de richtlijn het lokale protocol, alleen voor Botox en alleen
+      // de leeftijdsgrens. Verschillen worden benoemd, niet weggewerkt.
+      var lok = (prep === 'ona') ? lokaalPerKg(r.leeftijd) : null;
+      if (lok) {
+        var lk = el('div', 'do-vlag blauw');
+        lk.style.marginTop = '10px';
+        lk.appendChild(el('strong', null, 'Lokaal behandelprotocol (2012–2013) — alleen de leeftijdsgrens'));
+
+        if (lok.buiten) {
+          lk.appendChild(document.createTextNode(
+            'Dat protocol kent drie banden: 2–4 jaar 20 E/kg, 4–6 jaar 25 E/kg, ' +
+            '6–10 jaar 30 E/kg. Dit kind is ' + lok.buiten + ' en valt daarbuiten; ' +
+            'het protocol zegt daar niets over en ik trek de banden niet door.'));
+        } else if (lok.grens) {
+          lk.appendChild(document.createTextNode(
+            'Op precies ' + lok.grens + ' jaar raken twee banden elkaar: het protocol geeft daar ' +
+            lok.waarden.join(' E/kg en ') + ' E/kg. Welke van de twee geldt staat er niet bij, ' +
+            'dus kies zelf — de laagste is de voorzichtige.'));
+        } else {
+          var zelfde = r.perKg && lok.waarde === r.perKg.waarde;
+          lk.appendChild(document.createTextNode(
+            'Band ' + lok.band + ': maximaal ' + lok.waarde + ' E/kg. ' +
+            (zelfde
+              ? 'Gelijk aan wat de FMS-richtlijn hier geeft.'
+              : 'De FMS-richtlijn geeft hier ' + (r.perKg ? r.perKg.waarde + ' E/kg' : 'geen waarde') +
+                '. Het lokale protocol is dus ' + (lok.waarde < (r.perKg ? r.perKg.waarde : 0) ? 'lager' : 'hoger') +
+                '; het onderscheidt 2–4 van 4–6 jaar, waar de richtlijn alleen een grens bij 6 jaar legt.')));
+          if (!zelfde) {
+            var rij2 = el('div', 'do-knoprij');
+            var knop2 = el('button', null, 'Neem alleen de ' + lok.waarde + ' E/kg over');
+            knop2.type = 'button';
+            knop2.addEventListener('click', function () {
+              elMaxKg.value = String(lok.waarde);
+              herteken();
+              tekenRichtlijn();
+              tekenSpieren();
+            });
+            rij2.appendChild(knop2);
+            lk.appendChild(rij2);
+            var uitleg = el('div', null,
+              'Dit vult alleen het veld per kilogram. Het absolute maximum uit dat protocol staat ' +
+              'bewust niet in deze app, dus dat veld blijft staan zoals het staat.');
+            uitleg.style.marginTop = '6px';
+            lk.appendChild(uitleg);
+          }
+        }
+        elRicht.appendChild(lk);
+      }
 
       var pl = plafondVan(prep);
       var nuKg = getal(pl.kg), nuAbs = getal(pl.abs);
