@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Doses per spier — RCP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .bd-wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .bd-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .bd-terug:hover { text-decoration: underline; }
+
+  .bd-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .bd-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 16px;
+  }
+
+  .bd-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 14px;
+  }
+  .bd-vlag strong { display: block; margin-bottom: 3px; }
+  .bd-vlag.rood   { background: #FBEAE5; color: #8E3617; }
+  .bd-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .bd-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .bd-bedien {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 13px 13px 11px;
+    margin-bottom: 16px;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .bd-label {
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+  .bd-zoek {
+    width: 100%; font-family: system-ui, sans-serif;
+    font-size: 16px; padding: 9px 11px;
+    border: 1px solid var(--lijn); border-radius: 9px;
+    background: var(--papier); color: var(--inkt);
+  }
+  /* Eén rij die je opzij schuift. Wrappen maakte het bedieningspaneel op een
+     telefoon bijna schermvullend, en het staat sticky. */
+  .bd-chips {
+    display: flex; gap: 6px; margin-top: 10px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 2px;
+  }
+  .bd-chips::-webkit-scrollbar { display: none; }
+  .bd-chips button {
+    flex: 0 0 auto; white-space: nowrap;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 10px; border-radius: 999px;
+    border: 1px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .bd-chips button.aan { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .bd-merken { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
+  .bd-merken button {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    padding: 7px 4px; border-radius: 9px;
+    border: 1px solid var(--lijn); background: var(--papier);
+    color: var(--muted); cursor: pointer;
+  }
+  .bd-merken button.aan { border-width: 2px; }
+  .bd-merken button[data-m="botox"].aan   { border-color: #B4472C; color: #B4472C; background: #FBEAE5; }
+  .bd-merken button[data-m="dysport"].aan { border-color: #2E7D4F; color: #1C5F38; background: #E8F3EC; }
+  .bd-merken button[data-m="xeomin"].aan  { border-color: #3B4E8C; color: #2F3F72; background: #ECEFF8; }
+  .bd-merken button[data-m="alle"].aan    { border-color: var(--accent); color: var(--accent); background: var(--accent-zacht); }
+
+  .bd-telling {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    margin: 0 2px 10px;
+  }
+
+  .bd-groep { margin-top: 22px; }
+  .bd-groep h2 { font-size: 1.05rem; margin: 0 0 2px; }
+  .bd-groep .bron {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    font-style: italic; margin: 0 0 10px;
+  }
+
+  .bd-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 13px;
+    padding: 12px 13px;
+    margin-bottom: 9px;
+  }
+  .bd-naam {
+    font-family: system-ui, sans-serif;
+    font-size: 14.5px; font-weight: 800;
+    color: var(--inkt); margin-bottom: 2px;
+  }
+  .bd-actie {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.5; margin-bottom: 9px;
+  }
+
+  .bd-doses { display: flex; flex-direction: column; gap: 3px; margin-bottom: 9px; }
+  .bd-dose {
+    display: flex; align-items: baseline; gap: 8px;
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.45;
+    padding: 3px 7px; border-radius: 7px;
+  }
+  .bd-dose .merk { flex: 0 0 74px; font-size: 11.5px; font-weight: 700; letter-spacing: .02em; }
+  .bd-dose .waarde { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .bd-dose.botox   { color: #8E3617; }
+  .bd-dose.dysport { color: #1C5F38; }
+  .bd-dose.xeomin  { color: #2F3F72; }
+  .bd-dose.markeer.botox   { background: #FBEAE5; }
+  .bd-dose.markeer.dysport { background: #E8F3EC; }
+  .bd-dose.markeer.xeomin  { background: #ECEFF8; }
+  .bd-dose.flauw { opacity: .42; }
+
+  .bd-geen {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    font-style: italic; margin-bottom: 9px;
+  }
+
+  .bd-regel {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.55;
+    color: var(--inkt); margin-top: 6px;
+    display: flex; gap: 7px;
+  }
+  .bd-regel .ic { flex: 0 0 auto; }
+  .bd-regel q { font-style: normal; color: var(--inkt); }
+  .bd-regel .nl { color: var(--muted); }
+
+  .bd-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .bd-badge {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px;
+    background: var(--accent-zacht); color: #0f2733;
+  }
+  .bd-badge.plaatsen { background: #E8F3EC; color: #1C5F38; }
+  .bd-badge.let      { background: #FBF3DC; color: #6B4E06; }
+  .bd-badge.sic      { background: #FBEAE5; color: #8E3617; }
+
+  .bd-leeg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    text-align: center; padding: 26px 0;
+  }
+
+  .bd-voet {
+    margin-top: 30px;
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted); line-height: 1.65;
+  }
+  .bd-voet h3 { font-family: inherit; font-size: 12.5px; color: var(--inkt); margin: 0 0 6px; }
+  .bd-voet ul { margin: 6px 0 0; padding-left: 18px; }
+  .bd-voet li { margin-bottom: 4px; }
+  .bd-voet a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Doses per spier — RCP</div>
+</header>
+
+<div class="bd-wrap">
+  <a class="bd-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="bd-kop">Botulinetoxine A — dosis per spier, drie merken</h1>
+  <p class="bd-intro">
+    Appendix 2 <em>Injection sites for BoNT-A</em> uit <em>Spasticity in adults: management using
+    botulinum toxin</em>, Royal College of Physicians, 2e editie, 2018 — bladzijde 53 tot en met 63.
+    Per spier de dosis voor alle drie de preparaten naast elkaar, zodat de onderlinge verhouding
+    zichtbaar is.
+  </p>
+
+  <div class="bd-vlag rood">
+    <strong>Dit zijn doses voor volwassenen</strong>
+    De richtlijn heet <em>Spasticity in adults</em> en de tabel geeft geen kinderdoses, geen dosis
+    per kilogram en geen plafond per sessie. Reken deze getallen dus niet om naar een kind. De
+    beperkingen die bij kinderen gelden komen nog en staan hier pas als ze er zijn.
+  </div>
+
+  <div class="bd-bedien">
+    <label class="bd-label" for="bdZoek">Zoek een spier</label>
+    <input class="bd-zoek" id="bdZoek" type="search" placeholder="gastrocnemius, adductor, pronator …" autocomplete="off">
+    <div class="bd-merken" id="bdMerken">
+      <button type="button" data-m="alle" class="aan">Alle drie</button>
+      <button type="button" data-m="botox">BOTOX</button>
+      <button type="button" data-m="dysport">Dysport</button>
+      <button type="button" data-m="xeomin">Xeomin</button>
+    </div>
+    <div class="bd-chips" id="bdChips"></div>
+  </div>
+
+  <p class="bd-telling" id="bdTelling"></p>
+  <div id="bdLijst"></div>
+
+  <div class="bd-voet">
+    <h3>Welke editie</h3>
+    <p style="margin:0;">
+      De omslag van dit document zegt <b>2nd edition, National guidelines 2018</b>, uitgegeven door
+      de Royal College of Physicians samen met de British Society of Rehabilitation Medicine, het
+      Royal College of Occupational Therapists en de Chartered Society of Physiotherapy.
+      <b>Of er sinds 2018 een nieuwere editie is, heb ik niet kunnen nagaan</b> — deze app heeft geen
+      toegang tot rcp.ac.uk of andere externe sites, dus dat moet je zelf even bevestigen.
+      Kijk in dat geval of Appendix 2 dezelfde getallen houdt; de rest van deze pagina hangt
+      daaraan.
+    </p>
+    <h3 style="margin-top:12px;">Over deze tabel</h3>
+    <p style="margin:0;">
+      De kolommen <em>Action</em> en <em>Injection point</em> staan er letterlijk in het Engels bij
+      zoals de richtlijn ze afdrukt; vertalen zou betekenis kunnen verschuiven. De kolommen
+      <em>Origin</em> en <em>Insertion</em> uit de bron zijn hier niet overgenomen — dat is
+      anatomie die je elders opzoekt, en het maakte de kaartjes onleesbaar op een telefoon.
+      U = units = eenheden.
+    </p>
+    <h3 style="margin-top:12px;">Wat ik er zelf bij heb gezet</h3>
+    <ul>
+      <li><b>Verhouding Dysport : BOTOX.</b> Berekend uit de twee dosisbereiken in de tabel zelf.
+        Ligt hij buiten 3× – 5×, dan krijgt de spier een waarschuwing: dat wijkt af van het
+        patroon van de rest van de tabel.</li>
+      <li><b>Xeomin wijkt af.</b> Gemarkeerd waar de tabel voor Xeomin een ander bereik geeft dan
+        voor BOTOX, terwijl dat bij verreweg de meeste spieren gelijk is.</li>
+      <li><b>Aantal injectieplaatsen.</b> Alleen genoemd waar de bron het zelf zegt
+        („multiple injection sites", „Four points", „both heads", „at each site"). Staat er niets,
+        dan staat er hier <em>niet vermeld</em> — ik vul geen aantal in dat er niet staat.</li>
+    </ul>
+    <h3 style="margin-top:12px;">Voetnoot van de bron</h3>
+    <p style="margin:0;">
+      * OnabotulinumtoxinA (BOTOX®) · AbobotulinumtoxinA (Dysport®) · IncobotulinumtoxinA (Xeomin®).
+      „A number of 'apps' are available from the BoNT-A manufacturers which may be helpful to
+      clinicians in identifying and localising muscles for injection."
+      © Royal College of Physicians 2018.
+    </p>
+    <p style="margin:12px 0 0;">
+      <a href="dosering.html">→ Naar de doseringsplanner</a> — daar verdeel je een beschikbare
+      hoeveelheid eenheden over de spieren die je kiest.
+    </p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ------------------------------------------------------------------
+  // Appendix 2 "Injection sites for BoNT-A" — Spasticity in adults:
+  // management using botulinum toxin, Royal College of Physicians,
+  // 2nd edition 2018, p. 53-63.
+  //
+  // Overgetypt van de foto's van de bron, uitvergroot per rij nagelezen.
+  // b = BOTOX, d = Dysport, x = Xeomin; [min, max] of [waarde] bij een
+  // enkel getal; null waar de tabel geen dosis geeft.
+  // n  = aantal injectieplaatsen ALLEEN als de bron het zelf noemt.
+  // sic = afwijking in de bron die ik niet stilzwijgend heb gecorrigeerd.
+  // ------------------------------------------------------------------
+  var GROEPEN = [
+    { id: 'romp',    nl: 'Rompspieren',                              en: 'Trunk muscles' },
+    { id: 'heup',    nl: 'Heupextensoren en -abductoren',            en: 'Hip extensors and abductors' },
+    { id: 'knie',    nl: 'Bovenbeen — knie-extensoren',              en: 'Thigh – knee extensors' },
+    { id: 'add',     nl: 'Bovenbeen — adductoren en knieflexoren',   en: 'Thigh adductors and knee flexors' },
+    { id: 'onderAL', nl: 'Onderbeen — anterolateraal',               en: 'Lower leg – antero lateral compartment' },
+    { id: 'onderP',  nl: 'Onderbeen — posterieur (en voetspieren)',  en: 'Lower leg – posterior compartment' },
+    { id: 'gordel',  nl: 'Schoudergordel',                           en: 'Pectoral girdle' },
+    { id: 'arm',     nl: 'Arm',                                      en: 'Arm' },
+    { id: 'armExt',  nl: 'Onderarm — strekzijde',                    en: 'Extensor aspect of forearm' },
+    { id: 'armFlex', nl: 'Onderarm — buigzijde',                     en: 'Flexor aspect of forearm' }
+  ];
+
+  var RCP = [
+    // --- Trunk muscles (p. 53) ---
+    { g: 'romp', m: 'Psoas major', a: 'Flexes hip',
+      b: [100, 200], d: [600, 800], x: [100, 200],
+      p: 'Approach posteriorly advancing spinal needle between transverse processes at L2, L3 and L4. 50–60U at each site',
+      n: '3 plaatsen — L2, L3 en L4, 50–60U per plaats' },
+    { g: 'romp', m: 'Iliacus', a: 'Flexes hip',
+      b: [75, 150], d: [200, 400], x: [75, 150],
+      p: 'Anterior approach under lateral third of inguinal ligament – lateral to femoral nerve and avoiding lateral cutaneous nerve of thigh' },
+    { g: 'romp', m: 'Quadratus lumborum', a: 'Flexes vertebral column laterally',
+      b: [100], d: [400], x: [100],
+      p: 'Posterior approach lateral to vertebral column' },
+
+    // --- Hip extensors and abductors (p. 53-54) ---
+    { g: 'heup', m: 'Gluteus maximus', a: 'Extends thigh. Laterally rotates hip', zelden: true, p: '' },
+    { g: 'heup', m: 'Gluteus medius', a: 'Abducts leg', b: [100], d: [400], x: [100], p: '' },
+    { g: 'heup', m: 'Gluteus minimus', a: 'Abducts leg', zelden: true, p: '' },
+
+    // --- Thigh – knee extensors (p. 54) ---
+    { g: 'knie', m: 'Rectus femoris', a: 'Hip flexion and knee extension',
+      b: [100, 150], d: [400, 500], x: [100, 150],
+      p: 'Four points along the middle of quadriceps muscle mass',
+      n: '4 plaatsen' },
+    { g: 'knie', m: 'Vastus lateralis, intermedius and medialis', a: 'Knee extension',
+      b: [100, 150], d: [400, 500], x: [100, 150],
+      p: 'Two points in lateral aspect of thigh; one deep centrally in lower half of thigh and one to two medially',
+      n: 'meerdere plaatsen — twee lateraal, één diep centraal, één à twee mediaal' },
+
+    // --- Thigh adductors and knee flexors (p. 54-55) ---
+    { g: 'add', m: 'Pectineus', a: 'Adducts thigh and assists hip flexion',
+      b: [50, 100], d: [200, 400], x: [50, 100],
+      p: 'Difficult to inject because of overlying neurovascular bundle below inguinal ligament medial to femoral vein' },
+    { g: 'add', m: 'Adductor magnus', a: 'Adducts and laterally. Main action while sitting',
+      b: [100, 200], d: [400, 750], x: [100, 200],
+      dosisNoot: 'De tabel zet er bij de BOTOX-dosis uitdrukkelijk „into whole adductor group" bij — het is een dosis voor de hele adductorengroep, niet voor deze ene spier.',
+      p: 'Large muscle in upper medial thigh. Inject into upper third of thigh' },
+    { g: 'add', m: 'Adductor longus', a: 'Adducts thigh. Main action on standing',
+      b: null, d: null, x: null,
+      geenDosis: 'De tabel laat de dosiscel hier leeg; de dosis staat bij adductor magnus, voor de hele adductorengroep.',
+      p: "Antero medial aspect of thigh one hand's breadth below inguinal ligament medial to femoral vein" },
+    { g: 'add', m: 'Adductor brevis', a: 'Adducts and laterally rotates thigh', zelden: true,
+      p: 'Behind adductor longus and pectineus and in front of adductor magnus' },
+    { g: 'add', m: 'Gracilis', a: 'Adducts thigh and flexes knee. Medially rotates flexed leg',
+      b: [80, 120], d: [300, 400], x: [80, 120],
+      p: 'Postero medial edge of thigh several points of injection down medial thigh',
+      n: 'meerdere plaatsen — „several points … down medial thigh"' },
+    { g: 'add', m: 'Semi membranosus', a: 'Flexes knee. Medially rotates flexed leg and extends hip',
+      b: [100, 150], d: [400, 500], x: [100, 150],
+      p: 'Medial muscles in posterior thigh – multiple injection sites',
+      n: 'meerdere plaatsen' },
+    { g: 'add', m: 'Semi tendinosus', a: 'Same as semi membranosus',
+      b: [100, 150], d: [400, 600], x: [100, 150],
+      p: 'Medial muscles in posterior thigh – multiple injection sites',
+      n: 'meerdere plaatsen' },
+    { g: 'add', m: 'Biceps femoris', a: 'Flexes knee, rotates leg externally and extends hip',
+      b: [100, 150], d: [400, 600], x: [100, 150],
+      p: 'Lateral muscle in posterior thigh – multiple injection sites',
+      n: 'meerdere plaatsen' },
+    { g: 'add', m: 'Popliteus', a: 'Flexes knee and internally rotates lower leg at beginning of flexion',
+      b: [25, 30], d: [100, 120], x: [25, 30],
+      p: 'Deep over back of medial tibial condyle. Down to bone medial aspect of popliteal fossa and then withdraw' },
+
+    // --- Lower leg – antero lateral compartment (p. 56) ---
+    { g: 'onderAL', m: 'Tibialis anterior', a: 'Dorsiflexes and inverts foot',
+      b: [75, 120], d: [300, 400], x: [75, 120],
+      p: 'Front of shin, lateral to tibia' },
+    { g: 'onderAL', m: 'Extensor digitorum longus', a: 'Dorsiflexes foot and toes 2–5',
+      b: [50, 75], d: [200, 300], x: [50, 80],
+      p: 'Lateral to tibialis anterior in front of and border of fibula' },
+    { g: 'onderAL', m: 'Extensor hallucis longus', a: 'Extends great toe',
+      b: [50, 60], d: [200, 250], x: [50, 60],
+      p: 'Between tibialis anterior and extensor digitorum longus in middle of shin' },
+    { g: 'onderAL', m: 'Peroneus tertius (not always present)', a: 'Dorsi flexes and everts foot',
+      b: [30, 40], d: [120, 150], x: [30, 40],
+      p: 'Attached to ext digitorum longus lateral surface' },
+    { g: 'onderAL', m: 'Peroneus longus', a: 'Everts and plantar flexes foot',
+      b: [50, 80], d: [200, 320], x: [50, 80],
+      p: 'Lateral aspect of shin anterior to fibula' },
+    { g: 'onderAL', m: 'Peroneus brevis', a: 'Everts foot',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Lower half of lateral shin anterior to peroneus longus' },
+
+    // --- Lower leg – posterior compartment (p. 57-58) ---
+    { g: 'onderP', m: 'Gastrocnemius – medial head', a: 'Plantar flexes foot and flexes knee',
+      b: [50, 100], d: [200, 400], x: [50, 100],
+      p: 'Superficial muscle of medial aspect of calf' },
+    { g: 'onderP', m: 'Gastrocnemius – lateral head', a: 'Plantar flexes foot and flexes knee',
+      b: [50, 100], d: [200, 400], x: [50, 100],
+      p: 'Superficial muscle of lateral aspect of calf' },
+    { g: 'onderP', m: 'Soleus', a: 'Plantar flexes foot',
+      b: [75, 100], d: [300, 400], x: [75, 200],
+      p: 'Back of calf, midway down between muscle bellies of gastrocnemius' },
+    { g: 'onderP', m: 'Flexor hallucis longus', a: 'Flexes great toe (IP + MTP joints) maintains longitudinal arch',
+      b: [40, 60], d: [160, 240], x: [40, 60],
+      p: 'Under soleus mid-calf immediately posterior to peroneus longus and fibula' },
+    { g: 'onderP', m: 'Flexor digitorum longus', a: 'Flexes toes 2–5 (IP + MTP joints) and maintains longitudinal arch',
+      b: [40, 60], d: [160, 200], x: [40, 60],
+      p: 'Behind medial border of tibia in its upper mid area. Inject near origin just behind tibia' },
+    { g: 'onderP', m: 'Tibialis posterior', a: 'Plantar flexes and inverts foot',
+      b: [50, 80], d: [200, 320], x: [50, 80],
+      p: 'Mid-calf, deep behind tibia and in depression between tibia and fibula' },
+    { g: 'onderP', m: 'Abductor hallucis', a: 'Abducts and plantar flexes great toe',
+      b: [10, 20], d: [40, 80], x: [10, 20],
+      p: 'Medial aspect 1st metatarsal' },
+    { g: 'onderP', m: 'Flexor hallucis brevis', a: 'Flexes 1st MTP joint',
+      b: [10, 20], d: [40, 80], x: [10, 20],
+      p: 'Plantar aspect of foot under 1st metatarsal' },
+    { g: 'onderP', m: 'Flexor digitorum brevis', a: 'Flexes 1st IP joint and lateral four MTP joints',
+      b: [10, 20], d: [40, 80], x: [10, 20],
+      p: 'Plantar aspect of foot at base of metatarsals' },
+
+    // --- Pectoral girdle (p. 58-60) ---
+    { g: 'gordel', m: 'Trapezius', a: 'Scapular elevation and rotation',
+      b: [50, 75], d: [200, 300], x: [50, 75],
+      p: 'Large muscle between neck and shoulder' },
+    { g: 'gordel', m: 'Rhomboid', a: 'Extension of scapulae',
+      b: [50, 60], d: [200, 250], x: [50, 60],
+      p: 'Superficial, between scapula and spine' },
+    { g: 'gordel', m: 'Supraspinatus', a: 'Abd. of arm from 0–15° above 90°',
+      b: [40, 50], d: [160, 200], x: [40, 50],
+      p: 'Supraspinous fossa on scapula' },
+    { g: 'gordel', m: 'Infraspinatus', a: 'External rotation of arm',
+      b: [50, 60], d: [200, 240], x: [50, 60],
+      p: 'Infraspinous surface of scapula' },
+    { g: 'gordel', m: 'Subscapularis', a: 'Internal rotation of arm',
+      b: [50, 80], d: [200, 320], x: [15, 100],
+      p: 'Inject under lateral border of scapula' },
+    { g: 'gordel', m: 'Deltoid', a: 'Arm adduct from 15–90°',
+      b: [50, 75], d: [200, 300], x: [20, 150],
+      p: 'Inject anterior, middle and posterior fibres',
+      n: '3 plaatsen — voorste, middelste en achterste vezels' },
+    { g: 'gordel', m: 'Teres major', a: 'Adducts, medially rotates and extends arm',
+      b: [30, 50], d: [120, 200], x: [20, 100],
+      p: 'Lateral aspect lower scapula' },
+    { g: 'gordel', m: 'Teres minor', a: 'Adducts and laterally rotates',
+      b: [30, 50], d: [120, 200], x: [30, 50],
+      p: 'Lateral aspect scapula above' },
+    { g: 'gordel', m: 'Latissimus dorsi', a: 'Adducts, retracts and medially rotates upper limb',
+      b: [60, 80], d: [240, 320], x: [25, 150],
+      p: 'Find in posterior fold of axilla while asking patient to pull down elevated arm' },
+    { g: 'gordel', m: 'Serratus anterior', a: 'Protracts upper limb',
+      b: [60, 70], d: [250, 275], x: [60, 70],
+      p: 'Lateral aspect of upper eight ribs' },
+    { g: 'gordel', m: 'Pectoralis major', a: 'Adducts and medially rotates',
+      b: [75, 100], d: [300, 400], x: [20, 200],
+      p: 'Anterior axillary fold' },
+    { g: 'gordel', m: 'Pectoralis minor', a: 'Draw scapula down and forwards, depresses shoulder',
+      b: [40], d: [160], x: [40],
+      p: 'Deep to upper part of pectoralis major' },
+
+    // --- Arm (p. 60) ---
+    { g: 'arm', m: 'Biceps brachii', a: 'Supination and elbow flexion',
+      b: [75, 100], d: [100, 300], x: [75, 100],
+      p: 'Anterior aspect of upper arm. Inject both heads',
+      n: '2 plaatsen — beide koppen' },
+    { g: 'arm', m: 'Triceps brachii', a: 'Elbow extension',
+      b: [75, 100], d: [300, 400], x: [75, 100],
+      p: 'Three heads on post aspect of arm',
+      n: '3 koppen aan de achterzijde' },
+    { g: 'arm', m: 'Coracobrachialis', a: 'Flexes and adducts upper arm',
+      b: [30, 50], d: [120, 200], x: [30, 50],
+      p: 'Medial to upper humerus between it and neurovascular bundle' },
+    { g: 'arm', m: 'Brachialis', a: 'Flexes elbow',
+      b: [50, 75], d: [200, 400], x: [50, 75],
+      p: 'Lower anterior humerus medial and lateral of biceps tendon' },
+
+    // --- Extensor aspect of forearm (p. 60-62) ---
+    { g: 'armExt', m: 'Brachioradialis', a: 'Elbow flexion',
+      b: [50, 60], d: [200, 240], x: [50, 60],
+      p: 'Radial side upper forearm' },
+    { g: 'armExt', m: 'Supinator', a: 'Supinates forearm',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Extensor aspect of arm below radial neck – deep' },
+    { g: 'armExt', m: 'Extensor carpi radialis longus', a: 'Extends and adducts hand at wrist',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Posterior to brachio-radialis on back of forearm' },
+    { g: 'armExt', m: 'Extensor carpi radialis brevis', a: 'Extends and adducts hand at wrist',
+      b: [20, 30], d: [75, 120], x: [20, 30],
+      p: 'Posterior and medial to ECR longus' },
+    { g: 'armExt', m: 'Extensor carpi ulnaris', a: 'Extends wrist and elbow and adducts hand',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Most medially placed extensor muscle. Halfway down ulna shaft' },
+    { g: 'armExt', m: 'Extensor digitorum communis', a: 'Extends wrist and fingers',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Middle of back of forearm distal to radial tuberosity' },
+    { g: 'armExt', m: 'Extensor digiti minimi', a: 'Extends 5th finger',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Medial to ext digitorum' },
+    { g: 'armExt', m: 'Extensor pollicis longus', a: 'Extends all joints of thumb',
+      b: [20, 30], d: [75, 120], x: [20, 30],
+      p: 'Midway down back of forearm' },
+    { g: 'armExt', m: 'Extensor pollicis brevis', a: 'Extends CMC and MCP joints of thumb',
+      b: [20, 25], d: [75, 100], x: [20, 25],
+      p: 'Distal third of forearm. Palpate by moving CMC and MCP joints' },
+    { g: 'armExt', m: 'Adductor pollicis longus', a: 'Adducts thumb and hand',
+      b: [20, 40], d: [80, 120], x: [20, 40],
+      p: 'Proximal to ext pollicis brevis on back of forearm. Palpate action',
+      sic: 'De tabel drukt „Adductor pollicis longus" af. Uit de insertie (base of 1st MC) en de ligging op de strekzijde blijkt dat de <b>abductor</b> pollicis longus bedoeld is. Ik heb de naam laten staan zoals de bron hem geeft.' },
+    { g: 'armExt', m: 'Extensor indicis', a: 'Extends forefinger',
+      b: [20, 30], d: [75, 120], x: [20, 30],
+      p: 'Found medial of most lateral tendon of ext digit communis' },
+
+    // --- Flexor aspect of forearm (p. 62-63) ---
+    { g: 'armFlex', m: 'Pronator teres', a: 'Pronates forearm and flexes elbow',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Medial border of anterior cubital fossa – medial to brachial artery',
+      sic: 'In de tabel staat boven deze rij, in dezelfde cel, het kopje „Superficial flexor muscles".' },
+    { g: 'armFlex', m: 'Flexor carpi radialis', a: 'Flexes wrist and elbow',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Upper forearm just below bicipital aponeurosis and medial to pronator teres' },
+    { g: 'armFlex', m: 'Flexor carpi ulnaris', a: 'Flexes and adducts hand at wrist',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Upper forearm medial aspect of flexor surface below bicipital aponeurosis. Medial to FCR. Observe action of wrist flexion' },
+    { g: 'armFlex', m: 'Flexor digitorum superficialis', a: 'PIP joint flexor and MCP joint flexor',
+      b: [25, 30], d: [100, 120], x: [25, 30],
+      p: 'Middle of forearm half way down to either side of palmaris tendon',
+      n: '2 plaatsen — weerszijden van de pees van de palmaris' },
+    { g: 'armFlex', m: 'Flexor digitorum profoundus', a: 'Flexes all finger joints',
+      b: [30, 40], d: [120, 160], x: [30, 40],
+      p: 'Upper third of forearm. Deep muscle above lateral border of ulna',
+      sic: 'De bron spelt „profoundus"; gangbaar is <em>profundus</em>.' },
+    { g: 'armFlex', m: 'Flexor pollicis longus', a: 'Flexes all joints of thumb',
+      b: [20, 30], d: [75, 120], x: [20, 30],
+      p: 'Mid forearm over anterior aspect of radius' },
+    { g: 'armFlex', m: 'Pronator quadratus', a: 'Pronates forearm',
+      b: [20, 30], d: [75, 120], x: [20, 30],
+      p: 'Approach muscle from extensor aspect of forearm just proximal to wrist and advance through interosseous membrane' }
+  ];
+
+  var MERKNAAM = { botox: 'BOTOX', dysport: 'Dysport', xeomin: 'Xeomin' };
+
+  var merk = 'alle';
+  var groepFilter = 'alles';
+  try {
+    var bewaard = localStorage.getItem('krn-rcp-merk');
+    if (bewaard && (bewaard === 'alle' || MERKNAAM[bewaard])) merk = bewaard;
+  } catch (e) { /* private mode: blijf bij de standaard */ }
+
+  function toon(r) {
+    if (!r) return null;
+    return r.length === 1 ? r[0] + 'U' : r[0] + '–' + r[1] + 'U';
+  }
+
+  // Verhouding Dysport : BOTOX, gerekend op de twee bereiken uit de tabel
+  // zelf. Bij het overgrote deel van de spieren is die 4; wat daarbuiten
+  // valt krijgt een waarschuwing in plaats van dat ik het gladstrijk.
+  function verhouding(rij) {
+    if (!rij.b || !rij.d) return null;
+    var f = [];
+    for (var i = 0; i < Math.min(rij.b.length, rij.d.length); i++) {
+      if (rij.b[i] > 0) f.push(rij.d[i] / rij.b[i]);
+    }
+    if (!f.length) return null;
+    var laag = Math.min.apply(null, f), hoog = Math.max.apply(null, f);
+    return { laag: laag, hoog: hoog, afwijkend: (laag < 3 || hoog > 5) };
+  }
+
+  function komma(n) {
+    return (Math.round(n * 10) / 10).toString().replace('.', ',');
+  }
+
+  function gelijk(p, q) {
+    if (!p || !q) return p === q;
+    if (p.length !== q.length) return false;
+    for (var i = 0; i < p.length; i++) if (p[i] !== q[i]) return false;
+    return true;
+  }
+
+  function el(tag, cls, tekst) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  }
+
+  function doseRegel(sleutel, waarde) {
+    var d = el('div', 'bd-dose ' + sleutel + (merk === sleutel ? ' markeer' : (merk !== 'alle' ? ' flauw' : '')));
+    d.appendChild(el('span', 'merk', MERKNAAM[sleutel]));
+    d.appendChild(el('span', 'waarde', toon(waarde)));
+    return d;
+  }
+
+  function kaart(rij) {
+    var k = el('div', 'bd-kaart');
+    k.appendChild(el('div', 'bd-naam', rij.m));
+    if (rij.a) k.appendChild(el('div', 'bd-actie', rij.a));
+
+    if (rij.zelden) {
+      k.appendChild(el('div', 'bd-geen', 'Rarely injected — de tabel geeft voor deze spier geen dosis.'));
+    } else if (!rij.b) {
+      k.appendChild(el('div', 'bd-geen', rij.geenDosis || 'De tabel geeft hier geen dosis.'));
+    } else {
+      var doses = el('div', 'bd-doses');
+      doses.appendChild(doseRegel('botox', rij.b));
+      doses.appendChild(doseRegel('dysport', rij.d));
+      doses.appendChild(doseRegel('xeomin', rij.x));
+      k.appendChild(doses);
+      if (rij.dosisNoot) {
+        var dn = el('div', 'bd-regel');
+        dn.appendChild(el('span', 'ic', '※'));
+        dn.appendChild(el('span', 'nl', rij.dosisNoot));
+        k.appendChild(dn);
+      }
+    }
+
+    if (rij.p) {
+      var pr = el('div', 'bd-regel');
+      pr.appendChild(el('span', 'ic', '📍'));
+      var q = document.createElement('q');
+      q.textContent = rij.p;
+      pr.appendChild(q);
+      k.appendChild(pr);
+    }
+
+    var badges = el('div', 'bd-badges');
+
+    badges.appendChild(el('span', 'bd-badge plaatsen',
+      rij.n ? '💉 ' + rij.n : '💉 aantal plaatsen: niet vermeld'));
+
+    var v = verhouding(rij);
+    if (v) {
+      var tekst = 'Dysport ≈ ' +
+        (Math.abs(v.laag - v.hoog) < 0.05 ? komma(v.laag) + '×' : komma(v.laag) + '–' + komma(v.hoog) + '×') +
+        ' BOTOX';
+      badges.appendChild(el('span', 'bd-badge' + (v.afwijkend ? ' let' : ''), tekst));
+      if (v.afwijkend) {
+        badges.appendChild(el('span', 'bd-badge let',
+          '⚠ wijkt af van de 4× die de rest van de tabel aanhoudt'));
+      }
+    }
+
+    if (rij.b && rij.x && !gelijk(rij.b, rij.x)) {
+      badges.appendChild(el('span', 'bd-badge let',
+        '⚠ Xeomin ' + toon(rij.x) + ' wijkt af van BOTOX ' + toon(rij.b)));
+    }
+
+    k.appendChild(badges);
+
+    if (rij.sic) {
+      var s = el('div', 'bd-regel');
+      s.appendChild(el('span', 'ic', '📝'));
+      var sp = el('span', 'nl');
+      sp.innerHTML = rij.sic;
+      s.appendChild(sp);
+      k.appendChild(s);
+    }
+
+    return k;
+  }
+
+  function normaliseer(s) {
+    return (s || '').toLowerCase()
+      .replace(/[–—]/g, '-')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function teken() {
+    var zoek = normaliseer(document.getElementById('bdZoek').value);
+    var lijst = document.getElementById('bdLijst');
+    lijst.innerHTML = '';
+
+    var treffers = RCP.filter(function (r) {
+      if (groepFilter !== 'alles' && r.g !== groepFilter) return false;
+      if (!zoek) return true;
+      return normaliseer(r.m + ' ' + (r.a || '') + ' ' + (r.p || '')).indexOf(zoek) !== -1;
+    });
+
+    document.getElementById('bdTelling').textContent =
+      treffers.length + (treffers.length === 1 ? ' spier' : ' spieren') +
+      ' van ' + RCP.length + '.';
+
+    if (!treffers.length) {
+      lijst.appendChild(el('div', 'bd-leeg', 'Geen spier gevonden. De tabel gebruikt Engelse namen — probeer bijvoorbeeld „gastrocnemius" of „flexor".'));
+      return;
+    }
+
+    GROEPEN.forEach(function (gr) {
+      var rijen = treffers.filter(function (r) { return r.g === gr.id; });
+      if (!rijen.length) return;
+      var sec = el('div', 'bd-groep');
+      sec.appendChild(el('h2', null, gr.nl));
+      sec.appendChild(el('p', 'bron', 'in de bron: ' + gr.en));
+      rijen.forEach(function (r) { sec.appendChild(kaart(r)); });
+      lijst.appendChild(sec);
+    });
+  }
+
+  function bouwChips() {
+    var wrap = document.getElementById('bdChips');
+    var alles = el('button', 'aan', 'Alles');
+    alles.type = 'button';
+    alles.dataset.g = 'alles';
+    wrap.appendChild(alles);
+    GROEPEN.forEach(function (gr) {
+      var b = el('button', null, gr.nl);
+      b.type = 'button';
+      b.dataset.g = gr.id;
+      wrap.appendChild(b);
+    });
+    wrap.addEventListener('click', function (e) {
+      var b = e.target.closest('button');
+      if (!b) return;
+      groepFilter = b.dataset.g;
+      wrap.querySelectorAll('button').forEach(function (k) {
+        k.classList.toggle('aan', k.dataset.g === groepFilter);
+      });
+      teken();
+    });
+  }
+
+  document.getElementById('bdMerken').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    merk = b.dataset.m;
+    this.querySelectorAll('button').forEach(function (k) {
+      k.classList.toggle('aan', k.dataset.m === merk);
+    });
+    try { localStorage.setItem('krn-rcp-merk', merk); } catch (err) { /* geen opslag: niet erg */ }
+    teken();
+  });
+
+  document.getElementById('bdZoek').addEventListener('input', teken);
+
+  bouwChips();
+  document.querySelectorAll('#bdMerken button').forEach(function (k) {
+    k.classList.toggle('aan', k.dataset.m === merk);
+  });
+  teken();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
