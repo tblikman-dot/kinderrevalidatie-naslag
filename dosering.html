@@ -1336,7 +1336,12 @@
       zwakte: false,
       respons: 'nvt',
       prio: 'midden',
-      limiterend: false
+      limiterend: false,
+      // Aantal injectieplaatsen: overgenomen uit de RCP-tabel als die een
+      // aantal noemt, anders 1. Zegt de tabel alleen "meerdere plaatsen",
+      // dan is 1 de startwaarde en zet je het zelf — er wordt geen aantal
+      // verzonnen.
+      plaatsen: rcpPlaatsenAantal(id) || 1
     });
     tekenSpieren();
     herteken();
@@ -1431,7 +1436,43 @@
       raster.appendChild(keuze('Prioriteit', [
         ['hoog', 'hoog'], ['midden', 'midden'], ['laag', 'laag']
       ], g.prio, function (v) { g.prio = v; herteken(); }));
+
+      var pWrap = document.createElement('div');
+      var pLab = document.createElement('label');
+      pLab.textContent = 'Injectieplaatsen';
+      var pInp = document.createElement('input');
+      pInp.type = 'number';
+      pInp.inputMode = 'numeric';
+      pInp.min = '1';
+      pInp.max = '12';
+      pInp.step = '1';
+      pInp.value = String(g.plaatsen);
+      pInp.style.cssText = 'width:100%;box-sizing:border-box;font-family:system-ui,sans-serif;' +
+        'font-size:16px;padding:7px 8px;border:1.5px solid var(--lijn);border-radius:8px;' +
+        'background:var(--papier);color:var(--inkt);';
+      pInp.setAttribute('aria-label', s.naam + ' — aantal injectieplaatsen');
+      pInp.addEventListener('input', function () {
+        var v = parseInt(pInp.value, 10);
+        g.plaatsen = (isFinite(v) && v >= 1) ? Math.min(v, 12) : 1;
+        herteken();
+      });
+      pWrap.appendChild(pLab);
+      pWrap.appendChild(pInp);
+      raster.appendChild(pWrap);
       kaart.appendChild(raster);
+
+      var pHint = document.createElement('div');
+      pHint.style.cssText = 'font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:6px;';
+      var rcpN = rcpPlaatsenAantal(g.id);
+      if (rcpN) {
+        pHint.textContent = 'De RCP-tabel noemt ' + rcpN +
+          (rcpN === 1 ? ' plaats' : ' plaatsen') + ' voor deze spier.';
+      } else if (rcpZegtMeerdere(g.id)) {
+        pHint.textContent = 'De RCP-tabel zegt „meerdere plaatsen" zonder aantal. Zet zelf hoeveel je er maakt.';
+      } else {
+        pHint.textContent = 'De RCP-tabel noemt hier geen aantal plaatsen.';
+      }
+      kaart.appendChild(pHint);
 
       var lab = document.createElement('label');
       lab.className = 'do-check';
@@ -2018,15 +2059,22 @@
     if (pt && pt.boven.length) {
       elUit.appendChild(vlag('oranje',
         'Boven je grens van ' + ee(pt.grens) + ' E per injectieplaats.',
-        pt.boven.join('; ') + '. Verdeel over meer plaatsen of geef die spier minder. ' +
-        'Gerekend met het aantal plaatsen dat de RCP-tabel noemt; wijk je daarvan af, ' +
-        'dan klopt deze deling niet.'));
+        pt.boven.join('; ') + '. Zet het aantal plaatsen hoger of geef die spier minder.'));
     }
-    if (pt && pt.onbekend.length && pt.boven.length === 0) {
+
+    var tekort = regels.filter(function (r) {
+      var v = verdelingVan(r);
+      return v && v.tekort;
+    });
+    if (tekort.length) {
       elUit.appendChild(vlag('blauw',
-        'Niet elke spier is te toetsen op de dosis per plaats.',
-        'Voor ' + pt.onbekend.join(', ') + ' noemt de RCP-tabel geen aantal injectieplaatsen, ' +
-        'dus valt er niets te delen. Die grens van ' + ee(pt.grens) + ' E per plaats bewaak je daar zelf.'));
+        'Niet elke injectieplaats krijgt iets.',
+        tekort.map(function (r) {
+          var v = verdelingVan(r);
+          return r.naam + ' (' + v.delen.length + ' van de ' + r.g.plaatsen + ')';
+        }).join(', ') + '. Bij een stap van ' + ee(afronding) + ' E blijft er voor de laatste ' +
+        'plaatsen niets over. Kies een kleinere stap, minder plaatsen, of accepteer dat je er ' +
+        'minder maakt.'));
     }
 
     var limi = regels.filter(function (r) { return r.g.limiterend; });
@@ -2095,6 +2143,15 @@
       p.innerHTML = '<b>Optrekken:</b> ' + ee(c.totaalGeeft) + ' E ' + PREPARATEN[prep].merk +
         ' is minimaal ' + f.tekst + '. Afgerond op ' + String(afronding).replace('.', ',') + ' E per spier.';
       b.appendChild(p);
+
+      var sp = spuitjes(regels);
+      if (sp.totaal) {
+        var p2 = el('p');
+        p2.innerHTML = '<b>Klaarmaken:</b> ' + sp.totaal + ' ' +
+          (sp.totaal === 1 ? 'spuitje' : 'spuitjes') + ' — ' + sp.tekst +
+          '. Elk depot is één spuitje; bij beide kanten telt de verdeling twee keer.';
+        b.appendChild(p2);
+      }
       elUit.appendChild(b);
     }
   }
@@ -2163,45 +2220,110 @@
   // "meerdere", dan blijft het bij "meerdere". Zelf een aantal verzinnen doet
   // deze functie niet.
   function plaatsenTekst(r) {
-    var rijen = rcpRijen(r.g.id).filter(function (x) { return x.n; });
-    if (!rijen.length) return '';
-    var n = rijen[0].n;
-    var m = n.match(/^(\d+)\s/);
-    if (m && r.krijgtPerKant) {
-      var aantal = Number(m[1]);
-      var per = Math.round(r.krijgtPerKant / aantal * 10) / 10;
-      var tekst = 'RCP: over ' + aantal + ' plaatsen — ongeveer ' + ee(per) + ' E per plaats';
-      var grens = getal(plafondVan(prep).plaats);
-      if (grens !== null && per > grens) {
-        tekst += ' — ⚠ boven je grens van ' + ee(grens) + ' E per plaats';
-      }
-      return tekst;
+    var v = verdelingVan(r);
+    if (!v) return '';
+    var aantal = r.g.plaatsen;
+    var tekst = aantal === 1
+      ? '1 injectieplaats: ' + ee(v.delen[0]) + ' E'
+      : 'verdeel over ' + aantal + ' plaatsen: ' + groepeer(v.delen);
+    if (v.tekort) {
+      tekst += ' — past maar op ' + v.delen.length + ' van de ' + aantal +
+        ' plaatsen bij een stap van ' + ee(afronding) + ' E';
     }
-    if (m) return 'RCP: over ' + m[1] + ' plaatsen';
-    return 'RCP: ' + n.split(' — ')[0];
+    var grens = getal(plafondVan(prep).plaats);
+    if (grens !== null && Math.max.apply(null, v.delen) > grens) {
+      tekst += ' — ⚠ boven je grens van ' + ee(grens) + ' E per plaats';
+    }
+    return tekst;
   }
 
-  // Per injectieplaats toetsen kan alleen waar de RCP-tabel een AANTAL noemt.
+  // Het aantal injectieplaatsen dat de RCP-tabel noemt, als getal. Staat er
+  // "meerdere plaatsen" zonder aantal, of niets, dan null — dan vult de
+  // gebruiker het zelf in en verzint de pagina niets.
+  function rcpPlaatsenAantal(id) {
+    var rijen = rcpRijen(id).filter(function (x) { return x.n; });
+    if (!rijen.length) return null;
+    var m = rijen[0].n.match(/^(\d+)\s/);
+    return m ? Number(m[1]) : null;
+  }
+  function rcpZegtMeerdere(id) {
+    var rijen = rcpRijen(id).filter(function (x) { return x.n; });
+    return rijen.length > 0 && !/^\d+\s/.test(rijen[0].n);
+  }
+
+  // De dosis per kant verdelen over de injectieplaatsen, in hele stappen van
+  // de gekozen afronding. 15 E over 2 plaatsen bij stap 5 wordt 10 + 5, niet
+  // tweemaal 7,5 — dat laatste is geen spuitje dat je kunt klaarmaken.
+  // De som klopt altijd precies met de dosis.
+  function verdeelOverPlaatsen(dosis, aantal, stap) {
+    if (!dosis || !aantal || aantal < 1 || !stap) return null;
+    var eenheden = Math.round(dosis / stap);
+    if (eenheden <= 0) return null;
+    if (eenheden < aantal) {
+      var kort = [];
+      for (var j = 0; j < eenheden; j++) kort.push(stap);
+      return { delen: kort, tekort: aantal - eenheden };
+    }
+    var basis = Math.floor(eenheden / aantal), rest = eenheden % aantal, delen = [];
+    for (var i = 0; i < aantal; i++) delen.push((basis + (i < rest ? 1 : 0)) * stap);
+    return { delen: delen, tekort: 0 };
+  }
+
+  // [10,10,5] -> "2 × 10 E + 1 × 5 E"; [10,10] -> "2 × 10 E"
+  function groepeer(delen) {
+    var telling = [], zien = {};
+    delen.forEach(function (d) {
+      if (zien[d] === undefined) { zien[d] = telling.length; telling.push({ w: d, n: 0 }); }
+      telling[zien[d]].n++;
+    });
+    telling.sort(function (a, b) { return b.w - a.w; });
+    return telling.map(function (t) { return t.n + ' × ' + ee(t.w) + ' E'; }).join(' + ');
+  }
+
+  // Per injectieplaats toetsen kan alleen waar het aantal plaatsen bekend is.
   // Staat er "meerdere plaatsen" of niets, dan valt er niets te delen; die
   // spieren worden apart benoemd in plaats van stilzwijgend overgeslagen.
   function plaatsToets(regels) {
     var grens = getal(plafondVan(prep).plaats);
     if (grens === null) return null;
-    var boven = [], onbekend = [];
+    var boven = [];
     regels.forEach(function (r) {
-      if (!r.krijgtPerKant) return;
-      var rijen = rcpRijen(r.g.id).filter(function (x) { return x.n; });
-      var m = rijen.length ? rijen[0].n.match(/^(\d+)\s/) : null;
-      if (m) {
-        var per = r.krijgtPerKant / Number(m[1]);
-        if (per > grens) {
-          boven.push(r.naam + ' ' + ee(Math.round(per * 10) / 10) + ' E over ' + m[1] + ' plaatsen');
-        }
-      } else {
-        onbekend.push(r.naam);
+      var v = verdelingVan(r);
+      if (!v) return;
+      var grootste = Math.max.apply(null, v.delen);
+      if (grootste > grens) {
+        boven.push(r.naam + ': grootste depot ' + ee(grootste) + ' E over ' +
+          r.g.plaatsen + (r.g.plaatsen === 1 ? ' plaats' : ' plaatsen'));
       }
     });
-    return { grens: grens, boven: boven, onbekend: onbekend };
+    return { grens: grens, boven: boven };
+  }
+
+  function verdelingVan(r) {
+    if (!r.krijgtPerKant) return null;
+    return verdeelOverPlaatsen(r.krijgtPerKant, r.g.plaatsen, afronding);
+  }
+
+  // Wat de assistent moet klaarmaken: elk depot is een spuitje, en bij
+  // 'beide kanten' geldt de verdeling twee keer.
+  function spuitjes(regels) {
+    var perMaat = {}, totaal = 0, zonder = [];
+    regels.forEach(function (r) {
+      var v = verdelingVan(r);
+      if (!v) { if (r.krijgt) zonder.push(r.naam); return; }
+      for (var k = 0; k < r.kanten; k++) {
+        v.delen.forEach(function (d) {
+          perMaat[d] = (perMaat[d] || 0) + 1;
+          totaal++;
+        });
+      }
+    });
+    var maten = Object.keys(perMaat).map(Number).sort(function (a, b) { return b - a; });
+    return {
+      totaal: totaal,
+      zonder: zonder,
+      tekst: maten.map(function (m) { return perMaat[m] + ' × ' + ee(m) + ' E'; }).join(' + ')
+    };
   }
 
   function maatNaam(k)   { var f = MATEN.filter(function (m) { return m[0] === k; });   return f.length ? f[0][1].toLowerCase() : k; }
