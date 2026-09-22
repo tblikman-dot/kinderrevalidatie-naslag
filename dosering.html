@@ -743,6 +743,42 @@
     <div class="do-uit" id="doUit"></div>
   </section>
 
+  <!-- ================= voor het dossier ================= -->
+  <section class="do-sectie">
+    <h2>7 · Voor het dossier</h2>
+    <p class="do-sectie-uitleg">
+      Het schema als kale tekst, links en rechts apart, om in het dossier te plakken.
+      Bewust zonder opmaak: geen tabs, geen inspringing, geen tekens buiten het gewone
+      toetsenbord. Daardoor blijft het staan zoals het hier staat, ook in een
+      teksteditor die opmaak overneemt of juist weggooit.
+    </p>
+    <div class="do-vlag rood">
+      <strong>Lees het na voordat je het plakt.</strong>
+      Dit is een uitdraai van wat jij hierboven hebt ingevuld, geen verslag van wat er
+      gebeurd is. Wijk je tijdens de behandeling af, pas de tekst dan aan — hij is
+      bewerkbaar. En: vul hier geen naam, geboortedatum of patiëntnummer in; dat hoort
+      in het dossier zelf, niet op deze pagina.
+    </div>
+    <div class="do-paneel" style="margin-top:12px;">
+      <div class="do-knoprij" style="margin-top:0;">
+        <button type="button" id="doKopieer">Kopieer naar klembord</button>
+        <button type="button" id="doSelecteer">Selecteer alles</button>
+        <button type="button" id="doVernieuw" hidden>Bijwerken — jouw aanpassingen vervallen</button>
+      </div>
+      <span id="doKopieerHint" role="status" aria-live="polite"
+            style="display:block;font-family:system-ui,sans-serif;font-size:13px;color:var(--accent);font-weight:600;line-height:1.5;margin:7px 0 9px;min-height:1.2em;"></span>
+      <label for="doEpic" style="display:block;font-family:system-ui,sans-serif;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:5px;">
+        Tekst voor het dossier — bewerkbaar, wordt niet bewaard
+      </label>
+      <textarea id="doEpic" rows="14" wrap="soft"
+        spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off"
+        translate="no" class="notranslate" inputmode="text"
+        style="width:100%;box-sizing:border-box;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+               font-size:16px;line-height:1.5;padding:11px;border:1.5px solid var(--lijn);border-radius:9px;
+               background:var(--papier);color:var(--inkt);resize:vertical;white-space:pre-wrap;overflow-wrap:break-word;"></textarea>
+    </div>
+  </section>
+
   <!-- ================= bijwerkingen & praktijk ================= -->
   <section class="do-sectie">
     <h2>Bijwerkingen, herhaling en anesthesie</h2>
@@ -1973,6 +2009,7 @@
     if (!regels.length) {
       elUit.appendChild(el('div', 'do-leeg',
         'Kies hierboven doelspieren. Zodra er één staat en je tabel gevuld is, verschijnt hier het schema.'));
+      vulDossier(regels, c);
       return;
     }
 
@@ -2154,6 +2191,274 @@
       }
       elUit.appendChild(b);
     }
+
+    vulDossier(regels, c);
+  }
+
+  // ---------------- tekst voor het dossier ----------------
+  //
+  // Waarom zo kaal: deze tekst wordt geplakt in een dossier waarvan de
+  // teksteditor opmaak kan overnemen of juist weggooien. Alles wat daar
+  // misgaat is hier vooraf weggehaald:
+  //
+  // - Alleen ASCII. Em-dash, maalteken, gedachtestreepje, aanhalingstekens,
+  //   het graadteken, het registered-teken en de harde spatie worden vervangen
+  //   of verwijderd. Anders krijg je vraagtekens of ruitjes in het dossier.
+  // - Geen tabs: die springen in sommige editors naar het volgende veld.
+  // - Geen regel die begint met een streepje, sterretje, hekje of "1.",
+  //   want dat maakt een tekstverwerker stilzwijgend om tot een opsomming
+  //   met eigen inspringing.
+  // - Geen inspringing met spaties, om dezelfde reden.
+  // - Geen dubbele lege regels; sommige editors plakken die dubbel.
+  //
+  // De tekst komt in een textarea te staan. Kopieren uit een textarea levert
+  // altijd text/plain op - uit een div zou de HTML meekomen.
+
+  var ASCII_VERVANG = [
+    [/[‐‑‒–—―−]/g, '-'],
+    [/[×✕✖]/g, 'x'],
+    [/[‘’‚‛′]/g, "'"],
+    [/[“”„‟″]/g, '"'],
+    [/[→⇒]/g, '->'],
+    [/≤/g, '<='], [/≥/g, '>='],
+    [/≈/g, 'ca. '],   // let op: de tilde blijft staan, die is gewoon ASCII
+    [/°/g, ' graden'],
+    [/[®™©]/g, ''],
+    [/[     ]/g, ' '],
+    [/[​‌‍﻿]/g, ''],
+    [/[•·‧]/g, '-'],
+    [/…/g, '...'],
+    [/½/g, '1/2'],
+    [/\t/g, ' ']
+  ];
+
+  function naarAscii(t) {
+    var r = String(t == null ? '' : t);
+    ASCII_VERVANG.forEach(function (p) { r = r.replace(p[0], p[1]); });
+    // Accenten losweken en weggooien: e-accent wordt e.
+    if (String.prototype.normalize) {
+      r = r.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+    // Wat dan nog overblijft buiten het gewone toetsenbord gaat eruit.
+    r = r.replace(/[^\x20-\x7E\n]/g, '');
+    // Opruimen. Geen schoonheid maar noodzaak zodra deze functie ook over
+    // zelf getypte tekst loopt: spaties aan het regeleind, drie lege regels
+    // achter elkaar en lege regels aan begin of eind plakken slecht.
+    r = r.replace(/[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n').replace(/^\n+|\n+$/g, '');
+    // Een regel die begint met een opsommingsteken, een nummer of een letter
+    // met punt wordt door een tekstverwerker stilzwijgend een lijst met eigen
+    // inspringing. Er komt een punt voor zodat dat niet gebeurt; de tekst
+    // blijft leesbaar.
+    r = r.replace(/^(([-*+#>|]|\d+[.)]|[a-zA-Z][.)])\s)/gm, '. $1');
+    return r;
+  }
+
+  // Getallen zonder komma waar het kan: 7,5 blijft 7,5 maar 20,0 wordt 20.
+  function eeTxt(n) {
+    if (n === null || n === undefined) return '-';
+    var v = Math.round(n * 10) / 10;
+    return (v % 1 === 0 ? String(v) : String(v).replace('.', ',')) + ' E';
+  }
+
+  function verdelingTekst(v) {
+    if (!v || !v.delen.length) return '';
+    var eerste = v.delen[0];
+    var gelijk = v.delen.every(function (d) { return d === eerste; });
+    if (v.delen.length === 1) return eeTxt(eerste);
+    if (gelijk) return v.delen.length + ' x ' + eeTxt(eerste);
+    return v.delen.map(function (d) { return eeTxt(d); }).join(' + ');
+  }
+
+  function kantHeeft(r, kant) {
+    return r.g.kant === kant || r.g.kant === 'LR';
+  }
+
+  // Elke dosisregel draagt zelf de kant. Redundant met de kop, en dat is
+  // precies de bedoeling: raakt de regelopmaak bij het plakken kwijt, of
+  // wordt er een losse regel geciteerd, dan staat er nog steeds bij welke
+  // kant het is. Verkeerde kant is de klassieke fout bij deze ingreep.
+  function dossierRegel(r, kant) {
+    var v = verdelingVan(r);
+    var regel = kant + ' ' + naarAscii(r.naam) + ': ' + eeTxt(r.krijgtPerKant);
+    if (!v) return regel + ' - verdeling niet te bepalen';
+    if (v.delen.length === 1 && !v.tekort) return regel + ' in 1 injectieplaats';
+    regel += ', verdeeld over ' + v.delen.length + ' injectieplaats' +
+      (v.delen.length === 1 ? '' : 'en') + ' (' + verdelingTekst(v) + ')';
+    if (v.tekort) {
+      regel += '; ' + r.g.plaatsen + ' plaatsen ingesteld, ' + v.tekort +
+        ' daarvan blijven leeg bij een stap van ' + eeTxt(afronding);
+    }
+    return regel;
+  }
+
+  function dossierTekst(regels, c) {
+    var L = [];
+    var P = PREPARATEN[prep];
+
+    L.push('BOTULINETOXINE A - PLAN VOOR DEZE SESSIE');
+    L.push('');
+    L.push('Preparaat: ' + P.merk + ' (' + P.naam + ')');
+    L.push('E = eenheden ' + P.merk + '; niet uitwisselbaar met de andere preparaten.');
+
+    if (!regels.length) {
+      L.push('');
+      L.push('Nog geen doelspieren gekozen.');
+      return naarAscii(L.join('\n'));
+    }
+
+    // Zelfde volgorde als op het scherm, zodat naast elkaar leggen makkelijk is.
+    var geordend = regels.slice().sort(vergelijkVolgorde);
+    var meedoet = geordend.filter(function (r) { return r.krijgt && r.krijgtPerKant; });
+
+    if (c.totaalGeeft > 0) {
+      var tot = 'Totaal: ' + eeTxt(c.totaalGeeft);
+      if (gewicht !== null && gewicht > 0) {
+        tot += ' bij ' + String(gewicht).replace('.', ',') + ' kg = ' +
+          eeTxt(Math.round(c.totaalGeeft / gewicht * 10) / 10).replace(' E', ' E/kg');
+      }
+      L.push(tot);
+    }
+
+    var sp = spuitjes(meedoet);
+    if (sp.totaal) {
+      L.push('Injectieplaatsen: ' + sp.totaal +
+        ' (links ' + sp.links + ', rechts ' + sp.rechts + ')');
+    }
+
+    L.push('');
+    L.push('NOG IN TE VULLEN');
+    L.push('Datum en tijd:');
+    L.push('Verdunning:');
+    L.push('Flacons en batchnummers:');
+    L.push('Uitgevoerd conform dit plan, afwijkingen:');
+
+    [['L', 'LINKS'], ['R', 'RECHTS']].forEach(function (k) {
+      var rijen = meedoet.filter(function (r) { return kantHeeft(r, k[0]); });
+      if (!rijen.length) return;
+      var totaal = 0;
+      rijen.forEach(function (r) { totaal += r.krijgtPerKant; });
+      L.push('');
+      L.push(k[1] + ' - totaal ' + eeTxt(totaal));
+      rijen.forEach(function (r) { L.push(dossierRegel(r, k[1])); });
+    });
+
+    // Alles wat op het scherm een vlag geeft hoort ook hier. Een schema dat
+    // schoon oogt terwijl de app waarschuwt is het gevaarlijkste van alles.
+    var lijsten = [
+      ['Niet behandeld, er was binnen de gestelde grenzen geen ruimte voor:',
+       geordend.filter(function (r) { return r.gedropt; })],
+      ['Geen dosis bepaald, de tabelwaarde ontbreekt:',
+       geordend.filter(function (r) { return r.gewenst === null; })],
+      ['Onder de eigen ondergrens gegeven:',
+       geordend.filter(function (r) { return r.onderVloer && r.krijgt; })],
+      ['Op nul uitgekomen bij het verdelen:',
+       geordend.filter(function (r) { return r.gewenst !== null && !r.gedropt && !r.krijgt; })],
+      ['Teruggebracht om binnen het budget te blijven:',
+       geordend.filter(function (r) { return r.geknepen && r.krijgt; })]
+    ];
+    var letop = [];
+    lijsten.forEach(function (paar) {
+      if (!paar[1].length) return;
+      letop.push(paar[0]);
+      paar[1].forEach(function (r) {
+        var t = naarAscii(r.naam) + ' (' + kantWoord(r.g.kant) + ')';
+        if (paar[0].indexOf('Teruggebracht') === 0) {
+          t += ': ' + eeTxt(r.krijgtPerKant) + ' per kant in plaats van ' + eeTxt(r.gewenstPerKant);
+        }
+        letop.push(t);
+      });
+    });
+    if (c.plafond !== null && c.totaalGeeft > c.plafond) {
+      letop.push('Het schema komt op ' + eeTxt(c.totaalGeeft) +
+        ' en dat is boven het ingestelde plafond van ' + eeTxt(c.plafond) + '.');
+    }
+    var pt = plaatsToets(meedoet);
+    if (pt && pt.boven.length) {
+      letop.push('Boven de ingestelde ' + eeTxt(pt.grens) + ' per injectieplaats: ' +
+        naarAscii(pt.boven.join('; ')) + '.');
+    }
+    var dub = dubbeleKanten(meedoet);
+    if (dub.length) {
+      letop.push('Staat twee keer in het schema voor dezelfde kant: ' + naarAscii(dub.join(', ')) + '.');
+    }
+    if (letop.length) {
+      L.push('');
+      L.push('LET OP');
+      letop.forEach(function (t) { L.push(t); });
+    }
+
+    if (sp.totaal) {
+      L.push('');
+      L.push('KLAARMAKEN');
+      L.push(sp.totaal + ' spuitjes: ' + naarAscii(sp.tekst));
+      if (c.totaalGeeft > 0) {
+        L.push('Optrekken uit: ' + naarAscii(flaconAdvies(c.totaalGeeft).tekst));
+      }
+    }
+
+    // Alleen grenzen die ook echt gewerkt hebben. Een grens per kilogram
+    // zonder gewicht is niet toegepast, en dat mag niet in het dossier staan
+    // alsof hij dat wel was.
+    var pl = plafondVan(prep);
+    var gr = [];
+    var maxKg = getal(pl.kg), maxAbs = getal(pl.abs), maxPl = getal(pl.plaats);
+    if (maxKg !== null) {
+      gr.push(gewicht !== null && gewicht > 0
+        ? 'Maximaal ' + eeTxt(maxKg).replace(' E', ' E/kg') + ' bij ' +
+          String(gewicht).replace('.', ',') + ' kg = ' + eeTxt(maxKg * gewicht) + ' deze sessie.'
+        : 'Ingesteld op ' + eeTxt(maxKg).replace(' E', ' E/kg') +
+          ', maar niet toegepast: het gewicht was niet ingevuld.');
+    }
+    if (maxAbs !== null) gr.push('Maximaal ' + eeTxt(maxAbs) + ' per sessie.');
+    if (maxPl !== null) {
+      var hoogste = 0;
+      meedoet.forEach(function (r) {
+        var v = verdelingVan(r);
+        if (v) v.delen.forEach(function (d) { if (d > hoogste) hoogste = d; });
+      });
+      gr.push('Maximaal ' + eeTxt(maxPl) + ' per injectieplaats; hoogste depot hier ' + eeTxt(hoogste) + '.');
+    }
+    gr.push('Doses afgerond op veelvouden van ' + eeTxt(afronding) + '.');
+    L.push('');
+    L.push('GEHANTEERDE GRENZEN');
+    gr.forEach(function (t) { L.push(t); });
+
+    return naarAscii(L.join('\n'));
+  }
+
+  function kantWoord(k) {
+    return k === 'LR' ? 'beide' : (k === 'L' ? 'links' : 'rechts');
+  }
+
+  // De tekst wordt bij elke herberekening opnieuw opgebouwd. Heeft de
+  // gebruiker er zelf in getypt, dan mag dat NIET stilzwijgend verdwijnen:
+  // de pagina nodigt uit om af te wijken en aan te passen, en een toetsaanslag
+  // in het gewichtsveld wiste dat zonder waarschuwing en zonder ongedaan
+  // maken. Nu blijft het staan en verschijnt er een knop om bij te werken.
+  var dossierAuto = '';
+  var dossierVuil = false;
+
+  function vulDossier(regels, c) {
+    var vak = document.getElementById('doEpic');
+    if (!vak) return;
+    var vers = dossierTekst(regels, c);
+    if (dossierVuil) {
+      dossierAuto = vers;          // bewaren voor de bijwerkknop
+      toonVerversen(true);
+      return;                      // niet overschrijven
+    }
+    var top = vak.scrollTop;
+    vak.value = vers;
+    vak.scrollTop = top;
+    dossierAuto = vers;
+    toonVerversen(false);
+    meldKopie('');
+  }
+
+  function toonVerversen(aan) {
+    var k = document.getElementById('doVernieuw');
+    if (!k) return;
+    if (aan) k.removeAttribute('hidden'); else k.setAttribute('hidden', '');
   }
 
   function cel(kop, waarde, sub, klasse) {
@@ -2307,24 +2612,26 @@
   // Wat de assistent moet klaarmaken: elk depot is een spuitje, en bij
   // 'beide kanten' geldt de verdeling twee keer.
   function spuitjes(regels) {
-    var perMaat = {}, totaal = 0, zonder = [];
+    var perMaat = {}, totaal = 0, links = 0, rechts = 0;
     regels.forEach(function (r) {
       var v = verdelingVan(r);
-      if (!v) { if (r.krijgt) zonder.push(r.naam); return; }
-      for (var k = 0; k < r.kanten; k++) {
+      if (!v) return;
+      var kanten = r.g.kant === 'LR' ? ['L', 'R'] : [r.g.kant];
+      kanten.forEach(function (kant) {
         v.delen.forEach(function (d) {
           perMaat[d] = (perMaat[d] || 0) + 1;
           totaal++;
+          if (kant === 'L') links++; else rechts++;
         });
-      }
+      });
     });
     var maten = Object.keys(perMaat).map(Number).sort(function (a, b) { return b - a; });
     return {
-      totaal: totaal,
-      zonder: zonder,
-      tekst: maten.map(function (m) { return perMaat[m] + ' × ' + ee(m) + ' E'; }).join(' + ')
+      totaal: totaal, links: links, rechts: rechts,
+      tekst: maten.map(function (m) { return perMaat[m] + ' x ' + ee(m) + ' E'; }).join(' + ')
     };
   }
+
 
   function maatNaam(k)   { var f = MATEN.filter(function (m) { return m[0] === k; });   return f.length ? f[0][1].toLowerCase() : k; }
   function niveauNaam(k) { var f = NIVEAUS.filter(function (n) { return n[0] === k; }); return f.length ? f[0][1].toLowerCase() : k; }
@@ -2387,6 +2694,92 @@
 
   elZoek.addEventListener('input', bouwSpierkeuze);
 
+  var elEpic = document.getElementById('doEpic');
+  var elKopHint = document.getElementById('doKopieerHint');
+
+  function meldKopie(tekst) {
+    // Twee keer dezelfde tekst wordt door een schermlezer niet opnieuw
+    // voorgelezen; daarom eerst legen.
+    elKopHint.textContent = '';
+    if (tekst) window.setTimeout(function () { elKopHint.textContent = tekst; }, 20);
+  }
+
+  // Zelf getypte tekst bijhouden, zodat vulDossier hem niet overschrijft.
+  elEpic.addEventListener('input', function () {
+    // Zodra de tekst afwijkt van wat de pagina zou genereren, is er een weg
+    // terug nodig - ook als het schema zelf niet veranderd is. Typ je het
+    // verschil weer weg, dan verdwijnt de knop vanzelf.
+    dossierVuil = (elEpic.value !== dossierAuto);
+    toonVerversen(dossierVuil);
+  });
+
+  document.getElementById('doVernieuw').addEventListener('click', function () {
+    elEpic.value = dossierAuto;
+    dossierVuil = false;
+    toonVerversen(false);
+    meldKopie('Tekst bijgewerkt naar het huidige schema.');
+  });
+
+  document.getElementById('doSelecteer').addEventListener('click', function () {
+    elEpic.focus();
+    elEpic.setSelectionRange(0, elEpic.value.length);
+    meldKopie('Alles geselecteerd. Houd je vinger op de tekst en kies Kopieren.');
+  });
+
+  document.getElementById('doKopieer').addEventListener('click', function () {
+    // Wat gekopieerd wordt is wat er STAAT, inclusief eigen aanpassingen.
+    // Daarom hier opnieuw door de tekenfilter: getypte of geplakte tekst
+    // brengt anders alsnog aanhalingstekens, gedachtestreepjes en harde
+    // spaties het dossier in - precies wat deze pagina wil voorkomen.
+    var tekst = naarAscii(elEpic.value);
+    if (tekst !== elEpic.value) {
+      elEpic.value = tekst;
+      dossierVuil = (tekst !== dossierAuto);
+    }
+    if (!tekst.trim() || tekst.indexOf('Nog geen doelspieren') !== -1) {
+      meldKopie('Er staat nog geen schema in het vak.');
+      return;
+    }
+
+    function gelukt() {
+      meldKopie('Gekopieerd als platte tekst, ' + tekst.split('\n').length +
+        ' regels. Plak in het dossier: lang indrukken en Plakken, of Ctrl+V.');
+    }
+
+    // Afgeschaft, maar nog overal werkend, en op een telefoon vaak de enige
+    // die het doet. Daarom als tussenstap en niet als eerste keuze.
+    function viaSelectie() {
+      var top = elEpic.scrollTop, a = elEpic.selectionStart, z = elEpic.selectionEnd;
+      var ok = false;
+      try {
+        elEpic.focus({ preventScroll: true });
+        elEpic.setSelectionRange(0, elEpic.value.length);
+        ok = document.execCommand('copy');
+      } catch (e) { ok = false; }
+      try {
+        elEpic.setSelectionRange(a, z);
+        elEpic.scrollTop = top;
+        elEpic.blur();
+      } catch (e) { /* laat maar */ }
+      return ok;
+    }
+
+    function mislukt() {
+      if (viaSelectie()) { gelukt(); return; }
+      elEpic.focus();
+      elEpic.setSelectionRange(0, elEpic.value.length);
+      meldKopie('Kopieren via de knop lukte nu niet. De tekst staat geselecteerd: ' +
+        'houd je vinger erop en kies Kopieren, of probeer de knop opnieuw.');
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tekst).then(gelukt, mislukt);
+    } else {
+      mislukt();
+    }
+  });
+
+
   document.getElementById('doWisTabel').addEventListener('click', function () {
     tabellen[prep] = legeTabel();
     schrijf(SLEUTEL_TABEL, JSON.stringify(tabellen));
@@ -2396,6 +2789,7 @@
 
   document.getElementById('doWisSessie').addEventListener('click', function () {
     gekozen = [];
+    dossierVuil = false;
     elGewicht.value = '';
     elLeeftijd.value = '';
     elErnstig.checked = false;
