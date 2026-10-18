@@ -7,7 +7,7 @@ toen de werkomgeving opnieuw werd opgezet; daarom staan ze nu hier.
 
 ```
 python3 -m http.server 9052          # in de map met de html-bestanden
-cd tests && ./alles.sh test_rook.py test_dossier.py
+cd tests && ./alles.sh test_rook.py test_dossier.py test_emla.py
 ```
 
 `alles.sh` kijkt niet alleen naar regels die met FAIL beginnen, maar ook naar
@@ -23,6 +23,10 @@ onrechte als groen gelezen.
   geen inspringing, geen regel die een tekstverwerker tot opsomming maakt,
   geen tekens die in een dossiereditor een eigen betekenis hebben, kloppende
   subtotalen, en het klembord dat gelijk is aan het tekstvak.
+- `test_emla.py` — de smeerinstructie: de acht regio's, de zinnen letterlijk
+  zoals op de poster, links/rechts/beide, de tijd die 60 minuten terugrekent,
+  en het briefje dat ook in het zwaarste geval op één A4 past. Plus: er wordt
+  niets bewaard, dus na herladen staat het formulier leeg.
 
 `hulp.py` bevat de gedeelde handgrepen (een spierkaart opzoeken, splitsen,
 aantal plaatsen zetten). Spierkaarten worden hertekend, dus zoek ze elke

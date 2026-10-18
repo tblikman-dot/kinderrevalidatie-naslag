@@ -27,7 +27,7 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
 - **`CACHE_VERSIE` in `sw.js` omhoog.** Altijd. Anders blijven oude bestanden op de telefoon
   hangen en ziet de gebruiker zijn eigen wijziging niet. Dit is de fout die het vaakst gemaakt is.
 - **Tests draaien.** `python3 -m http.server 9052` in de map, dan
-  `cd tests && ./alles.sh test_rook.py test_dossier.py`. `alles.sh` kijkt ook naar exitcode,
+  `cd tests && ./alles.sh test_rook.py test_dossier.py test_emla.py`. `alles.sh` kijkt ook naar exitcode,
   tracebacks en console-errors — niet alleen naar regels die met FAIL beginnen. Een suite die
   halverwege crasht gaf eerder "0 fails" en werd ten onrechte als groen gelezen.
 - **Een test die faalt na een bedoelde wijziging**: eerst nagaan of de code klopt, dan de
@@ -51,7 +51,9 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
   `rcp-spieren.html` lezen eruit. Niet overtypen in een tweede pagina.
 - **`localStorage` alleen voor instellingen.** Wat per patiënt wordt ingevuld (gewicht, spieren,
   doses) wordt met opzet niet bewaard en verdwijnt bij het sluiten.
-- `multiplier.js`, `fotos.js`: eveneens gedeelde data, zelfde regel.
+- `multiplier.js`, `fotos.js`, `emla-data.js`: eveneens gedeelde data, zelfde regel.
+- `epictekst.js` bevat `naarAscii()`: de opschoning voor tekst die in een dossiereditor geplakt
+  wordt. `dosering.html` en `emla.html` gebruiken hem allebei; niet opnieuw schrijven.
 
 ## Tekst voor het dossier (Epic)
 
