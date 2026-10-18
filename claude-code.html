@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Claude Code — commando's</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .cc-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .cc-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .cc-terug:hover { text-decoration: underline; }
+
+  .cc-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .cc-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 16px;
+  }
+
+  .cc-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.65;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 14px;
+  }
+  .cc-vlag strong { display: block; margin-bottom: 3px; }
+  .cc-vlag.oranje { background: #FBF3DC; color: #6B4E06; }
+  .cc-vlag.blauw  { background: var(--accent-zacht); color: #0f2733; }
+
+  .cc-sectie { margin-top: 28px; }
+  .cc-sectie h2 { font-size: 1.15rem; margin: 0 0 4px; }
+  .cc-sectie .uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 13px;
+  }
+
+  .cc-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 13px;
+    padding: 13px 14px;
+    margin-bottom: 9px;
+    font-family: system-ui, sans-serif;
+  }
+  .cc-kaart .cmd {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 14px; font-weight: 700;
+    background: var(--accent-zacht); color: var(--accent);
+    border-radius: 7px; padding: 3px 9px;
+    margin-bottom: 7px;
+  }
+  .cc-kaart .wat {
+    font-size: 13.5px; line-height: 1.55; color: var(--inkt);
+  }
+  .cc-kaart .hier {
+    font-size: 12.5px; line-height: 1.6; color: var(--muted);
+    margin-top: 6px;
+  }
+  .cc-kaart .hier b { color: var(--inkt); }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.92em;
+    background: var(--accent-zacht); color: var(--accent);
+    border-radius: 5px; padding: 1px 5px;
+  }
+
+  .cc-lijst {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; line-height: 1.7; color: var(--inkt);
+    margin: 0; padding-left: 19px;
+  }
+  .cc-lijst li { margin-bottom: 7px; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Claude Code</div>
+</header>
+
+<div class="cc-wrap">
+  <a class="cc-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="cc-kop">Commando's die ik het meest gebruik</h1>
+  <p class="cc-intro">
+    De slash-commando's waarmee deze app gebouwd wordt. Ze werken <b>in Claude Code</b> —
+    in de terminal of de Claude Code-app — en dus <b>niet</b> in het gewone chatvenster.
+    Deze pagina staat hier zodat je ze op je telefoon kunt nakijken.
+  </p>
+
+  <div class="cc-vlag oranje">
+    <strong>Welke er zijn, verschilt per versie</strong>
+    De lijst met commando's wisselt met de versie en het platform. Typ in Claude Code
+    <code>/</code> of <code>/help</code> om te zien wat er bij jou beschikbaar is —
+    dat is altijd de actuele lijst, deze pagina niet.
+  </div>
+
+  <section class="cc-sectie">
+    <h2>De zeven uit je overzicht</h2>
+    <p class="uitleg">
+      Met per commando wat het doet, en waar het in deze app van pas komt.
+    </p>
+
+    <div class="cc-kaart">
+      <span class="cmd">/init</span>
+      <div class="wat">Maakt een <code>CLAUDE.md</code> met projectcontext, zodat Claude je app elke
+        sessie meteen begrijpt.</div>
+      <div class="hier"><b>Hier:</b> eenmalig. Daarin horen de afspraken die telkens terugkomen —
+        de service worker ophogen bij elke wijziging, geen patiëntgegevens op de pagina's,
+        geen klinische getallen verzinnen, tests in <code>tests/</code>.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/plan</span>
+      <div class="wat">Laat Claude eerst een plan maken voordat hij code wijzigt.</div>
+      <div class="hier"><b>Hier:</b> handig bij iets dat meerdere bestanden raakt, zoals een nieuwe
+        rekenmodule. Bij een kleine tekstcorrectie kost het alleen tijd.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/clear</span> <span class="cmd">/compact</span>
+      <div class="wat">Maken het geheugen van de sessie leeg, of vatten het samen bij lange
+        sessies.</div>
+      <div class="hier"><b>Hier:</b> <code>/clear</code> als je aan een heel ander onderwerp begint.
+        <code>/compact</code> als je in hetzelfde onderwerp doorgaat maar het gesprek lang wordt —
+        dan blijft de rode draad behouden.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/rewind</span>
+      <div class="wat">Draait een wijziging terug naar een eerder punt.</div>
+      <div class="hier"><b>Hier:</b> vangnet als een wijziging de verkeerde kant op gaat. Let op:
+        wat al <em>gecommit en gepusht</em> is, staat in de geschiedenis van de repo — dat haal je
+        terug met git, niet hiermee.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/diff</span>
+      <div class="wat">Toont alle wijzigingen voordat je ze vastlegt.</div>
+      <div class="hier"><b>Hier:</b> het nuttigste commando van de zeven. Kijk vooral naar
+        <em>klinische getallen</em>: een afkapwaarde of dosis die stilletjes verandert, zie je
+        alleen als je het verschil leest.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/resume</span>
+      <div class="wat">Zet een eerdere sessie voort.</div>
+      <div class="hier"><b>Hier:</b> als je 's avonds verder wilt waar je gebleven was, zonder alles
+        opnieuw uit te leggen.</div>
+    </div>
+
+    <div class="cc-kaart">
+      <span class="cmd">/model</span>
+      <div class="wat">Wisselt van model.</div>
+      <div class="hier"><b>Hier:</b> een zwaarder model voor rekenwerk en bronnen overtypen, een
+        lichter model voor tekst en opmaak.</div>
+    </div>
+  </section>
+
+  <section class="cc-sectie">
+    <h2>Afspraken die voor deze app gelden</h2>
+    <p class="uitleg">
+      Geen commando's, maar de dingen die telkens misgaan als ze niet genoemd worden.
+      Dit is de inhoud die in een <code>CLAUDE.md</code> thuishoort.
+    </p>
+    <div class="cc-kaart">
+      <ul class="cc-lijst">
+        <li><b>Service worker ophogen.</b> <code>CACHE_VERSIE</code> in <code>sw.js</code> moet bij
+          élke wijziging omhoog, anders blijven oude bestanden op je telefoon hangen en zie je je
+          eigen aanpassing niet.</li>
+        <li><b>Geen patiëntgegevens.</b> Dit is een openbare pagina. Geen naam, geboortedatum of
+          patiëntnummer — ook niet in een spiernaam of een notitie.</li>
+        <li><b>Geen klinische getallen verzinnen.</b> Een afkapwaarde, dosis of interval komt uit een
+          bron die erbij genoemd wordt, of hij komt er niet in. Staat iets er niet in de bron, dan
+          staat dat er ook zo.</li>
+        <li><b>Bron erbij.</b> Bij elk getal: welke richtlijn, welk artikel, welke editie. En of het
+          overgetypt is uit een schermafbeelding of uit het document zelf.</li>
+        <li><b>Tests draaien.</b> In <code>tests/</code> staat <code>alles.sh</code>; die kijkt ook
+          naar exitcodes en console-errors, niet alleen naar regels die met FAIL beginnen.</li>
+        <li><b>Nieuwe pagina?</b> Dan ook: opnemen in <code>sw.js</code>, een knop in
+          <code>app.js</code>, en zoekwoorden zodat je hem terugvindt.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cc-sectie">
+    <h2>Waar deze lijst vandaan komt</h2>
+    <div class="cc-kaart">
+      <div class="wat">
+        Overgenomen uit je eigen overzicht van veelgebruikte commando's. De omschrijvingen van wat
+        elk commando doet zijn van jou; wat eronder staat bij <b>Hier</b> is wat het in deze app
+        betekent, en de afspraken hierboven komen uit hoe we tot nu toe gewerkt hebben.
+      </div>
+      <div class="hier">
+        Nogmaals: controleer met <code>/help</code> welke commando's jouw versie kent. Deze pagina
+        loopt achter zodra er iets verandert, en weet dat zelf niet.
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

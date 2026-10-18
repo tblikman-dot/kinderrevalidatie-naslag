@@ -132,6 +132,11 @@ const DEFAULT_CATS = [
     ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
+  { id: 'appzelf', label: 'De app zelf onderhouden', scope: "Claude Code-commando's en werkafspraken",
+    zoekwoorden: 'claude code commando slash command init plan clear compact rewind diff resume model help CLAUDE.md projectcontext sessie geheugen samenvatten terugdraaien wijzigingen tonen hervatten model wisselen service worker cache versie ophogen sw.js app.js zoekwoorden tests alles.sh github repo commit push ontwikkelen onderhoud werkafspraken bron vermelden geen patientgegevens',
+    directLinks: [
+      { label: '\u2328\uFE0F Commando\u2019s die ik het meest gebruik', url: 'claude-code.html' },
+    ] },
 ];
 
 // ===== STARTNOTITIES =====
