@@ -47,5 +47,44 @@ with sync_playwright() as p:
     check("richtlijn 25 E/kg", "25 E/kg" in pg.inner_text("#doRichtlijn"))
     check("lokaal protocol", "Lokaal behandelprotocol" in pg.inner_text("#doRichtlijn"))
     check("dossiertekst gevuld", "PLAN VOOR DEZE SESSIE" in pg.input_value("#doEpic"))
+    pg.close()
+
+    # startscherm: het hulpmiddelenoverzicht
+    ctx=b.new_context(viewport={"width":390,"height":844})
+    pg=ctx.new_page()
+    errs=[]; pg.on("pageerror", lambda e: errs.append(str(e)))
+    pg.goto("http://localhost:9052/index.html"); pg.wait_for_timeout(600)
+    rijen=pg.locator("#hmLijst .hm-rij")
+    check("hulpmiddelen op het startscherm", rijen.count()>=23, "| "+str(rijen.count()))
+    check("in groepen", pg.locator("#hmLijst .hm-groep").count()==6)
+
+    # een knop in dit overzicht mag nooit naar een niet-bestaande pagina wijzen
+    hrefs=[rijen.nth(i).get_attribute("href") for i in range(rijen.count())]
+    stuk=[h for h in hrefs if ctx.request.get("http://localhost:9052/"+h).status>=400]
+    check("geen dode links", not stuk, "| "+str(stuk))
+    check("geen dubbele", len(hrefs)==len(set(hrefs)), "| "+str(len(hrefs)-len(set(hrefs)))+" dubbel")
+
+    pg.click("#tabOnder"); pg.wait_for_timeout(250)
+    check("tabblad wisselt", pg.locator("#catList").is_visible() and not pg.locator("#hmLijst").is_visible())
+    pg.fill("#zoek","heup"); pg.wait_for_timeout(350)
+    check("zoeken toont beide panelen",
+          pg.locator("#panelHulp").is_visible() and pg.locator("#panelOnder").is_visible())
+    check("zoeken filtert de hulpmiddelen", 0 < pg.locator("#hmLijst .hm-rij").count() < 23,
+          "| "+str(pg.locator("#hmLijst .hm-rij").count()))
+    pg.fill("#zoek",""); pg.wait_for_timeout(300)
+    check("na wissen weer één paneel", not pg.locator("#panelHulp").is_visible())
+    pg.close()
+
+    pg=b.new_context(viewport={"width":1280,"height":880}).new_page()
+    pg.goto("http://localhost:9052/index.html"); pg.wait_for_timeout(600)
+    check("breed scherm: overzicht naast de onderwerpen",
+          pg.locator("#hmStart .hm-rij").first.is_visible()
+          and pg.locator("#panelOnder").is_visible()
+          and not pg.locator(".tabs").is_visible())
+    pg.locator("#catList .cat-item").first.click(); pg.wait_for_timeout(300)
+    check("breed scherm: terugknop aanwezig", pg.locator("#backBtn").is_visible())
+    pg.click("#backBtn"); pg.wait_for_timeout(250)
+    check("breed scherm: terug op het overzicht", pg.locator("#hmStart .hm-rij").first.is_visible())
+
     print("\nfails:",fails,"| errors:",errs)
     b.close()

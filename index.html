@@ -94,17 +94,32 @@
 
 <div class="layout" id="layout">
 
-  <nav class="sidebar" id="sidebar">
+  <nav class="sidebar" id="sidebar" data-tab="hulp" data-zoekt="0">
     <div class="sidebar-search">
-      <input type="search" id="zoek" placeholder="Zoeken…" autocomplete="off">
+      <input type="search" id="zoek" placeholder="Zoeken in alles…" autocomplete="off">
+      <div class="tabs" role="tablist">
+        <button class="tab" id="tabHulp" role="tab" aria-selected="true">Hulpmiddelen</button>
+        <button class="tab" id="tabOnder" role="tab" aria-selected="false">Onderwerpen</button>
+      </div>
     </div>
-    <div class="sidebar-list" id="catList"></div>
+
+    <div class="paneel-hulp" id="panelHulp">
+      <div class="paneel-kop">Hulpmiddelen</div>
+      <div class="hm-lijst" id="hmLijst"></div>
+    </div>
+
+    <div class="paneel-onder" id="panelOnder">
+      <div class="paneel-kop">Onderwerpen</div>
+      <div class="sidebar-list" id="catList"></div>
+    </div>
   </nav>
 
   <main class="detail" id="detail">
     <div class="detail-empty" id="detailEmpty">
-      <p>👈 Kies links een aandachtsgebied, of voeg er zelf één toe met de ＋ knop.</p>
-      <p class="muted">Alles wat je hier typt wordt automatisch bewaard in je browser (localStorage) — alleen op dit apparaat.</p>
+      <h2 class="start-kop">Hulpmiddelen</h2>
+      <p class="start-uitleg">De rekenhulpen, schema's en beslisbomen van deze app. Onder <em>Onderwerpen</em> links staan dezelfde pagina's per aandachtsgebied, met je eigen aantekeningen erbij.</p>
+      <div class="hm-start" id="hmStart"></div>
+      <p class="muted">Alles wat je in de aantekeningen typt wordt bewaard in je browser (localStorage) — alleen op dit apparaat.</p>
     </div>
     <div class="detail-content" id="detailContent" hidden>
       <div class="detail-head">

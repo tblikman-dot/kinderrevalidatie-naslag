@@ -89,7 +89,7 @@ body {
   gap: 8px;
   width: 100%;
   text-align: left;
-  padding: 12px 12px;
+  padding: 9px 12px;
   border: none;
   background: none;
   border-radius: 10px;
@@ -157,8 +157,10 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 32px;
-  max-width: 760px;
 }
+/* de leesbreedte geldt voor een geopend onderwerp; het startoverzicht mag de
+   hele breedte gebruiken */
+.detail-content { max-width: 760px; }
 
 .detail-empty {
   font-family: system-ui, sans-serif;
@@ -869,3 +871,150 @@ body.viewer-open { overflow: hidden; }
 /* naam en omschrijving zijn aantikbaar om te hernoemen */
 #detailTitle, .detail-scope { cursor: pointer; }
 #detailTitle:hover, .detail-scope:hover { text-decoration: underline dotted; }
+
+/* ===== STARTSCHERM: HULPMIDDELEN NAAST ONDERWERPEN =====
+   Het probleem dat dit oplost: de lijst met aandachtsgebieden zag er overal
+   hetzelfde uit, en de pagina's die je tijdens een spreekuur nodig hebt zaten
+   er twee tikken diep in. Nu staan ze vooraan, gegroepeerd. */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+  background: #F0F0EC;
+  border-radius: 10px;
+  padding: 3px;
+}
+.tab {
+  flex: 1;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  padding: 8px 6px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1.2;
+}
+.tab[aria-selected="true"] {
+  background: var(--paneel);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(15,39,51,0.13);
+}
+
+/* Het kopje boven een paneel is overbodig zolang het tabblad het al zegt —
+   tijdens het zoeken staan beide panelen open en is het juist nodig. */
+.paneel-kop {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  padding: 14px 14px 4px;
+}
+.sidebar[data-zoekt="0"] .paneel-kop { display: none; }
+.sidebar[data-tab="hulp"][data-zoekt="0"] .paneel-onder { display: none; }
+.sidebar[data-tab="onderwerpen"][data-zoekt="0"] .paneel-hulp { display: none; }
+
+.hm-lijst { padding: 6px 6px 14px; }
+
+.hm-groep + .hm-groep { margin-top: 12px; }
+.hm-groepkop {
+  font-family: system-ui, sans-serif;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  padding: 0 8px 5px;
+}
+
+.hm-rij {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--inkt);
+  font-family: system-ui, sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.hm-rij:hover { background: var(--accent-zacht); }
+.hm-rij:active { background: var(--accent-zacht); }
+
+.hm-icoon {
+  flex: none;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-zacht);
+  border-radius: 9px;
+  font-size: 15px;
+  line-height: 1;
+}
+.hm-naam { min-width: 0; }
+
+/* aantal eigen pagina's achter een onderwerp — rechts in de rij, zodat het de
+   titel niet uit elkaar duwt */
+.cat-telling {
+  flex: none;
+  margin-left: auto;
+  margin-top: 1px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--accent-zacht);
+  color: var(--accent);
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cat-item.active .cat-telling { background: rgba(255,255,255,0.22); color: #fff; }
+
+/* ---- hetzelfde overzicht in het rechtervlak, dat anders leeg bleef ---- */
+.start-kop { font-size: 1.5rem; margin: 0 0 4px; }
+.start-uitleg {
+  font-family: system-ui, sans-serif;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 20px;
+  max-width: 54ch;
+}
+.start-uitleg em { font-style: normal; font-weight: 700; color: var(--inkt); }
+
+.hm-start {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.hm-start .hm-groep {
+  margin: 0;
+  background: var(--paneel);
+  border: 1px solid var(--lijn);
+  border-radius: 14px;
+  padding: 12px 10px 10px;
+}
+.hm-start .hm-groepkop { padding-left: 10px; }
+.hm-start .hm-rij { font-size: 14px; }
+
+@media (max-width: 760px) {
+  /* de zijbalk is op de telefoon het startscherm; iets meer lucht onderaan */
+  .hm-lijst { padding-bottom: 28px; }
+}
+
+/* Op een breed scherm is er plek voor allebei tegelijk: de onderwerpen in de
+   zijbalk, de hulpmiddelen in het vlak ernaast. De tabbladen zijn daar dus
+   overbodig — behalve tijdens het zoeken, want dan zoekt de zijbalk in beide.
+   De Terug-knop staat er ook op een breed scherm, anders kom je niet meer bij
+   het overzicht zodra je een onderwerp geopend hebt. */
+@media (min-width: 761px) {
+  .sidebar .tabs { display: none; }
+  .sidebar[data-tab][data-zoekt="0"] .paneel-hulp { display: none; }
+  .sidebar[data-tab][data-zoekt="0"] .paneel-onder { display: block; }
+  .back-btn { display: inline-block; }
+}

@@ -35,7 +35,8 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
   alles groen is.
 - **Zelf nakijken op telefoonbreedte** (390 px). Geen horizontale scroll, geen afgesneden tabel.
 - **Nieuwe pagina?** Dan ook: opnemen in `APP_BESTANDEN` in `sw.js`, een knop in `app.js`, en
-  zoekwoorden zodat de pagina terug te vinden is.
+  zoekwoorden zodat de pagina terug te vinden is. Geef die knop `kort`, `icoon` en `groep` mee,
+  anders staat de pagina niet in het hulpmiddelenoverzicht op het startscherm.
 
 ## Hoe de app in elkaar zit
 

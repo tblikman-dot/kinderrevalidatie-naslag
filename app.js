@@ -53,26 +53,26 @@ function hipscreenUrl(pakket) {
 const DEFAULT_CATS = [
   { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen',
     directLinks: [
-      { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
+      { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html', kort: 'GMFCS per leeftijd', icoon: '🧒', groep: 'cp' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema',
     directLinks: [
-      { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html' },
+      { label: '🌳 Beslisboom: heup beoordelen', url: 'beslisboom-heup.html', kort: 'Beslisboom heup', icoon: '🌳', groep: 'heup' },
       { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html' },
       { label: '👶 Heupdysplasie (DDH) — niet hetzelfde', url: 'heupdysplasie.html' },
       { label: '📱 HipScreen openen (MP meten)', url: 'HIPSCREEN' },
-      { label: '⚙️ HipScreen opent niet? Instellen', url: 'hipscreen.html' },
+      { label: '⚙️ HipScreen opent niet? Instellen', url: 'hipscreen.html', kort: 'HipScreen instellen', icoon: '⚙️', groep: 'heup' },
       { label: '📎 Screeningsschema heupluxatie (FMS-bijlage)', url: 'https://richtlijnendatabase.nl/gerelateerde_documenten/bijlage/17205/1/92/Screeningsschema%20heupluxatie.html' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'botox', label: 'Botulinetoxine-injecties', scope: 'Indicatie, doelspieren, doseringsplanner en de dosistabellen',
     zoekwoorden: 'dosering doseerregels dosisschema eenheden units budget voorraad flacon plafond maximum per kilogram lichaamsgewicht spiergrootte aantal spieren ernst spierzwakte respons eerdere behandeling bijwerkingen voorgeschiedenis prioriteit verdelen ondergrens laagste dosis afronden verdunning POBOT dosing rules pectoralis minor protractie scapula pleura pneumothorax echogeleid dosering eenheden preparaat abobotulinumtoxine onabotulinumtoxine incobotulinumtoxine latissimus dorsi pectoralis major teres major subscapularis hefboomarm momentsarm meerdere injectieplaatsen depot verspreiding eindplaatzone doelspieren spierkeuze Hefter armpatronen pROM passieve functie krachtmoment torque echogeniciteit vitaal pronator biceps pectoralis subscapularis polsflexoren lidocaine bupivacaine proefblokkade diagnostische blokkade extrafusaal intrafusaal spierspoel gamma motorneuron rekreflex differentiele blokkade kracht-lengtecurve slack-lengte positieve negatieve symptomen spastische parese clonus hyperreflexie hypertonie co-contractie associated reaction withdrawal response spierzwakte selectiviteit vermoeibaarheid spierstijfheid contractuur spasticiteit dystonie spastische dystonie choreoathetose ataxie piramidaal extrapiramidaal basale kernen corticospinaal Lance Pandyan Monbaliu respons botulinetoxine indicatie snelheidsafhankelijk hyperreflexie contraindicatie contra-indicatie interactie humaan albumine lithium aminoglycoside spectinomycine tetanusvaccinatie antilichaamvorming drie maanden interval algehele anesthesie narcose bijwerkingen lokale pijn griepachtige verschijnselen Boyd maximale dosering per kilogram 25 U/kg 30 U/kg 700 U 200 U 1000 U 1500 U Russman Awaad Molenaers Desloovere Scholtes Wissel Pollack werkgroep fabrikant kinderdosering plafond multi-level diplegie tetraplegie FMS Federatie Medisch Specialisten Richtlijnendatabase spastische cerebrale parese bij kinderen module overweging RCP Royal College of Physicians Spasticity in adults national guidelines 2018 appendix 2 injection sites BOTOX Dysport Xeomin onabotulinumtoxinA abobotulinumtoxinA incobotulinumtoxinA units eenheden dosis per spier injectieplaats injection point aantal injectieplaatsen multiple injection sites psoas iliacus quadratus lumborum gluteus rectus femoris vastus pectineus adductor magnus longus brevis gracilis semimembranosus semitendinosus biceps femoris popliteus tibialis anterior posterior extensor digitorum longus hallucis peroneus longus brevis tertius gastrocnemius soleus flexor hallucis abductor hallucis trapezius rhomboid supraspinatus infraspinatus subscapularis deltoid teres major minor latissimus dorsi serratus anterior pectoralis major minor biceps triceps brachii coracobrachialis brachialis brachioradialis supinator extensor carpi radialis ulnaris digiti minimi pollicis longus brevis indicis pronator teres quadratus flexor carpi radialis ulnaris digitorum superficialis profundus volwassenen',
     directLinks: [
-      { label: '1️⃣ Spastische parese — is er een indicatie?', url: 'spasticiteit-dystonie.html' },
-      { label: '2️⃣ Doelspieren kiezen — per gewricht, vijf armpatronen', url: 'doelspieren.html' },
-      { label: '3️⃣ Doseringsplanner — dosis, plafonds en beschikbare eenheden', url: 'dosering.html' },
-      { label: '4️⃣ Dosis per spier — BOTOX, Dysport en Xeomin naast elkaar (RCP, volwassenen)', url: 'rcp-spieren.html' },
+      { label: '1️⃣ Spastische parese — is er een indicatie?', url: 'spasticiteit-dystonie.html', kort: 'Spastisch of dystoon?', icoon: '🧠', groep: 'cp' },
+      { label: '2️⃣ Doelspieren kiezen — per gewricht, vijf armpatronen', url: 'doelspieren.html', kort: 'Doelspieren kiezen', icoon: '🎯', groep: 'cp' },
+      { label: '3️⃣ Doseringsplanner — dosis, plafonds en beschikbare eenheden', url: 'dosering.html', kort: 'Doseringsplanner botox', icoon: '💉', groep: 'cp' },
+      { label: '4️⃣ Dosis per spier — BOTOX, Dysport en Xeomin naast elkaar (RCP, volwassenen)', url: 'rcp-spieren.html', kort: 'Dosis per spier (RCP)', icoon: '📊', groep: 'cp' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
@@ -80,17 +80,17 @@ const DEFAULT_CATS = [
   { id: 'sb', label: 'Spina bifida / neurale buisdefecten', scope: 'MMC, spina bifida occulta, tethered cord',
     zoekwoorden: 'spina bifida myelomeningocele MMC SBO occulta tethered cord retethering filum terminale conus medullaris lipoom syringomyelie hydromyelie neurale buisdefect uitvalsniveau blaasfunctie kyfoscoliose neurogene blaas detrusor onderactief overactief NDO detrusoroveractiviteit areflex slappe blaas outletweerstand sfincter DSD detrusor-sfincter-dyssynergie compliance opslagdruk ledigingsdruk residu capaciteit incontinentie CIC clean intermittent catheterisation zelfkatheterisatie antimuscarinica botulinetoxine detrusor sfincter UUT hogere urinewegen hydronefrose VUR vesico-ureterale reflux nierfunctie urineweginfectie blaasstenen onveilige blaas urodynamica',
     directLinks: [
-      { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html' },
+      { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html', kort: 'Tethered cord', icoon: '🔗', groep: 'zenuw' },
       { label: '🦵 Spieruitvalsniveaus', url: 'myotomen.html' },
-      { label: '💧 Neurogene blaas — de vier combinaties', url: 'neurogene-blaas.html' },
+      { label: '💧 Neurogene blaas — de vier combinaties', url: 'neurogene-blaas.html', kort: 'Neurogene blaas', icoon: '💧', groep: 'zenuw' },
       { label: '🗓️ Rondom een operatie — perioperatieve checklist', url: 'perioperatief.html' },
     ] },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
     zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
     directLinks: [
-      { label: '🦵 Plaat: welk niveau, welke spieren', url: 'myotomen.html' },
-      { label: '🖐️ Perifere zenuwen van de arm — verloop & uitval', url: 'zenuwen.html' },
-      { label: '⏱️ Herstel na zenuwletsel — rekenhulp', url: 'zenuwherstel.html' },
+      { label: '🦵 Plaat: welk niveau, welke spieren', url: 'myotomen.html', kort: 'Spieruitvalsniveaus', icoon: '🦵', groep: 'zenuw' },
+      { label: '🖐️ Perifere zenuwen van de arm — verloop & uitval', url: 'zenuwen.html', kort: 'Zenuwen van de arm', icoon: '🖐️', groep: 'zenuw' },
+      { label: '⏱️ Herstel na zenuwletsel — rekenhulp', url: 'zenuwherstel.html', kort: 'Herstel na zenuwletsel', icoon: '⏱️', groep: 'zenuw' },
     ] },
   { id: 'ontw', label: 'Ontwikkelingsstoornissen', scope: 'O.a. DCD, motorische ontwikkeling' },
   { id: 'amp', label: 'Aangeboren afwijkingen, amputatie & prothesiologie', scope: '' },
@@ -102,19 +102,19 @@ const DEFAULT_CATS = [
   { id: 'ortho', label: 'Orthopedische aspecten', scope: 'Heupdysplasie, beenlengteverschil, wervelkolom',
     zoekwoorden: 'heupecho echografie Graf typering alfahoek betahoek benige pandakrand kraakbenige pandakrand labrum Y-voeg os ilium basislijn coronale coupe meetpunten Robben Dremmen mature hip immature delay in development decentrering eccentric hip labruminterpositie standaardverslag WKO werkgroep kinderorthopedie stroomschema DDH Graf classificatie Pavlik spreidvoorziening gesloten repositie open repositie gipsbroek spica adductorentenotomie bekkenosteotomie restdysplasie reluxatie AC-hoek acetabulaire index acetabular index grenswaarden standaarddeviatie lichte dysplasie ernstige dysplasie links rechts zijde Brunken Tonnis Hilgenreiner Perkin Shenton migratiepercentage Reimers CE-hoek Wiberg heupfoto X-bekken kwadrant heuplateralisatie beenlengteverschil LLD epifysiodese schoenverhoging callusdistractie hemihypertrofie overgroei Galeazzi groeisturing multiplier Paley White-Menelaus aangeboren congenitaal ontwikkelingsverschil verworven groeiremming growth inhibition twee metingen eerdere verlenging lengthening vaste verhouding skeletleeftijd botleeftijd langebeenopname proximale tibia distale femur ingreepvenster operatiedatum heupdysplasie DDH Pavlik stuitligging abductiebeperking coxartrose',
     directLinks: [
-      { label: '📏 Beenlengteverschil — verwijzen & beleid', url: 'beenlengte.html' },
-      { label: '📐 Groeisturing — hoe groot wordt het?', url: 'groeisturing.html' },
-      { label: '🗓️ Epifysiodese-planner — welke fyse, tot wanneer?', url: 'epifysiodese.html' },
-      { label: '👶 Heupdysplasie (DDH) — screenen & verwijzen', url: 'heupdysplasie.html' },
-      { label: '🩻 Heupfoto beoordelen — AC-hoek, lijnen, MP', url: 'heupfoto.html' },
-      { label: '🔊 Heupecho volgens Graf — α/β naar type', url: 'heupecho.html' },
-      { label: '🧭 Stroomschema DDH — NOV-richtlijn stap voor stap', url: 'ddh-stroomschema.html' },
+      { label: '📏 Beenlengteverschil — verwijzen & beleid', url: 'beenlengte.html', kort: 'Beenlengteverschil', icoon: '📏', groep: 'been' },
+      { label: '📐 Groeisturing — hoe groot wordt het?', url: 'groeisturing.html', kort: 'Groeisturing', icoon: '📐', groep: 'been' },
+      { label: '🗓️ Epifysiodese-planner — welke fyse, tot wanneer?', url: 'epifysiodese.html', kort: 'Epifysiodese-planner', icoon: '🗓️', groep: 'been' },
+      { label: '👶 Heupdysplasie (DDH) — screenen & verwijzen', url: 'heupdysplasie.html', kort: 'Heupdysplasie (DDH)', icoon: '👶', groep: 'heup' },
+      { label: '🩻 Heupfoto beoordelen — AC-hoek, lijnen, MP', url: 'heupfoto.html', kort: 'Heupfoto beoordelen', icoon: '🩻', groep: 'heup' },
+      { label: '🔊 Heupecho volgens Graf — α/β naar type', url: 'heupecho.html', kort: 'Heupecho volgens Graf', icoon: '🔊', groep: 'heup' },
+      { label: '🧭 Stroomschema DDH — NOV-richtlijn stap voor stap', url: 'ddh-stroomschema.html', kort: 'Stroomschema DDH', icoon: '🧭', groep: 'heup' },
     ] },
   { id: 'rotatie', label: 'Rotatie- en standsafwijkingen', scope: 'Intoeing, femorale anteversie, tibiatorsie',
     zoekwoorden: 'rotatieafwijking standsafwijking intoeing naar binnen lopen tenengang femorale anteversie anteversie femurhals endorotatie exorotatie heuprotatie buikligging rotatieprofiel dij-voethoek thigh foot angle tibiatorsie interne tibiatorsie metatarsus adductus voorvoetadductie voetlijn voetlijnmethode heel bisector hielbissectrice Bleck Berg skewfoot serpentine foot serieel gipsen corrigeerbaar mediale huidplooi cuneiforme packaging disorder W-zit W-houding trochanter prominentiehoek anteversiecurve leeftijdscurve gemiddelde anteversie per leeftijd meisjes jongens 8 jaar derotatie osteotomie intertrochantair lever-arm dysfunction hefboomdisfunctie genu varum genu valgum Blount torticollis DDH',
     directLinks: [
-      { label: '\u{1F9B5} Rotatieprofiel & intoeing \u2014 welke van de drie?', url: 'rotatie.html' },
-      { label: '\u{1F9B6} Metatarsus adductus \u2014 voetlijn & beleid', url: 'metatarsus.html' },
+      { label: '\u{1F9B5} Rotatieprofiel & intoeing \u2014 welke van de drie?', url: 'rotatie.html', kort: 'Rotatieprofiel & intoeing', icoon: '\u{1F9B5}', groep: 'been' },
+      { label: '\u{1F9B6} Metatarsus adductus \u2014 voetlijn & beleid', url: 'metatarsus.html', kort: 'Metatarsus adductus', icoon: '\u{1F9B6}', groep: 'been' },
     ] },
   { id: 'armhand', label: 'Arm & hand', scope: 'Bovenste extremiteit — functie, spalken, chirurgie, MACS',
     zoekwoorden: 'Hefter armpatronen spastische arm houding endorotatie pronatie supinatie polsflexie doelspieren',
@@ -128,14 +128,14 @@ const DEFAULT_CATS = [
   { id: 'periop', label: 'Rondom een operatie of ingreep', scope: 'Perioperatieve regelzaken, postoperatieve zorg, checklist',
     zoekwoorden: 'perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden scoliose scoliosecorrectie spondylodese kyfose kyfectomie wervelkolomchirurgie rolstoel zitsysteem zitting custom contoured modulair CCS MWS leverancier ergotherapeut tillift transfers mobiliseren zitbalans zitduur decubitus drukplek huid sensibiliteit latexallergie shunt baclofenpomp katheterisatie darmbeleid blaasbeleid pijnbeleid thuiszorg pgb machtiging school terugkeer participatie verwachtingen nulmeting kwaliteit van leven HRQOL Khoshbin Thomson Hosking Meng spina bifida cystica Chiari syringomyelie tethered cord',
     directLinks: [
-      { label: '🗓️ Perioperatieve checklist — wat moet ik regelen?', url: 'perioperatief.html' },
+      { label: '🗓️ Perioperatieve checklist — wat moet ik regelen?', url: 'perioperatief.html', kort: 'Perioperatieve checklist', icoon: '🗓️', groep: 'ok' },
     ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
   { id: 'appzelf', label: 'De app zelf onderhouden', scope: "Claude Code-commando's en werkafspraken",
     zoekwoorden: 'claude code commando slash command init plan clear compact rewind diff resume model help CLAUDE.md projectcontext sessie geheugen samenvatten terugdraaien wijzigingen tonen hervatten model wisselen service worker cache versie ophogen sw.js app.js zoekwoorden tests alles.sh github repo commit push ontwikkelen onderhoud werkafspraken bron vermelden geen patientgegevens',
     directLinks: [
-      { label: '\u2328\uFE0F Commando\u2019s die ik het meest gebruik', url: 'claude-code.html' },
+      { label: '\u2328\uFE0F Commando\u2019s die ik het meest gebruik', url: 'claude-code.html', kort: 'Claude Code-commando\u2019s', icoon: '\u2328\uFE0F', groep: 'app' },
     ] },
 ];
 
@@ -1039,6 +1039,86 @@ function zoekTreffer(cat, filter) {
   return { raak: false };
 }
 
+// ===== HULPMIDDELEN: alle eigen pagina's bij elkaar =====
+// Eén bron: een pagina staat in dit overzicht doordat zijn knop bij een
+// categorie een 'kort' heeft. Zo kan een nieuwe pagina niet uit het overzicht
+// vallen omdat hij op twee plekken moest worden bijgehouden.
+const HM_GROEPEN = [
+  { id: 'cp',    naam: 'Cerebrale parese & botox' },
+  { id: 'heup',  naam: 'Heup' },
+  { id: 'been',  naam: 'Benen & stand' },
+  { id: 'zenuw', naam: 'Zenuw & niveau' },
+  { id: 'ok',    naam: 'Rondom een operatie' },
+  { id: 'app',   naam: 'De app zelf' },
+];
+
+function alleHulpmiddelen() {
+  const gezien = new Set();
+  const uit = [];
+  categories.forEach(cat => {
+    (cat.directLinks || []).forEach(l => {
+      if (!l.kort || gezien.has(l.url)) return;
+      gezien.add(l.url);
+      uit.push({
+        kort: l.kort, icoon: l.icoon || '📄', url: l.url,
+        groep: l.groep || 'app', label: l.label, cat: cat.label,
+      });
+    });
+  });
+  return uit;
+}
+
+function hulpmiddelenHtml(filter) {
+  const f = normaliseer((filter || '').trim());
+  const lijst = alleHulpmiddelen()
+    .filter(h => !f || normaliseer(h.kort + ' ' + h.label + ' ' + h.cat).includes(f));
+
+  if (!lijst.length) return '';
+
+  return HM_GROEPEN.map(g => {
+    const rijen = lijst.filter(h => h.groep === g.id);
+    if (!rijen.length) return '';
+    return `
+      <div class="hm-groep">
+        <div class="hm-groepkop">${esc(g.naam)}</div>
+        ${rijen.map(h => `
+          <a class="hm-rij" href="${esc(h.url)}" title="${esc(h.label)}">
+            <span class="hm-icoon">${esc(h.icoon)}</span>
+            <span class="hm-naam">${esc(h.kort)}</span>
+          </a>
+        `).join('')}
+      </div>`;
+  }).join('');
+}
+
+function renderHulpmiddelen(filter) {
+  const html = hulpmiddelenHtml(filter);
+  const leeg = '<div class="cat-empty">Geen hulpmiddel met dit woord.</div>';
+  ['hmLijst', 'hmStart'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html || (id === 'hmLijst' ? leeg : '');
+  });
+}
+
+// Zoeken doorzoekt allebei: tijdens het zoeken staan de hulpmiddelen én de
+// onderwerpen onder elkaar, zodat een treffer niet achter een tabblad verdwijnt.
+function renderStart(filter) {
+  const zoekt = !!(filter || '').trim();
+  document.getElementById('sidebar').dataset.zoekt = zoekt ? '1' : '0';
+  renderHulpmiddelen(filter);
+  renderList(filter);
+}
+
+const STORAGE_TAB = 'krnStartTab';
+
+function zetTab(naam) {
+  const zijbalk = document.getElementById('sidebar');
+  zijbalk.dataset.tab = naam;
+  document.getElementById('tabHulp').setAttribute('aria-selected', naam === 'hulp');
+  document.getElementById('tabOnder').setAttribute('aria-selected', naam === 'onderwerpen');
+  try { localStorage.setItem(STORAGE_TAB, naam); } catch (e) {}
+}
+
 // ===== RENDER =====
 function renderList(filter) {
   const el = document.getElementById('catList');
@@ -1060,14 +1140,19 @@ function renderList(filter) {
   // maar een deel, en dan zou "naar boven slepen" een onvoorspelbare plek geven.
   const kanSlepen = !f;
 
-  el.innerHTML = items.map(c => `
+  el.innerHTML = items.map(c => {
+    // Hoeveel eigen pagina's zitten erachter? Anders zien alle onderwerpen er
+    // hetzelfde uit en moet je ze openen om te weten of er iets in zit.
+    const eigen = (c.directLinks || []).filter(l => !/^https?:/i.test(l.url)).length;
+    return `
     <div class="cat-item${c.id === activeId ? ' active' : ''}" data-id="${c.id}" role="button" tabindex="0">
       ${kanSlepen ? '<span class="cat-grip" title="Sleep omhoog of omlaag om te verplaatsen">⠿</span>' : ''}
       <span class="cat-text">${esc(c.label)}${c.scope ? `<span class="scope">${esc(c.scope)}</span>` : ''}${
         treffers.has(c.id) ? `<span class="treffer">${esc(treffers.get(c.id))}</span>` : ''
       }</span>
-    </div>
-  `).join('');
+      ${eigen ? `<span class="cat-telling">${eigen} ${eigen === 1 ? 'hulpmiddel' : 'hulpmiddelen'}</span>` : ''}
+    </div>`;
+  }).join('');
 
   el.querySelectorAll('.cat-item').forEach(rij => {
     rij.addEventListener('click', () => {
@@ -1576,9 +1661,17 @@ document.getElementById('importInput').addEventListener('change', e => {
 });
 
 loadState();
-renderList('');
 
-document.getElementById('zoek').addEventListener('input', e => renderList(e.target.value));
+let startTab = 'hulp';
+try { if (localStorage.getItem(STORAGE_TAB) === 'onderwerpen') startTab = 'onderwerpen'; } catch (e) {}
+zetTab(startTab);
+
+document.getElementById('tabHulp').addEventListener('click', () => zetTab('hulp'));
+document.getElementById('tabOnder').addEventListener('click', () => zetTab('onderwerpen'));
+
+renderStart('');
+
+document.getElementById('zoek').addEventListener('input', e => renderStart(e.target.value));
 document.getElementById('notesArea').addEventListener('input', scheduleSave);
 
 // toolbar: mousedown i.p.v. click, anders raakt de selectie kwijt bij het aanklikken
