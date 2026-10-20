@@ -53,7 +53,7 @@
   /* ---- regio's kiezen ---- */
   .em-raster {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(166px, 1fr));
     gap: 9px;
   }
   .em-kaart {
@@ -69,16 +69,64 @@
     gap: 2px;
   }
   .em-kaart.aan { border-color: var(--accent); background: var(--accent-zacht); }
-  .em-kaart-top { display: flex; align-items: center; gap: 9px; }
-  .em-kaart svg.em-tek { width: 24px; height: 38px; flex: none; }
-  .em-kaart svg.em-tek.em-breed { width: 38px; height: 24px; }
+  .em-kaart-top { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  /* hoogte vast, breedte volgt de verhouding van de tekening zelf */
+  .em-kaart svg.em-tek { height: 46px; width: auto; max-width: 56px; flex: none; }
+  .em-kaart svg.em-tek.em-breed { height: 30px; max-width: 62px; }
   /* zonder min-width:0 krimpt deze kolom niet mee en loopt een lange
      omschrijving buiten het scherm */
   .em-kaart-tekst { min-width: 0; }
   .em-kaart .em-naam,
   .em-kaart .em-sub { display: block; overflow-wrap: break-word; }
-  .em-kaart .em-naam { font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+  .em-kaart .em-naam { font-size: 13px; font-weight: 700; line-height: 1.25; }
   .em-kaart .em-sub { font-size: 11.5px; color: var(--muted); line-height: 1.3; }
+
+  /* ---- eigen foto per regio ---- */
+  .em-fotoknop {
+    margin-top: 5px;
+    width: 100%;
+    border: 1px dashed var(--lijn);
+    background: none;
+    border-radius: 7px;
+    padding: 5px 2px;
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .em-fotoknop:hover { border-color: var(--accent); color: var(--accent); }
+  .em-fotoknop.heeft { border-style: solid; border-color: var(--accent); color: var(--accent); }
+
+  .em-markeer {
+    margin-top: 12px;
+    border: 1.5px solid var(--accent);
+    border-radius: 13px;
+    padding: 12px 13px 14px;
+    background: var(--paneel);
+  }
+  .em-markeer[hidden] { display: none; }
+  .em-markeer h3 { font-size: 14px; margin: 0 0 2px; font-family: system-ui, sans-serif; }
+  .em-markeer .uitleg { margin-bottom: 10px; }
+
+  .em-doek {
+    position: relative;
+    max-width: 340px;
+    margin: 0 auto 10px;
+    touch-action: none;           /* anders scrollt de pagina tijdens slepen */
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+  }
+  .em-doek img { display: block; width: 100%; border-radius: 9px; }
+  .em-doek svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+
+  .em-schuif {
+    display: flex; align-items: center; gap: 9px;
+    font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .em-schuif span { width: 66px; flex: none; }
+  .em-schuif input { flex: 1; }
 
   .em-kanten { display: flex; gap: 4px; margin-top: 7px; }
   .em-kant {
@@ -173,8 +221,14 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .em-bladregio svg.em-tek { width: 38px; height: 60px; flex: none; }
-  .em-bladregio svg.em-tek.em-breed { width: 60px; height: 36px; }
+  .em-bladregio svg.em-tek { height: 64px; width: auto; max-width: 74px; flex: none; }
+  .em-bladregio svg.em-tek.em-breed { height: 42px; max-width: 84px; }
+
+  /* eigen foto op het briefje, met het vlak eroverheen */
+  .em-bfoto.em-kfoto { width: 58px; border-radius: 6px; overflow: hidden; }
+  .em-bfoto { position: relative; flex: none; width: 74px; line-height: 0; }
+  .em-bfoto img { width: 100%; border-radius: 5px; display: block; }
+  .em-bfoto svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
   .em-bladregio .em-bnaam { font-size: 13.5px; font-weight: 700; line-height: 1.3; }
   .em-bladregio .em-bkant {
     display: inline-block;
@@ -229,10 +283,21 @@
     padding: 18px 2px;
   }
 
-  /* tekeningen */
-  .em-huid { fill: #F5E2D7; stroke: #D7B4A2; stroke-width: 1.5; }
-  .em-zone { fill: #9BAED6; fill-opacity: 0.72; stroke: #3B5EA6; stroke-width: 1.5; }
-  .em-lijn { fill: none; stroke: #C79E8B; stroke-width: 1.2; }
+  /* tekeningen — de lijndikte mag niet meeschalen, anders is hij op een
+     duimnagel onzichtbaar en op de afdruk een balk */
+  .em-tek .em-huid,
+  .em-tek .em-zone,
+  .em-tek .em-lijn,
+  .em-tek .em-lijn2 { vector-effect: non-scaling-stroke; }
+  /* het vlak over een foto staat in fotopixels; zonder dit is de rand ~1/900
+     beeldbreedte en dus onzichtbaar */
+  .em-doek .em-zone,
+  .em-bfoto .em-zone { vector-effect: non-scaling-stroke; stroke-width: 1.5; }
+  .em-huid { fill: #F5E2D7; stroke: #C9A595; stroke-width: 1; }
+  .em-zone { fill: #9BAED6; fill-opacity: 0.72; stroke: #3B5EA6; stroke-width: 1; }
+  .em-flauw { fill: #EBD3C6; stroke: none; }
+  .em-lijn { fill: none; stroke: #C79E8B; stroke-width: 1; }
+  .em-lijn2 { fill: none; stroke: #D7B4A2; stroke-width: 1; }
   .em-folie { fill: none; stroke: #7FA6B8; stroke-width: 2; stroke-dasharray: 5 4; }
   .em-creme { fill: #E9EEF6; stroke: #3B5EA6; stroke-width: 1.5; }
   .em-huidlaag { fill: #F5E2D7; stroke: #D7B4A2; stroke-width: 1.5; }
@@ -272,12 +337,18 @@
     body { background: #fff; }
     .em-wrap { max-width: none; padding: 0; }
     .em-blad { border: none; box-shadow: none; border-radius: 0; padding: 0; }
+    /* zonder dit laat de browser gekleurde vlakken weg bij het printen: dan
+       staat er een foto zonder markering en een kant zonder kleur op papier */
+    .em-blad, .em-blad * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .em-bladregio { break-inside: avoid; page-break-inside: avoid; }
     /* krapper, zodat ook het zwaarste geval — alle acht de regio's én een
        ingevulde tijd — op één vel past; dat scheelt een losse tweede pagina */
     .em-wanneer { margin-bottom: 11px; padding: 8px 12px; }
     .em-bladkop { margin: 13px 0 6px; }
-    .em-bladregios { gap: 10px; }
+    .em-bladregios { gap: 9px; }
+    .em-bladregio svg.em-tek { height: 54px; }
+    .em-bladregio svg.em-tek.em-breed { height: 36px; }
+    .em-bfoto { width: 66px; }
     .em-bladlijst li { margin-bottom: 2px; }
     .em-bron { margin-top: 10px; }
   }
@@ -315,6 +386,23 @@
         dat staat hier omdat er vaak aan één kant geïnjecteerd wordt.
       </p>
       <div class="em-raster" id="emRaster"></div>
+      <input type="file" id="emFotoInput" accept="image/*" hidden>
+
+      <div class="em-markeer" id="emMarkeer" hidden>
+        <h3 id="emMarkeerKop"></h3>
+        <p class="uitleg">
+          Sleep over de foto om het vlak te verplaatsen; met de schuiven maak je het groter,
+          kleiner of gedraaid. Het vlak komt zo ook op het briefje te staan.
+        </p>
+        <div class="em-doek" id="emDoek"></div>
+        <div class="em-schuif"><span>Breedte</span><input type="range" id="emBreed" min="3" max="50"></div>
+        <div class="em-schuif"><span>Hoogte</span><input type="range" id="emHoog" min="3" max="50"></div>
+        <div class="em-schuif"><span>Draaien</span><input type="range" id="emHoek" min="-90" max="90"></div>
+        <div class="em-knoprij" style="margin:10px 0 0">
+          <button class="em-knop" id="emMarkeerKlaar">Klaar</button>
+          <button class="em-knop rustig" id="emFotoWeg">Foto weghalen</button>
+        </div>
+      </div>
     </section>
 
     <section class="em-sectie">
@@ -360,7 +448,9 @@
 </div>
 
 <script src="epictekst.js"></script>
+<script src="anatomie-data.js"></script>
 <script src="emla-data.js"></script>
+<script src="fotos.js"></script>
 <script>
 (function () {
   'use strict';
@@ -395,6 +485,78 @@
     return EMLA.regios.filter(function (r) { return keuze[r.id]; });
   }
 
+  // ---------------- tekeningen ----------------
+  //
+  // _LEFT en _RIGHT in anatomie-data.js zijn de linker- en rechterkant van de
+  // AFBEELDING. Bij een vooraanzicht kijk je de patiënt aan, dus zijn linkerbeen
+  // staat rechts in beeld; bij een achteraanzicht staat links gewoon links.
+  // Een gespiegeld briefje is een echte fout, dus dit staat op één plek en er
+  // zit een test op.
+  function beeldZijden(kant, aanzicht) {
+    var voor = (aanzicht === 'voor');
+    var uit = [];
+    if (kant === 'L' || kant === 'LR') uit.push(voor ? 'RIGHT' : 'LEFT');
+    if (kant === 'R' || kant === 'LR') uit.push(voor ? 'LEFT' : 'RIGHT');
+    return uit;
+  }
+
+  var tekenTeller = 0;
+
+  function tekenRegio(regio, kant) {
+    var t = regio.tekening;
+
+    // de voeten zijn een eigen schets; daar zit geen links/rechts in.
+    // Het vlak wordt afgeknipt tot de omtrek, zodat het nooit buiten de voet valt.
+    if (t.soort === 'schets') {
+      var sch = t.schets;
+      var sid = 'emvoet' + (++tekenTeller);
+      return '<svg class="em-tek' + (sch.breed ? ' em-breed' : '') + '" viewBox="' + sch.box +
+        '" role="img" aria-hidden="true">' +
+        '<defs><clipPath id="' + sid + '"><path d="' + sch.omtrek + '"/></clipPath></defs>' +
+        '<path class="em-huid" d="' + sch.omtrek + '"/>' +
+        (sch.extra || '') +
+        '<g clip-path="url(#' + sid + ')">' + sch.zone + '</g>' +
+        '</svg>';
+    }
+
+    var P = ANATOMIE.paden[t.aanzicht];
+    var zijden = beeldZijden(kant || 'LR', t.aanzicht);
+    var n = ++tekenTeller;
+    var defs = [];
+    var inhoud = ['<path class="em-huid" d="' + P.BODY + '"/>'];
+
+    (t.flauw || []).forEach(function (naam) {
+      if (P[naam]) inhoud.push('<path class="em-flauw" d="' + P[naam] + '"/>');
+    });
+
+    zijden.forEach(function (zijde) {
+      if (t.soort === 'spier') {
+        (t.paden || []).forEach(function (p) {
+          var d = P[p.replace('%', zijde)];
+          if (d) inhoud.push('<path class="em-zone" d="' + d + '"/>');
+        });
+        return;
+      }
+      // spierband of lichaamsband: een rechthoek, afgeknipt tot de spier of
+      // tot de omtrek van het been. Zo blijft het vlak binnen het been.
+      var knipPad = (t.soort === 'spierband') ? P[t.pad.replace('%', zijde)] : P.BODY;
+      var b = t.band[zijde];
+      if (!knipPad || !b) return;
+      var id = 'emknip' + n + zijde;
+      defs.push('<clipPath id="' + id + '"><path d="' + knipPad + '"/></clipPath>');
+      inhoud.push('<g clip-path="url(#' + id + ')"><rect class="em-zone" x="' + b[0] +
+        '" y="' + b[1] + '" width="' + b[2] + '" height="' + b[3] + '"/></g>');
+
+      (t.bij || []).forEach(function (p) {
+        var d = P[p.replace('%', zijde)];
+        if (d) inhoud.push('<path class="em-zone" d="' + d + '"/>');
+      });
+    });
+
+    return '<svg class="em-tek" viewBox="' + t.box + '" role="img" aria-hidden="true">' +
+      '<defs>' + defs.join('') + '</defs>' + inhoud.join('') + '</svg>';
+  }
+
   // 60 minuten eerder. Over middernacht heen telt gewoon door naar de vorige dag.
   function zestigEerder(hhmm) {
     var m = /^(\d{1,2}):(\d{2})$/.exec(hhmm || '');
@@ -405,13 +567,191 @@
     return ('0' + Math.floor(tot / 60)).slice(-2) + ':' + ('0' + (tot % 60)).slice(-2);
   }
 
+  // ---------------- eigen foto per regio ----------------
+  //
+  // De foto blijft op dit toestel. Hij gaat in dezelfde IndexedDB als de
+  // boekpagina's (fotos.js), onder een eigen sleutel per regio, en komt daardoor
+  // ook mee in de back-up. Er wordt niets verstuurd en niets gepubliceerd.
+  var FOTO_SLEUTEL = 'emla:';
+  var fotos = {};              // { regioId: {id, url, breedte, hoogte, vlek} }
+  var markeerRegio = null;
+  var vlekTimer = null;
+
+  function standaardVlek() { return { cx: 0.5, cy: 0.5, rx: 0.28, ry: 0.16, hoek: 0 }; }
+
+  function heeftOpslag() {
+    return typeof verwerkFoto === 'function' && !!window.indexedDB;
+  }
+
+  function laadFotos() {
+    if (!heeftOpslag()) return Promise.resolve();
+    return Promise.all(EMLA.regios.map(function (r) {
+      var rijen = fotosVan(FOTO_SLEUTEL + r.id);
+      if (!rijen.length) return null;
+      var rij = rijen[rijen.length - 1];
+      return haalFoto(rij.id).then(function (rec) {
+        if (!rec || !rec.blob) return;
+        if (fotos[r.id] && fotos[r.id].url) URL.revokeObjectURL(fotos[r.id].url);
+        fotos[r.id] = {
+          id: rij.id,
+          url: URL.createObjectURL(rec.blob),
+          breedte: rec.breedte || 1000,
+          hoogte: rec.hoogte || 1000,
+          vlek: rec.vlek || standaardVlek(),
+        };
+      }).catch(function () {});
+    }));
+  }
+
+  // Het vlak staat als breuken van de foto opgeslagen, dus het klopt op elk
+  // formaat: op het scherm, op de duimnagel en op de afdruk.
+  function vlekSvg(f) {
+    var v = f.vlek, b = f.breedte, h = f.hoogte;
+    var cx = v.cx * b, cy = v.cy * h;
+    return '<svg viewBox="0 0 ' + b + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<ellipse class="em-zone" cx="' + cx + '" cy="' + cy + '" rx="' + (v.rx * b) +
+      '" ry="' + (v.ry * h) + '" transform="rotate(' + (v.hoek || 0) + ' ' + cx + ' ' + cy + ')"/>' +
+      '</svg>';
+  }
+
+  function fotoBlok(regioId, klasse) {
+    var f = fotos[regioId];
+    return '<div class="' + klasse + '"><img src="' + f.url + '" alt="">' + vlekSvg(f) + '</div>';
+  }
+
+  // tekening of eigen foto — de foto wint als hij er is
+  function beeldVan(regio, kant, klasse) {
+    return fotos[regio.id] ? fotoBlok(regio.id, klasse) : tekenRegio(regio, kant);
+  }
+
+  var elDoek = document.getElementById('emDoek');
+  var elMarkeer = document.getElementById('emMarkeer');
+  var elFotoInput = document.getElementById('emFotoInput');
+  var schuiven = {
+    rx: document.getElementById('emBreed'),
+    ry: document.getElementById('emHoog'),
+    hoek: document.getElementById('emHoek'),
+  };
+
+  function openMarkeer(regioId) {
+    var f = fotos[regioId];
+    if (!f) return;
+    markeerRegio = regioId;
+    var regio = EMLA.regios.filter(function (r) { return r.id === regioId; })[0];
+    document.getElementById('emMarkeerKop').textContent = 'Foto bij ' + regio.titel;
+    elDoek.innerHTML = '<img src="' + f.url + '" alt="">' + vlekSvg(f);
+    schuiven.rx.value = Math.round(f.vlek.rx * 100);
+    schuiven.ry.value = Math.round(f.vlek.ry * 100);
+    schuiven.hoek.value = Math.round(f.vlek.hoek || 0);
+    elMarkeer.hidden = false;
+  }
+
+  function vernieuwDoek() {
+    var f = fotos[markeerRegio];
+    var el = elDoek.querySelector('ellipse');
+    if (!f || !el) return;
+    var cx = f.vlek.cx * f.breedte, cy = f.vlek.cy * f.hoogte;
+    el.setAttribute('cx', cx);
+    el.setAttribute('cy', cy);
+    el.setAttribute('rx', f.vlek.rx * f.breedte);
+    el.setAttribute('ry', f.vlek.ry * f.hoogte);
+    el.setAttribute('transform', 'rotate(' + (f.vlek.hoek || 0) + ' ' + cx + ' ' + cy + ')');
+  }
+
+  function bewaarVlek() {
+    clearTimeout(vlekTimer);
+    var regioId = markeerRegio;
+    vlekTimer = setTimeout(function () {
+      var f = fotos[regioId];
+      if (!f || !heeftOpslag()) return;
+      haalFoto(f.id).then(function (rec) {
+        if (!rec) return;
+        rec.vlek = f.vlek;
+        return fotoTransactie('readwrite').then(function (store) {
+          return alsBelofte(store.put(rec));
+        });
+      }).catch(function () {});
+    }, 300);
+  }
+
+  function sleep(e) {
+    var f = fotos[markeerRegio];
+    if (!f) return;
+    var r = elDoek.getBoundingClientRect();
+    f.vlek.cx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    f.vlek.cy = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    vernieuwDoek();
+    bewaarVlek();
+  }
+
+  elDoek.addEventListener('pointerdown', function (e) {
+    if (!markeerRegio) return;
+    elDoek.setPointerCapture(e.pointerId);
+    sleep(e);
+  });
+  elDoek.addEventListener('pointermove', function (e) {
+    if (e.buttons) sleep(e);
+  });
+
+  Object.keys(schuiven).forEach(function (naam) {
+    schuiven[naam].addEventListener('input', function () {
+      var f = fotos[markeerRegio];
+      if (!f) return;
+      var w = parseFloat(this.value);
+      f.vlek[naam] = (naam === 'hoek') ? w : w / 100;
+      vernieuwDoek();
+      bewaarVlek();
+      herteken();
+    });
+  });
+
+  document.getElementById('emMarkeerKlaar').addEventListener('click', function () {
+    elMarkeer.hidden = true;
+    markeerRegio = null;
+    herteken();
+  });
+
+  document.getElementById('emFotoWeg').addEventListener('click', function () {
+    var regioId = markeerRegio;
+    var f = fotos[regioId];
+    if (!f) return;
+    var cat = FOTO_SLEUTEL + regioId;
+    Promise.all(fotosVan(cat).map(function (rij) { return verwijderFoto(cat, rij.id); }))
+      .then(function () {
+        URL.revokeObjectURL(f.url);
+        delete fotos[regioId];
+        elMarkeer.hidden = true;
+        markeerRegio = null;
+        herteken();
+      });
+  });
+
+  elFotoInput.addEventListener('change', function (e) {
+    var bestand = e.target.files && e.target.files[0];
+    var regioId = markeerRegio;
+    e.target.value = '';
+    if (!bestand || !regioId || !heeftOpslag()) return;
+    var cat = FOTO_SLEUTEL + regioId;
+    var oud = fotosVan(cat).slice();
+    verwerkFoto(cat, bestand, 'Emla ' + regioId)
+      .then(function () {
+        // één foto per regio: de vorige gaat eruit
+        return Promise.all(oud.map(function (rij) { return verwijderFoto(cat, rij.id); }));
+      })
+      .then(laadFotos)
+      .then(function () { herteken(); openMarkeer(regioId); })
+      .catch(function (fout) {
+        alert('De foto kon niet worden toegevoegd: ' + (fout && fout.message ? fout.message : fout));
+      });
+  });
+
   // ---------------- kiezen ----------------
   function tekenRaster() {
     elRaster.innerHTML = EMLA.regios.map(function (r) {
       var aan = !!keuze[r.id];
       return '<div class="em-kaart' + (aan ? ' aan' : '') + '" data-regio="' + r.id + '"' +
         ' role="button" tabindex="0" aria-pressed="' + aan + '">' +
-        '<div class="em-kaart-top">' + r.svg +
+        '<div class="em-kaart-top">' + beeldVan(r, keuze[r.id], 'em-bfoto em-kfoto') +
           '<span class="em-kaart-tekst"><span class="em-naam">' + esc(r.titel) + '</span>' +
           '<span class="em-sub">' + esc(r.sub) + '</span></span>' +
         '</div>' +
@@ -419,11 +759,20 @@
           return '<button type="button" class="em-kant' + (keuze[r.id] === k.code ? ' aan' : '') +
             '" data-kant="' + k.code + '" data-regio="' + r.id + '">' + k.kort + '</button>';
         }).join('') + '</div>' : '') +
+        (aan && heeftOpslag() ? '<button type="button" class="em-fotoknop' +
+          (fotos[r.id] ? ' heeft' : '') + '" data-foto="' + r.id + '">' +
+          (fotos[r.id] ? '\u270E Foto bijstellen' : '\uD83D\uDCF7 Eigen foto') + '</button>' : '') +
         '</div>';
     }).join('');
   }
 
   elRaster.addEventListener('click', function (e) {
+    var fotoKnop = e.target.closest('.em-fotoknop');
+    if (fotoKnop) {
+      var rid = fotoKnop.dataset.foto;
+      if (fotos[rid]) { openMarkeer(rid); } else { markeerRegio = rid; elFotoInput.click(); }
+      return;
+    }
     var kantKnop = e.target.closest('.em-kant');
     if (kantKnop) {
       keuze[kantKnop.dataset.regio] = kantKnop.dataset.kant;
@@ -469,7 +818,7 @@
 
     var regiosHtml = lijst.map(function (r) {
       return '<div class="em-bladregio">' +
-        '<div class="em-vink"></div>' + r.svg +
+        '<div class="em-vink"></div>' + beeldVan(r, keuze[r.id], 'em-bfoto') +
         '<div><div class="em-bnaam">' + esc(r.titel) +
           '<span class="em-bkant">' + esc(kantWoord(keuze[r.id])) + '</span></div>' +
           '<div class="em-bsub">' + esc(r.sub) + '</div>' +
@@ -498,7 +847,10 @@
       '<ul class="em-bladlijst">' + EMLA.letop.map(function (t) {
         return '<li>' + esc(t) + '</li>';
       }).join('') + '</ul>' +
-      '<div class="em-bron">' + esc(EMLA.bron) + '</div>';
+      // de herkomst van de tekeningen hoort in de app thuis, niet op het
+      // briefje dat de ouder meekrijgt
+      '<div class="em-bron">' + esc(EMLA.bron) +
+        '<span class="em-nietprint"> ' + esc(EMLA.bronTekening) + '</span></div>';
   }
 
   // ---------------- tekst voor de brief ----------------
@@ -602,6 +954,7 @@
   });
 
   herteken();
+  laadFotos().then(herteken);
 })();
 
 if ('serviceWorker' in navigator) {

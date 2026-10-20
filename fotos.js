@@ -563,6 +563,14 @@ function wisAlleFotos() {
 // ---------- opstarten ----------
 laadFotoIndex();
 
+// De opslag hierboven wordt ook door emla.html gebruikt; de bediening hieronder
+// hoort alleen bij index.html. Daarom staat die achter een controle: zonder die
+// knoppen zou dit bestand meteen omvallen op een pagina die alleen de opslag
+// nodig heeft.
+if (document.getElementById('fotoAddBtn')) koppelFotoUi();
+
+function koppelFotoUi() {
+
 // Index en database kunnen uit de pas lopen (browsergegevens deels gewist).
 // Eén keer bij het starten controleren en zo nodig herstellen.
 fotoDb().then(() => {
@@ -596,3 +604,5 @@ document.getElementById('fotoViewerImg').addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !document.getElementById('fotoViewer').hidden) sluitFotoGroot();
 });
+
+}   // einde koppelFotoUi

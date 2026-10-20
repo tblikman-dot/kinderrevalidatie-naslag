@@ -27,6 +27,10 @@ onrechte als groen gelezen.
   zoals op de poster, links/rechts/beide, de tijd die 60 minuten terugrekent,
   en het briefje dat ook in het zwaarste geval op één A4 past. Plus: er wordt
   niets bewaard, dus na herladen staat het formulier leeg.
+  Twee dingen daarin zijn makkelijk stuk te maken en worden daarom apart
+  getoetst: of "links" ook echt het linkerbeen van de **patiënt** oplicht (bij
+  een vooraanzicht is dat het rechterbeen in beeld), en of een eigen foto met
+  zijn markeervlak bewaard blijft en een herlaadbeurt overleeft.
 
 `hulp.py` bevat de gedeelde handgrepen (een spierkaart opzoeken, splitsen,
 aantal plaatsen zetten). Spierkaarten worden hertekend, dus zoek ze elke

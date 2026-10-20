@@ -1,6 +1,6 @@
 // Emla-smeerinstructie — tekst en tekeningen.
 //
-// BRON: poster "Waar Emla® insmeren? Voor botulinetoxine-injecties",
+// BRON VAN DE TEKST: poster "Waar Emla® insmeren? Voor botulinetoxine-injecties",
 // UMCG Centrum voor Revalidatie. Overgetypt uit een schermafbeelding van die
 // poster — niet uit het bronbestand zelf. De zinnen staan er letterlijk in;
 // er is niets aan toegevoegd of herschreven.
@@ -10,52 +10,49 @@
 //  - links/rechts staat er niet op. Dat onderscheid komt uit deze app, omdat
 //    botulinetoxine vaak eenzijdig wordt gegeven. Het is een keuze van de arts,
 //    geen uitspraak uit de bron.
+//
+// BRON VAN DE TEKENINGEN: anatomie-data.js (@musclemap/assets, MIT). Een regio
+// beschrijft hier alleen wélk stuk van dat lichaam moet oplichten; emla.html
+// tekent het. Vier soorten:
+//   spier         - een of meer spierpaden lichten op
+//   spierband     - een spierpad, afgeknipt tot een band (rectus femoris in de quadriceps)
+//   lichaamsband  - de lichaamsomtrek, afgeknipt tot een band (binnenzijde dij, voorste onderbeen)
+//   schets        - een eigen tekening; alleen de twee voeten, die zitten niet in de bron
+// Banden staan als [x, y, breedte, hoogte] in de maten van het grote vlak
+// (1024 x 1536), per kant van de AFBEELDING.
 
 (function (global) {
   'use strict';
 
-  // ---- schematische silhouetten; geen anatomische platen ----
-  var BOVENBEEN =
-    '<path class="em-huid" d="M40,4 C56,4 64,16 62,38 C60,62 58,86 56,106 ' +
-    'C55,118 49,126 40,126 C31,126 25,118 24,106 C22,86 20,62 18,38 ' +
-    'C16,16 24,4 40,4 Z"/>' +
-    '<ellipse class="em-huid" cx="40" cy="134" rx="14" ry="7"/>';
+  // ---- de twee voeten: eigen schets, want voeten zitten niet in anatomie-data.js ----
+  var VOET_ZIJ = {
+    box: '0 0 170 100', breed: true,
+    omtrek: 'M42,4 C38,24 34,40 28,50 C18,58 16,76 26,84 C32,88 40,88 46,86 ' +
+      'C64,78 80,72 100,74 C120,76 140,80 154,80 C164,80 166,72 158,66 ' +
+      'C140,58 118,48 104,38 C90,28 82,16 78,4 Z',
+    extra: '<ellipse class="em-lijn2" cx="56" cy="36" rx="8" ry="9"/>',
+    zone: '<ellipse class="em-zone" cx="82" cy="74" rx="38" ry="10" transform="rotate(-6 82 74)"/>',
+  };
 
-  var ONDERBEEN =
-    '<path class="em-huid" d="M40,4 C54,4 62,18 60,40 C58,62 52,80 49,96 ' +
-    'C47,110 46,120 45,128 Q40,134 35,128 C34,120 33,110 31,96 ' +
-    'C28,80 22,62 20,40 C18,18 26,4 40,4 Z"/>';
+  var VOET_ZOOL = {
+    box: '0 0 100 170', breed: false,
+    omtrek: 'M50,26 C68,26 79,41 79,60 C79,78 72,90 69,105 ' +
+      'C66,122 63,146 50,146 C37,146 34,122 31,105 C28,90 21,78 21,60 ' +
+      'C21,41 32,26 50,26 Z',
+    extra: '<ellipse class="em-huid" cx="29" cy="15" rx="8" ry="7"/>' +
+      '<ellipse class="em-huid" cx="44" cy="11" rx="5.5" ry="5.5"/>' +
+      '<ellipse class="em-huid" cx="55" cy="11" rx="5" ry="5"/>' +
+      '<ellipse class="em-huid" cx="65" cy="13" rx="4.5" ry="4.5"/>' +
+      '<ellipse class="em-huid" cx="73" cy="17" rx="4" ry="4"/>',
+    zone: '<path class="em-zone" d="M50,30 C67,30 76,44 76,61 C76,78 70,90 67,105 ' +
+      'C64,120 61,142 50,142 C39,142 36,120 33,105 C30,90 24,78 24,61 C24,44 33,30 50,30 Z"/>',
+  };
 
-  var VOET_ZIJ =
-    '<path class="em-huid" d="M16,62 C8,54 10,36 22,28 C34,20 46,22 58,30 ' +
-    'C72,39 92,46 114,50 C126,52 132,58 130,64 Q128,68 120,68 L26,68 ' +
-    'Q18,68 16,62 Z"/>';
-
-  var VOET_ZOOL =
-    '<path class="em-huid" d="M45,20 C62,20 72,36 72,56 C72,76 66,90 64,106 ' +
-    'C62,122 58,138 45,138 C32,138 28,122 26,106 C24,90 18,76 18,56 ' +
-    'C18,36 28,20 45,20 Z"/>' +
-    '<ellipse class="em-huid" cx="27" cy="12" rx="7" ry="6"/>' +
-    '<ellipse class="em-huid" cx="40" cy="9" rx="5" ry="5"/>' +
-    '<ellipse class="em-huid" cx="50" cy="9" rx="4.5" ry="4.5"/>' +
-    '<ellipse class="em-huid" cx="58" cy="11" rx="4" ry="4"/>' +
-    '<ellipse class="em-huid" cx="65" cy="14" rx="3.5" ry="3.5"/>';
-
-  function been(binnenwerk, zone) {
-    return '<svg class="em-tek" viewBox="0 0 80 145" role="img" aria-hidden="true">' +
-      binnenwerk + zone + '</svg>';
-  }
-  function voetZij(zone) {
-    return '<svg class="em-tek em-breed" viewBox="0 0 140 80" role="img" aria-hidden="true">' +
-      VOET_ZIJ + zone + '</svg>';
-  }
-  function voetZool(zone) {
-    return '<svg class="em-tek" viewBox="0 0 90 150" role="img" aria-hidden="true">' +
-      VOET_ZOOL + zone + '</svg>';
-  }
-
-  // de streep bovenaan de achterzijde is de bilplooi
-  var BILPLOOI = '<path class="em-lijn" d="M22,18 Q40,27 58,18"/>';
+  // ---- uitsnedes uit het grote vlak ----
+  var BOX_DIJ_VOOR   = '336 662 352 400';   // bovenbeen: heup tot net onder de knie
+  var BOX_DIJ_ACHTER = '336 766 352 390';   // bovenbeen achter: bilplooi tot net onder de knie
+  var BOX_KUIT       = '318 996 388 420';   // knieplooi tot de hiel
+  var BOX_SCHEEN     = '318 976 388 372';   // knie tot enkel
 
   var REGIOS = [
     {
@@ -63,62 +60,75 @@
       titel: 'Rectus femoris',
       sub: 'voorzijde bovenbeen',
       zin: 'Smeer het midden van de voorzijde van het bovenbeen in, over de gehele lengte van de rectus femoris.',
-      svg: been(BOVENBEEN, '<ellipse class="em-zone" cx="40" cy="64" rx="9" ry="46"/>'),
+      tekening: {
+        soort: 'spierband', aanzicht: 'voor', box: BOX_DIJ_VOOR, pad: 'QUADRICEPS_%',
+        band: { LEFT: [402, 680, 44, 330], RIGHT: [576, 680, 44, 330] },
+      },
     },
     {
       id: 'quadriceps',
       titel: 'Quadricepsregio',
       sub: 'voorzijde bovenbeen',
       zin: 'Smeer de volledige voorzijde van het bovenbeen in (quadricepsregio), van heup tot net boven de knie.',
-      svg: been(BOVENBEEN, '<ellipse class="em-zone" cx="40" cy="64" rx="19" ry="52"/>'),
+      tekening: {
+        soort: 'spier', aanzicht: 'voor', box: BOX_DIJ_VOOR, paden: ['QUADRICEPS_%'],
+      },
     },
     {
       id: 'adductoren',
       titel: 'Adductorenregio',
       sub: 'binnenzijde bovenbeen',
       zin: 'Smeer de binnenzijde van het bovenbeen in, over de volledige adductorenregio (van lies tot knie).',
-      svg: been(BOVENBEEN, '<ellipse class="em-zone" cx="29" cy="66" rx="10" ry="50"/>'),
+      tekening: {
+        // de adductorenpaden lopen tot halverwege de dij; de band erbij maakt er
+        // "van lies tot knie" van, zoals de zin zegt
+        soort: 'lichaamsband', aanzicht: 'voor', box: BOX_DIJ_VOOR,
+        band: { LEFT: [444, 770, 68, 250], RIGHT: [512, 770, 68, 250] },
+        bij: ['ADDUCTOR_%'],
+      },
     },
     {
       id: 'hamstrings',
       titel: 'Hamstringsregio',
       sub: 'achterzijde bovenbeen',
       zin: 'Smeer de achterzijde van het bovenbeen in, over de volledige hamstringsregio (van bilplooi tot net boven de knie).',
-      svg: been(BOVENBEEN + BILPLOOI, '<ellipse class="em-zone" cx="40" cy="70" rx="18" ry="46"/>'),
+      tekening: {
+        soort: 'spier', aanzicht: 'achter', box: BOX_DIJ_ACHTER, paden: ['HAMSTRINGS_%'],
+        flauw: ['GLUTEUS_LEFT', 'GLUTEUS_RIGHT'],
+      },
     },
     {
       id: 'kuit',
       titel: 'Triceps surae-regio',
       sub: 'kuit: gastrocnemius en soleus',
       zin: 'Smeer de volledige kuit in, van net onder de knieplooi tot aan de hiel (triceps surae-regio: gastrocnemius en soleus).',
-      svg: been(ONDERBEEN,
-        '<path class="em-zone" d="M23,28 C19,58 31,70 33,96 L35,124 L45,124 ' +
-        'L47,96 C49,70 61,58 57,28 C51,16 29,16 23,28 Z"/>'),
+      tekening: {
+        soort: 'spier', aanzicht: 'achter', box: BOX_KUIT, paden: ['CALVES_%'],
+      },
     },
     {
       id: 'scheen',
       titel: 'Voorzijde onderbeen',
       sub: 'voorzijde onderbeen',
       zin: 'Smeer de voorzijde van het onderbeen in, over de volledige voorste onderbeenregio (van knie tot enkel).',
-      svg: been(ONDERBEEN, '<ellipse class="em-zone" cx="40" cy="60" rx="13" ry="48"/>'),
+      tekening: {
+        soort: 'lichaamsband', aanzicht: 'voor', box: BOX_SCHEEN,
+        band: { LEFT: [318, 1004, 194, 300], RIGHT: [512, 1004, 194, 300] },
+      },
     },
     {
       id: 'voetmediaal',
       titel: 'Mediale zijde van de voet',
       sub: 'abductor hallucis',
       zin: 'Smeer de mediale zijde van de voet in, over de spierbuik van de abductor hallucis.',
-      svg: voetZij('<ellipse class="em-zone" cx="68" cy="56" rx="28" ry="9" ' +
-        'transform="rotate(-6 68 56)"/>'),
+      tekening: { soort: 'schets', schets: VOET_ZIJ },
     },
     {
       id: 'voetzool',
       titel: 'Plantaire zijde van de voet',
       sub: 'onderkant voet',
       zin: 'Smeer de onderkant van de voet in, van de hiel tot aan de tenen.',
-      svg: voetZool(
-        '<path class="em-zone" d="M45,26 C59,26 67,39 67,56 C67,74 61,88 59,104 ' +
-        'C57,118 54,132 45,132 C36,132 33,118 31,104 C29,88 23,74 23,56 ' +
-        'C23,39 31,26 45,26 Z"/>'),
+      tekening: { soort: 'schets', schets: VOET_ZOOL },
     },
   ];
 
@@ -165,6 +175,7 @@
 
   global.EMLA = {
     bron: 'Poster “Waar Emla® insmeren? Voor botulinetoxine-injecties”, UMCG Centrum voor Revalidatie (overgetypt uit een schermafbeelding).',
+    bronTekening: 'Lichaamstekeningen: @musclemap/assets (MIT).',
     vooraf: VOORAF,
     intro: INTRO,
     regios: REGIOS,

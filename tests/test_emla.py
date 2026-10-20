@@ -3,6 +3,7 @@
 # Waar dit vooral op let: de zinnen moeten lETTERLIJK die van de poster zijn
 # (ze zijn overgetypt, niet herschreven), het briefje moet op één A4 passen, en
 # er mag niets bewaard worden.
+import base64
 import sys
 import os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from playwright.sync_api import sync_playwright
@@ -57,8 +58,48 @@ with sync_playwright() as p:
     data = pg.evaluate("() => EMLA.regios.map(r => r.zin)")
     ontbreekt = [z for z in ZINNEN if z not in data]
     check("zinnen letterlijk van de poster", not ontbreekt, "| anders: " + str(ontbreekt)[:160])
-    check("elke regio heeft een tekening",
-          pg.evaluate("() => EMLA.regios.every(r => /<svg/.test(r.svg))"))
+    check("licentie van de tekeningen blijft staan",
+          pg.evaluate("() => /MIT/.test(ANATOMIE.bron) && !!ANATOMIE.paden.voor.BODY"))
+
+    # Elke regio moet een tekening opleveren, en de kant moet op het goede been
+    # terechtkomen. Dat laatste is het belangrijkste: de paden heten _LEFT en
+    # _RIGHT naar de kant van de AFBEELDING, en bij een vooraanzicht is dat de
+    # andere kant van de patiënt. Een gespiegeld briefje is een echte fout.
+    AANZICHT = {"Rectus femoris": "voor", "Quadricepsregio": "voor", "Adductorenregio": "voor",
+                "Hamstringsregio": "achter", "Triceps surae-regio": "achter",
+                "Voorzijde onderbeen": "voor"}
+
+    def zonemidden():
+        return pg.evaluate("""() => {
+          const svg = document.querySelector('#emBlad .em-bladregio svg');
+          if (!svg) return null;
+          let min = 1e9, max = -1e9;
+          svg.querySelectorAll('.em-zone').forEach(z => {
+            const bb = z.getBBox(); min = Math.min(min, bb.x); max = Math.max(max, bb.x + bb.width);
+          });
+          return max < min ? null : (min + max) / 2;
+        }""")
+
+    for naam, aanzicht in AANZICHT.items():
+        kies(pg, naam)
+        pg.wait_for_timeout(120)
+        check(naam + ": tekening op het briefje",
+              pg.locator("#emBlad .em-bladregio svg .em-zone").count() > 0)
+        uitkomst = {}
+        for kant, knop in (("L", "Links"), ("R", "Rechts")):
+            pg.locator(".em-kaart", has_text=naam).first.locator(".em-kant", has_text=knop).click()
+            pg.wait_for_timeout(140)
+            mid = zonemidden()
+            uitkomst[kant] = "beeldlinks" if (mid is not None and mid < 512) else "beeldrechts"
+        verwacht = ({"L": "beeldrechts", "R": "beeldlinks"} if aanzicht == "voor"
+                    else {"L": "beeldlinks", "R": "beeldrechts"})
+        check(naam + ": links en rechts op het goede been (" + aanzicht + ")",
+              uitkomst == verwacht, "| " + str(uitkomst))
+        kies(pg, naam)   # weer uit
+        pg.wait_for_timeout(80)
+
+    check("de voeten zijn een eigen schets zonder links/rechts",
+          pg.evaluate("() => EMLA.regios.filter(r => r.tekening.soort === 'schets').length") == 2)
 
     # kiezen, kant wisselen
     kies(pg, "Rectus femoris")
@@ -147,5 +188,95 @@ with sync_playwright() as p:
     check("het briefje staat er wel op", pg.locator("#emBlad").is_visible())
     pg.close()
 
-    print("\nfails:", fails, "| errors:", errs)
+    # ---- eigen foto met markeervlak ----
+    # De foto blijft op het toestel; de test controleert dat hij opgeslagen
+    # wordt, het vlak meegaat, en alles een herlaadbeurt overleeft.
+    ctx = b.new_context(viewport={"width": 420, "height": 900})
+    pg = ctx.new_page()
+    errs2 = []
+    pg.on("pageerror", lambda e: errs2.append(str(e)))
+    buiten = []
+    pg.on("request", lambda r: buiten.append(r.url) if "localhost:9052" not in r.url else None)
+    pg.goto(URL)
+    pg.wait_for_timeout(600)
+
+    kies(pg, "Mediale zijde van de voet")
+    pg.wait_for_timeout(150)
+    check("knop voor een eigen foto", pg.locator(".em-fotoknop").count() == 1)
+
+    plaatje = pg.evaluate("""() => { const c = document.createElement('canvas');
+      c.width = 900; c.height = 600; const x = c.getContext('2d');
+      x.fillStyle = '#E8C9A0'; x.fillRect(0, 0, 900, 600);
+      x.fillStyle = '#BE8C60'; x.beginPath(); x.ellipse(450, 320, 330, 150, 0, 0, 7); x.fill();
+      return c.toDataURL('image/jpeg', 0.85); }""")
+    rauw = base64.b64decode(plaatje.split(",", 1)[1])
+    with pg.expect_file_chooser() as fc:
+        pg.locator(".em-fotoknop").first.click()
+    fc.value.set_files({"name": "voet.jpg", "mimeType": "image/jpeg", "buffer": rauw})
+    pg.wait_for_timeout(1800)
+
+    check("markeerscherm gaat open", not pg.locator("#emMarkeer").is_hidden())
+    check("foto staat op het briefje", pg.locator("#emBlad .em-bfoto img").count() == 1)
+    check("foto vervangt de tekening", pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 0)
+
+    pg.locator("#emDoek").scroll_into_view_if_needed()
+    pg.wait_for_timeout(200)
+    bb = pg.locator("#emDoek").bounding_box()
+    pg.mouse.move(bb["x"] + bb["width"] * 0.30, bb["y"] + bb["height"] * 0.66)
+    pg.mouse.down()
+    pg.mouse.move(bb["x"] + bb["width"] * 0.38, bb["y"] + bb["height"] * 0.62)
+    pg.mouse.up()
+    for sel, waarde in (("#emBreed", "40"), ("#emHoog", "12"), ("#emHoek", "-15")):
+        pg.fill(sel, waarde)
+        pg.dispatch_event(sel, "input")
+    pg.wait_for_timeout(800)
+
+    vlek = pg.evaluate("""async () => {
+      const db = await new Promise(r => { const q = indexedDB.open('krnFotos'); q.onsuccess = () => r(q.result); });
+      return await new Promise(r => {
+        const t = db.transaction('fotos', 'readonly').objectStore('fotos').getAll();
+        t.onsuccess = () => r(t.result.map(x => ({ cat: x.catId, vlek: x.vlek })));
+      });
+    }""")
+    check("foto bewaard onder een eigen sleutel",
+          len(vlek) == 1 and vlek[0]["cat"] == "emla:voetmediaal", "| " + str(vlek)[:90])
+    v = vlek[0]["vlek"] if vlek else {}
+    check("slepen verzet het vlak", v and abs(v["cx"] - 0.5) > 0.05 and abs(v["cy"] - 0.5) > 0.05,
+          "| " + str(v))
+    check("schuiven worden bewaard",
+          v and round(v["rx"], 2) == 0.4 and round(v["ry"], 2) == 0.12 and v["hoek"] == -15,
+          "| " + str(v))
+
+    pg.reload()
+    pg.wait_for_timeout(1800)
+    kies(pg, "Mediale zijde van de voet")
+    pg.wait_for_timeout(600)
+    check("foto overleeft herladen", pg.locator("#emBlad .em-bfoto img").count() == 1)
+    check("knop zegt nu bijstellen", pg.locator(".em-fotoknop.heeft").count() == 1)
+
+    pg.locator(".em-fotoknop").first.click()
+    pg.wait_for_timeout(400)
+    pg.click("#emFotoWeg")
+    pg.wait_for_timeout(900)
+    check("foto weghalen zet de tekening terug",
+          pg.locator("#emBlad .em-bfoto img").count() == 0
+          and pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 1)
+
+    check("de pagina haalt niets van buiten", not buiten, "| " + str(buiten)[:120])
+    pg.close()
+
+    # De opslag van fotos.js wordt nu door twee pagina's gebruikt; de
+    # boekpagina-foto's op index.html moeten blijven werken.
+    pg = b.new_context(viewport={"width": 390, "height": 844}).new_page()
+    stuk = []
+    pg.on("pageerror", lambda e: stuk.append(str(e)))
+    pg.goto("http://localhost:9052/index.html")
+    pg.wait_for_timeout(700)
+    check("index.html blijft heel na het opsplitsen van fotos.js", not stuk, "| " + str(stuk)[:120])
+    check("de fotoknoppen op index.html zijn aangesloten",
+          pg.evaluate("""() => typeof koppelFotoUi === 'function'
+            && !!document.getElementById('fotoAddBtn')"""))
+    pg.close()
+
+    print("\nfails:", fails, "| errors:", errs + errs2)
     b.close()

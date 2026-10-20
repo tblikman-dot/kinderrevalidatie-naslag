@@ -14,6 +14,11 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
   dát er: "niet in de richtlijn". Eerder vragen dan aannemen.
 - **Bron erbij.** Welke richtlijn, welke editie, welk jaar. En of het overgetypt is uit een
   schermafbeelding of uit het document zelf — dat is niet hetzelfde.
+- **Overgenomen materiaal alleen met een licentie die publiceren toestaat.** Dit is een openbare
+  repo. Plaatjes, tekeningen of code van elders komen er alleen in als de licentie het toelaat,
+  en dan mét de licentietekst in het bestand (zie `anatomie-data.js`, MIT). Geen beeld van het
+  web "omdat het handig is", en geen materiaal van de instelling zonder dat de gebruiker zegt
+  dat het mag.
 - **Geen namen van personen.** Geen sprekers, geen collega's, geen auteurs-als-autoriteit.
   Instelling en richtlijn mogen genoemd worden.
 - **Geen operatietechniek.** De gebruiker is revalidatiearts, geen operateur. Wat de chirurg
