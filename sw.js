@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v71';
+const CACHE_VERSIE = 'krn-v72';
 
 const APP_BESTANDEN = [
   './',
@@ -23,6 +23,8 @@ const APP_BESTANDEN = [
   './epictekst.js',
   './emla.html',
   './emla-data.js',
+  './echo-landmarks.html',
+  './echo-heup-psoas.webp',
   './anatomie-data.js',
   './myotomen.html',
   './tetheredcord.html',

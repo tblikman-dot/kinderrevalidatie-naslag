@@ -11,7 +11,7 @@ PAGINAS=["index.html","dosering.html","rcp-spieren.html","perioperatief.html","r
          "beslisboom-heup.html","gmfcs.html","doelspieren.html","spasticiteit-dystonie.html",
          "myotomen.html","zenuwen.html","zenuwherstel.html","beenlengte.html","heupdysplasie.html",
          "hipscreen.html","tetheredcord.html","neurogene-blaas.html","ddh-stroomschema.html","claude-code.html",
-         "emla.html"]
+         "emla.html","echo-landmarks.html"]
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path=B)
     fails=0

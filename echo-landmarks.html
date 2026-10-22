@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Echo landmarks</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .el-wrap { max-width: 900px; margin: 0 auto; padding: 18px 16px 60px; }
+
+  .el-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 12px;
+  }
+  .el-terug:hover { text-decoration: underline; }
+
+  .el-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .el-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 14px;
+  }
+
+  .el-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.65;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 18px;
+    background: var(--accent-zacht); color: #0f2733;
+  }
+  .el-vlag strong { display: block; margin-bottom: 3px; }
+
+  .el-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 14px 15px 16px;
+    margin-bottom: 18px;
+  }
+  .el-kaart h2 { font-size: 1.1rem; margin: 0 0 2px; }
+  .el-kaart .el-zijde {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  .el-beeld { display: block; margin-bottom: 8px; }
+  .el-beeld img {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    background: #2A1A12;
+    /* de foto zelf blijft zoals hij is; dit is alleen de weergave */
+    transition: filter 0.15s;
+  }
+  .el-beeld.helder img { filter: brightness(1.35) contrast(1.25) saturate(0.7); }
+
+  .el-knoprij { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .el-knop {
+    padding: 8px 14px;
+    border: 1.5px solid var(--lijn);
+    border-radius: 10px;
+    background: var(--paneel);
+    color: var(--inkt);
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .el-knop:hover { border-color: var(--accent); color: var(--accent); }
+  .el-knop.aan { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .el-subkop {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--accent);
+    margin: 16px 0 7px;
+  }
+
+  .el-lijst {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; line-height: 1.6;
+    margin: 0; padding: 0; list-style: none;
+  }
+  .el-lijst li {
+    padding: 7px 0;
+    border-bottom: 1px solid var(--lijn);
+    display: flex; gap: 10px; align-items: baseline;
+  }
+  .el-lijst li:last-child { border-bottom: none; }
+  .el-lijst b { flex: none; min-width: 108px; color: var(--inkt); }
+  .el-lijst span { color: var(--muted); }
+
+  .el-instel {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 12.5px; line-height: 1.7;
+    background: #F3F3F0;
+    border-radius: 9px;
+    padding: 10px 12px;
+    color: var(--inkt);
+  }
+
+  .el-noot {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; margin: 10px 0 0;
+  }
+
+  .el-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px solid var(--lijn);
+    padding-top: 9px; margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Echo landmarks</div>
+</header>
+
+<div class="el-wrap">
+  <a class="el-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="el-kop">Echo landmarks</h1>
+  <p class="el-intro">
+    Herkenningspunten op de echo, met de bijschriften zoals ze op het beeld stonden.
+    Bedoeld om een beeld terug te herkennen — niet als beschrijving van hoe je prikt.
+  </p>
+
+  <div class="el-vlag">
+    <strong>Over dit beeld</strong>
+    Dit is een foto van een cursusdia; de bijschriften en de pijlen komen van de maker van die
+    dia. Er staat geen naam, geboortedatum of patiëntnummer op de scan — alleen het opschrift
+    van het apparaat en de instellingen.
+  </div>
+
+  <div class="el-kaart">
+    <h2>Heup — pees van de psoas</h2>
+    <p class="el-zijde">Rechterheup. Op de scan staat <em>RIGHT HIP INJ</em>.</p>
+
+    <a class="el-beeld" id="elBeeld" href="echo-heup-psoas.webp" target="_blank" rel="noopener"
+       title="Tik om de foto op volle grootte te openen">
+      <img src="echo-heup-psoas.webp" width="1667" height="772"
+           alt="Echobeeld van de rechterheup met bijschriften: iliacus, V-A-N, RF, heupgewricht en de pees van de psoas.">
+    </a>
+
+    <div class="el-knoprij">
+      <button class="el-knop" id="elHelder">Helderder maken</button>
+      <a class="el-knop" href="echo-heup-psoas.webp" target="_blank" rel="noopener">Groter bekijken</a>
+    </div>
+    <p class="el-noot">
+      De foto zelf blijft onbewerkt; “helderder” verandert alleen hoe hij hier op het scherm
+      getoond wordt. Een foto van een projectiescherm blijft donkerder dan het beeld op de
+      echo zelf.
+    </p>
+
+    <div class="el-subkop">Wat staat waar</div>
+    <ul class="el-lijst">
+      <li><b>iliacus</b><span>linksboven in beeld, pijl naar beneden</span></li>
+      <li><b>V-A-N</b><span>rechtsboven, pijl naar beneden</span></li>
+      <li><b>RF</b><span>links in beeld, pijl naar rechts</span></li>
+      <li><b>Pees psoas</b><span>midden, pijl vanaf rechts</span></li>
+      <li><b>heupgewricht</b><span>linksonder, pijl naar rechtsboven; op de foto is dit woord aan de linkerrand half weggevallen</span></li>
+    </ul>
+
+    <div class="el-subkop">Instellingen die op de scan te lezen zijn</div>
+    <div class="el-instel">
+      SIEMENS · 9L4 / MSK · General<br>
+      THI / H 9.00 MHz<br>
+      22 fps · diepte 5 cm
+    </div>
+    <p class="el-noot">
+      Er staan nog vier presetregels onder (dB/DR, SC/DTCE, Map/ST, T/B). Die zijn op de foto te
+      onscherp om zonder twijfel over te typen, dus ze staan hier niet — ze zijn wel te zien als
+      je het beeld groter opent.
+    </p>
+
+    <div class="el-bron">
+      Foto van een cursusdia, overgenomen zoals hij is (alleen bijgesneden: de rand van de zaal
+      eraf). De bijschriften zijn van de maker van de dia.
+    </div>
+  </div>
+
+  <div class="el-kaart">
+    <h2>Hier komen er meer bij</h2>
+    <p class="el-zijde">Per beeld is dit nodig om het toe te voegen:</p>
+    <ul class="el-lijst">
+      <li><b>Welke spier</b><span>of welk niveau het beeld laat zien</span></li>
+      <li><b>Welke kant</b><span>links of rechts, en of het beeld in lengte- of dwarsrichting staat</span></li>
+      <li><b>De bijschriften</b><span>zoals ze op het beeld horen te staan</span></li>
+      <li><b>De herkomst</b><span>eigen beeld, of van wie het materiaal is — dat bepaalt of het hier mag staan</span></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+document.getElementById('elHelder').addEventListener('click', function () {
+  var uit = document.getElementById('elBeeld').classList.toggle('helder');
+  this.classList.toggle('aan', uit);
+  this.textContent = uit ? 'Weer zoals de foto' : 'Helderder maken';
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function (e) {
+      console.log('SW niet geregistreerd:', e);
+    });
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>
