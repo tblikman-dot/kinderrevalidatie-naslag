@@ -155,14 +155,14 @@
     <h2>Heup — pees van de psoas</h2>
     <p class="el-zijde">Rechterheup. Op de scan staat <em>RIGHT HIP INJ</em>.</p>
 
-    <a class="el-beeld" id="elBeeld" href="echo-heup-psoas.webp" target="_blank" rel="noopener"
+    <a class="el-beeld" id="beeldPsoas" href="echo-heup-psoas.webp" target="_blank" rel="noopener"
        title="Tik om de foto op volle grootte te openen">
       <img src="echo-heup-psoas.webp" width="1667" height="772"
            alt="Echobeeld van de rechterheup met bijschriften: iliacus, V-A-N, RF, heupgewricht en de pees van de psoas.">
     </a>
 
     <div class="el-knoprij">
-      <button class="el-knop" id="elHelder">Helderder maken</button>
+      <button class="el-knop el-helder" data-beeld="beeldPsoas">Helderder maken</button>
       <a class="el-knop" href="echo-heup-psoas.webp" target="_blank" rel="noopener">Groter bekijken</a>
     </div>
     <p class="el-noot">
@@ -199,6 +199,53 @@
   </div>
 
   <div class="el-kaart">
+    <h2>Hamstrings — semitendinosus</h2>
+    <p class="el-zijde">Achterzijde bovenbeen. Welke kant het is, staat niet op de dia.</p>
+
+    <a class="el-beeld" id="beeldSt" href="echo-semitendinosus.webp" target="_blank" rel="noopener"
+       title="Tik om de foto op volle grootte te openen">
+      <img src="echo-semitendinosus.webp" width="951" height="985"
+           alt="Dia m. Semitendinosus: anatomische tekening met meetlijn van it naar MFE met markeringen op 30% en 70%, een foto van het bovenbeen met de plekken A, B en C, en drie echobeelden A, B en C.">
+    </a>
+
+    <div class="el-knoprij">
+      <button class="el-knop el-helder" data-beeld="beeldSt">Helderder maken</button>
+      <a class="el-knop" href="echo-semitendinosus.webp" target="_blank" rel="noopener">Groter bekijken</a>
+    </div>
+
+    <div class="el-subkop">Hoe de dia is opgebouwd</div>
+    <ul class="el-lijst">
+      <li><b>Tekening</b><span>een stippellijn van <em>it</em> bovenaan naar <em>MFE</em> onderaan, met markeringen op <em>30%</em> en <em>70%</em>; op die twee hoogtes staat een witte stip op de spier</span></li>
+      <li><b>Foto</b><span>het bovenbeen met drie plekken: <em>A</em>, <em>B</em> en <em>C</em>, van boven naar beneden</span></li>
+      <li><b>Drie echobeelden</b><span><em>A</em> rechtsboven, <em>B</em> linksonder, <em>C</em> rechtsonder — de gele stip linksboven in elk beeld hoort bij de stip bij de letter op de foto</span></li>
+    </ul>
+    <p class="el-noot">
+      Welke van de plekken A, B en C bij de 30% en de 70% uit de tekening horen, staat er niet bij;
+      dat vul ik niet zelf in.
+    </p>
+
+    <div class="el-subkop">Bijschriften op de echobeelden</div>
+    <ul class="el-lijst">
+      <li><b>SEMITENDINOSUS</b><span>in alle drie de beelden, met daarbij <em>lower medial</em> en <em>upper lateral</em> — in beeld C staat alleen <em>lower medial</em></span></li>
+      <li><b>SM</b><span>links in beeld, in alle drie</span></li>
+      <li><b>AM</b><span>onderin, in A en B</span></li>
+      <li><b>BF</b><span>rechts, met <em>long</em> en <em>short</em>; in A staat er <em>BF long</em> langs de rand</span></li>
+      <li><b>S</b><span>rechts van het midden, in alle drie</span></li>
+      <li><b>F</b><span>rechtsonder, in B en C</span></li>
+    </ul>
+    <p class="el-noot">
+      Onderaan de dia loopt een legenda van de vorige of volgende dia doorheen — de foto ving twee
+      beelden tegelijk. Leesbaar zijn alleen de stukken “S: … nerve”, “it: isch…” en “F: f…”.
+      De rest van die legenda staat er niet, dus ik vul de afkortingen hier niet verder in.
+    </p>
+
+    <div class="el-bron">
+      Foto van een cursusdia, overgenomen zoals hij is. De tekening, de foto, de echobeelden en
+      alle bijschriften komen van de maker van de dia.
+    </div>
+  </div>
+
+  <div class="el-kaart">
     <h2>Hier komen er meer bij</h2>
     <p class="el-zijde">Per beeld is dit nodig om het toe te voegen:</p>
     <ul class="el-lijst">
@@ -211,10 +258,15 @@
 </div>
 
 <script>
-document.getElementById('elHelder').addEventListener('click', function () {
-  var uit = document.getElementById('elBeeld').classList.toggle('helder');
-  this.classList.toggle('aan', uit);
-  this.textContent = uit ? 'Weer zoals de foto' : 'Helderder maken';
+// per beeld een eigen knop; de foto's zelf blijven onbewerkt
+document.addEventListener('click', function (e) {
+  var knop = e.target.closest('.el-helder');
+  if (!knop) return;
+  var beeld = document.getElementById(knop.dataset.beeld);
+  if (!beeld) return;
+  var uit = beeld.classList.toggle('helder');
+  knop.classList.toggle('aan', uit);
+  knop.textContent = uit ? 'Weer zoals de foto' : 'Helderder maken';
 });
 
 if ('serviceWorker' in navigator) {

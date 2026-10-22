@@ -75,7 +75,7 @@ const DEFAULT_CATS = [
       { label: '4️⃣ Dosis per spier — BOTOX, Dysport en Xeomin naast elkaar (RCP, volwassenen)', url: 'rcp-spieren.html', kort: 'Dosis per spier (RCP)', icoon: '📊', groep: 'cp' },
       { label: '🧴 Emla-smeerinstructie — briefje voor thuis', url: 'emla.html', kort: 'Emla-smeerinstructie', icoon: '🧴', groep: 'cp' },
       { label: '🩺 Echo landmarks — herkenningspunten op het echobeeld', url: 'echo-landmarks.html', kort: 'Echo landmarks', icoon: '🩺', groep: 'cp',
-        zoek: 'echo echogeleid echografie psoas iliacus pees heupgewricht rectus femoris vaatzenuwbundel probe transducer landmark herkenningspunt' },
+        zoek: 'echo echogeleid echografie psoas iliacus pees heupgewricht rectus femoris vaatzenuwbundel probe transducer landmark herkenningspunt semitendinosus hamstrings semimembranosus adductor magnus biceps femoris nervus ischiadicus tuber ischiadicum epicondyl 30% 70%' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'sedatie', label: 'Sedatie bij botulinetoxine-injecties', scope: 'Contra-indicaties / afweging sedatie vs. algehele narcose' },
