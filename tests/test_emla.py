@@ -65,9 +65,11 @@ with sync_playwright() as p:
     # terechtkomen. Dat laatste is het belangrijkste: de paden heten _LEFT en
     # _RIGHT naar de kant van de AFBEELDING, en bij een vooraanzicht is dat de
     # andere kant van de patiënt. Een gespiegeld briefje is een echte fout.
+    # Triceps surae en Voorzijde onderbeen hebben een meegeleverde foto met het
+    # vlak er al op; daar valt niets te kleuren. De rest wordt getekend.
     AANZICHT = {"Rectus femoris": "voor", "Quadricepsregio": "voor", "Adductorenregio": "voor",
-                "Hamstringsregio": "achter", "Triceps surae-regio": "achter",
-                "Voorzijde onderbeen": "voor"}
+                "Hamstringsregio": "achter"}
+    MET_FOTO = ["Triceps surae-regio", "Voorzijde onderbeen"]
 
     def zonemidden():
         return pg.evaluate("""() => {
@@ -97,6 +99,18 @@ with sync_playwright() as p:
               uitkomst == verwacht, "| " + str(uitkomst))
         kies(pg, naam)   # weer uit
         pg.wait_for_timeout(80)
+
+    for naam in MET_FOTO:
+        kies(pg, naam)
+        pg.wait_for_timeout(150)
+        check(naam + ": toont de meegeleverde foto",
+              pg.locator("#emBlad .em-bladregio img.em-tekfoto").count() == 1
+              and pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 0)
+        kies(pg, naam)
+        pg.wait_for_timeout(80)
+
+    check("twee regio's hebben een meegeleverde foto",
+          pg.evaluate("() => EMLA.regios.filter(r => r.foto).length") == 2)
 
     check("de voeten zijn een eigen schets zonder links/rechts",
           pg.evaluate("() => EMLA.regios.filter(r => r.tekening.soort === 'schets').length") == 2)

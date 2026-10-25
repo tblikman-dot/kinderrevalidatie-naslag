@@ -11,6 +11,12 @@
 //    botulinetoxine vaak eenzijdig wordt gegeven. Het is een keuze van de arts,
 //    geen uitspraak uit de bron.
 //
+// BRON VAN DE FOTO'S: aangeleverd door de gebruiker; het paarse vlak zit al op de
+// foto. Een regio met een 'foto' toont die in plaats van de tekening. Zo'n foto
+// laat één been zien, dus links/rechts kleurt daar niet mee — dat staat alleen
+// in de tekst van het briefje. De regel bij 'arts' is een aantekening van de
+// gebruiker voor zichzelf; die staat wel op het scherm en niet op het briefje.
+//
 // BRON VAN DE TEKENINGEN: anatomie-data.js (@musclemap/assets, MIT). Een regio
 // beschrijft hier alleen wélk stuk van dat lichaam moet oplichten; emla.html
 // tekent het. Vier soorten:
@@ -102,6 +108,7 @@
       titel: 'Triceps surae-regio',
       sub: 'kuit: gastrocnemius en soleus',
       zin: 'Smeer de volledige kuit in, van net onder de knieplooi tot aan de hiel (triceps surae-regio: gastrocnemius en soleus).',
+      foto: 'smeer-kuit.webp',
       tekening: {
         soort: 'spier', aanzicht: 'achter', box: BOX_KUIT, paden: ['CALVES_%'],
       },
@@ -111,6 +118,8 @@
       titel: 'Voorzijde onderbeen',
       sub: 'voorzijde onderbeen',
       zin: 'Smeer de voorzijde van het onderbeen in, over de volledige voorste onderbeenregio (van knie tot enkel).',
+      foto: 'smeer-onderbeen-voor.webp',
+      arts: 'Dekt de tibialis anterior en ook de tibialis posterior (ventrale benadering).',
       tekening: {
         soort: 'lichaamsband', aanzicht: 'voor', box: BOX_SCHEEN,
         band: { LEFT: [318, 1004, 194, 300], RIGHT: [512, 1004, 194, 300] },

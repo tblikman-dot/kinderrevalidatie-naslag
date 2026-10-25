@@ -72,6 +72,7 @@
   .em-kaart-top { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   /* hoogte vast, breedte volgt de verhouding van de tekening zelf */
   .em-kaart svg.em-tek { height: 46px; width: auto; max-width: 56px; flex: none; }
+  .em-kaart .em-tekfoto { height: 64px; width: auto; flex: none; display: block; }
   .em-kaart svg.em-tek.em-breed { height: 30px; max-width: 62px; }
   /* zonder min-width:0 krimpt deze kolom niet mee en loopt een lange
      omschrijving buiten het scherm */
@@ -79,6 +80,12 @@
   .em-kaart .em-naam,
   .em-kaart .em-sub { display: block; overflow-wrap: break-word; }
   .em-kaart .em-naam { font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .em-kaart .em-arts {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px; line-height: 1.4;
+    color: var(--accent);
+  }
   .em-kaart .em-sub { font-size: 11.5px; color: var(--muted); line-height: 1.3; }
 
   /* ---- eigen foto per regio ---- */
@@ -222,6 +229,7 @@
     page-break-inside: avoid;
   }
   .em-bladregio svg.em-tek { height: 64px; width: auto; max-width: 74px; flex: none; }
+  .em-bladregio .em-tekfoto { height: 92px; width: auto; flex: none; }
   .em-bladregio svg.em-tek.em-breed { height: 42px; max-width: 84px; }
 
   /* eigen foto op het briefje, met het vlak eroverheen */
@@ -347,6 +355,7 @@
     .em-bladkop { margin: 13px 0 6px; }
     .em-bladregios { gap: 9px; }
     .em-bladregio svg.em-tek { height: 54px; }
+    .em-bladregio .em-tekfoto { height: 84px; }
     .em-bladregio svg.em-tek.em-breed { height: 36px; }
     .em-bfoto { width: 66px; }
     .em-bladlijst li { margin-bottom: 2px; }
@@ -619,9 +628,17 @@
     return '<div class="' + klasse + '"><img src="' + f.url + '" alt="">' + vlekSvg(f) + '</div>';
   }
 
-  // tekening of eigen foto — de foto wint als hij er is
+  // Volgorde: een eigen foto van dit toestel wint, daarna de foto die bij de
+  // app wordt meegeleverd, en anders de tekening. Op een meegeleverde foto zit
+  // het paarse vlak al; die toont één been, dus links/rechts kleurt er niet in
+  // mee — dat staat in de tekst erbij.
   function beeldVan(regio, kant, klasse) {
-    return fotos[regio.id] ? fotoBlok(regio.id, klasse) : tekenRegio(regio, kant);
+    if (fotos[regio.id]) return fotoBlok(regio.id, klasse);
+    if (regio.foto) {
+      return '<img class="em-tekfoto" src="' + regio.foto + '" alt="' +
+        esc(regio.titel + ': het gekleurde vlak laat zien waar de crème moet komen.') + '">';
+    }
+    return tekenRegio(regio, kant);
   }
 
   var elDoek = document.getElementById('emDoek');
@@ -753,7 +770,8 @@
         ' role="button" tabindex="0" aria-pressed="' + aan + '">' +
         '<div class="em-kaart-top">' + beeldVan(r, keuze[r.id], 'em-bfoto em-kfoto') +
           '<span class="em-kaart-tekst"><span class="em-naam">' + esc(r.titel) + '</span>' +
-          '<span class="em-sub">' + esc(r.sub) + '</span></span>' +
+          '<span class="em-sub">' + esc(r.sub) + '</span>' +
+          (r.arts ? '<span class="em-arts">' + esc(r.arts) + '</span>' : '') + '</span>' +
         '</div>' +
         (aan ? '<div class="em-kanten">' + KANTEN.map(function (k) {
           return '<button type="button" class="em-kant' + (keuze[r.id] === k.code ? ' aan' : '') +
