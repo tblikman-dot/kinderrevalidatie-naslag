@@ -85,6 +85,8 @@
       titel: 'Adductorenregio',
       sub: 'binnenzijde bovenbeen',
       zin: 'Smeer de binnenzijde van het bovenbeen in, over de volledige adductorenregio (van lies tot knie).',
+      foto: 'smeer-adductoren.webp',
+      fotoKant: 'R',          // de foto toont het rechterbeen; links wordt gespiegeld
       tekening: {
         // de adductorenpaden lopen tot halverwege de dij; de band erbij maakt er
         // "van lies tot knie" van, zoals de zin zegt

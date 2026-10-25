@@ -67,7 +67,7 @@ with sync_playwright() as p:
     # andere kant van de patiënt. Een gespiegeld briefje is een echte fout.
     # Triceps surae en Voorzijde onderbeen hebben een meegeleverde foto met het
     # vlak er al op; daar valt niets te kleuren. De rest wordt getekend.
-    AANZICHT = {"Rectus femoris": "voor", "Quadricepsregio": "voor", "Adductorenregio": "voor",
+    AANZICHT = {"Rectus femoris": "voor", "Quadricepsregio": "voor",
                 "Hamstringsregio": "achter"}
     MET_FOTO = ["Triceps surae-regio", "Voorzijde onderbeen"]
 
@@ -109,8 +109,30 @@ with sync_playwright() as p:
         kies(pg, naam)
         pg.wait_for_timeout(80)
 
-    check("twee regio's hebben een meegeleverde foto",
-          pg.evaluate("() => EMLA.regios.filter(r => r.foto).length") == 2)
+    # De adductorenfoto toont het rechterbeen; voor links wordt hij gespiegeld en
+    # bij "beide" staan ze allebei. Spiegelen is makkelijk andersom te krijgen,
+    # dus dit wordt per kant nagemeten.
+    kies(pg, "Adductorenregio")
+    pg.wait_for_timeout(150)
+
+    def spiegelstand():
+        return pg.evaluate("""() => [...document.querySelectorAll('#emBlad .em-tekfoto')]
+            .map(i => i.classList.contains('em-gespiegeld'))""")
+
+    check("adductoren, beide zijden: twee beelden, één gespiegeld",
+          spiegelstand() == [False, True], "| " + str(spiegelstand()))
+    for knop, verwacht in (("Rechts", [False]), ("Links", [True])):
+        pg.locator(".em-kaart", has_text="Adductorenregio").first.locator(
+            ".em-kant", has_text=knop).click()
+        pg.wait_for_timeout(150)
+        check("adductoren, " + knop.lower() + ": " +
+              ("ongespiegeld" if verwacht == [False] else "gespiegeld"),
+              spiegelstand() == verwacht, "| " + str(spiegelstand()))
+    kies(pg, "Adductorenregio")
+    pg.wait_for_timeout(80)
+
+    check("drie regio's hebben een meegeleverde foto",
+          pg.evaluate("() => EMLA.regios.filter(r => r.foto).length") == 3)
 
     check("de voeten zijn een eigen schets zonder links/rechts",
           pg.evaluate("() => EMLA.regios.filter(r => r.tekening.soort === 'schets').length") == 2)

@@ -73,6 +73,8 @@
   /* hoogte vast, breedte volgt de verhouding van de tekening zelf */
   .em-kaart svg.em-tek { height: 46px; width: auto; max-width: 56px; flex: none; }
   .em-kaart .em-tekfoto { height: 64px; width: auto; flex: none; display: block; }
+  .em-gespiegeld { transform: scaleX(-1); }
+  .em-tweefoto { display: flex; gap: 3px; flex: none; }
   .em-kaart svg.em-tek.em-breed { height: 30px; max-width: 62px; }
   /* zonder min-width:0 krimpt deze kolom niet mee en loopt een lange
      omschrijving buiten het scherm */
@@ -630,14 +632,32 @@
 
   // Volgorde: een eigen foto van dit toestel wint, daarna de foto die bij de
   // app wordt meegeleverd, en anders de tekening. Op een meegeleverde foto zit
-  // het paarse vlak al; die toont één been, dus links/rechts kleurt er niet in
-  // mee — dat staat in de tekst erbij.
+  // het paarse vlak al.
+  //
+  // Staat erbij welk been op de foto staat (fotoKant), dan wordt hij voor de
+  // andere kant gespiegeld en bij "beide" twee keer getoond. Zonder fotoKant
+  // blijft het één beeld en staat de kant alleen in de tekst.
+  function fotoBeeld(regio, spiegel, watVoorKant) {
+    return '<img class="em-tekfoto' + (spiegel ? ' em-gespiegeld' : '') + '" src="' +
+      regio.foto + '" alt="' + esc(regio.titel + (watVoorKant ? ', ' + watVoorKant : '') +
+      ': het gekleurde vlak laat zien waar de crème moet komen.') + '">';
+  }
+
   function beeldVan(regio, kant, klasse) {
     if (fotos[regio.id]) return fotoBlok(regio.id, klasse);
+
     if (regio.foto) {
-      return '<img class="em-tekfoto" src="' + regio.foto + '" alt="' +
-        esc(regio.titel + ': het gekleurde vlak laat zien waar de crème moet komen.') + '">';
+      if (!regio.fotoKant) return fotoBeeld(regio, false, '');
+      var k = kant || 'LR';
+      if (k === 'LR') {
+        return '<span class="em-tweefoto">' +
+          fotoBeeld(regio, false, 'rechts') + fotoBeeld(regio, true, 'links') + '</span>';
+      }
+      // spiegelen zodra de gevraagde kant niet de kant van de foto is
+      var spiegel = (k !== regio.fotoKant);
+      return fotoBeeld(regio, spiegel, k === 'L' ? 'links' : 'rechts');
     }
+
     return tekenRegio(regio, kant);
   }
 
