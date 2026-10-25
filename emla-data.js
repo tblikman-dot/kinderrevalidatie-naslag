@@ -21,7 +21,10 @@
 //    geen uitspraak uit de bron.
 //
 // BRON VAN DE FOTO'S: aangeleverd door de gebruiker; het paarse vlak zit al op de
-// foto. Een regio met een 'foto' toont die in plaats van de tekening. Zo'n foto
+// foto. De foto's gaan er ONBEWERKT in: alleen verkleind, niet bijgesneden. Dat
+// is een uitdrukkelijke afspraak — het hele been hoort in beeld te blijven, en
+// alle vijf de foto's hebben daardoor dezelfde uitsnede en schaal. Snijd er dus
+// niets af om een vlak groter te laten lijken. Een regio met een 'foto' toont die in plaats van de tekening. Zo'n foto
 // laat één been zien, dus links/rechts kleurt daar niet mee — dat staat alleen
 // in de tekst van het briefje. De regel bij 'arts' is een aantekening van de
 // gebruiker voor zichzelf; die staat wel op het scherm en niet op het briefje.
