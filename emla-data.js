@@ -1,9 +1,18 @@
 // Emla-smeerinstructie — tekst en tekeningen.
 //
 // BRON VAN DE TEKST: poster "Waar Emla® insmeren? Voor botulinetoxine-injecties",
-// UMCG Centrum voor Revalidatie. Overgetypt uit een schermafbeelding van die
-// poster — niet uit het bronbestand zelf. De zinnen staan er letterlijk in;
-// er is niets aan toegevoegd of herschreven.
+// UMCG Centrum voor Revalidatie, overgetypt uit een schermafbeelding van die
+// poster — niet uit het bronbestand zelf.
+//
+// De zinnen zijn NIET meer letterlijk die van de poster. Op verzoek van de
+// gebruiker zijn de spiernamen eruit gehaald (rectus femoris, quadricepsregio,
+// adductorenregio, hamstringsregio, triceps surae-regio, gastrocnemius, soleus,
+// abductor hallucis) omdat het briefje voor ouders is. De rest van de bewoording
+// is onveranderd: er is niets bij verzonnen en niets herschreven dat er niet
+// stond. De spiernamen staan nog wel bij 'arts', dat alleen op het scherm komt.
+//
+// Ook samengevoegd op verzoek: "rectus femoris" en "quadricepsregio" waren twee
+// regio's en zijn nu één — "Voorzijde bovenbeen".
 //
 // Twee dingen uit die poster zijn bewust niet gladgestreken:
 //  - de poster gebruikt "zalf" en "crème" door elkaar, ook binnen één zin;
@@ -62,34 +71,26 @@
 
   var REGIOS = [
     {
-      id: 'rectus',
-      titel: 'Rectus femoris',
-      sub: 'voorzijde bovenbeen',
-      zin: 'Smeer het midden van de voorzijde van het bovenbeen in, over de gehele lengte van de rectus femoris.',
-      tekening: {
-        soort: 'spierband', aanzicht: 'voor', box: BOX_DIJ_VOOR, pad: 'QUADRICEPS_%',
-        band: { LEFT: [402, 680, 44, 330], RIGHT: [576, 680, 44, 330] },
-      },
-    },
-    {
-      id: 'quadriceps',
-      titel: 'Quadricepsregio',
-      sub: 'voorzijde bovenbeen',
-      zin: 'Smeer de volledige voorzijde van het bovenbeen in (quadricepsregio), van heup tot net boven de knie.',
+      id: 'bovenbeenvoor',
+      titel: 'Voorzijde bovenbeen',
+      sub: '',
+      zin: 'Smeer de volledige voorzijde van het bovenbeen in, van heup tot net boven de knie.',
+      arts: 'Rectus femoris en de overige quadriceps; op de poster waren dit twee regio\u2019s.',
+      foto: 'smeer-bovenbeen-voor.webp',
+      fotoKant: 'R',
       tekening: {
         soort: 'spier', aanzicht: 'voor', box: BOX_DIJ_VOOR, paden: ['QUADRICEPS_%'],
       },
     },
     {
       id: 'adductoren',
-      titel: 'Adductorenregio',
-      sub: 'binnenzijde bovenbeen',
-      zin: 'Smeer de binnenzijde van het bovenbeen in, over de volledige adductorenregio (van lies tot knie).',
-      foto: 'smeer-adductoren.webp',
+      titel: 'Binnenzijde bovenbeen',
+      sub: '',
+      zin: 'Smeer de binnenzijde van het bovenbeen in, van lies tot knie.',
+      arts: 'Adductoren.',
+      foto: 'smeer-bovenbeen-binnen.webp',
       fotoKant: 'R',          // de foto toont het rechterbeen; links wordt gespiegeld
       tekening: {
-        // de adductorenpaden lopen tot halverwege de dij; de band erbij maakt er
-        // "van lies tot knie" van, zoals de zin zegt
         soort: 'lichaamsband', aanzicht: 'voor', box: BOX_DIJ_VOOR,
         band: { LEFT: [444, 770, 68, 250], RIGHT: [512, 770, 68, 250] },
         bij: ['ADDUCTOR_%'],
@@ -97,9 +98,12 @@
     },
     {
       id: 'hamstrings',
-      titel: 'Hamstringsregio',
-      sub: 'achterzijde bovenbeen',
-      zin: 'Smeer de achterzijde van het bovenbeen in, over de volledige hamstringsregio (van bilplooi tot net boven de knie).',
+      titel: 'Achterzijde bovenbeen',
+      sub: '',
+      zin: 'Smeer de achterzijde van het bovenbeen in, van bilplooi tot net boven de knie.',
+      arts: 'Hamstrings.',
+      foto: 'smeer-bovenbeen-achter.webp',
+      fotoKant: 'R',
       tekening: {
         soort: 'spier', aanzicht: 'achter', box: BOX_DIJ_ACHTER, paden: ['HAMSTRINGS_%'],
         flauw: ['GLUTEUS_LEFT', 'GLUTEUS_RIGHT'],
@@ -107,10 +111,12 @@
     },
     {
       id: 'kuit',
-      titel: 'Triceps surae-regio',
-      sub: 'kuit: gastrocnemius en soleus',
-      zin: 'Smeer de volledige kuit in, van net onder de knieplooi tot aan de hiel (triceps surae-regio: gastrocnemius en soleus).',
+      titel: 'Kuitregio',
+      sub: '',
+      zin: 'Smeer de volledige kuit in, van net onder de knieplooi tot aan de hiel.',
+      arts: 'Gastrocnemius en soleus (triceps surae).',
       foto: 'smeer-kuit.webp',
+      fotoKant: 'R',
       tekening: {
         soort: 'spier', aanzicht: 'achter', box: BOX_KUIT, paden: ['CALVES_%'],
       },
@@ -118,10 +124,11 @@
     {
       id: 'scheen',
       titel: 'Voorzijde onderbeen',
-      sub: 'voorzijde onderbeen',
+      sub: '',
       zin: 'Smeer de voorzijde van het onderbeen in, over de volledige voorste onderbeenregio (van knie tot enkel).',
-      foto: 'smeer-onderbeen-voor.webp',
       arts: 'Dekt de tibialis anterior en ook de tibialis posterior (ventrale benadering).',
+      foto: 'smeer-onderbeen-voor.webp',
+      fotoKant: 'R',
       tekening: {
         soort: 'lichaamsband', aanzicht: 'voor', box: BOX_SCHEEN,
         band: { LEFT: [318, 1004, 194, 300], RIGHT: [512, 1004, 194, 300] },
@@ -129,15 +136,16 @@
     },
     {
       id: 'voetmediaal',
-      titel: 'Mediale zijde van de voet',
-      sub: 'abductor hallucis',
-      zin: 'Smeer de mediale zijde van de voet in, over de spierbuik van de abductor hallucis.',
+      titel: 'Binnenzijde van de voet',
+      sub: '',
+      zin: 'Smeer de binnenzijde van de voet in.',
+      arts: 'Spierbuik van de abductor hallucis; zo stond het op de poster.',
       tekening: { soort: 'schets', schets: VOET_ZIJ },
     },
     {
       id: 'voetzool',
-      titel: 'Plantaire zijde van de voet',
-      sub: 'onderkant voet',
+      titel: 'Onderkant van de voet',
+      sub: '',
       zin: 'Smeer de onderkant van de voet in, van de hiel tot aan de tenen.',
       tekening: { soort: 'schets', schets: VOET_ZOOL },
     },
@@ -185,7 +193,7 @@
     '</svg>';
 
   global.EMLA = {
-    bron: 'Poster “Waar Emla® insmeren? Voor botulinetoxine-injecties”, UMCG Centrum voor Revalidatie (overgetypt uit een schermafbeelding).',
+    bron: 'Naar de poster “Waar Emla® insmeren? Voor botulinetoxine-injecties”, UMCG Centrum voor Revalidatie; de spiernamen zijn eruit gelaten, de bewoording is verder onveranderd.',
     bronTekening: 'Lichaamstekeningen: @musclemap/assets (MIT).',
     vooraf: VOORAF,
     intro: INTRO,
