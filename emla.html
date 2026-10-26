@@ -277,6 +277,15 @@
     letter-spacing: 0.5px; color: var(--accent); margin-bottom: 2px;
   }
 
+  /* herkomst van tekst en tekeningen: hoort bij de app, niet bij het briefje */
+  .em-herkomst {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; line-height: 1.6;
+    color: var(--muted);
+    border-top: 1px solid var(--lijn);
+    margin: 28px 0 0; padding-top: 10px;
+  }
+
   .em-bron {
     margin-top: 16px;
     padding-top: 8px;
@@ -459,6 +468,8 @@
       </div>
       <textarea class="em-epic" id="emEpic" spellcheck="false" readonly></textarea>
     </section>
+
+    <p class="em-herkomst" id="emHerkomst"></p>
   </div>
 </div>
 
@@ -854,9 +865,9 @@
   // trap is nagemeten; test_emla.py bewaakt de ondergrens.
   function fotoHoogte(aantal) {
     if (aantal <= 2) return 410;
-    if (aantal <= 4) return 260;
-    if (aantal <= 6) return 165;
-    return 150;
+    if (aantal <= 4) return 275;
+    if (aantal <= 6) return 182;
+    return 158;
   }
 
   function tekenBlad() {
@@ -899,11 +910,10 @@
       '<div class="em-bladkop">Let op</div>' +
       '<ul class="em-bladlijst">' + EMLA.letop.map(function (t) {
         return '<li>' + esc(t) + '</li>';
-      }).join('') + '</ul>' +
-      // de herkomst van de tekeningen hoort in de app thuis, niet op het
-      // briefje dat de ouder meekrijgt
-      '<div class="em-bron">' + esc(EMLA.bron) +
-        '<span class="em-nietprint"> ' + esc(EMLA.bronTekening) + '</span></div>';
+      }).join('') + '</ul>';
+    // Geen bronvermelding op het briefje: voor de ouder die dit meekrijgt is
+    // die niet relevant. De verantwoording staat in de kop van emla-data.js en
+    // onderaan deze pagina, en de tekst voor het dossier eindigt er nog mee.
   }
 
   // ---------------- tekst voor de brief ----------------
@@ -1006,6 +1016,7 @@
     setTimeout(function () { elStatus.textContent = ''; }, 2500);
   });
 
+  document.getElementById('emHerkomst').textContent = EMLA.bron + ' ' + EMLA.bronTekening;
   herteken();
   laadFotos().then(herteken);
 })();

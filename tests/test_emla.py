@@ -152,7 +152,12 @@ with sync_playwright() as p:
     check("geen drie lege regels achter elkaar", "\n\n\n" not in t)
     check("alle regio's in de tekst", sum(t.count(n) for n in ALLE) >= 7)
     check("terugrekentijd in de tekst", "08:15" in t, "| " + t.split("\n")[2][:70])
-    check("bron erbij", "UMCG Centrum voor Revalidatie" in t)
+    check("bron erbij in de tekst voor het dossier", "UMCG Centrum voor Revalidatie" in t)
+
+    # Op het briefje dat de ouder meekrijgt staat juist geen bronvermelding meer.
+    check("geen bronvermelding op het briefje",
+          "naar de poster" not in pg.inner_text("#emBlad").lower()
+          and "umcg" not in pg.inner_text("#emBlad").lower())
 
     # Geen spiernamen meer op het briefje en niet in de brief; dat was de
     # uitdrukkelijke wens. Zowel het blad als de Epic-tekst wordt nagelopen.
