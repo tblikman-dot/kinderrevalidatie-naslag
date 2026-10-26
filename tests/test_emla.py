@@ -84,8 +84,8 @@ with sync_playwright() as p:
         check(naam + ": toont de aangeleverde foto, niet de tekening",
               pg.locator("#emBlad .em-bladregio img.em-tekfoto").count() > 0
               and pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 0)
-        check(naam + ": beide zijden geeft twee beelden, één gespiegeld",
-              spiegelstand() == [False, True], "| " + str(spiegelstand()))
+        check(naam + ": beide zijden geeft één beeld, ongespiegeld",
+              spiegelstand() == [False], "| " + str(spiegelstand()))
         for knop, verwacht in (("Rechts", [False]), ("Links", [True])):
             pg.locator(".em-kaart", has_text=naam).first.locator(
                 ".em-kant", has_text=knop).click()
@@ -199,6 +199,26 @@ with sync_playwright() as p:
     pg.wait_for_timeout(200)
     hoogte = pg.evaluate("document.body.scrollHeight")
     check("zeven regio's én een tijd passen op één A4", hoogte <= 1032, "| " + str(hoogte) + " px")
+
+    # De foto's worden groter naarmate er minder regio's op het briefje staan.
+    # Elk aantal moet op één A4 blijven passen; dat wordt hier allemaal gemeten.
+    for aantal in (1, 2, 3, 4, 5, 6):
+        pg2 = b.new_context(viewport={"width": 703, "height": 1032}).new_page()
+        pg2.goto(URL)
+        pg2.wait_for_timeout(450)
+        for naam in ALLE[:aantal]:
+            pg2.locator(".em-kaart", has_text=naam).first.click()
+            pg2.wait_for_timeout(70)
+        pg2.fill("#emTijd", "14:30")
+        pg2.wait_for_timeout(350)
+        pg2.emulate_media(media="print")
+        pg2.wait_for_timeout(200)
+        h = pg2.evaluate("document.body.scrollHeight")
+        fh = pg2.evaluate("""() => getComputedStyle(document.getElementById('emBlad'))
+            .getPropertyValue('--fotohoog').trim()""")
+        check(str(aantal) + " regio's passen op één A4 (foto " + fh + ")", h <= 1032,
+              "| " + str(h) + " px")
+        pg2.close()
     check("app-onderdelen staan niet op papier",
           not pg.locator(".topbar").is_visible()
           and not pg.locator("#emRaster").is_visible()

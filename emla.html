@@ -231,7 +231,7 @@
     page-break-inside: avoid;
   }
   .em-bladregio svg.em-tek { height: 64px; width: auto; max-width: 74px; flex: none; }
-  .em-bladregio .em-tekfoto { height: 142px; width: auto; flex: none; }
+  .em-bladregio .em-tekfoto { height: var(--fotohoog, 142px); width: auto; flex: none; }
   .em-bladregio svg.em-tek.em-breed { height: 42px; max-width: 84px; }
 
   /* eigen foto op het briefje, met het vlak eroverheen */
@@ -361,7 +361,7 @@
     .em-bladlijst { font-size: 11.5px; line-height: 1.45; }
     .em-bron { font-size: 10px; }
     .em-bladregio svg.em-tek { height: 54px; }
-    .em-bladregio .em-tekfoto { height: 130px; }
+    .em-bladregio .em-tekfoto { height: var(--fotohoog, 130px); }
     .em-bladregio svg.em-tek.em-breed { height: 36px; }
     .em-bfoto { width: 66px; }
     .em-bladlijst li { margin-bottom: 1px; }
@@ -652,11 +652,11 @@
 
     if (regio.foto) {
       if (!regio.fotoKant) return fotoBeeld(regio, false, '');
+      // Eén been per regio, niet twee naast elkaar: dat geeft de foto de volle
+      // breedte en daarmee de dubbele grootte. Welke kant het is staat in het
+      // label ernaast; bij "beide" staat het been zoals het is aangeleverd.
       var k = kant || 'LR';
-      if (k === 'LR') {
-        return '<span class="em-tweefoto">' +
-          fotoBeeld(regio, false, 'rechts') + fotoBeeld(regio, true, 'links') + '</span>';
-      }
+      if (k === 'LR') return fotoBeeld(regio, false, 'beide zijden');
       // spiegelen zodra de gevraagde kant niet de kant van de foto is
       var spiegel = (k !== regio.fotoKant);
       return fotoBeeld(regio, spiegel, k === 'L' ? 'links' : 'rechts');
@@ -849,8 +849,19 @@
       esc(EMLA.vooraf) + '</div>';
   }
 
+  // Hoe meer regio's op het briefje, hoe kleiner de foto's moeten staan om op
+  // één A4 te passen. Bij twee regio's is er ruimte zat, bij zeven niet. Deze
+  // trap is nagemeten; test_emla.py bewaakt de ondergrens.
+  function fotoHoogte(aantal) {
+    if (aantal <= 2) return 410;
+    if (aantal <= 4) return 260;
+    if (aantal <= 6) return 165;
+    return 150;
+  }
+
   function tekenBlad() {
     var lijst = gekozen();
+    elBlad.style.setProperty('--fotohoog', fotoHoogte(lijst.length) + 'px');
 
     if (!lijst.length) {
       elBlad.innerHTML = '<div class="em-leeg">Kies hierboven één of meer regio\'s. ' +
