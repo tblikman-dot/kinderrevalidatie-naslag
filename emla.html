@@ -351,10 +351,14 @@
 
   /* ---- printen: alleen het briefje ---- */
   @media print {
-    @page { size: A4 portrait; margin: 12mm; }
+    /* Marge 0 op de pagina zelf, en de witrand als padding eromheen. Dat is
+       niet alleen opmaak: zonder margeruimte heeft de browser geen plek voor
+       zijn eigen koptekst en voettekst, en dan blijft de URL van de site van
+       de afdruk. */
+    @page { size: A4 portrait; margin: 0; }
     .offline-balk, .topbar, .em-nietprint { display: none !important; }
     body { background: #fff; }
-    .em-wrap { max-width: none; padding: 0; }
+    .em-wrap { max-width: none; padding: 12mm; }
     .em-blad { border: none; box-shadow: none; border-radius: 0; padding: 0; }
     /* zonder dit laat de browser gekleurde vlakken weg bij het printen: dan
        staat er een foto zonder markering en een kant zonder kleur op papier */

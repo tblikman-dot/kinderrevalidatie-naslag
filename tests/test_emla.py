@@ -191,24 +191,27 @@ with sync_playwright() as p:
     pg.close()
 
     # printweergave: alleen het briefje, en het past op één A4
-    # (A4 min 12mm marges is ongeveer 703 x 1032 px bij 96 dpi)
-    pg = b.new_context(viewport={"width": 703, "height": 1032}).new_page()
+    # Een heel A4 is bij 96 dpi 794 x 1123 px; de witrand zit in de pagina zelf.
+    pg = b.new_context(viewport={"width": 794, "height": 1123}).new_page()
     pg.goto(URL)
     pg.wait_for_timeout(400)
     for naam in ALLE:
         kies(pg, naam)
-    # het zwaarste geval: alles aangevinkt én een tijd ingevuld
+    # het zwaarste geval: alles aangevinkt én een tijd ingevuld.
+    # De witrand zit sinds krn-v82 als padding in de pagina en niet meer in
+    # @page (anders drukt de browser zijn eigen koptekst met de URL mee), dus
+    # de hele body is de maat: een A4 is 1123 px bij 96 dpi.
     pg.fill("#emTijd", "14:30")
     pg.wait_for_timeout(300)
     pg.emulate_media(media="print")
     pg.wait_for_timeout(200)
     hoogte = pg.evaluate("document.body.scrollHeight")
-    check("zeven regio's én een tijd passen op één A4", hoogte <= 1032, "| " + str(hoogte) + " px")
+    check("zeven regio's én een tijd passen op één A4", hoogte <= 1123, "| " + str(hoogte) + " px")
 
     # De foto's worden groter naarmate er minder regio's op het briefje staan.
     # Elk aantal moet op één A4 blijven passen; dat wordt hier allemaal gemeten.
     for aantal in (1, 2, 3, 4, 5, 6):
-        pg2 = b.new_context(viewport={"width": 703, "height": 1032}).new_page()
+        pg2 = b.new_context(viewport={"width": 794, "height": 1123}).new_page()
         pg2.goto(URL)
         pg2.wait_for_timeout(450)
         for naam in ALLE[:aantal]:
@@ -221,7 +224,7 @@ with sync_playwright() as p:
         h = pg2.evaluate("document.body.scrollHeight")
         fh = pg2.evaluate("""() => getComputedStyle(document.getElementById('emBlad'))
             .getPropertyValue('--fotohoog').trim()""")
-        check(str(aantal) + " regio's passen op één A4 (foto " + fh + ")", h <= 1032,
+        check(str(aantal) + " regio's passen op één A4 (foto " + fh + ")", h <= 1123,
               "| " + str(h) + " px")
         pg2.close()
     check("app-onderdelen staan niet op papier",
