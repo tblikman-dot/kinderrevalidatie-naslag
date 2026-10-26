@@ -14,6 +14,13 @@
 // Ook samengevoegd op verzoek: "rectus femoris" en "quadricepsregio" waren twee
 // regio's en zijn nu één — "Voorzijde bovenbeen".
 //
+// EEN INSTRUCTIE IS VERVANGEN op aanwijzing van de behandelend arts. De poster
+// zegt: "Verwijder de zalf of veeg overtollige crème af vlak voor de
+// behandeling." Zo gaat het niet; de folie blijft zitten. Daarvoor in de plaats
+// staat er nu, in de woorden van de arts: "De folie blijft om tot aan de
+// behandeling." Zet de posterregel hier dus niet terug — tests/test_emla.py
+// valt om als dat toch gebeurt.
+//
 // Twee dingen uit die poster zijn bewust niet gladgestreken:
 //  - de poster gebruikt "zalf" en "crème" door elkaar, ook binnen één zin;
 //  - links/rechts staat er niet op. Dat onderscheid komt uit deze app, omdat
@@ -168,7 +175,7 @@
     "Breng een dikke laag Emla® crème aan op de aangegeven regio('s) en smeer goed uit.",
     'Dek eventueel af met een niet-luchtdoorlatende folie (bijv. huishoudfolie) en fixeer met een pleister.',
     'Laat minimaal 60 minuten zitten (langer mag, maximaal 4 uur).',
-    'Verwijder de zalf of veeg overtollige crème af vlak voor de behandeling.',
+    'De folie blijft om tot aan de behandeling.',
     'Alleen op de huid aanbrengen. Niet op open wonden of geïrriteerde huid.',
     'Bij vragen kunt u contact opnemen met het revalidatieteam.',
   ];
@@ -196,7 +203,7 @@
     '</svg>';
 
   global.EMLA = {
-    bron: 'Naar de poster “Waar Emla® insmeren? Voor botulinetoxine-injecties”, UMCG Centrum voor Revalidatie; de spiernamen zijn eruit gelaten, de bewoording is verder onveranderd.',
+    bron: 'Naar de poster “Waar Emla® insmeren? Voor botulinetoxine-injecties”, UMCG Centrum voor Revalidatie; tekst aangepast op aanwijzing van de behandelend arts.',
     bronTekening: 'Lichaamstekeningen: @musclemap/assets (MIT).',
     vooraf: VOORAF,
     intro: INTRO,

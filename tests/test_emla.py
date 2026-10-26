@@ -161,6 +161,16 @@ with sync_playwright() as p:
     gevonden = sorted({w for w in VERBODEN if w in blad_tekst or w in brief})
     check("geen spiernamen in de patiententekst", not gevonden, "| " + str(gevonden))
 
+    # De posterregel "Verwijder de zalf ... vlak voor de behandeling" is op
+    # aanwijzing van de arts vervangen: de folie blijft om tot aan de
+    # behandeling. Deze toets valt om zodra de oude instructie terugkeert.
+    check("de folie blijft om tot aan de behandeling",
+          "de folie blijft om tot aan de behandeling" in blad_tekst
+          and "de folie blijft om tot aan de behandeling" in brief)
+    check("de oude instructie over verwijderen staat er niet meer",
+          "verwijder de zalf" not in blad_tekst and "verwijder de zalf" not in brief
+          and "overtollige creme" not in brief)
+
     # leegmaken en herladen laten niets achter
     pg.click("#emWis")
     pg.wait_for_timeout(250)

@@ -72,7 +72,7 @@
   .em-kaart-top { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   /* hoogte vast, breedte volgt de verhouding van de tekening zelf */
   .em-kaart svg.em-tek { height: 46px; width: auto; max-width: 56px; flex: none; }
-  .em-kaart .em-tekfoto { height: 88px; width: auto; flex: none; display: block; }
+  .em-kaart .em-tekfoto { height: 106px; width: auto; flex: none; display: block; }
   .em-gespiegeld { transform: scaleX(-1); }
   .em-tweefoto { display: flex; gap: 3px; flex: none; }
   .em-kaart svg.em-tek.em-breed { height: 30px; max-width: 62px; }
@@ -231,7 +231,7 @@
     page-break-inside: avoid;
   }
   .em-bladregio svg.em-tek { height: 64px; width: auto; max-width: 74px; flex: none; }
-  .em-bladregio .em-tekfoto { height: 118px; width: auto; flex: none; }
+  .em-bladregio .em-tekfoto { height: 142px; width: auto; flex: none; }
   .em-bladregio svg.em-tek.em-breed { height: 42px; max-width: 84px; }
 
   /* eigen foto op het briefje, met het vlak eroverheen */
@@ -353,14 +353,18 @@
     .em-bladregio { break-inside: avoid; page-break-inside: avoid; }
     /* krapper, zodat ook het zwaarste geval — alle acht de regio's én een
        ingevulde tijd — op één vel past; dat scheelt een losse tweede pagina */
-    .em-wanneer { margin-bottom: 11px; padding: 8px 12px; }
-    .em-bladkop { margin: 13px 0 6px; }
-    .em-bladregios { gap: 9px; }
+    .em-wanneer { margin-bottom: 9px; padding: 7px 12px; }
+    .em-bladkop { margin: 10px 0 5px; }
+    .em-bladregios { gap: 8px; }
+    /* de foto's zijn 20% groter; die hoogte wordt hier teruggehaald bij de twee
+       opsommingen, zodat het briefje op één vel blijft passen */
+    .em-bladlijst { font-size: 11.5px; line-height: 1.45; }
+    .em-bron { font-size: 10px; }
     .em-bladregio svg.em-tek { height: 54px; }
-    .em-bladregio .em-tekfoto { height: 108px; }
+    .em-bladregio .em-tekfoto { height: 130px; }
     .em-bladregio svg.em-tek.em-breed { height: 36px; }
     .em-bfoto { width: 66px; }
-    .em-bladlijst li { margin-bottom: 2px; }
+    .em-bladlijst li { margin-bottom: 1px; }
     .em-bron { margin-top: 10px; }
   }
 </style>
