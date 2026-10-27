@@ -84,6 +84,12 @@ SPREEK_ZINNEN = [
     "zenuwletsel, pijn, angst) en de alternatieven (niets doen, ....)zijn besproken.",
     "Patient / { ouders/pleegouders/verzorgers } {zijn akkoord / zijn niet akkoord/ "
     "denken nog verder na} t.a.v. de voorgestelde ingreep conform WGBO.",
+    "Pre-operatief zal een MDO met de behandelaren van patient/patiente (ET/FT/Logo/Psy) "
+    "en behandelaren in het UMCG (ergotherapeut, fysiotherapeut en revalidatiearts) "
+    "plaatsvinden om de voorzieningen te checken en onderling af te stemmen over de "
+    "voorbereiding van de operatie en de nabehandeling.",
+    "Pre- en 3/6 maanden postoperatief zal klinimetrie consult gepland worden in het UMCG "
+    "voor het afnemen van klinimetrie.",
     "Patiente / { ouders/pleegouders/verzorgers} zijn akkoord met:",
     "Deelname CP register ja/nee",
     "MDO / afstemming met behandelaren uit regio: ja/nee",
@@ -92,6 +98,33 @@ SPREEK_ZINNEN = [
 
 # Alles wat aangevinkt kan worden, in de volgorde waarin het aangezet moet
 # worden (ouder voor kind, anders is het kind nog verborgen).
+BESPREEK_ZINNEN = [
+    "Pre-operatief",
+    "Organiseren voorzieningen/checken voorzieningen",
+    "Oefenen gebruik voorzieningen?",
+    "Psychologische voorbereiding?",
+    "Voedingsstatus?",
+    "Conditie pre operatief optimaliseren?",
+    "Slikken veilig evt. In liggende houding?",
+    "Toiletgang",
+    "Schoolgang",
+    "Opname UMCG",
+    "Bij ontslag overdracht naar ....",
+    "Gips",
+    "Spalken aanmeten",
+    "Aanpassing rolstoel",
+    "Post operatief",
+    "Therapie frequentie, FT, ET, psy, hydrotherapie? Waar?",
+    "Controle?",
+]
+
+BESPREEK_AAN = [
+    "b1.voorz", "b1.oefenen", "b1.psy", "b1.voeding", "b1.conditie", "b1.slikken",
+    "b1.toilet", "b1.school",
+    "b2.overdracht", "b2.gips", "b2.spalken", "b2.rolstoel",
+    "b3.therapie", "b3.controle",
+]
+
 ALLES_AAN = [
     "p1.klin", "p1.opname", "p1.opname.direct", "p1.beetster", "p1.poli",
     "p1.ther", "p1.ther.ft", "p1.ther.ft.freq", "p1.ther.et", "p1.ther.et.freq",
@@ -305,6 +338,55 @@ with sync_playwright() as p:
     pg.click("#mdoKopieerSpreek"); pg.wait_for_timeout(500)
     check("spreekkamer kopieert", "Gekopieerd" in pg.inner_text("#mdoMeldingSpreek"))
     check("klembord spreekkamer", pg.evaluate("navigator.clipboard.readText()") == S())
+
+    # ---------- bespreekpunten ----------
+    print("\n--- bespreekpunten ---")
+    pg.click("#mdoTabBespreek"); pg.wait_for_timeout(300)
+    check("bespreekpunten: kop uit de bron",
+          pg.inner_text("#mdoBespreekKop") == "MDO pre operatief, bespreekpunten:",
+          "| " + pg.inner_text("#mdoBespreekKop"))
+    check("bespreekpunten: leeg tekstvak zolang er niets aan staat",
+          pg.input_value("#mdoBespreekEpic") == "",
+          "| " + pg.input_value("#mdoBespreekEpic")[:80])
+    pg.click("#mdoKopieerBespreek"); pg.wait_for_timeout(400)
+    check("bespreekpunten: leeg kopieren meldt dat",
+          "nog niets" in pg.inner_text("#mdoMeldingBespreek"),
+          "| " + pg.inner_text("#mdoMeldingBespreek"))
+    for pad in BESPREEK_AAN:
+        try:
+            vink(pad)
+        except Exception as e:
+            check("aanvinken lukt: " + pad, False, "| " + str(e)[:90])
+    pg.wait_for_timeout(400)
+    tb = pg.input_value("#mdoBespreekEpic")
+    veilig(tb, "bespreekpunten")
+    check("bespreekpunten: kop boven de tekst",
+          tb.startswith("MDO PRE OPERATIEF, BESPREEKPUNTEN"), "| " + tb[:50])
+    for z in BESPREEK_ZINNEN:
+        check("letterlijk: " + z[:58], z in tb)
+    vul("b2.overdracht", "naar", "eerste lijn"); pg.wait_for_timeout(300)
+    check("bespreekpunten: ingevuld veld komt erin",
+          "Bij ontslag overdracht naar eerste lijn" in pg.input_value("#mdoBespreekEpic"))
+    check("bespreekpunten: uitgezette punten blijven eruit",
+          "Toiletgang" in pg.input_value("#mdoBespreekEpic"))
+    pg.uncheck('input[data-pad="b1.toilet"]:not([data-veld])'); pg.wait_for_timeout(300)
+    check("bespreekpunten: uitgezet punt verdwijnt",
+          "Toiletgang" not in pg.input_value("#mdoBespreekEpic"))
+    pg.click("#mdoWisBespreek"); pg.wait_for_timeout(300)
+    check("bespreekpunten: leegmaken maakt het tekstvak leeg",
+          pg.input_value("#mdoBespreekEpic") == "")
+    check("bespreekpunten: leegmaken raakt de MDO-checklist niet",
+          "NOG NIET INGEVULD" in T() and T().startswith("MDO-CHECKLIST"))
+
+    # ---------- de drie tabbladen ----------
+    print("\n--- tabbladen ---")
+    for knop, vlak in [("#mdoTabMdo", "#mdoVlakMdo"),
+                       ("#mdoTabBespreek", "#mdoVlakBespreek"),
+                       ("#mdoTabSpreek", "#mdoVlakSpreek")]:
+        pg.click(knop); pg.wait_for_timeout(200)
+        zichtbaar = [v for v in ["#mdoVlakMdo", "#mdoVlakBespreek", "#mdoVlakSpreek"]
+                     if pg.locator(v).is_visible()]
+        check("tab " + knop + " toont alleen " + vlak, zichtbaar == [vlak], "| " + str(zichtbaar))
 
     # ---------- niets bewaard ----------
     print("\n--- niets bewaard ---")

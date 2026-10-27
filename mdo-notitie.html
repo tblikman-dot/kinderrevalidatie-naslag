@@ -49,8 +49,8 @@
   }
   .mdo-tab {
     flex: 1;
-    padding: 10px 8px;
-    font-size: 13.5px; font-weight: 700;
+    padding: 10px 6px;
+    font-size: 13px; font-weight: 700;
     border: 1px solid var(--lijn); border-radius: 10px;
     background: var(--paneel); color: var(--inkt);
     cursor: pointer;
@@ -177,6 +177,7 @@
   @media (max-width: 480px) {
     .mdo-onder { margin-left: 12px; }
     .mdo-optienoot { margin-left: 12px; }
+    .mdo-tab { font-size: 12px; padding: 9px 4px; }
   }
 </style>
 </head>
@@ -206,10 +207,11 @@
 
   <div class="mdo-tabs">
     <button class="mdo-tab aan" id="mdoTabMdo" type="button">MDO-checklist</button>
+    <button class="mdo-tab" id="mdoTabBespreek" type="button">Bespreekpunten</button>
     <button class="mdo-tab" id="mdoTabSpreek" type="button">Spreekkamer</button>
   </div>
 
-  <!-- ============ MDO ============ -->
+  <!-- ============ MDO-CHECKLIST ============ -->
   <div id="mdoVlakMdo">
     <form id="mdoForm" autocomplete="off"></form>
 
@@ -225,6 +227,28 @@
         <span class="mdo-melding" id="mdoMelding"></span>
       </div>
       <textarea class="mdo-epic" id="mdoEpic" spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- ============ BESPREEKPUNTEN ============ -->
+  <div id="mdoVlakBespreek" hidden>
+    <p class="mdo-intro" id="mdoBespreekKop"></p>
+    <form id="mdoBespreekForm" autocomplete="off"></form>
+
+    <div class="mdo-uit">
+      <h2>Tekst voor Epic</h2>
+      <p class="mdo-uitleg">
+        Dit is de agenda van het MDO, niet de uitkomst. Wat je aankruist komt in de tekst; de
+        uitkomst van het overleg leg je vast op het tabblad MDO-checklist.
+      </p>
+      <div class="mdo-knoprij">
+        <button class="mdo-knop" id="mdoKopieerBespreek" type="button">Kopiëren</button>
+        <button class="mdo-knop rustig" id="mdoWisBespreek" type="button">Alles leegmaken</button>
+        <span class="mdo-melding" id="mdoMeldingBespreek"></span>
+      </div>
+      <textarea class="mdo-epic" id="mdoBespreekEpic" spellcheck="false" readonly
+        placeholder="Kruis hierboven aan wat besproken is."></textarea>
+      <div class="mdo-noot" id="mdoBespreekNoten"></div>
     </div>
   </div>
 
@@ -257,21 +281,13 @@
 
   var D = window.MDO;
 
-  // Niets hiervan wordt bewaard: geen localStorage, geen URL. Bij herladen weg.
-  var aan = {};      // pad -> true
-  var velden = {};   // pad + '#' + veldnaam -> waarde
-
-  var elForm = document.getElementById('mdoForm');
-  var elEpic = document.getElementById('mdoEpic');
-  var elMelding = document.getElementById('mdoMelding');
-
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
 
-  // ---------- opbouwen ----------
+  // ================= opbouwen van de keuzes =================
 
   function veldHtml(pad, naam, def) {
     def = def || {};
@@ -324,116 +340,89 @@
     }).join('');
   }
 
-  function puntHtml(p) {
+  // Eén kaart: met nummer (de negen punten) of zonder (de bespreekpunten).
+  function kaartHtml(blok) {
     var body = '<div class="mdo-opties">' +
-      optiesHtml(p.id, { soort: p.soort, opties: p.opties }) + '</div>';
-    var binnen = p.uitklap
+      optiesHtml(blok.id, { soort: blok.soort, opties: blok.opties }) + '</div>';
+    var binnen = blok.uitklap
       ? '<details class="mdo-uitklap"><summary>Lijst openklappen</summary>' + body + '</details>'
       : body;
-    var noot = p.noot ? '<p class="mdo-noot"><strong>In de bron:</strong> ' + esc(p.noot) + '</p>' : '';
+    var noot = blok.noot ? '<p class="mdo-noot"><strong>In de bron:</strong> ' + esc(blok.noot) + '</p>' : '';
+    var nr = blok.nr ? '<span class="mdo-nr">' + blok.nr + '</span>' : '';
     return '<section class="mdo-punt">' +
-      '<h2 class="mdo-puntkop"><span class="mdo-nr">' + p.nr + '</span>' + esc(p.kop) + '</h2>' +
+      '<h2 class="mdo-puntkop">' + nr + esc(blok.kop) + '</h2>' +
       binnen + noot + '</section>';
   }
 
-  elForm.innerHTML = D.punten.map(puntHtml).join('');
-  elForm.addEventListener('submit', function (e) { e.preventDefault(); });
+  // ================= stand uitlezen =================
 
-  // ---------- stand uitlezen ----------
-
-  function leesStand() {
-    aan = {}; velden = {};
-    var vinkjes = elForm.querySelectorAll('input[data-pad]:not([data-veld])');
+  function leesStand(formEl) {
+    var stand = { aan: {}, velden: {} };
+    var vinkjes = formEl.querySelectorAll('input[data-pad]:not([data-veld])');
     for (var i = 0; i < vinkjes.length; i++) {
-      if (vinkjes[i].checked) aan[vinkjes[i].getAttribute('data-pad')] = true;
+      if (vinkjes[i].checked) stand.aan[vinkjes[i].getAttribute('data-pad')] = true;
     }
-    var vlds = elForm.querySelectorAll('[data-veld]');
+    var vlds = formEl.querySelectorAll('[data-veld]');
     for (var j = 0; j < vlds.length; j++) {
       var w = String(vlds[j].value || '').trim();
-      if (w) velden[vlds[j].getAttribute('data-pad') + '#' + vlds[j].getAttribute('data-veld')] = w;
+      if (w) stand.velden[vlds[j].getAttribute('data-pad') + '#' + vlds[j].getAttribute('data-veld')] = w;
     }
+    return stand;
   }
 
   // Onderliggende keuzes alleen tonen als de regel erboven aan staat.
-  function toonOnder() {
-    var blokken = elForm.querySelectorAll('.mdo-onder');
+  function toonOnder(formEl, stand) {
+    var blokken = formEl.querySelectorAll('.mdo-onder');
     for (var i = 0; i < blokken.length; i++) {
-      blokken[i].hidden = !aan[blokken[i].getAttribute('data-onder')];
+      blokken[i].hidden = !stand.aan[blokken[i].getAttribute('data-onder')];
     }
-    var vrij = elForm.querySelectorAll('.mdo-vrij');
+    var vrij = formEl.querySelectorAll('.mdo-vrij');
     for (var j = 0; j < vrij.length; j++) {
       var pad = vrij[j].getAttribute('data-pad');
       var naam = vrij[j].getAttribute('data-veld').replace(/__vrij$/, '');
-      var sel = elForm.querySelector('select[data-pad="' + pad + '"][data-veld="' + naam + '"]');
+      var sel = formEl.querySelector('select[data-pad="' + pad + '"][data-veld="' + naam + '"]');
       vrij[j].hidden = !(sel && sel.value === vrij[j].getAttribute('data-vrijbij'));
     }
   }
 
-  // ---------- tekst ----------
+  // ================= tekst =================
 
-  function waardeVan(pad, naam, def) {
-    var w = velden[pad + '#' + naam];
+  function waardeVan(stand, pad, naam, def) {
+    var w = stand.velden[pad + '#' + naam];
     if (def && def.soort === 'keuze') {
       if (!w) return def.leeg || '';
       if (def.vrijBij && w === def.vrijBij) {
         // Zelf ingetypt centrum vervangt het woord "overig"; staat er niets,
         // dan blijft "overig" staan.
-        return velden[pad + '#' + naam + '__vrij'] || def.vrijBij;
+        return stand.velden[pad + '#' + naam + '__vrij'] || def.vrijBij;
       }
       return w;
     }
     return w || (def && def.leeg) || '';
   }
 
-  function vulTekst(pad, o) {
+  function vulTekst(stand, pad, o) {
     return String(o.tekst).replace(/\{(\w+)\}/g, function (hele, naam) {
-      return waardeVan(pad, naam, (o.velden || {})[naam]);
+      return waardeVan(stand, pad, naam, (o.velden || {})[naam]);
     });
   }
 
-  function verzamel(groepPad, groep, uit) {
+  function verzamel(stand, groepPad, groep, uit) {
     groep.opties.forEach(function (o) {
       var pad = groepPad + '.' + o.id;
-      if (!aan[pad]) return;
-      uit.push(vulTekst(pad, o));
-      if (o.onder) verzamel(pad, o.onder, uit);
+      if (!stand.aan[pad]) return;
+      uit.push(vulTekst(stand, pad, o));
+      if (o.onder) verzamel(stand, pad, o.onder, uit);
     });
   }
 
-  function maakTekst() {
-    var L = [D.titel, '', D.aanhef, ''];
-    var mist = [];
-    D.punten.forEach(function (p) {
-      var uit = [];
-      verzamel(p.id, { soort: p.soort, opties: p.opties }, uit);
-      if (!uit.length) { mist.push('(' + p.nr + ') ' + p.kort); return; }
-      // "1." aan het begin van een regel maakt in een teksteditor een
-      // genummerde lijst; "(1)" niet. Zie de kop van mdo-data.js.
-      L.push('(' + p.nr + ') ' + p.kop);
-      uit.forEach(function (r) { L.push(r); });
-      L.push('');
-    });
-    if (mist.length) {
-      L.push('NOG NIET INGEVULD');
-      mist.forEach(function (r) { L.push(r); });
-    }
-    return naarAscii(L.join('\n'));
+  function regelsVan(stand, blok) {
+    var uit = [];
+    verzamel(stand, blok.id, { soort: blok.soort, opties: blok.opties }, uit);
+    return uit;
   }
 
-  function bij() {
-    leesStand();
-    toonOnder();
-    elEpic.value = maakTekst();
-  }
-
-  elForm.addEventListener('change', bij);
-  elForm.addEventListener('input', bij);
-  // Een klik in een invulveld mag het vinkje erboven niet omzetten.
-  elForm.addEventListener('click', function (e) {
-    if (e.target && e.target.getAttribute && e.target.getAttribute('data-veld')) e.stopPropagation();
-  }, true);
-
-  // ---------- kopieren ----------
+  // ================= kopieren =================
 
   function viaSelectie(tekst) {
     var hulp = document.createElement('textarea');
@@ -462,49 +451,119 @@
     setTimeout(function () { meldEl.textContent = ''; }, 2500);
   }
 
-  document.getElementById('mdoKopieer').addEventListener('click', function () {
-    kopieer(elEpic, elMelding);
-  });
+  // Eén invulbaar tabblad: formulier, tekstvak, knoppen.
+  function koppel(formEl, blokken, uitEl, maakTekst, knopKopieer, knopWis, meldEl) {
+    formEl.innerHTML = blokken.map(kaartHtml).join('');
+    formEl.addEventListener('submit', function (e) { e.preventDefault(); });
 
-  document.getElementById('mdoWis').addEventListener('click', function () {
-    elForm.reset();
+    function bij() {
+      var stand = leesStand(formEl);
+      toonOnder(formEl, stand);
+      uitEl.value = maakTekst(stand);
+    }
+
+    formEl.addEventListener('change', bij);
+    formEl.addEventListener('input', bij);
+    // Een klik in een invulveld mag het vinkje erboven niet omzetten.
+    formEl.addEventListener('click', function (e) {
+      if (e.target && e.target.getAttribute && e.target.getAttribute('data-veld')) e.stopPropagation();
+    }, true);
+
+    knopKopieer.addEventListener('click', function () { kopieer(uitEl, meldEl); });
+    knopWis.addEventListener('click', function () { formEl.reset(); bij(); });
     bij();
-  });
+  }
 
-  // ---------- spreekkamer ----------
+  // ---------- tabblad 1: de negen punten ----------
+
+  koppel(
+    document.getElementById('mdoForm'),
+    D.punten,
+    document.getElementById('mdoEpic'),
+    function (stand) {
+      var L = [D.titel, '', D.aanhef, ''];
+      var mist = [];
+      D.punten.forEach(function (p) {
+        var uit = regelsVan(stand, p);
+        if (!uit.length) { mist.push('(' + p.nr + ') ' + p.kort); return; }
+        // "1." aan het begin van een regel maakt in een teksteditor een
+        // genummerde lijst; "(1)" niet. Zie de kop van mdo-data.js.
+        L.push('(' + p.nr + ') ' + p.kop);
+        uit.forEach(function (r) { L.push(r); });
+        L.push('');
+      });
+      if (mist.length) {
+        L.push('NOG NIET INGEVULD');
+        mist.forEach(function (r) { L.push(r); });
+      }
+      return naarAscii(L.join('\n'));
+    },
+    document.getElementById('mdoKopieer'),
+    document.getElementById('mdoWis'),
+    document.getElementById('mdoMelding')
+  );
+
+  // ---------- tabblad 2: de bespreekpunten ----------
+
+  document.getElementById('mdoBespreekKop').textContent = D.bespreek.kop;
+
+  koppel(
+    document.getElementById('mdoBespreekForm'),
+    D.bespreek.groepen,
+    document.getElementById('mdoBespreekEpic'),
+    function (stand) {
+      var L = [];
+      D.bespreek.groepen.forEach(function (g) {
+        var uit = regelsVan(stand, g);
+        if (!uit.length) return;
+        L.push(g.kop);
+        uit.forEach(function (r) { L.push(r); });
+        L.push('');
+      });
+      // Niets aangekruist: dan ook geen kop. Een lege agenda hoort niet in het
+      // dossier te belanden.
+      if (!L.length) return '';
+      return naarAscii([D.bespreek.titel, ''].concat(L).join('\n'));
+    },
+    document.getElementById('mdoKopieerBespreek'),
+    document.getElementById('mdoWisBespreek'),
+    document.getElementById('mdoMeldingBespreek')
+  );
+
+  function notenHtml(lijst) {
+    return '<strong>In de bron:</strong><br>' +
+      lijst.map(function (n) { return '— ' + esc(n); }).join('<br>');
+  }
+  document.getElementById('mdoBespreekNoten').innerHTML = notenHtml(D.bespreek.noten);
+
+  // ---------- tabblad 3: spreekkamer ----------
 
   var elSpreek = document.getElementById('mdoSpreek');
   elSpreek.value = naarAscii(D.spreekkamer.regels.join('\n'));
-  elSpreek.style.minHeight = '240px';
-
-  document.getElementById('mdoSpreekNoten').innerHTML =
-    '<strong>In de bron:</strong><br>' +
-    D.spreekkamer.noten.map(function (n) { return '— ' + esc(n); }).join('<br>');
-
+  elSpreek.style.minHeight = '260px';
+  document.getElementById('mdoSpreekNoten').innerHTML = notenHtml(D.spreekkamer.noten);
   document.getElementById('mdoKopieerSpreek').addEventListener('click', function () {
     kopieer(elSpreek, document.getElementById('mdoMeldingSpreek'));
   });
 
   // ---------- tabs ----------
 
-  var tabMdo = document.getElementById('mdoTabMdo');
-  var tabSpreek = document.getElementById('mdoTabSpreek');
-  var vlakMdo = document.getElementById('mdoVlakMdo');
-  var vlakSpreek = document.getElementById('mdoVlakSpreek');
-
-  function zetTab(welke) {
-    var mdo = (welke === 'mdo');
-    tabMdo.classList.toggle('aan', mdo);
-    tabSpreek.classList.toggle('aan', !mdo);
-    vlakMdo.hidden = !mdo;
-    vlakSpreek.hidden = mdo;
-  }
-  tabMdo.addEventListener('click', function () { zetTab('mdo'); });
-  tabSpreek.addEventListener('click', function () { zetTab('spreek'); });
+  var TABS = [
+    { knop: 'mdoTabMdo', vlak: 'mdoVlakMdo' },
+    { knop: 'mdoTabBespreek', vlak: 'mdoVlakBespreek' },
+    { knop: 'mdoTabSpreek', vlak: 'mdoVlakSpreek' }
+  ];
+  TABS.forEach(function (t) {
+    document.getElementById(t.knop).addEventListener('click', function () {
+      TABS.forEach(function (a) {
+        var aan = (a === t);
+        document.getElementById(a.knop).classList.toggle('aan', aan);
+        document.getElementById(a.vlak).hidden = !aan;
+      });
+    });
+  });
 
   document.getElementById('mdoBron').textContent = D.bron;
-
-  bij();
 })();
 
 window.addEventListener('online', () => document.body.classList.remove('is-offline'));

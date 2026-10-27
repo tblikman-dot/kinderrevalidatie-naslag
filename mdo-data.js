@@ -45,6 +45,9 @@
       '',
       'Patiënt / { ouders/pleegouders/verzorgers } {zijn akkoord / zijn niet akkoord/ denken nog verder na} t.a.v. de voorgestelde ingreep conform WGBO.',
       '',
+      'Pre-operatief zal een MDO met de behandelaren van patient/patiente (ET/FT/Logo/Psy) en behandelaren in het UMCG (ergotherapeut, fysiotherapeut en revalidatiearts) plaatsvinden om de voorzieningen te checken en onderling af te stemmen over de voorbereiding van de operatie en de nabehandeling.',
+      'Pre- en 3/6 maanden postoperatief zal klinimetrie consult gepland worden in het UMCG voor het afnemen van klinimetrie.',
+      '',
       'Patiënte / { ouders/pleegouders/verzorgers} zijn akkoord met:',
       'Deelname CP register ja/nee',
       'MDO / afstemming met behandelaren uit regio: ja/nee',
@@ -56,7 +59,54 @@
       '"De procedure ()" heeft lege haakjes: een invulplek zonder ***-markering. Zo overgenomen.',
       '"complicatie’s" staat zo in de bron; vermoedelijk "complicaties".',
       'In "(niets doen, ….)zijn besproken" ontbreekt een spatie na het haakje. Zo overgenomen.',
-      'De drie ja/nee-regels stonden in de bron deels met en deels zonder bolletje. Hier staan ze alle drie gelijk.'
+      'De drie ja/nee-regels stonden in de bron deels met en deels zonder bolletje. Hier staan ze alle drie gelijk.',
+      'De twee alinea’s over het pre-operatieve MDO en de klinimetrie kwamen later los aan, zonder dat erbij stond waar ze horen. Ze staan nu na de WGBO-zin en vóór "zijn akkoord met", omdat dat de enige plek is waar ze in de loop van de tekst passen. Klopt dat niet, dan verplaats ik ze.',
+      'Die eerste alinea schrijft "patient/patiente" met een schuine streep, terwijl de rest van de tekst "Patiënte" gebruikt. Zo overgenomen.',
+      '"Pre- en 3/6 maanden postoperatief" staat hier; het stroomschema (bijlage 1) noemt alleen 6 maanden postoperatief. Zo overgenomen.'
+    ]
+  };
+
+  // De agenda van het pre-operatieve MDO. Dit is een andere lijst dan de negen
+  // punten hierboven: dit is wat je bespreekt, die negen zijn waar je op uitkomt.
+  // Inhoudelijk overlappen ze (voorzieningen, voeding, conditie, gips, therapie).
+  var BESPREEK = {
+    kop: 'MDO pre operatief, bespreekpunten:',
+    titel: 'MDO PRE OPERATIEF, BESPREEKPUNTEN',
+    groepen: [
+      {
+        id: 'b1', kop: 'Pre-operatief', soort: 'check',
+        opties: [
+          { id: 'voorz', tekst: 'Organiseren voorzieningen/checken voorzieningen' },
+          { id: 'oefenen', tekst: 'Oefenen gebruik voorzieningen?' },
+          { id: 'psy', tekst: 'Psychologische voorbereiding?' },
+          { id: 'voeding', tekst: 'Voedingsstatus?' },
+          { id: 'conditie', tekst: 'Conditie pre operatief optimaliseren?' },
+          { id: 'slikken', tekst: 'Slikken veilig evt. In liggende houding?' },
+          { id: 'toilet', tekst: 'Toiletgang' },
+          { id: 'school', tekst: 'Schoolgang' }
+        ]
+      },
+      {
+        id: 'b2', kop: 'Opname UMCG', soort: 'check',
+        opties: [
+          { id: 'overdracht', tekst: 'Bij ontslag overdracht naar {naar}', velden: { naar: { leeg: '....' } } },
+          { id: 'gips', tekst: 'Gips' },
+          { id: 'spalken', tekst: 'Spalken aanmeten' },
+          { id: 'rolstoel', tekst: 'Aanpassing rolstoel' }
+        ]
+      },
+      {
+        id: 'b3', kop: 'Post operatief', soort: 'check',
+        opties: [
+          { id: 'therapie', tekst: 'Therapie frequentie, FT, ET, psy, hydrotherapie? Waar?' },
+          { id: 'controle', tekst: 'Controle?' }
+        ]
+      }
+    ],
+    noten: [
+      'Veel punten eindigen in de bron op een vraagteken. Dat zijn vragen om te stellen, geen vaststellingen; de vraagtekens blijven dus staan.',
+      '"Slikken veilig evt. In liggende houding?" heeft midden in de zin een hoofdletter I. Zo overgenomen.',
+      'Deze lijst overlapt met de negen punten van de MDO-checklist: voorzieningen, voeding, conditie, gips, spalken en therapiefrequentie komen in allebei voor. Dit is de agenda, die negen zijn de uitkomst.'
     ]
   };
 
@@ -299,6 +349,7 @@
     titel: 'MDO-CHECKLIST',
     aanhef: 'Richtlijnen ten aanzien van de nabehandeling werden besproken:',
     spreekkamer: SPREEKKAMER,
+    bespreek: BESPREEK,
     punten: PUNTEN
   };
 })(typeof window !== 'undefined' ? window : this);
