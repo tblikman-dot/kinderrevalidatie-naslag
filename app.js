@@ -129,12 +129,18 @@ const DEFAULT_CATS = [
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'periop', label: 'Rondom een operatie of ingreep', scope: 'Perioperatieve regelzaken, postoperatieve zorg, checklist',
-    zoekwoorden: 'perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden scoliose scoliosecorrectie spondylodese kyfose kyfectomie wervelkolomchirurgie rolstoel zitsysteem zitting custom contoured modulair CCS MWS leverancier ergotherapeut tillift transfers mobiliseren zitbalans zitduur decubitus drukplek huid sensibiliteit latexallergie shunt baclofenpomp katheterisatie darmbeleid blaasbeleid pijnbeleid thuiszorg pgb machtiging school terugkeer participatie verwachtingen nulmeting kwaliteit van leven HRQOL Khoshbin Thomson Hosking Meng spina bifida cystica Chiari syringomyelie tethered cord',
+    zoekwoorden: 'mdo-notitie mdo notitie epic dossier beleid nabehandeling klinische revalidatiebehandeling poliklinisch eerste lijn paramedische begeleiding hydrotherapie frequentie onbelast partieel belast mobiliseren bewegingsuitslagen buiklig heupspreiding statafel langzit gips orthese draagadvies spreidvoorziening stavoorziening loophulp ligvoorziening tillift zitorthese dietetiek slikfunctie logopedie psychologische pedagogische begeleiding spreekkamer WGBO CP register akkoord behandelvoorstel complicaties alternatieven consent perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden scoliose scoliosecorrectie spondylodese kyfose kyfectomie wervelkolomchirurgie rolstoel zitsysteem zitting custom contoured modulair CCS MWS leverancier ergotherapeut tillift transfers mobiliseren zitbalans zitduur decubitus drukplek huid sensibiliteit latexallergie shunt baclofenpomp katheterisatie darmbeleid blaasbeleid pijnbeleid thuiszorg pgb machtiging school terugkeer participatie verwachtingen nulmeting kwaliteit van leven HRQOL Khoshbin Thomson Hosking Meng spina bifida cystica Chiari syringomyelie tethered cord',
     directLinks: [
       { label: '🗓️ Perioperatieve checklist — wat moet ik regelen?', url: 'perioperatief.html', kort: 'Perioperatieve checklist', icoon: '🗓️', groep: 'ok' },
+      { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html', kort: 'MDO-notitie voor Epic', icoon: '📋', groep: 'ok',
+        zoek: 'mdo notitie epic dossier beleid nabehandeling spreekkamer WGBO akkoord gips orthese voorziening mobiliseren onbelast partieel buiklig statafel langzit hydrotherapie dietetiek slikfunctie klinische poliklinische revalidatiebehandeling eerste lijn CP register' },
     ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
-  { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model' },
+  { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model, MDO rondom een operatie',
+    zoekwoorden: 'mdo multidisciplinair overleg notitie epic dossier nabehandeling spreekkamer behandelaren ET FT logopedie psychologie regio',
+    directLinks: [
+      { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html' },
+    ] },
   { id: 'appzelf', label: 'De app zelf onderhouden', scope: "Claude Code-commando's en werkafspraken",
     zoekwoorden: 'claude code commando slash command init plan clear compact rewind diff resume model help CLAUDE.md projectcontext sessie geheugen samenvatten terugdraaien wijzigingen tonen hervatten model wisselen service worker cache versie ophogen sw.js app.js zoekwoorden tests alles.sh github repo commit push ontwikkelen onderhoud werkafspraken bron vermelden geen patientgegevens',
     directLinks: [

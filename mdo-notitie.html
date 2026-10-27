@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>MDO-notitie voor Epic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .mdo-wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .mdo-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .mdo-terug:hover { text-decoration: underline; }
+
+  .mdo-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .mdo-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 16px;
+  }
+
+  .mdo-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.65;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 14px;
+    background: #FBEAE5; color: #8E3617;
+  }
+  .mdo-vlag strong { display: block; margin-bottom: 3px; }
+
+  /* ---- tabs ---- */
+  .mdo-tabs {
+    display: flex; gap: 6px; margin: 0 0 16px;
+    font-family: system-ui, sans-serif;
+  }
+  .mdo-tab {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 13.5px; font-weight: 700;
+    border: 1px solid var(--lijn); border-radius: 10px;
+    background: var(--paneel); color: var(--inkt);
+    cursor: pointer;
+  }
+  .mdo-tab.aan { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ---- punten ---- */
+  .mdo-punt {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin: 0 0 12px;
+  }
+  .mdo-puntkop {
+    font-size: 15px; line-height: 1.45;
+    margin: 0 0 10px;
+    display: flex; gap: 9px; align-items: baseline;
+  }
+  .mdo-nr {
+    flex: 0 0 auto;
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 700;
+    background: var(--accent-zacht); color: var(--accent);
+    border-radius: 6px; padding: 2px 7px;
+  }
+
+  .mdo-opties { font-family: system-ui, sans-serif; font-size: 13.5px; }
+  .mdo-optie { margin: 0 0 4px; }
+
+  .mdo-vink {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 5px 6px; border-radius: 8px;
+    cursor: pointer; line-height: 1.5;
+  }
+  .mdo-vink:hover { background: var(--accent-zacht); }
+  .mdo-vink input { margin: 3px 0 0; flex: 0 0 auto; width: 16px; height: 16px; }
+  .mdo-tekst { min-width: 0; overflow-wrap: break-word; }
+
+  .mdo-veld {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    padding: 2px 6px;
+    border: 1px solid var(--lijn); border-radius: 6px;
+    background: #fff; color: var(--inkt);
+    max-width: 100%;
+    min-width: 60px;
+  }
+  .mdo-veld:focus { outline: none; border-color: var(--accent); }
+  .mdo-keuzeveld { max-width: 100%; }
+
+  .mdo-onder {
+    margin: 2px 0 8px 24px;
+    padding-left: 10px;
+    border-left: 2px solid var(--lijn);
+  }
+
+  .mdo-noot {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; line-height: 1.6;
+    color: #6B4E06; background: #FBF3DC;
+    border-radius: 8px; padding: 8px 10px;
+    margin: 8px 0 0;
+  }
+  .mdo-optienoot { margin: 2px 0 6px 30px; }
+
+  .mdo-uitklap { margin: 0; }
+  .mdo-uitklap > summary {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); cursor: pointer;
+    padding: 6px 0;
+  }
+
+  /* ---- uitvoer ---- */
+  .mdo-uit {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin: 18px 0 0;
+  }
+  .mdo-uit h2 { font-size: 15px; margin: 0 0 6px; }
+  .mdo-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 10px;
+  }
+  .mdo-knoprij {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin: 0 0 10px;
+  }
+  .mdo-knop {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; font-weight: 700;
+    padding: 9px 14px; border-radius: 9px;
+    border: 1px solid var(--accent);
+    background: var(--accent); color: #fff;
+    cursor: pointer;
+  }
+  .mdo-knop.rustig { background: var(--paneel); color: var(--accent); }
+  .mdo-melding {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--accent);
+  }
+  .mdo-epic {
+    width: 100%;
+    min-height: 320px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; line-height: 1.55;
+    padding: 10px 11px;
+    border: 1px solid var(--lijn); border-radius: 9px;
+    background: #fff; color: var(--inkt);
+    resize: vertical;
+    white-space: pre;
+  }
+
+  .mdo-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 11.5px; color: var(--muted);
+    line-height: 1.6; margin: 18px 0 0;
+  }
+
+  @media (max-width: 480px) {
+    .mdo-onder { margin-left: 12px; }
+    .mdo-optienoot { margin-left: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">MDO-notitie voor Epic</div>
+</header>
+
+<div class="mdo-wrap">
+  <a class="mdo-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="mdo-kop">Notitie voor Epic</h1>
+  <p class="mdo-intro">
+    Aankruisen wat besproken is; onderaan staat de tekst die je in Epic plakt. De tekst is
+    letterlijk je eigen checklist — er is niets aan herschreven of toegevoegd. Wat je niet
+    aankruist, komt er niet in te staan.
+  </p>
+
+  <div class="mdo-vlag">
+    <strong>Geen patiëntgegevens invullen.</strong>
+    Deze pagina staat op een openbaar adres. Geen naam, geboortedatum of patiëntnummer in de
+    invulvelden — ook niet als voorbeeld. Wat je hier invult wordt nergens bewaard en is na het
+    sluiten van de pagina weg.
+  </div>
+
+  <div class="mdo-tabs">
+    <button class="mdo-tab aan" id="mdoTabMdo" type="button">MDO-checklist</button>
+    <button class="mdo-tab" id="mdoTabSpreek" type="button">Spreekkamer</button>
+  </div>
+
+  <!-- ============ MDO ============ -->
+  <div id="mdoVlakMdo">
+    <form id="mdoForm" autocomplete="off"></form>
+
+    <div class="mdo-uit">
+      <h2>Tekst voor Epic</h2>
+      <p class="mdo-uitleg">
+        Platte tekst zonder tekens die in een dossiereditor opmaak veroorzaken. Punten waar nog
+        niets gekozen is, staan onderaan apart — zodat je ziet wat er nog mist voordat je plakt.
+      </p>
+      <div class="mdo-knoprij">
+        <button class="mdo-knop" id="mdoKopieer" type="button">Kopiëren</button>
+        <button class="mdo-knop rustig" id="mdoWis" type="button">Alles leegmaken</button>
+        <span class="mdo-melding" id="mdoMelding"></span>
+      </div>
+      <textarea class="mdo-epic" id="mdoEpic" spellcheck="false" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- ============ SPREEKKAMER ============ -->
+  <div id="mdoVlakSpreek" hidden>
+    <div class="mdo-uit" style="margin-top:0">
+      <h2>Spreekkamer</h2>
+      <p class="mdo-uitleg">
+        De korte versie, letterlijk zoals jij hem hebt. Hier valt niets aan te kiezen: je eigen
+        invulmarkeringen blijven staan — <code>***</code> voor vrije tekst,
+        <code>{ a / b / c }</code> voor een keuze en <code>ja/nee</code>. Die vul je in Epic in.
+      </p>
+      <div class="mdo-knoprij">
+        <button class="mdo-knop" id="mdoKopieerSpreek" type="button">Kopiëren</button>
+        <span class="mdo-melding" id="mdoMeldingSpreek"></span>
+      </div>
+      <textarea class="mdo-epic" id="mdoSpreek" spellcheck="false" readonly></textarea>
+      <div class="mdo-noot" id="mdoSpreekNoten"></div>
+    </div>
+  </div>
+
+  <p class="mdo-bron" id="mdoBron"></p>
+</div>
+
+<script src="epictekst.js"></script>
+<script src="mdo-data.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var D = window.MDO;
+
+  // Niets hiervan wordt bewaard: geen localStorage, geen URL. Bij herladen weg.
+  var aan = {};      // pad -> true
+  var velden = {};   // pad + '#' + veldnaam -> waarde
+
+  var elForm = document.getElementById('mdoForm');
+  var elEpic = document.getElementById('mdoEpic');
+  var elMelding = document.getElementById('mdoMelding');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  // ---------- opbouwen ----------
+
+  function veldHtml(pad, naam, def) {
+    def = def || {};
+    var basis = ' data-pad="' + esc(pad) + '" data-veld="' + esc(naam) + '"';
+    if (def.soort === 'keuze') {
+      var opts = '<option value="">' + esc(def.leeg || 'kies') + '</option>' +
+        (def.opties || []).map(function (w) {
+          return '<option value="' + esc(w) + '">' + esc(w) + '</option>';
+        }).join('');
+      var h = '<select class="mdo-veld mdo-keuzeveld"' + basis + '>' + opts + '</select>';
+      if (def.vrijBij) {
+        h += '<input type="text" class="mdo-veld mdo-vrij" hidden' +
+             ' placeholder="' + esc(def.vrijLeeg || '....') + '"' +
+             ' data-vrijbij="' + esc(def.vrijBij) + '"' +
+             ' data-pad="' + esc(pad) + '" data-veld="' + esc(naam) + '__vrij">';
+      }
+      return h;
+    }
+    var breed = Math.max(6, Math.min(24, String(def.leeg || '....').length + 8));
+    return '<input type="text" class="mdo-veld" size="' + breed + '"' +
+           ' placeholder="' + esc(def.leeg || '....') + '"' + basis + '>';
+  }
+
+  // De zin uit de bron blijft heel; alleen {naam} wordt een invulveld.
+  function regelHtml(pad, o) {
+    var delen = String(o.tekst).split(/\{(\w+)\}/);
+    var uit = '';
+    for (var i = 0; i < delen.length; i++) {
+      if (i % 2 === 0) uit += esc(delen[i]);
+      else uit += veldHtml(pad, delen[i], (o.velden || {})[delen[i]]);
+    }
+    return uit;
+  }
+
+  function optiesHtml(groepPad, groep) {
+    var type = groep.soort === 'radio' ? 'radio' : 'checkbox';
+    return groep.opties.map(function (o) {
+      var pad = groepPad + '.' + o.id;
+      var h = '<div class="mdo-optie">' +
+        '<label class="mdo-vink">' +
+        '<input type="' + type + '" name="' + esc(groepPad) + '" data-pad="' + esc(pad) + '">' +
+        '<span class="mdo-tekst">' + regelHtml(pad, o) + '</span>' +
+        '</label>';
+      if (o.noot) h += '<p class="mdo-noot mdo-optienoot">' + esc(o.noot) + '</p>';
+      if (o.onder) {
+        h += '<div class="mdo-onder" data-onder="' + esc(pad) + '" hidden>' +
+             optiesHtml(pad, o.onder) + '</div>';
+      }
+      return h + '</div>';
+    }).join('');
+  }
+
+  function puntHtml(p) {
+    var body = '<div class="mdo-opties">' +
+      optiesHtml(p.id, { soort: p.soort, opties: p.opties }) + '</div>';
+    var binnen = p.uitklap
+      ? '<details class="mdo-uitklap"><summary>Lijst openklappen</summary>' + body + '</details>'
+      : body;
+    var noot = p.noot ? '<p class="mdo-noot"><strong>In de bron:</strong> ' + esc(p.noot) + '</p>' : '';
+    return '<section class="mdo-punt">' +
+      '<h2 class="mdo-puntkop"><span class="mdo-nr">' + p.nr + '</span>' + esc(p.kop) + '</h2>' +
+      binnen + noot + '</section>';
+  }
+
+  elForm.innerHTML = D.punten.map(puntHtml).join('');
+  elForm.addEventListener('submit', function (e) { e.preventDefault(); });
+
+  // ---------- stand uitlezen ----------
+
+  function leesStand() {
+    aan = {}; velden = {};
+    var vinkjes = elForm.querySelectorAll('input[data-pad]:not([data-veld])');
+    for (var i = 0; i < vinkjes.length; i++) {
+      if (vinkjes[i].checked) aan[vinkjes[i].getAttribute('data-pad')] = true;
+    }
+    var vlds = elForm.querySelectorAll('[data-veld]');
+    for (var j = 0; j < vlds.length; j++) {
+      var w = String(vlds[j].value || '').trim();
+      if (w) velden[vlds[j].getAttribute('data-pad') + '#' + vlds[j].getAttribute('data-veld')] = w;
+    }
+  }
+
+  // Onderliggende keuzes alleen tonen als de regel erboven aan staat.
+  function toonOnder() {
+    var blokken = elForm.querySelectorAll('.mdo-onder');
+    for (var i = 0; i < blokken.length; i++) {
+      blokken[i].hidden = !aan[blokken[i].getAttribute('data-onder')];
+    }
+    var vrij = elForm.querySelectorAll('.mdo-vrij');
+    for (var j = 0; j < vrij.length; j++) {
+      var pad = vrij[j].getAttribute('data-pad');
+      var naam = vrij[j].getAttribute('data-veld').replace(/__vrij$/, '');
+      var sel = elForm.querySelector('select[data-pad="' + pad + '"][data-veld="' + naam + '"]');
+      vrij[j].hidden = !(sel && sel.value === vrij[j].getAttribute('data-vrijbij'));
+    }
+  }
+
+  // ---------- tekst ----------
+
+  function waardeVan(pad, naam, def) {
+    var w = velden[pad + '#' + naam];
+    if (def && def.soort === 'keuze') {
+      if (!w) return def.leeg || '';
+      if (def.vrijBij && w === def.vrijBij) {
+        // Zelf ingetypt centrum vervangt het woord "overig"; staat er niets,
+        // dan blijft "overig" staan.
+        return velden[pad + '#' + naam + '__vrij'] || def.vrijBij;
+      }
+      return w;
+    }
+    return w || (def && def.leeg) || '';
+  }
+
+  function vulTekst(pad, o) {
+    return String(o.tekst).replace(/\{(\w+)\}/g, function (hele, naam) {
+      return waardeVan(pad, naam, (o.velden || {})[naam]);
+    });
+  }
+
+  function verzamel(groepPad, groep, uit) {
+    groep.opties.forEach(function (o) {
+      var pad = groepPad + '.' + o.id;
+      if (!aan[pad]) return;
+      uit.push(vulTekst(pad, o));
+      if (o.onder) verzamel(pad, o.onder, uit);
+    });
+  }
+
+  function maakTekst() {
+    var L = [D.titel, '', D.aanhef, ''];
+    var mist = [];
+    D.punten.forEach(function (p) {
+      var uit = [];
+      verzamel(p.id, { soort: p.soort, opties: p.opties }, uit);
+      if (!uit.length) { mist.push('(' + p.nr + ') ' + p.kort); return; }
+      // "1." aan het begin van een regel maakt in een teksteditor een
+      // genummerde lijst; "(1)" niet. Zie de kop van mdo-data.js.
+      L.push('(' + p.nr + ') ' + p.kop);
+      uit.forEach(function (r) { L.push(r); });
+      L.push('');
+    });
+    if (mist.length) {
+      L.push('NOG NIET INGEVULD');
+      mist.forEach(function (r) { L.push(r); });
+    }
+    return naarAscii(L.join('\n'));
+  }
+
+  function bij() {
+    leesStand();
+    toonOnder();
+    elEpic.value = maakTekst();
+  }
+
+  elForm.addEventListener('change', bij);
+  elForm.addEventListener('input', bij);
+  // Een klik in een invulveld mag het vinkje erboven niet omzetten.
+  elForm.addEventListener('click', function (e) {
+    if (e.target && e.target.getAttribute && e.target.getAttribute('data-veld')) e.stopPropagation();
+  }, true);
+
+  // ---------- kopieren ----------
+
+  function viaSelectie(tekst) {
+    var hulp = document.createElement('textarea');
+    hulp.value = tekst;
+    hulp.setAttribute('readonly', '');
+    hulp.style.position = 'fixed';
+    hulp.style.top = '-1000px';
+    document.body.appendChild(hulp);
+    hulp.select();
+    var gelukt = false;
+    try { gelukt = document.execCommand('copy'); } catch (e) { gelukt = false; }
+    document.body.removeChild(hulp);
+    return gelukt;
+  }
+
+  function kopieer(bronEl, meldEl) {
+    var tekst = naarAscii(bronEl.value);
+    if (!tekst) { meldEl.textContent = 'Er is nog niets om te kopiëren.'; return; }
+    function klaar() { meldEl.textContent = '✓ Gekopieerd'; }
+    function mislukt() { meldEl.textContent = 'Kopiëren lukte niet — selecteer de tekst zelf.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tekst).then(klaar, function () {
+        if (viaSelectie(tekst)) klaar(); else mislukt();
+      });
+    } else if (viaSelectie(tekst)) { klaar(); } else { mislukt(); }
+    setTimeout(function () { meldEl.textContent = ''; }, 2500);
+  }
+
+  document.getElementById('mdoKopieer').addEventListener('click', function () {
+    kopieer(elEpic, elMelding);
+  });
+
+  document.getElementById('mdoWis').addEventListener('click', function () {
+    elForm.reset();
+    bij();
+  });
+
+  // ---------- spreekkamer ----------
+
+  var elSpreek = document.getElementById('mdoSpreek');
+  elSpreek.value = naarAscii(D.spreekkamer.regels.join('\n'));
+  elSpreek.style.minHeight = '240px';
+
+  document.getElementById('mdoSpreekNoten').innerHTML =
+    '<strong>In de bron:</strong><br>' +
+    D.spreekkamer.noten.map(function (n) { return '— ' + esc(n); }).join('<br>');
+
+  document.getElementById('mdoKopieerSpreek').addEventListener('click', function () {
+    kopieer(elSpreek, document.getElementById('mdoMeldingSpreek'));
+  });
+
+  // ---------- tabs ----------
+
+  var tabMdo = document.getElementById('mdoTabMdo');
+  var tabSpreek = document.getElementById('mdoTabSpreek');
+  var vlakMdo = document.getElementById('mdoVlakMdo');
+  var vlakSpreek = document.getElementById('mdoVlakSpreek');
+
+  function zetTab(welke) {
+    var mdo = (welke === 'mdo');
+    tabMdo.classList.toggle('aan', mdo);
+    tabSpreek.classList.toggle('aan', !mdo);
+    vlakMdo.hidden = !mdo;
+    vlakSpreek.hidden = mdo;
+  }
+  tabMdo.addEventListener('click', function () { zetTab('mdo'); });
+  tabSpreek.addEventListener('click', function () { zetTab('spreek'); });
+
+  document.getElementById('mdoBron').textContent = D.bron;
+
+  bij();
+})();
+
+window.addEventListener('online', () => document.body.classList.remove('is-offline'));
+window.addEventListener('offline', () => document.body.classList.add('is-offline'));
+if (!navigator.onLine) document.body.classList.add('is-offline');
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+</script>
+</body>
+</html>

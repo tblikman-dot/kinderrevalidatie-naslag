@@ -32,7 +32,7 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
 - **`CACHE_VERSIE` in `sw.js` omhoog.** Altijd. Anders blijven oude bestanden op de telefoon
   hangen en ziet de gebruiker zijn eigen wijziging niet. Dit is de fout die het vaakst gemaakt is.
 - **Tests draaien.** `python3 -m http.server 9052` in de map, dan
-  `cd tests && ./alles.sh test_rook.py test_dossier.py test_emla.py`. `alles.sh` kijkt ook naar exitcode,
+  `cd tests && ./alles.sh test_rook.py test_dossier.py test_emla.py test_mdo.py`. `alles.sh` kijkt ook naar exitcode,
   tracebacks en console-errors — niet alleen naar regels die met FAIL beginnen. Een suite die
   halverwege crasht gaf eerder "0 fails" en werd ten onrechte als groen gelezen.
 - **Een test die faalt na een bedoelde wijziging**: eerst nagaan of de code klopt, dan de
