@@ -423,6 +423,16 @@ with sync_playwright() as p:
     pg2.fill("#zoek", "spreekkamer"); pg2.wait_for_timeout(500)
     check("te vinden op het woord spreekkamer",
           pg2.locator('a[href="mdo-notitie.html"]').count() >= 1)
+    # De perioperatieve checklist is op verzoek verwijderd: er mag nergens meer
+    # een knop naar staan, anders krijgt de gebruiker een 404.
+    pg2.fill("#zoek", ""); pg2.wait_for_timeout(400)
+    check("geen knop meer naar de verwijderde perioperatieve checklist",
+          pg2.locator('a[href="perioperatief.html"]').count() == 0)
+    pg2.fill("#zoek", "operatie"); pg2.wait_for_timeout(500)
+    check("ook niet via zoeken op operatie",
+          pg2.locator('a[href="perioperatief.html"]').count() == 0)
+    check("de groep 'Rondom een operatie' is niet leeg",
+          pg2.locator('a[href="mdo-notitie.html"]').count() >= 1)
     check("startpagina zonder fouten", not errs2, "| " + str(errs2[:2]))
 
     print("\nfails:", fails, "| errors:", errs)

@@ -86,7 +86,6 @@ const DEFAULT_CATS = [
       { label: '🔗 Tethered cord syndroom', url: 'tetheredcord.html', kort: 'Tethered cord', icoon: '🔗', groep: 'zenuw' },
       { label: '🦵 Spieruitvalsniveaus', url: 'myotomen.html' },
       { label: '💧 Neurogene blaas — de vier combinaties', url: 'neurogene-blaas.html', kort: 'Neurogene blaas', icoon: '💧', groep: 'zenuw' },
-      { label: '🗓️ Rondom een operatie — perioperatieve checklist', url: 'perioperatief.html' },
     ] },
   { id: 'uitval', label: 'Uitvalsniveau & spierinnervatie', scope: 'Myotomen, perifere zenuwen van de arm en herstel na zenuwletsel',
     zoekwoorden: 'medianus ulnaris radialis myotoom carpale tunnel Guyon PIN interosseus regeneratie zenuwherstel',
@@ -129,9 +128,8 @@ const DEFAULT_CATS = [
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'periop', label: 'Rondom een operatie of ingreep', scope: 'Perioperatieve regelzaken, postoperatieve zorg, checklist',
-    zoekwoorden: 'mdo-notitie mdo notitie epic dossier beleid nabehandeling klinische revalidatiebehandeling poliklinisch eerste lijn paramedische begeleiding hydrotherapie frequentie onbelast partieel belast mobiliseren bewegingsuitslagen buiklig heupspreiding statafel langzit gips orthese draagadvies spreidvoorziening stavoorziening loophulp ligvoorziening tillift zitorthese dietetiek slikfunctie logopedie psychologische pedagogische begeleiding spreekkamer WGBO CP register akkoord behandelvoorstel complicaties alternatieven consent perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden scoliose scoliosecorrectie spondylodese kyfose kyfectomie wervelkolomchirurgie rolstoel zitsysteem zitting custom contoured modulair CCS MWS leverancier ergotherapeut tillift transfers mobiliseren zitbalans zitduur decubitus drukplek huid sensibiliteit latexallergie shunt baclofenpomp katheterisatie darmbeleid blaasbeleid pijnbeleid thuiszorg pgb machtiging school terugkeer participatie verwachtingen nulmeting kwaliteit van leven HRQOL Khoshbin Thomson Hosking Meng spina bifida cystica Chiari syringomyelie tethered cord',
+    zoekwoorden: 'mdo-notitie mdo notitie epic dossier beleid nabehandeling bespreekpunten agenda klinische revalidatiebehandeling poliklinisch eerste lijn paramedische begeleiding fysiotherapie ergotherapie hydrotherapie frequentie onbelast partieel belast mobiliseren bewegingsuitslagen buiklig heupspreiding statafel langzit gips spalken orthese draagadvies voorzieningen spreidvoorziening stavoorziening loophulp ligvoorziening tillift rolstoel zitorthese dietetiek voedingsstatus conditie slikken slikfunctie logopedie psychologische pedagogische begeleiding toiletgang schoolgang overdracht spreekkamer WGBO CP register akkoord behandelvoorstel complicaties alternatieven consent perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden',
     directLinks: [
-      { label: '🗓️ Perioperatieve checklist — wat moet ik regelen?', url: 'perioperatief.html', kort: 'Perioperatieve checklist', icoon: '🗓️', groep: 'ok' },
       { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html', kort: 'MDO-notitie voor Epic', icoon: '📋', groep: 'ok',
         zoek: 'mdo notitie epic dossier beleid nabehandeling spreekkamer WGBO akkoord gips orthese voorziening mobiliseren onbelast partieel buiklig statafel langzit hydrotherapie dietetiek slikfunctie klinische poliklinische revalidatiebehandeling eerste lijn CP register' },
     ] },

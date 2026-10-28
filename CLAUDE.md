@@ -49,7 +49,7 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
 - Eén pagina is één bestand: eigen `<style>`, eigen `<script>`, geen gedeelde JS-modules behalve
   de data-bestanden.
 - **CSS-prefix per pagina** om botsingen te voorkomen: `do-` (dosering), `rcp-`/`ro-`, `bd-`,
-  `po-` (perioperatief), `cc-` (claude-code), `nb-` (neurogene blaas), `mt-`. Nieuwe pagina:
+  `mdo-` (MDO-notitie), `cc-` (claude-code), `nb-` (neurogene blaas), `mt-`. Nieuwe pagina:
   nieuwe prefix.
 - **Klinische getallen die twee pagina's gebruiken, staan in één bestand.** `rcp-data.js`
   (`window.RCP_APPENDIX2`) is de enige plek waar de RCP-doseringen staan; `dosering.html` en

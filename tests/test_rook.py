@@ -6,7 +6,7 @@ import os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from hulp import *
 from playwright.sync_api import sync_playwright
 B="/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
-PAGINAS=["index.html","dosering.html","rcp-spieren.html","perioperatief.html","rotatie.html",
+PAGINAS=["index.html","dosering.html","rcp-spieren.html","rotatie.html",
          "metatarsus.html","heupecho.html","heupfoto.html","groeisturing.html","epifysiodese.html",
          "beslisboom-heup.html","gmfcs.html","doelspieren.html","spasticiteit-dystonie.html",
          "myotomen.html","zenuwen.html","zenuwherstel.html","beenlengte.html","heupdysplasie.html",
