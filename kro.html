@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>KRO-spreekuur — wat moet ik regelen?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f4c5c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .kro-wrap { max-width: 880px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .kro-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .kro-terug:hover { text-decoration: underline; }
+
+  .kro-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .kro-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 16px;
+  }
+
+  .kro-vlag {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.65;
+    border-radius: 11px; padding: 11px 13px;
+    margin: 0 0 14px;
+    background: #FBEAE5; color: #8E3617;
+  }
+  .kro-vlag strong { display: block; margin-bottom: 3px; }
+
+  .kro-tabs { display: flex; gap: 6px; margin: 0 0 16px; font-family: system-ui, sans-serif; }
+  .kro-tab {
+    flex: 1; padding: 10px 6px;
+    font-size: 13px; font-weight: 700;
+    border: 1px solid var(--lijn); border-radius: 10px;
+    background: var(--paneel); color: var(--inkt); cursor: pointer;
+  }
+  .kro-tab.aan { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .kro-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin: 0 0 12px;
+  }
+  .kro-kaart h2 { font-size: 15px; margin: 0 0 4px; }
+  .kro-kaart h3 {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted);
+    margin: 14px 0 6px;
+  }
+  .kro-kaart h3:first-child { margin-top: 0; }
+  /* Een kopje dat letterlijk uit de bron komt, blijft staan zoals het er staat. */
+  .kro-kaart h3.kro-bronkop {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 13.5px; text-transform: none; letter-spacing: normal;
+    color: var(--inkt);
+  }
+  .kro-uitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; margin: 0 0 10px;
+  }
+
+  .kro-keuzes { font-family: system-ui, sans-serif; font-size: 13.5px; }
+  .kro-groepkop {
+    font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted);
+    margin: 10px 0 2px;
+  }
+  .kro-groepkop:first-child { margin-top: 0; }
+  .kro-vink {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 6px; border-radius: 8px; cursor: pointer; line-height: 1.5;
+  }
+  .kro-vink:hover { background: var(--accent-zacht); }
+  .kro-vink input { margin: 3px 0 0; flex: 0 0 auto; width: 16px; height: 16px; }
+  .kro-vink span { min-width: 0; overflow-wrap: break-word; }
+  .kro-rij { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .kro-rij .kro-vink { flex: 0 1 auto; }
+
+  .kro-taak { margin: 0 0 4px; }
+  .kro-onder {
+    margin: 0 0 6px 26px; padding-left: 10px;
+    border-left: 2px solid var(--lijn);
+    font-family: system-ui, sans-serif; font-size: 13px;
+    color: var(--inkt); line-height: 1.55;
+  }
+  .kro-onder div { padding: 3px 0; }
+  .kro-leeg {
+    font-family: system-ui, sans-serif; font-size: 13px;
+    color: var(--muted); line-height: 1.6;
+  }
+
+  .kro-let {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6;
+    background: var(--accent-zacht); color: #0f2733;
+    border-radius: 9px; padding: 9px 11px; margin: 10px 0 0;
+  }
+  .kro-noot {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; line-height: 1.6;
+    color: #6B4E06; background: #FBF3DC;
+    border-radius: 8px; padding: 8px 10px; margin: 10px 0 0;
+  }
+  .kro-noot strong { font-weight: 700; }
+
+  .kro-naar {
+    display: inline-block; margin-top: 6px;
+    font-family: system-ui, sans-serif; font-size: 12.5px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+  }
+  .kro-naar:hover { text-decoration: underline; }
+
+  .kro-datumrij {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    font-family: system-ui, sans-serif; font-size: 13.5px;
+    margin: 0 0 6px;
+  }
+  .kro-datumrij input {
+    font-family: system-ui, sans-serif; font-size: 13.5px;
+    padding: 6px 8px; border: 1px solid var(--lijn); border-radius: 8px;
+    background: #fff; color: var(--inkt);
+  }
+  .kro-uitkomst { font-family: system-ui, sans-serif; font-size: 13.5px; }
+  .kro-uitkomst div { padding: 6px 0; border-bottom: 1px solid var(--lijn); }
+  .kro-uitkomst div:last-child { border-bottom: 0; }
+  .kro-wanneer { font-weight: 700; }
+  .kro-vanwaar { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
+
+  .kro-knoprij { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
+  .kro-knop {
+    font-family: system-ui, sans-serif; font-size: 13.5px; font-weight: 700;
+    padding: 9px 14px; border-radius: 9px;
+    border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; cursor: pointer;
+  }
+  .kro-knop.rustig { background: var(--paneel); color: var(--accent); }
+  .kro-melding { font-family: system-ui, sans-serif; font-size: 12.5px; color: var(--accent); }
+  .kro-epic {
+    width: 100%; min-height: 260px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; line-height: 1.55;
+    padding: 10px 11px;
+    border: 1px solid var(--lijn); border-radius: 9px;
+    background: #fff; color: var(--inkt);
+    resize: vertical; white-space: pre;
+  }
+
+  /* tijdlijn */
+  .kro-stap { border-left: 3px solid var(--accent-zacht); padding: 0 0 0 12px; margin: 0 0 16px; }
+  .kro-stap.route-a { border-left-color: #8ab0bc; }
+  .kro-stap.route-b { border-left-color: #c9b06a; }
+  /* De algemene h3-regel hierboven zet kopjes in hoofdletters; een stapnaam
+     komt letterlijk uit de bron en moet dus blijven staan zoals hij is. */
+  .kro-stap .kro-stapkop {
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    font-size: 14.5px; font-weight: 700;
+    text-transform: none; letter-spacing: normal;
+    color: var(--inkt); margin: 0 0 4px;
+  }
+  .kro-merk {
+    display: inline-block; font-family: system-ui, sans-serif;
+    font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+    text-transform: none;
+    border-radius: 5px; padding: 2px 6px; margin-right: 6px;
+    background: var(--accent-zacht); color: var(--accent);
+  }
+  .kro-lijst { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.6; margin: 4px 0; }
+  .kro-lijst div { padding: 2px 0; }
+  .kro-termijn {
+    font-family: system-ui, sans-serif; font-size: 12.5px;
+    color: #2d6a4f; font-weight: 700; margin: 4px 0;
+  }
+
+  .kro-bron {
+    font-family: system-ui, sans-serif; font-size: 11.5px;
+    color: var(--muted); line-height: 1.6; margin: 18px 0 0;
+  }
+
+  @media (max-width: 480px) {
+    .kro-onder { margin-left: 12px; }
+    .kro-tab { font-size: 12px; padding: 9px 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">KRO-spreekuur</div>
+</header>
+
+<div class="kro-wrap">
+  <a class="kro-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="kro-kop">KRO — wat moet ik regelen?</h1>
+  <p class="kro-intro">
+    Het stroomschema van het kinderrevalidatie-orthopedie spreekuur, omgedraaid: niet vier
+    pagina's doorzoeken, maar aangeven waar je staat en lezen wat er nú geregeld moet worden.
+    Alle regels komen letterlijk uit bijlage 1.
+  </p>
+
+  <div class="kro-vlag">
+    <strong>Geen patiëntgegevens invullen.</strong>
+    Deze pagina staat op een openbaar adres. Geen naam, geboortedatum of patiëntnummer. Wat je
+    invult wordt nergens bewaard en is na het sluiten van de pagina weg.
+  </div>
+
+  <div class="kro-tabs">
+    <button class="kro-tab aan" id="kroTabNu" type="button">Nu regelen</button>
+    <button class="kro-tab" id="kroTabPlan" type="button">Planning</button>
+    <button class="kro-tab" id="kroTabLijn" type="button">Tijdlijn</button>
+  </div>
+
+  <!-- ===================== NU REGELEN ===================== -->
+  <div id="kroVlakNu">
+    <form id="kroForm" autocomplete="off">
+      <section class="kro-kaart">
+        <h2>1. Waar sta je?</h2>
+        <div class="kro-keuzes" id="kroStappen"></div>
+      </section>
+
+      <section class="kro-kaart">
+        <h2>2. Waar is de patiënt bekend?</h2>
+        <p class="kro-uitleg">
+          Dit bepaalt bij wie je het klinimetrieconsult aanvraagt, waar de klinimetrie gedaan
+          wordt en waar de bevindingen genoteerd worden.
+        </p>
+        <div class="kro-keuzes kro-rij" id="kroWaar"></div>
+        <div class="kro-let" id="kroEldersLet" hidden></div>
+      </section>
+
+      <section class="kro-kaart" id="kroKlinKaart" hidden>
+        <h2>3. Welke klinimetrie?</h2>
+        <p class="kro-uitleg">
+          De lijst hangt af van de GMFCS en de leeftijd.
+          <a class="kro-naar" href="gmfcs.html">GMFCS niet zeker? → GMFCS per leeftijdsband</a>
+        </p>
+        <h3>GMFCS</h3>
+        <div class="kro-keuzes kro-rij" id="kroGmfcs"></div>
+        <h3>Leeftijd</h3>
+        <div class="kro-keuzes kro-rij" id="kroLeeftijd"></div>
+        <div class="kro-noot" id="kroKlinNoten"></div>
+      </section>
+
+      <section class="kro-kaart">
+        <h2 id="kroTakenKop">Wat er geregeld moet worden</h2>
+        <div class="kro-uitleg" id="kroWanneer"></div>
+        <div class="kro-keuzes" id="kroTaken"></div>
+        <div id="kroKlinLijst"></div>
+        <div class="kro-noot" id="kroStapNoot" hidden></div>
+        <div class="kro-uitleg" id="kroHierna"></div>
+      </section>
+    </form>
+
+    <div class="kro-kaart">
+      <h2>Tekst voor Epic</h2>
+      <div class="kro-knoprij">
+        <button class="kro-knop" id="kroKopieer" type="button">Kopiëren</button>
+        <button class="kro-knop rustig" id="kroWis" type="button">Alles leegmaken</button>
+        <span class="kro-melding" id="kroMelding"></span>
+      </div>
+      <textarea class="kro-epic" id="kroEpic" spellcheck="false" readonly
+        placeholder="Kies hierboven waar je staat."></textarea>
+    </div>
+  </div>
+
+  <!-- ===================== PLANNING ===================== -->
+  <div id="kroVlakPlan" hidden>
+    <section class="kro-kaart">
+      <h2>Datums uitrekenen</h2>
+      <p class="kro-uitleg">
+        Alleen de termijnen die in bijlage 1 staan. Bij elke uitkomst staat de zin waar hij
+        vandaan komt.
+      </p>
+      <div class="kro-datumrij">
+        <label for="kroDatumOk">Datum van de operatie</label>
+        <input type="date" id="kroDatumOk">
+      </div>
+      <div class="kro-datumrij">
+        <label for="kroDatumKlin">Datum klinimetrieconsult + gangbeeldanalyse</label>
+        <input type="date" id="kroDatumKlin">
+      </div>
+      <div class="kro-uitkomst" id="kroPlanUit"></div>
+    </section>
+
+    <div class="kro-kaart">
+      <h2>Tekst voor Epic</h2>
+      <div class="kro-knoprij">
+        <button class="kro-knop" id="kroKopieerPlan" type="button">Kopiëren</button>
+        <button class="kro-knop rustig" id="kroWisPlan" type="button">Leegmaken</button>
+        <span class="kro-melding" id="kroMeldingPlan"></span>
+      </div>
+      <textarea class="kro-epic" id="kroEpicPlan" spellcheck="false" readonly
+        placeholder="Vul hierboven een datum in."></textarea>
+    </div>
+  </div>
+
+  <!-- ===================== TIJDLIJN ===================== -->
+  <div id="kroVlakLijn" hidden>
+    <section class="kro-kaart">
+      <h2 id="kroLijnKop"></h2>
+      <p class="kro-uitleg">
+        Het hele schema, in de volgorde van het document. Na de verwijzing splitst het in twee
+        routes; vanaf het preoperatief MDO lopen ze weer gelijk.
+      </p>
+      <div id="kroLijn"></div>
+    </section>
+  </div>
+
+  <p class="kro-bron" id="kroBron"></p>
+</div>
+
+<script src="epictekst.js"></script>
+<script src="kro-data.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var D = window.KRO;
+
+  var GMFCS = [
+    { id: 'i-iii', naam: 'I t/m III' },
+    { id: 'iv-v',  naam: 'IV-V' },
+    { id: 'geen',  naam: 'Geen CP / niet van toepassing' }
+  ];
+  var LEEFTIJD = [
+    { id: 'jong', naam: 'Jonger dan 4 jaar' },
+    { id: 'oud',  naam: 'Ouder dan 4 jaar' }
+  ];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function el(id) { return document.getElementById(id); }
+
+  // ---------- keuzes tekenen ----------
+
+  function keuzeHtml(naam, waarde, label, soort) {
+    return '<label class="kro-vink"><input type="' + (soort || 'radio') + '"' +
+      ' name="' + esc(naam) + '" value="' + esc(waarde) + '">' +
+      '<span>' + esc(label) + '</span></label>';
+  }
+
+  // De stappen gegroepeerd, zodat de lijst leesbaar blijft.
+  var GROEPEN = [
+    { kop: 'Begin', fases: ['start'] },
+    { kop: 'Het KRO-consult', fases: ['consult'] },
+    { kop: 'Klinimetrie en MDO', fases: ['klinimetrie', 'mdo'] },
+    { kop: 'Voorbereiding en opname', fases: ['voorbereiding', 'opname'] },
+    { kop: 'Na de operatie', fases: ['controle'] }
+  ];
+
+  (function tekenStappen () {
+    var gedaan = {};
+    var h = '';
+    GROEPEN.forEach(function (g) {
+      var rijen = D.stappen.filter(function (s) {
+        return g.fases.indexOf(s.fase) >= 0 && !gedaan[s.id];
+      });
+      if (!rijen.length) return;
+      h += '<div class="kro-groepkop">' + esc(g.kop) + '</div>';
+      rijen.forEach(function (s) {
+        gedaan[s.id] = true;
+        var merk = s.route === 'a' ? ' (route A)' : (s.route === 'b' ? ' (route B)' : '');
+        h += keuzeHtml('stap', s.id, s.naam + merk);
+      });
+    });
+    el('kroStappen').innerHTML = h;
+  })();
+
+  el('kroWaar').innerHTML = D.waarBekend.map(function (w) {
+    return keuzeHtml('waar', w.id, w.kort);
+  }).join('');
+  el('kroGmfcs').innerHTML = GMFCS.map(function (g) {
+    return keuzeHtml('gmfcs', g.id, g.naam);
+  }).join('');
+  el('kroLeeftijd').innerHTML = LEEFTIJD.map(function (l) {
+    return keuzeHtml('leeftijd', l.id, l.naam);
+  }).join('');
+  el('kroKlinNoten').innerHTML = '<strong>In de bron:</strong><br>' +
+    D.klinimetrie.noten.map(function (n) { return '— ' + esc(n); }).join('<br>');
+
+  // ---------- stand ----------
+
+  function gekozen(naam) {
+    var i = el('kroForm').querySelector('input[name="' + naam + '"]:checked');
+    return i ? i.value : '';
+  }
+  function stapVan(id) {
+    for (var i = 0; i < D.stappen.length; i++) if (D.stappen[i].id === id) return D.stappen[i];
+    return null;
+  }
+  function waarVan(id) {
+    for (var i = 0; i < D.waarBekend.length; i++) if (D.waarBekend[i].id === id) return D.waarBekend[i];
+    return null;
+  }
+  // Een regel met 'bij' geldt alleen voor die situatie. Is er nog niets
+  // gekozen, dan tonen we ze allebei.
+  function geldt(item, groep) { return !item.bij || !groep || item.bij === groep; }
+
+  function zichtbareTaken(stap, groep) {
+    if (!stap) return [];
+    return (stap.taken || []).filter(function (t) { return geldt(t, groep); });
+  }
+
+  // ---------- klinimetrie ----------
+
+  function klinimetrieRegels() {
+    var gm = gekozen('gmfcs'), lf = gekozen('leeftijd');
+    if (!gm) return null;
+    var uit = D.klinimetrie.altijd.items.slice();
+    if (gm === 'geen') return uit;
+    var groep = null;
+    D.klinimetrie.groepen.forEach(function (g) { if (g.id === gm) groep = g; });
+    if (!groep) return uit;
+    groep.items.forEach(function (it) {
+      if (it.leeftijd && lf && it.leeftijd !== lf) return;
+      // Zolang de leeftijd niet gekozen is, blijven beide staan met de
+      // leeftijdsgrens uit de bron erachter.
+      uit.push(it.leeftijd && !lf ? it.tekst + ' (' + it.na + ')' : it.tekst);
+    });
+    return uit;
+  }
+
+  // ---------- tekenen ----------
+
+  function tekenNu() {
+    var stap = stapVan(gekozen('stap'));
+    var waar = waarVan(gekozen('waar'));
+    var groep = waar ? waar.groep : '';
+
+    el('kroEldersLet').hidden = !(groep === 'elders');
+    el('kroEldersLet').textContent = D.eldersLetOp;
+
+    el('kroKlinKaart').hidden = !(stap && stap.klinimetrie);
+
+    if (!stap) {
+      el('kroTakenKop').textContent = 'Wat er geregeld moet worden';
+      el('kroWanneer').textContent = '';
+      el('kroTaken').innerHTML =
+        '<div class="kro-leeg">Kies hierboven waar je staat.</div>';
+      el('kroKlinLijst').innerHTML = '';
+      el('kroStapNoot').hidden = true;
+      el('kroHierna').textContent = '';
+      el('kroEpic').value = '';
+      return;
+    }
+
+    el('kroTakenKop').textContent = stap.naam;
+    el('kroWanneer').textContent = stap.wanneer || '';
+
+    var taken = zichtbareTaken(stap, groep);
+    var h = '';
+    (stap.context || []).forEach(function (c) {
+      h += '<div class="kro-leeg">' + esc(c) + '</div>';
+    });
+    if (!taken.length) {
+      h += '<div class="kro-leeg">Voor deze stap staat er geen taak voor jou in het schema.</div>';
+    }
+    taken.forEach(function (t) {
+      h += '<div class="kro-taak">' +
+        '<label class="kro-vink"><input type="checkbox" name="taak" value="' + esc(t.id) + '">' +
+        '<span>' + esc(t.tekst) + '</span></label>';
+      var onder = (t.onder || []).filter(function (o) { return geldt(o, groep); });
+      if (onder.length) {
+        h += '<div class="kro-onder">' +
+          onder.map(function (o) { return '<div>' + esc(o.tekst) + '</div>'; }).join('') +
+          '</div>';
+      }
+      if (t.bijlage2) {
+        h += '<a class="kro-naar" href="mdo-notitie.html">→ Bijlage 2: checklist en Epic-tekst</a>';
+      }
+      h += '</div>';
+    });
+    if (!groep && taken.some(function (t) {
+      return t.bij || (t.onder || []).some(function (o) { return o.bij; });
+    })) {
+      h += '<div class="kro-leeg">Kies hierboven waar de patiënt bekend is; dan blijft ' +
+           'alleen de regel staan die geldt.</div>';
+    }
+    el('kroTaken').innerHTML = h;
+
+    var klin = stap.klinimetrie ? klinimetrieRegels() : null;
+    if (klin) {
+      el('kroKlinLijst').innerHTML = '<h3 class="kro-bronkop">' + esc(D.klinimetrie.kop) + '</h3>' +
+        '<div class="kro-lijst">' +
+        klin.map(function (r) { return '<div>' + esc(r) + '</div>'; }).join('') + '</div>';
+    } else if (stap.klinimetrie) {
+      el('kroKlinLijst').innerHTML =
+        '<div class="kro-leeg">Kies hierboven de GMFCS voor de klinimetrielijst.</div>';
+    } else {
+      el('kroKlinLijst').innerHTML = '';
+    }
+
+    el('kroStapNoot').hidden = !stap.noot;
+    if (stap.noot) {
+      el('kroStapNoot').innerHTML = '<strong>In de bron:</strong> ' + esc(stap.noot);
+    }
+
+    var volgend = stap.volgende ? stapVan(stap.volgende) : null;
+    el('kroHierna').textContent = volgend
+      ? 'Hierna volgt: ' + volgend.naam + (volgend.wanneer ? ' — ' + volgend.wanneer : '')
+      : '';
+
+    el('kroEpic').value = maakNuTekst(stap, waar, taken, klin);
+  }
+
+  function maakNuTekst(stap, waar, taken, klin) {
+    var aan = {};
+    var vinkjes = el('kroTaken').querySelectorAll('input[name="taak"]');
+    for (var i = 0; i < vinkjes.length; i++) {
+      if (vinkjes[i].checked) aan[vinkjes[i].value] = true;
+    }
+    var L = ['KRO-SPREEKUUR', '', 'Moment: ' + stap.naam];
+    if (waar) L.push(waar.zin);
+    if (stap.wanneer) L.push('Termijn: ' + stap.wanneer);
+    L.push('');
+
+    var gedaan = taken.filter(function (t) { return aan[t.id]; });
+    var open = taken.filter(function (t) { return !aan[t.id]; });
+
+    function blok(kop, rij) {
+      if (!rij.length) return;
+      L.push(kop);
+      rij.forEach(function (t) {
+        L.push(t.tekst);
+        (t.onder || []).forEach(function (o) {
+          if (geldt(o, waar ? waar.groep : '')) L.push(o.tekst);
+        });
+      });
+      L.push('');
+    }
+    blok('Aangevraagd of geregeld:', gedaan);
+    blok('Nog te doen:', open);
+
+    if (klin && klin.length) {
+      L.push('Te verrichten klinimetrie:');
+      klin.forEach(function (r) { L.push(r); });
+    }
+    return naarAscii(L.join('\n'));
+  }
+
+  el('kroForm').addEventListener('change', function (e) {
+    // Een vinkje bij een taak verandert alleen de tekst, niet de hele lijst:
+    // anders springt de lijst onder je vinger weg.
+    if (e.target && e.target.name === 'taak') {
+      var stap = stapVan(gekozen('stap'));
+      var waar = waarVan(gekozen('waar'));
+      if (stap) {
+        el('kroEpic').value = maakNuTekst(
+          stap, waar, zichtbareTaken(stap, waar ? waar.groep : ''),
+          stap.klinimetrie ? klinimetrieRegels() : null);
+      }
+      return;
+    }
+    tekenNu();
+  });
+
+  // ---------- planning ----------
+
+  var MAANDEN = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli',
+                 'augustus', 'september', 'oktober', 'november', 'december'];
+  var DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+
+  function leesDatum(s) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s || '')) return null;
+    var d = new Date(s + 'T12:00:00');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // Maanden en jaren optellen zonder over te lopen: 31 januari + 1 maand wordt
+  // 28 (of 29) februari, niet 2 of 3 maart.
+  function verschuif(d, jaren, maanden, dagen) {
+    var j = d.getFullYear() + (jaren || 0);
+    var m = d.getMonth() + (maanden || 0);
+    j += Math.floor(m / 12); m = ((m % 12) + 12) % 12;
+    var laatste = new Date(j, m + 1, 0).getDate();
+    var x = new Date(j, m, Math.min(d.getDate(), laatste), 12, 0, 0);
+    if (dagen) x.setDate(x.getDate() + dagen);
+    return x;
+  }
+  function lang(d) {
+    return DAGEN[d.getDay()] + ' ' + d.getDate() + ' ' + MAANDEN[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function kort(d) {
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return p(d.getDate()) + '-' + p(d.getMonth() + 1) + '-' + d.getFullYear();
+  }
+  function pas(d, t, kant) {
+    var w = kant === 'van' ? t.vanWeken : t.totWeken;
+    var m = kant === 'van' ? t.vanMaanden : t.totMaanden;
+    var j = kant === 'van' ? t.vanJaren : t.totJaren;
+    return verschuif(d, j || 0, m || 0, (w || 0) * 7);
+  }
+
+  function planRegels() {
+    var ok = leesDatum(el('kroDatumOk').value);
+    var kl = leesDatum(el('kroDatumKlin').value);
+    var uit = [];
+    D.termijnen.forEach(function (t) {
+      var basis = t.vanaf === 'ok' ? ok : kl;
+      if (!basis) return;
+      var van = pas(basis, t, 'van'), tot = pas(basis, t, 'tot');
+      uit.push({
+        naam: t.naam,
+        langTekst: kort(van) === kort(tot) ? lang(van) : lang(van) + ' t/m ' + lang(tot),
+        kortTekst: kort(van) === kort(tot) ? kort(van) : kort(van) + ' t/m ' + kort(tot),
+        bron: t.bron
+      });
+    });
+    return { ok: ok, kl: kl, regels: uit };
+  }
+
+  function tekenPlan() {
+    var p = planRegels();
+    if (!p.regels.length) {
+      el('kroPlanUit').innerHTML =
+        '<div class="kro-leeg">Vul een datum in; dan verschijnen de termijnen uit bijlage 1.</div>';
+      el('kroEpicPlan').value = '';
+      return;
+    }
+    el('kroPlanUit').innerHTML = p.regels.map(function (r) {
+      return '<div><span class="kro-wanneer">' + esc(r.naam) + ':</span> ' +
+        esc(r.langTekst) + '<span class="kro-vanwaar">' + esc(r.bron) + '</span></div>';
+    }).join('');
+
+    var L = ['KRO-PLANNING', ''];
+    if (p.ok) L.push('Operatie: ' + kort(p.ok));
+    if (p.kl) L.push('Klinimetrieconsult + gangbeeldanalyse: ' + kort(p.kl));
+    L.push('');
+    p.regels.forEach(function (r) {
+      L.push(r.naam + ': ' + r.kortTekst);
+      L.push('(' + r.bron + ')');
+    });
+    el('kroEpicPlan').value = naarAscii(L.join('\n'));
+  }
+
+  el('kroDatumOk').addEventListener('input', tekenPlan);
+  el('kroDatumKlin').addEventListener('input', tekenPlan);
+  el('kroDatumOk').addEventListener('change', tekenPlan);
+  el('kroDatumKlin').addEventListener('change', tekenPlan);
+
+  // ---------- tijdlijn ----------
+
+  (function tekenLijn () {
+    el('kroLijnKop').textContent = D.titel;
+    el('kroLijn').innerHTML = D.stappen.map(function (s) {
+      var merk = s.route === 'a'
+        ? '<span class="kro-merk">route A</span>'
+        : (s.route === 'b' ? '<span class="kro-merk">route B</span>' : '');
+      var h = '<div class="kro-stap route-' + esc(s.route) + '">' +
+        '<h3 class="kro-stapkop">' + merk + esc(s.naam) + '</h3>';
+      if (s.wanneer) h += '<div class="kro-termijn">' + esc(s.wanneer) + '</div>';
+      var regels = (s.context || []).concat((s.taken || []).map(function (t) { return t.tekst; }));
+      (s.taken || []).forEach(function (t) {
+        (t.onder || []).forEach(function (o) { regels.push(o.tekst); });
+      });
+      if (regels.length) {
+        h += '<div class="kro-lijst">' +
+          regels.map(function (r) { return '<div>' + esc(r) + '</div>'; }).join('') + '</div>';
+      }
+      if (s.noot) h += '<div class="kro-noot"><strong>In de bron:</strong> ' + esc(s.noot) + '</div>';
+      return h + '</div>';
+    }).join('');
+  })();
+
+  // ---------- kopieren ----------
+
+  function viaSelectie(tekst) {
+    var hulp = document.createElement('textarea');
+    hulp.value = tekst;
+    hulp.setAttribute('readonly', '');
+    hulp.style.position = 'fixed';
+    hulp.style.top = '-1000px';
+    document.body.appendChild(hulp);
+    hulp.select();
+    var gelukt = false;
+    try { gelukt = document.execCommand('copy'); } catch (e) { gelukt = false; }
+    document.body.removeChild(hulp);
+    return gelukt;
+  }
+  function kopieer(bronEl, meldEl) {
+    var tekst = naarAscii(bronEl.value);
+    if (!tekst) { meldEl.textContent = 'Er is nog niets om te kopiëren.'; return; }
+    function klaar() { meldEl.textContent = '✓ Gekopieerd'; }
+    function mislukt() { meldEl.textContent = 'Kopiëren lukte niet — selecteer de tekst zelf.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tekst).then(klaar, function () {
+        if (viaSelectie(tekst)) klaar(); else mislukt();
+      });
+    } else if (viaSelectie(tekst)) { klaar(); } else { mislukt(); }
+    setTimeout(function () { meldEl.textContent = ''; }, 2500);
+  }
+
+  el('kroKopieer').addEventListener('click', function () {
+    kopieer(el('kroEpic'), el('kroMelding'));
+  });
+  el('kroKopieerPlan').addEventListener('click', function () {
+    kopieer(el('kroEpicPlan'), el('kroMeldingPlan'));
+  });
+  el('kroWis').addEventListener('click', function () { el('kroForm').reset(); tekenNu(); });
+  el('kroWisPlan').addEventListener('click', function () {
+    el('kroDatumOk').value = ''; el('kroDatumKlin').value = ''; tekenPlan();
+  });
+
+  // ---------- tabs ----------
+
+  var TABS = [
+    { knop: 'kroTabNu', vlak: 'kroVlakNu' },
+    { knop: 'kroTabPlan', vlak: 'kroVlakPlan' },
+    { knop: 'kroTabLijn', vlak: 'kroVlakLijn' }
+  ];
+  TABS.forEach(function (t) {
+    el(t.knop).addEventListener('click', function () {
+      TABS.forEach(function (a) {
+        var aan = (a === t);
+        el(a.knop).classList.toggle('aan', aan);
+        el(a.vlak).hidden = !aan;
+      });
+    });
+  });
+
+  el('kroBron').textContent = D.bron;
+
+  tekenNu();
+  tekenPlan();
+})();
+
+window.addEventListener('online', () => document.body.classList.remove('is-offline'));
+window.addEventListener('offline', () => document.body.classList.add('is-offline'));
+if (!navigator.onLine) document.body.classList.add('is-offline');
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+</script>
+</body>
+</html>

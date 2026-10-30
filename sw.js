@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v85';
+const CACHE_VERSIE = 'krn-v86';
 
 const APP_BESTANDEN = [
   './',
@@ -36,6 +36,8 @@ const APP_BESTANDEN = [
   './tetheredcord.html',
   './mdo-notitie.html',
   './mdo-data.js',
+  './kro.html',
+  './kro-data.js',
   './neurogene-blaas.html',
   './neurogene-blaas-schema.jpg',
   './zenuwen.html',

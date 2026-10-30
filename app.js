@@ -130,13 +130,16 @@ const DEFAULT_CATS = [
   { id: 'periop', label: 'Rondom een operatie of ingreep', scope: 'Perioperatieve regelzaken, postoperatieve zorg, checklist',
     zoekwoorden: 'mdo-notitie mdo notitie epic dossier beleid nabehandeling bespreekpunten agenda klinische revalidatiebehandeling poliklinisch eerste lijn paramedische begeleiding fysiotherapie ergotherapie hydrotherapie frequentie onbelast partieel belast mobiliseren bewegingsuitslagen buiklig heupspreiding statafel langzit gips spalken orthese draagadvies voorzieningen spreidvoorziening stavoorziening loophulp ligvoorziening tillift rolstoel zitorthese dietetiek voedingsstatus conditie slikken slikfunctie logopedie psychologische pedagogische begeleiding toiletgang schoolgang overdracht spreekkamer WGBO CP register akkoord behandelvoorstel complicaties alternatieven consent perioperatief postoperatief preoperatief operatie ingreep opname ontslag checklist regelen voorbereiden',
     directLinks: [
+      { label: '🧭 KRO-spreekuur — wat moet ik nu regelen?', url: 'kro.html', kort: 'KRO: wat regelen?', icoon: '🧭', groep: 'ok',
+        zoek: 'kro kinderrevalidatie orthopedie spreekuur stroomschema tijdlijn bijlage 1 route verwijzing klinimetrie observatielijst CP register gangbeeldanalyse Beatrixoord Treant Vogellanden Revalidatie Friesland secretariaat medische staf behandelplan brief multi-level GAS GMFM Pedi CAT Pedi NL CP Child 6 minuten looptest functionele kracht planning termijn 8-12 weken 6 maanden' },
       { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html', kort: 'MDO-notitie voor Epic', icoon: '📋', groep: 'ok',
         zoek: 'mdo notitie epic dossier beleid nabehandeling spreekkamer WGBO akkoord gips orthese voorziening mobiliseren onbelast partieel buiklig statafel langzit hydrotherapie dietetiek slikfunctie klinische poliklinische revalidatiebehandeling eerste lijn CP register' },
     ] },
   { id: 'transitie', label: 'Transitie naar volwassenenzorg', scope: '' },
   { id: 'mdo', label: 'Multidisciplinaire samenwerking', scope: 'ICF-model, MDO rondom een operatie',
-    zoekwoorden: 'mdo multidisciplinair overleg notitie epic dossier nabehandeling spreekkamer behandelaren ET FT logopedie psychologie regio',
+    zoekwoorden: 'mdo multidisciplinair overleg notitie epic dossier nabehandeling spreekkamer behandelaren ET FT logopedie psychologie regio kro kinderrevalidatie orthopedie spreekuur stroomschema klinimetrie',
     directLinks: [
+      { label: '🧭 KRO-spreekuur — wat moet ik nu regelen?', url: 'kro.html' },
       { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html' },
     ] },
   { id: 'appzelf', label: 'De app zelf onderhouden', scope: "Claude Code-commando's en werkafspraken",
