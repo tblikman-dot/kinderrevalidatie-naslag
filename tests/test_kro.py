@@ -299,15 +299,20 @@ with sync_playwright() as p:
     check("zonder datum: de 8-12 weken staan erbij",
           "bij voorkeur 8-12 weken voor (chirurgische) behandeling" in pt)
 
-    # Alleen de MDO-datum: daaruit volgt wanneer de operatie op zijn vroegst kan.
+    # Alleen de MDO-datum. Daar volgt GEEN operatiedatum uit: de MDO-datum ligt
+    # niet vast. Hij wordt alleen vermeld.
     mdo = datetime.date(2027, 2, 10)
     pg.fill("#kroDatumMdo", "2027-02-10"); pg.wait_for_timeout(400)
     pt = P(); veilig(pt, "planning met alleen de MDO-datum")
-    r = [l for l in pt.split("\n") if l.startswith("Operatie:")]
-    check("MDO-datum geeft het operatievenster",
-          r and r[0] == "Operatie: " + nl(schuif(mdo, dagen=56)) + " t/m " + nl(schuif(mdo, dagen=84)),
-          "| " + str(r))
-    check("en meldt dat het afgeleid is", "Afgeleid uit:" in pt)
+    check("MDO-datum wordt vermeld", "Datum preoperatief MDO: " + nl(mdo) in pt,
+          "| " + pt.replace("\n", " / ")[:160])
+    check("MDO-datum leidt GEEN operatiedatum af",
+          "Operatie:" not in pt and "Afgeleid uit:" not in pt,
+          "| " + pt.replace("\n", " / ")[:200])
+    check("de operatiedatum blijft onbekend heten",
+          "Datum operatie: nog niet bekend" in pt)
+    check("het preoperatief MDO staat op de ingevulde datum",
+          "Preoperatief MDO: " + nl(mdo) in pt, "| " + pt.replace("\n", " / ")[:200])
     check("de post-operatieve regels blijven in woorden",
           "Klinimetrie post operatief: 6 maanden post operatief" in pt)
 

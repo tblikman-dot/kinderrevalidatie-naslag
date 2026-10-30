@@ -288,8 +288,8 @@
       <h2>Planning</h2>
       <p class="kro-uitleg">
         Alle drie de datums mogen leeg blijven. Weet je nog niets, dan krijg je de termijnen
-        uit bijlage 1 in woorden — ook dan is de tekst te plakken. Vul je er één in, dan wordt
-        de rest uitgerekend. Bij elke regel staat de zin waar hij vandaan komt.
+        uit bijlage 1 in woorden — ook dan is de tekst te plakken. Vanaf de operatiedatum
+        wordt de rest uitgerekend. Bij elke regel staat de zin waar hij vandaan komt.
       </p>
       <div class="kro-datumrij">
         <label for="kroDatumOk">Datum van de operatie</label>
@@ -299,7 +299,7 @@
       <div class="kro-datumrij">
         <label for="kroDatumMdo">Datum preoperatief MDO</label>
         <input type="date" id="kroDatumMdo">
-        <span class="kro-vanwaar">als die al gepland is</span>
+        <span class="kro-vanwaar">als die al gepland is; hieruit volgt geen operatiedatum</span>
       </div>
       <div class="kro-datumrij">
         <label for="kroDatumKlin">Datum klinimetrieconsult + gangbeeldanalyse</label>
@@ -651,14 +651,12 @@
       R.push({ naam: naam, w: w, bron: (bron && bron !== w.kort) ? bron : '' });
     }
 
-    // Operatie. Staat de datum niet vast maar het MDO wel, dan is de vroegst
-    // mogelijke operatiedatum af te leiden: het MDO hoort 8-12 weken ervoor.
-    // Zonder datum en zonder MDO voegt een regel "Operatie: nog niet bekend"
-    // niets toe; dat staat al in de kop van de tekst.
+    // Alleen een regel als de operatiedatum echt bekend is. Uit een geplande
+    // MDO-datum valt GEEN operatiedatum af te leiden: die MDO-datum ligt niet
+    // vast en mag verschuiven. Op aanwijzing van de arts.
+    // Staat de datum nergens, dan voegt "Operatie: nog niet bekend" niets toe;
+    // dat staat al in de kop van de tekst.
     if (ok) regel('Operatie', venster(ok, ok));
-    else if (mdo) regel('Operatie',
-      venster(verschuif(mdo, 0, 0, 8 * 7), verschuif(mdo, 0, 0, 12 * 7)),
-      'Afgeleid uit: ' + bMdo);
 
     if (mdo) regel('Preoperatief MDO', venster(mdo, mdo), bMdo);
     else if (ok) regel('Preoperatief MDO',
