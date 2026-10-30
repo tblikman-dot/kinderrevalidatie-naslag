@@ -378,14 +378,64 @@ with sync_playwright() as p:
     check("bespreekpunten: leegmaken raakt de MDO-checklist niet",
           "NOG NIET INGEVULD" in T() and T().startswith("MDO-CHECKLIST"))
 
-    # ---------- de drie tabbladen ----------
+    # ---------- afgeleide tekst voor orthopedie ----------
+    print("\n--- orthopedie ---")
+    pg.reload(); pg.wait_for_timeout(600)
+    pg.click("#mdoTabOrtho"); pg.wait_for_timeout(300)
+    check("orthopedie: leeg zolang de checklist leeg is",
+          pg.input_value("#mdoOrtho") == "", "| " + pg.input_value("#mdoOrtho")[:80])
+    pg.click("#mdoTabMdo"); pg.wait_for_timeout(200)
+    pg.locator("details.mdo-uitklap summary").click(); pg.wait_for_timeout(200)
+    for pad in ["p1.klin", "p2.ja", "p2.ja.onbelast", "p5.ja", "p5.ja.type",
+                "p7.tillift", "p8.ja", "p8.ja.logo", "p9.ja", "p9.ja.via"]:
+        vink(pad)
+    vul("p2.ja.onbelast", "weken", "6")
+    vul("p5.ja.type", "type", "bovenbeensgips")
+    vul("p9.ja.via", "via", "medische psychologie")
+    pg.wait_for_timeout(400)
+    pg.click("#mdoTabOrtho"); pg.wait_for_timeout(300)
+    ot = pg.input_value("#mdoOrtho")
+    veilig(ot, "orthopedie")
+    check("orthopedie: eigen kop", ot.startswith("VOOR DE OPNEMEND ARTS ORTHOPEDIE"), "| " + ot[:60])
+    check("orthopedie: regel uit bijlage 1",
+          "Paramedici UMCG worden in consult gevraagd door de zaalarts Orthopedie, conform "
+          "MDO behandelplan brief" in ot)
+    check("orthopedie: regel uit bijlage 3",
+          "Orthopedie zorg voor een opmerking in de opname-order waarin verwezen wordt naar "
+          "een mdo-notitie van de revalidatie." in ot)
+    check("orthopedie: bestelling bij MHM staat erin",
+          "bestelt de voorzieningen bij MHM." in ot)
+    for nr in ["(1)", "(2)", "(5)", "(7)", "(9)"]:
+        check("orthopedie: punt " + nr + " staat erin", nr + " " in ot,
+              "| " + ot.replace("\n", " / ")[:200])
+    check("orthopedie: punt 8 staat er NIET in (dat is pre-operatief)",
+          "(8)" not in ot and "Logopedie voor beoordeling slikfunctie" not in ot,
+          "| " + ot.replace("\n", " / "))
+    check("orthopedie: ingevulde waarden komen mee",
+          "Onbelast mobiliseren gedurende 6 weken" in ot
+          and "Type gips: bovenbeensgips" in ot
+          and "Organiseren via medische psychologie" in ot,
+          "| " + ot.replace("\n", " / "))
+    check("orthopedie: de MDO-tekst blijft wat hij was",
+          T().startswith("MDO-CHECKLIST") and "Logopedie voor beoordeling slikfunctie" in T())
+    pg.click("#mdoKopieerOrtho"); pg.wait_for_timeout(500)
+    check("orthopedie kopieert", "Gekopieerd" in pg.inner_text("#mdoMeldingOrtho"))
+    check("klembord orthopedie", pg.evaluate("navigator.clipboard.readText()") == ot)
+    pg.click("#mdoTabMdo"); pg.wait_for_timeout(200)
+    pg.click("#mdoWis"); pg.wait_for_timeout(400)
+    pg.click("#mdoTabOrtho"); pg.wait_for_timeout(300)
+    check("orthopedie: leegmaken maakt ook deze tekst leeg",
+          pg.input_value("#mdoOrtho") == "", "| " + pg.input_value("#mdoOrtho")[:60])
+
+    # ---------- de vier tabbladen ----------
     print("\n--- tabbladen ---")
     for knop, vlak in [("#mdoTabMdo", "#mdoVlakMdo"),
                        ("#mdoTabBespreek", "#mdoVlakBespreek"),
+                       ("#mdoTabOrtho", "#mdoVlakOrtho"),
                        ("#mdoTabSpreek", "#mdoVlakSpreek")]:
         pg.click(knop); pg.wait_for_timeout(200)
-        zichtbaar = [v for v in ["#mdoVlakMdo", "#mdoVlakBespreek", "#mdoVlakSpreek"]
-                     if pg.locator(v).is_visible()]
+        zichtbaar = [v for v in ["#mdoVlakMdo", "#mdoVlakBespreek", "#mdoVlakOrtho",
+                                 "#mdoVlakSpreek"] if pg.locator(v).is_visible()]
         check("tab " + knop + " toont alleen " + vlak, zichtbaar == [vlak], "| " + str(zichtbaar))
 
     # ---------- niets bewaard ----------

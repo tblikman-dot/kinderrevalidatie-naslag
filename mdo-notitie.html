@@ -44,11 +44,11 @@
 
   /* ---- tabs ---- */
   .mdo-tabs {
-    display: flex; gap: 6px; margin: 0 0 16px;
+    display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px;
     font-family: system-ui, sans-serif;
   }
   .mdo-tab {
-    flex: 1;
+    flex: 1 1 42%;
     padding: 10px 6px;
     font-size: 13px; font-weight: 700;
     border: 1px solid var(--lijn); border-radius: 10px;
@@ -211,6 +211,7 @@
   <div class="mdo-tabs">
     <button class="mdo-tab aan" id="mdoTabMdo" type="button">MDO-checklist</button>
     <button class="mdo-tab" id="mdoTabBespreek" type="button">Bespreekpunten</button>
+    <button class="mdo-tab" id="mdoTabOrtho" type="button">Orthopedie</button>
     <button class="mdo-tab" id="mdoTabSpreek" type="button">Spreekkamer</button>
   </div>
 
@@ -252,6 +253,25 @@
       <textarea class="mdo-epic" id="mdoBespreekEpic" spellcheck="false" readonly
         placeholder="Kruis hierboven aan wat besproken is."></textarea>
       <div class="mdo-noot" id="mdoBespreekNoten"></div>
+    </div>
+  </div>
+
+  <!-- ============ VOOR DE OPNEMEND ARTS ORTHOPEDIE ============ -->
+  <div id="mdoVlakOrtho" hidden>
+    <div class="mdo-uit" style="margin-top:0">
+      <h2>Voor de opnemend arts orthopedie</h2>
+      <p class="mdo-uitleg">
+        Afgeleid uit wat je op het tabblad <strong>MDO-checklist</strong> hebt ingevuld — je
+        hoeft hier niets opnieuw in te vullen. Alleen de punten die tijdens de opname van
+        belang zijn, met erboven de twee regels die zeggen wat orthopedie zelf regelt.
+      </p>
+      <div class="mdo-knoprij">
+        <button class="mdo-knop" id="mdoKopieerOrtho" type="button">Kopiëren</button>
+        <span class="mdo-melding" id="mdoMeldingOrtho"></span>
+      </div>
+      <textarea class="mdo-epic" id="mdoOrtho" spellcheck="false" readonly
+        placeholder="Vul eerst de MDO-checklist in; deze tekst volgt daaruit."></textarea>
+      <div class="mdo-noot" id="mdoOrthoNoten"></div>
     </div>
   </div>
 
@@ -455,7 +475,7 @@
   }
 
   // Eén invulbaar tabblad: formulier, tekstvak, knoppen.
-  function koppel(formEl, blokken, uitEl, maakTekst, knopKopieer, knopWis, meldEl) {
+  function koppel(formEl, blokken, uitEl, maakTekst, knopKopieer, knopWis, meldEl, extra) {
     formEl.innerHTML = blokken.map(kaartHtml).join('');
     formEl.addEventListener('submit', function (e) { e.preventDefault(); });
 
@@ -463,6 +483,8 @@
       var stand = leesStand(formEl);
       toonOnder(formEl, stand);
       uitEl.value = maakTekst(stand);
+      // Eén keer invullen, meer dan één tekst eruit.
+      (extra || []).forEach(function (x) { x.uitEl.value = x.maak(stand); });
     }
 
     formEl.addEventListener('change', bij);
@@ -475,6 +497,38 @@
     knopKopieer.addEventListener('click', function () { kopieer(uitEl, meldEl); });
     knopWis.addEventListener('click', function () { formEl.reset(); bij(); });
     bij();
+  }
+
+  // ---------- afgeleide tekst voor de opnemend arts orthopedie ----------
+
+  function puntVan(id) {
+    for (var i = 0; i < D.punten.length; i++) if (D.punten[i].id === id) return D.punten[i];
+    return null;
+  }
+
+  function maakOrthoTekst(stand) {
+    var O = D.ortho;
+    var blokken = [];
+    O.punten.forEach(function (id) {
+      var p = puntVan(id);
+      if (!p) return;
+      var uit = regelsVan(stand, p);
+      if (uit.length) blokken.push({ p: p, uit: uit });
+    });
+    // Zonder beleid is deze tekst zinloos; dan komt er niets.
+    if (!blokken.length) return '';
+
+    var L = [O.titel, '', O.inleiding, '', O.kopVast];
+    O.vast.forEach(function (v) { L.push(v.tekst); });
+    L.push('');
+    L.push(O.kopBeleid);
+    L.push('');
+    blokken.forEach(function (b) {
+      L.push('(' + b.p.nr + ') ' + b.p.kop);
+      b.uit.forEach(function (r) { L.push(r); });
+      L.push('');
+    });
+    return naarAscii(L.join('\n'));
   }
 
   // ---------- tabblad 1: de negen punten ----------
@@ -503,7 +557,8 @@
     },
     document.getElementById('mdoKopieer'),
     document.getElementById('mdoWis'),
-    document.getElementById('mdoMelding')
+    document.getElementById('mdoMelding'),
+    [{ uitEl: document.getElementById('mdoOrtho'), maak: maakOrthoTekst }]
   );
 
   // ---------- tabblad 2: de bespreekpunten ----------
@@ -538,6 +593,10 @@
       lijst.map(function (n) { return '— ' + esc(n); }).join('<br>');
   }
   document.getElementById('mdoBespreekNoten').innerHTML = notenHtml(D.bespreek.noten);
+  document.getElementById('mdoOrthoNoten').innerHTML = notenHtml(D.ortho.noten);
+  document.getElementById('mdoKopieerOrtho').addEventListener('click', function () {
+    kopieer(document.getElementById('mdoOrtho'), document.getElementById('mdoMeldingOrtho'));
+  });
 
   // ---------- tabblad 3: spreekkamer ----------
 
@@ -554,6 +613,7 @@
   var TABS = [
     { knop: 'mdoTabMdo', vlak: 'mdoVlakMdo' },
     { knop: 'mdoTabBespreek', vlak: 'mdoVlakBespreek' },
+    { knop: 'mdoTabOrtho', vlak: 'mdoVlakOrtho' },
     { knop: 'mdoTabSpreek', vlak: 'mdoVlakSpreek' }
   ];
   TABS.forEach(function (t) {

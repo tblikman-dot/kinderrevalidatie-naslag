@@ -213,8 +213,8 @@ with sync_playwright() as p:
     check("klinimetriekaart verschijnt", pg.locator("#kroKlinKaart").is_visible())
     check("vraagt eerst om de GMFCS",
           "Kies hierboven de GMFCS" in pg.inner_text("#kroKlinLijst"))
-    check("link naar de GMFCS-pagina",
-          pg.locator('#kroKlinKaart a[href="gmfcs.html"]').count() == 1)
+    check("geen link naar de GMFCS-pagina (de GMFCS is bekend gegeven)",
+          pg.locator('#kroKlinKaart a[href="gmfcs.html"]').count() == 0)
 
     kies("gmfcs", "i-iii")
     lst = pg.inner_text("#kroKlinLijst")
@@ -280,10 +280,41 @@ with sync_playwright() as p:
     # ---------- planning ----------
     print("\n--- planning ---")
     pg.click("#kroTabPlan"); pg.wait_for_timeout(300)
-    check("planning: leeg zonder datum", P() == "", "| " + P()[:60])
-    pg.fill("#kroDatumOk", "2027-04-15"); pg.wait_for_timeout(400)
+
+    # De gewone situatie: de operatiedatum is nog niet bekend. De tekst moet
+    # dan nog steeds kloppen en plakbaar zijn, met de termijnen in woorden.
+    pt = P(); veilig(pt, "planning zonder datums")
+    check("zonder datum: tekstvak niet leeg", len(pt) > 80, "| " + pt[:70])
+    check("zonder datum: operatiedatum staat als onbekend",
+          "Datum operatie: nog niet bekend" in pt, "| " + pt.replace("\n", " / ")[:120])
+    for w in ["Preoperatief MDO: nog te plannen",
+              "Klinimetrie post operatief: 6 maanden post operatief",
+              "Gangbeeldanalyse 1 jaar post operatief (alleen bij multi-level): 1 jaar post operatief",
+              "Gangbeeldanalyse 2 jaar post operatief (alleen bij multi-level): 2 jaar post operatief",
+              "MDO klinimetrie: 1-2 weken na klinimetrie consult + gangbeeldanalyse"]:
+        check("zonder datum: " + w[:54], w in pt, "| " + pt.replace("\n", " / "))
+    check("zonder datum: geen enkele datum verzonnen",
+          not re.search(r'\d{2}-\d{2}-\d{4}', pt),
+          "| " + str(re.findall(r'\d{2}-\d{2}-\d{4}', pt)))
+    check("zonder datum: de 8-12 weken staan erbij",
+          "bij voorkeur 8-12 weken voor (chirurgische) behandeling" in pt)
+
+    # Alleen de MDO-datum: daaruit volgt wanneer de operatie op zijn vroegst kan.
+    mdo = datetime.date(2027, 2, 10)
+    pg.fill("#kroDatumMdo", "2027-02-10"); pg.wait_for_timeout(400)
+    pt = P(); veilig(pt, "planning met alleen de MDO-datum")
+    r = [l for l in pt.split("\n") if l.startswith("Operatie:")]
+    check("MDO-datum geeft het operatievenster",
+          r and r[0] == "Operatie: " + nl(schuif(mdo, dagen=56)) + " t/m " + nl(schuif(mdo, dagen=84)),
+          "| " + str(r))
+    check("en meldt dat het afgeleid is", "Afgeleid uit:" in pt)
+    check("de post-operatieve regels blijven in woorden",
+          "Klinimetrie post operatief: 6 maanden post operatief" in pt)
+
+    # Alleen de operatiedatum: dan is het MDO een venster.
+    pg.fill("#kroDatumMdo", ""); pg.fill("#kroDatumOk", "2027-04-15"); pg.wait_for_timeout(400)
     ok = datetime.date(2027, 4, 15)
-    pt = P(); veilig(pt, "planning")
+    pt = P(); veilig(pt, "planning met de operatiedatum")
     verwacht = [
         ("Preoperatief MDO", nl(schuif(ok, dagen=-84)) + " t/m " + nl(schuif(ok, dagen=-56))),
         ("Klinimetrie post operatief", nl(schuif(ok, maanden=6))),
@@ -291,33 +322,54 @@ with sync_playwright() as p:
         ("Gangbeeldanalyse 2 jaar post operatief", nl(schuif(ok, jaren=2))),
     ]
     for naam, datum in verwacht:
-        regels = [l for l in pt.split("\n") if l.startswith(naam)]
-        check("datum klopt: " + naam, regels and regels[0].endswith(datum),
-              "| " + str(regels) + " verwacht " + datum)
+        rs = [l for l in pt.split("\n") if l.startswith(naam)]
+        check("datum klopt: " + naam, rs and rs[0].endswith(datum),
+              "| " + str(rs) + " verwacht " + datum)
     check("planning noemt de bronzin",
           "(Het preoperatief MDO wordt bij voorkeur 8-12 weken voor (chirurgische) behandeling gepland.)" in pt)
-    check("MDO klinimetrie nog niet berekend", "MDO klinimetrie:" not in pt)
+    check("MDO klinimetrie nog in woorden", "MDO klinimetrie: 1-2 weken na" in pt)
 
     pg.fill("#kroDatumKlin", "2027-02-02"); pg.wait_for_timeout(400)
     kl = datetime.date(2027, 2, 2)
-    pt = P()
-    regels = [l for l in pt.split("\n") if l.startswith("MDO klinimetrie:")]
+    r = [l for l in P().split("\n") if l.startswith("MDO klinimetrie:")]
     check("MDO klinimetrie 1-2 weken erna",
-          regels and regels[0].endswith(nl(schuif(kl, dagen=7)) + " t/m " + nl(schuif(kl, dagen=14))),
-          "| " + str(regels))
+          r and r[0].endswith(nl(schuif(kl, dagen=7)) + " t/m " + nl(schuif(kl, dagen=14))),
+          "| " + str(r))
 
     # maandoverloop: 31 augustus + 6 maanden mag geen 2 of 3 maart worden
     pg.fill("#kroDatumOk", "2027-08-31"); pg.wait_for_timeout(400)
-    pt = P()
-    regels = [l for l in pt.split("\n") if l.startswith("Klinimetrie post operatief")]
+    r = [l for l in P().split("\n") if l.startswith("Klinimetrie post operatief")]
     check("maandoverloop klemt op het maandeinde",
-          regels and regels[0].endswith("29-02-2028"), "| " + str(regels))
+          r and r[0].endswith("29-02-2028"), "| " + str(r))
+
+    # marge tussen MDO en operatie
+    print("\n--- marge MDO-operatie ---")
+    pg.fill("#kroDatumOk", "2027-03-10"); pg.fill("#kroDatumMdo", "2027-02-10")
+    pg.wait_for_timeout(400)
+    check("te krappe marge geeft een waarschuwing",
+          pg.locator("#kroPlanWaarschuwing").is_visible())
+    w = pg.inner_text("#kroPlanWaarschuwing")
+    check("waarschuwing noemt het aantal weken", "4 weken" in w, "| " + w)
+    check("waarschuwing staat ook in de Epic-tekst",
+          "Let op: tussen het preoperatief MDO en de operatie" in P())
+    pg.fill("#kroDatumOk", "2027-04-15"); pg.wait_for_timeout(400)
+    check("goede marge: geen waarschuwing",
+          not pg.locator("#kroPlanWaarschuwing").is_visible())
+    check("en geen waarschuwing in de tekst", "Let op:" not in P())
+    pg.fill("#kroDatumMdo", "2027-05-10"); pg.wait_for_timeout(400)
+    check("MDO na de operatie wordt gemeld",
+          "staat ná de operatie" in pg.inner_text("#kroPlanWaarschuwing"),
+          "| " + pg.inner_text("#kroPlanWaarschuwing"))
 
     pg.click("#kroKopieerPlan"); pg.wait_for_timeout(500)
     check("planning kopieert", "Gekopieerd" in pg.inner_text("#kroMeldingPlan"))
     check("klembord planning", pg.evaluate("navigator.clipboard.readText()") == P())
     pg.click("#kroWisPlan"); pg.wait_for_timeout(300)
-    check("planning leegmaken", P() == "" and pg.input_value("#kroDatumOk") == "")
+    check("planning leegmaken wist alle drie de velden",
+          pg.input_value("#kroDatumOk") == "" and pg.input_value("#kroDatumMdo") == ""
+          and pg.input_value("#kroDatumKlin") == "")
+    check("en zet de tekst terug op de termijnen in woorden",
+          "Datum operatie: nog niet bekend" in P())
 
     # ---------- kopieren en leegmaken op tab 1 ----------
     print("\n--- kopieren ---")

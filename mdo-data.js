@@ -66,6 +66,29 @@
     ]
   };
 
+  // Afgeleide tekst voor de arts die de patiënt opneemt op de orthopedie.
+  // Niets nieuws: dezelfde antwoorden uit de negen punten, maar alleen die
+  // welke tijdens de opname van belang zijn, met de twee regels erboven die
+  // zeggen wat orthopedie zelf moet doen.
+  var ORTHO = {
+    titel: 'VOOR DE OPNEMEND ARTS ORTHOPEDIE',
+    inleiding: 'Afspraken uit het preoperatief MDO, voor de opname.',
+    kopVast: 'Te regelen door orthopedie:',
+    kopBeleid: 'Beleid uit de MDO-checklist:',
+    vast: [
+      { tekst: 'Paramedici UMCG worden in consult gevraagd door de zaalarts Orthopedie, conform MDO behandelplan brief', bron: 'bijlage 1' },
+      { tekst: 'Orthopedie zorg voor een opmerking in de opname-order waarin verwezen wordt naar een mdo-notitie van de revalidatie. In die notitie staat welke voorzieningen nodig zijn. De regieverpleegkundige ziet deze order voor opname en bestelt de voorzieningen bij MHM.', bron: 'bijlage 3' }
+    ],
+    // Punt 8 valt af: dat is pre-operatief en daarmee vóór de opname geregeld.
+    punten: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p9'],
+    noten: [
+      'De twee regels onder "Te regelen door orthopedie" komen letterlijk uit bijlage 1 en bijlage 3 en gaan over wat orthopedie zelf doet rond de opname.',
+      '"Orthopedie zorg voor een opmerking" staat zo in bijlage 3; vermoedelijk "zorgt". Niet gecorrigeerd.',
+      'Punt 8 (pre-operatief extra inzet paramedici) staat er met opzet niet in: dat is vóór de opname geregeld. De andere acht punten staan er wel in, voor zover je ze hebt ingevuld.',
+      'De zin "Afspraken uit het preoperatief MDO, voor de opname." is van mij, als kop boven de tekst. Al het andere is overgenomen.'
+    ]
+  };
+
   // De agenda van het pre-operatieve MDO. Dit is een andere lijst dan de negen
   // punten hierboven: dit is wat je bespreekt, die negen zijn waar je op uitkomt.
   // Inhoudelijk overlappen ze (voorzieningen, voeding, conditie, gips, therapie).
@@ -350,6 +373,7 @@
     aanhef: 'Richtlijnen ten aanzien van de nabehandeling werden besproken:',
     spreekkamer: SPREEKKAMER,
     bespreek: BESPREEK,
+    ortho: ORTHO,
     punten: PUNTEN
   };
 })(typeof window !== 'undefined' ? window : this);

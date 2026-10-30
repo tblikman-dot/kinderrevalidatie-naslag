@@ -252,7 +252,6 @@
         <h2>3. Welke klinimetrie?</h2>
         <p class="kro-uitleg">
           De lijst hangt af van de GMFCS en de leeftijd.
-          <a class="kro-naar" href="gmfcs.html">GMFCS niet zeker? → GMFCS per leeftijdsband</a>
         </p>
         <h3>GMFCS</h3>
         <div class="kro-keuzes kro-rij" id="kroGmfcs"></div>
@@ -286,19 +285,27 @@
   <!-- ===================== PLANNING ===================== -->
   <div id="kroVlakPlan" hidden>
     <section class="kro-kaart">
-      <h2>Datums uitrekenen</h2>
+      <h2>Planning</h2>
       <p class="kro-uitleg">
-        Alleen de termijnen die in bijlage 1 staan. Bij elke uitkomst staat de zin waar hij
-        vandaan komt.
+        Alle drie de datums mogen leeg blijven. Weet je nog niets, dan krijg je de termijnen
+        uit bijlage 1 in woorden — ook dan is de tekst te plakken. Vul je er één in, dan wordt
+        de rest uitgerekend. Bij elke regel staat de zin waar hij vandaan komt.
       </p>
       <div class="kro-datumrij">
         <label for="kroDatumOk">Datum van de operatie</label>
         <input type="date" id="kroDatumOk">
+        <span class="kro-vanwaar">vaak nog niet bekend — laat leeg</span>
+      </div>
+      <div class="kro-datumrij">
+        <label for="kroDatumMdo">Datum preoperatief MDO</label>
+        <input type="date" id="kroDatumMdo">
+        <span class="kro-vanwaar">als die al gepland is</span>
       </div>
       <div class="kro-datumrij">
         <label for="kroDatumKlin">Datum klinimetrieconsult + gangbeeldanalyse</label>
         <input type="date" id="kroDatumKlin">
       </div>
+      <div class="kro-let" id="kroPlanWaarschuwing" hidden></div>
       <div class="kro-uitkomst" id="kroPlanUit"></div>
     </section>
 
@@ -310,7 +317,7 @@
         <span class="kro-melding" id="kroMeldingPlan"></span>
       </div>
       <textarea class="kro-epic" id="kroEpicPlan" spellcheck="false" readonly
-        placeholder="Vul hierboven een datum in."></textarea>
+        placeholder=""></textarea>
     </div>
   </div>
 
@@ -612,59 +619,111 @@
     function p(n) { return (n < 10 ? '0' : '') + n; }
     return p(d.getDate()) + '-' + p(d.getMonth() + 1) + '-' + d.getFullYear();
   }
-  function pas(d, t, kant) {
-    var w = kant === 'van' ? t.vanWeken : t.totWeken;
-    var m = kant === 'van' ? t.vanMaanden : t.totMaanden;
-    var j = kant === 'van' ? t.vanJaren : t.totJaren;
-    return verschuif(d, j || 0, m || 0, (w || 0) * 7);
+  function bronVan(id) {
+    for (var i = 0; i < D.termijnen.length; i++) {
+      if (D.termijnen[i].id === id) return D.termijnen[i].bron;
+    }
+    return '';
   }
+  function venster(van, tot) {
+    var zelfde = kort(van) === kort(tot);
+    return {
+      lang: zelfde ? lang(van) : lang(van) + ' t/m ' + lang(tot),
+      kort: zelfde ? kort(van) : kort(van) + ' t/m ' + kort(tot)
+    };
+  }
+  function los(woorden) { return { lang: woorden, kort: woorden }; }
 
+  // Alle drie de datums mogen ontbreken. Dat is de gewone situatie: op het
+  // moment dat je dit regelt staat de operatie meestal nog niet gepland. Wat
+  // niet uit te rekenen valt, komt in woorden uit de bron terug, zodat de
+  // tekst altijd te plakken is.
   function planRegels() {
-    var ok = leesDatum(el('kroDatumOk').value);
-    var kl = leesDatum(el('kroDatumKlin').value);
-    var uit = [];
-    D.termijnen.forEach(function (t) {
-      var basis = t.vanaf === 'ok' ? ok : kl;
-      if (!basis) return;
-      var van = pas(basis, t, 'van'), tot = pas(basis, t, 'tot');
-      uit.push({
-        naam: t.naam,
-        langTekst: kort(van) === kort(tot) ? lang(van) : lang(van) + ' t/m ' + lang(tot),
-        kortTekst: kort(van) === kort(tot) ? kort(van) : kort(van) + ' t/m ' + kort(tot),
-        bron: t.bron
-      });
+    var ok  = leesDatum(el('kroDatumOk').value);
+    var mdo = leesDatum(el('kroDatumMdo').value);
+    var kl  = leesDatum(el('kroDatumKlin').value);
+
+    var bMdo = bronVan('mdo_pre'), bKlin = bronVan('klin_post');
+    var bGba = bronVan('gba1'), bMk = bronVan('mdo_klin');
+    var R = [];
+    function regel(naam, w, bron) {
+      // Herhaalt de bron het antwoord woordelijk, dan voegt hij niets toe.
+      R.push({ naam: naam, w: w, bron: (bron && bron !== w.kort) ? bron : '' });
+    }
+
+    // Operatie. Staat de datum niet vast maar het MDO wel, dan is de vroegst
+    // mogelijke operatiedatum af te leiden: het MDO hoort 8-12 weken ervoor.
+    // Zonder datum en zonder MDO voegt een regel "Operatie: nog niet bekend"
+    // niets toe; dat staat al in de kop van de tekst.
+    if (ok) regel('Operatie', venster(ok, ok));
+    else if (mdo) regel('Operatie',
+      venster(verschuif(mdo, 0, 0, 8 * 7), verschuif(mdo, 0, 0, 12 * 7)),
+      'Afgeleid uit: ' + bMdo);
+
+    if (mdo) regel('Preoperatief MDO', venster(mdo, mdo), bMdo);
+    else if (ok) regel('Preoperatief MDO',
+      venster(verschuif(ok, 0, 0, -12 * 7), verschuif(ok, 0, 0, -8 * 7)), bMdo);
+    else regel('Preoperatief MDO', los('nog te plannen'), bMdo);
+
+    if (ok) regel('Klinimetrie post operatief', venster(verschuif(ok, 0, 6, 0), verschuif(ok, 0, 6, 0)), bKlin);
+    else regel('Klinimetrie post operatief', los('6 maanden post operatief'), bKlin);
+
+    [1, 2].forEach(function (j) {
+      var naam = 'Gangbeeldanalyse ' + j + ' jaar post operatief (alleen bij multi-level)';
+      if (ok) regel(naam, venster(verschuif(ok, j, 0, 0), verschuif(ok, j, 0, 0)), bGba);
+      else regel(naam, los(j + ' jaar post operatief'), bGba);
     });
-    return { ok: ok, kl: kl, regels: uit };
+
+    if (kl) regel('MDO klinimetrie',
+      venster(verschuif(kl, 0, 0, 7), verschuif(kl, 0, 0, 14)), bMk);
+    else regel('MDO klinimetrie', los('1-2 weken na klinimetrie consult + gangbeeldanalyse'), bMk);
+
+    // Staan het MDO en de operatie allebei vast, dan kan de marge gecheckt.
+    var waarschuwing = '';
+    if (ok && mdo) {
+      var dagen = Math.round((ok.getTime() - mdo.getTime()) / 86400000);
+      if (dagen < 0) {
+        waarschuwing = 'Let op: het preoperatief MDO staat ná de operatie.';
+      } else if (dagen < 8 * 7 || dagen > 12 * 7) {
+        var wk = String(Math.round(dagen / 7 * 10) / 10).replace('.', ',');
+        waarschuwing = 'Let op: tussen het preoperatief MDO en de operatie zit ' + wk +
+          ' weken. ' + bMdo;
+      }
+    }
+    return { ok: ok, mdo: mdo, kl: kl, regels: R, waarschuwing: waarschuwing };
   }
 
   function tekenPlan() {
     var p = planRegels();
-    if (!p.regels.length) {
-      el('kroPlanUit').innerHTML =
-        '<div class="kro-leeg">Vul een datum in; dan verschijnen de termijnen uit bijlage 1.</div>';
-      el('kroEpicPlan').value = '';
-      return;
-    }
+
+    el('kroPlanWaarschuwing').hidden = !p.waarschuwing;
+    el('kroPlanWaarschuwing').textContent = p.waarschuwing;
+
     el('kroPlanUit').innerHTML = p.regels.map(function (r) {
       return '<div><span class="kro-wanneer">' + esc(r.naam) + ':</span> ' +
-        esc(r.langTekst) + '<span class="kro-vanwaar">' + esc(r.bron) + '</span></div>';
+        esc(r.w.lang) +
+        (r.bron ? '<span class="kro-vanwaar">' + esc(r.bron) + '</span>' : '') +
+        '</div>';
     }).join('');
 
     var L = ['KRO-PLANNING', ''];
-    if (p.ok) L.push('Operatie: ' + kort(p.ok));
-    if (p.kl) L.push('Klinimetrieconsult + gangbeeldanalyse: ' + kort(p.kl));
+    if (p.ok) L.push('Datum operatie: ' + kort(p.ok));
+    else L.push('Datum operatie: nog niet bekend');
+    if (p.mdo) L.push('Datum preoperatief MDO: ' + kort(p.mdo));
+    if (p.kl) L.push('Datum klinimetrieconsult + gangbeeldanalyse: ' + kort(p.kl));
     L.push('');
+    if (p.waarschuwing) { L.push(p.waarschuwing); L.push(''); }
     p.regels.forEach(function (r) {
-      L.push(r.naam + ': ' + r.kortTekst);
-      L.push('(' + r.bron + ')');
+      L.push(r.naam + ': ' + r.w.kort);
+      if (r.bron) L.push('(' + r.bron + ')');
     });
     el('kroEpicPlan').value = naarAscii(L.join('\n'));
   }
 
-  el('kroDatumOk').addEventListener('input', tekenPlan);
-  el('kroDatumKlin').addEventListener('input', tekenPlan);
-  el('kroDatumOk').addEventListener('change', tekenPlan);
-  el('kroDatumKlin').addEventListener('change', tekenPlan);
+  ['kroDatumOk', 'kroDatumMdo', 'kroDatumKlin'].forEach(function (id) {
+    el(id).addEventListener('input', tekenPlan);
+    el(id).addEventListener('change', tekenPlan);
+  });
 
   // ---------- tijdlijn ----------
 
@@ -726,7 +785,8 @@
   });
   el('kroWis').addEventListener('click', function () { el('kroForm').reset(); tekenNu(); });
   el('kroWisPlan').addEventListener('click', function () {
-    el('kroDatumOk').value = ''; el('kroDatumKlin').value = ''; tekenPlan();
+    el('kroDatumOk').value = ''; el('kroDatumMdo').value = ''; el('kroDatumKlin').value = '';
+    tekenPlan();
   });
 
   // ---------- tabs ----------
