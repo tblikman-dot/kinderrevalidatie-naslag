@@ -22,6 +22,16 @@
 // als 'taken', 'wanneer' en 'context'. Klopt die lezing niet, dan verschuift er
 // tekst van de ene lijst naar de andere, maar er verandert geen woord.
 //
+// WAT ER OP AANWIJZING VAN DE ARTS IS AANGEPAST, en verder niets:
+//
+//   1. "peroperatief MDO" -> "preoperatief MDO" (twee plekken). Het schema
+//      gebruikt beide vormen voor hetzelfde overleg; de arts bevestigde dat
+//      "peroperatief" een tikfout is.
+//   2. De GMFM staat in de bron onder "Altijd", maar geldt alleen bij CP.
+//      Zonder CP blijft alleen GAS doelen over.
+//   3. Een kind van precies 4 jaar valt in de bron tussen "<4 jaar" en
+//      "> 4 jaar" in. Dat telt als "> 4 jaar", dus de Pedi CAT.
+//
 // Een taak met 'bij' geldt alleen voor die situatie: 'umcg' = patient niet
 // elders bekend, 'elders' = bekend bij Treant, de Vogellanden of Revalidatie
 // Friesland. Zo staat het in de bron en zo wordt het hier gefilterd.
@@ -51,7 +61,12 @@
 
   var KLINIMETRIE = {
     kop: '* Te verrichten klinimetrie',
-    altijd: { kop: 'Altijd', items: ['GAS doelen', 'GMFM'] },
+    // De bron zet GAS doelen en GMFM allebei onder "Altijd". Op aanwijzing van
+    // de arts geldt de GMFM alleen bij CP; zonder CP blijft alleen GAS over.
+    altijd: { kop: 'Altijd', items: [
+      { tekst: 'GAS doelen' },
+      { tekst: 'GMFM', alleenCp: true }
+    ] },
     groepen: [
       {
         id: 'i-iii', kop: 'CP GMFCS ( tot en met III)',
@@ -69,8 +84,9 @@
       }
     ],
     noten: [
-      'De bron schrijft "kind <4 jaar" en "kind > 4 jaar". Een kind van precies 4 valt daarmee in geen van beide. Kies zelf welke test je doet; ik vul hier niets in.',
-      'De twee groepen heten in de bron "CP GMFCS". Voor een kind zonder CP zegt het document niets over de groepsgebonden testen; dan blijft alleen "Altijd" over.'
+      'De bron schrijft "kind <4 jaar" en "kind > 4 jaar", waardoor een kind van precies 4 in geen van beide groepen valt. Op aanwijzing van de arts telt precies 4 jaar als "> 4 jaar": dus de Pedi CAT.',
+      'De bron zet GAS doelen en GMFM allebei onder "Altijd". Op aanwijzing van de arts geldt de GMFM alleen bij CP; zonder CP blijft alleen GAS over.',
+      'De twee groepen heten in de bron "CP GMFCS". Voor een kind zonder CP zegt het document niets over de groepsgebonden testen.'
     ]
   };
 
@@ -94,14 +110,14 @@
       id: 'consult1a', naam: 'KRO 1e consult: indicatie chirurgische behandeling gesteld',
       route: 'a', fase: 'consult', volgende: 'klinimetrie_pre',
       taken: [
-        { id: 'mdo', tekst: 'Revalidatiearts vraagt peroperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' },
+        { id: 'mdo', tekst: 'Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' },
         { id: 'checklist', tekst: 'Checklist invullen met ouders en orthopeed (zie bijlage 2)', bijlage2: true },
         { id: 'klin', tekst: 'Klinimetrie consult aanvragen door revalidatiearts:', onder: [
           { id: 'umcg', tekst: 'Via order UMCG CvR locatie Beatrixoord indien kind niet elders bekend.', bij: 'umcg' },
           { id: 'elders', tekst: 'Via verwijzend revalidatiearts indien patiënt bekend bij Treant, de Vogellanden of revalidatie Friesland.', bij: 'elders' }
         ] }
       ],
-      noot: 'In de bron staat hier "peroperatief MDO"; elders in hetzelfde schema heet het "preoperatief MDO". Gezien de termijn (8-12 weken vóór de behandeling) gaat het om hetzelfde overleg en lijkt "peroperatief" een tikfout. Niet gecorrigeerd.'
+      noot: 'In de bron staat hier "peroperatief MDO"; elders in hetzelfde schema heet het "preoperatief MDO". Op aanwijzing van de arts is dat een tikfout en staat er hier "preoperatief". Dat is de enige plek waar de tekst van de bron afwijkt.'
     },
 
     {
@@ -140,7 +156,7 @@
       route: 'b', fase: 'consult', volgende: 'mdo_pre',
       taken: [
         { id: 'checklist', tekst: 'Checklist invullen met ouders en orthopeed (zie bijlage 2)', bijlage2: true },
-        { id: 'mdo', tekst: 'Revalidatiearts vraagt peroperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' }
+        { id: 'mdo', tekst: 'Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' }
       ]
     },
 

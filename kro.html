@@ -342,9 +342,10 @@
     { id: 'iv-v',  naam: 'IV-V' },
     { id: 'geen',  naam: 'Geen CP / niet van toepassing' }
   ];
+  // Precies 4 jaar hoort op aanwijzing van de arts bij de bovenste groep.
   var LEEFTIJD = [
     { id: 'jong', naam: 'Jonger dan 4 jaar' },
-    { id: 'oud',  naam: 'Ouder dan 4 jaar' }
+    { id: 'oud',  naam: '4 jaar of ouder' }
   ];
 
   function esc(s) {
@@ -429,7 +430,12 @@
   function klinimetrieRegels() {
     var gm = gekozen('gmfcs'), lf = gekozen('leeftijd');
     if (!gm) return null;
-    var uit = D.klinimetrie.altijd.items.slice();
+    // De GMFM staat in de bron onder "Altijd", maar geldt alleen bij CP.
+    var uit = [];
+    D.klinimetrie.altijd.items.forEach(function (it) {
+      if (it.alleenCp && gm === 'geen') return;
+      uit.push(it.tekst);
+    });
     if (gm === 'geen') return uit;
     var groep = null;
     D.klinimetrie.groepen.forEach(function (g) { if (g.id === gm) groep = g; });

@@ -13,7 +13,7 @@ ZINNEN = [
     "Via kinderrevalidatiearts",
     "Op advies orthopeed, via kinderrevalidatie orthopedie spreekuur Vogellanden of revalidatie Friesland.",
     "KRO 1e consult: indicatie chirurgische behandeling gesteld",
-    "Revalidatiearts vraagt peroperatief MDO aan bij het secretariaat medische staf "
+    "Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat medische staf "
     "revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici",
     "Checklist invullen met ouders en orthopeed (zie bijlage 2)",
     "Klinimetrie consult aanvragen door revalidatiearts:",
@@ -144,7 +144,7 @@ with sync_playwright() as p:
     stap("consult1a")
     t = taken()
     check("A: MDO aanvragen staat erbij",
-          "Revalidatiearts vraagt peroperatief MDO aan bij het secretariaat" in t)
+          "Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat" in t)
     check("A: checklist staat erbij", "Checklist invullen met ouders en orthopeed (zie bijlage 2)" in t)
     check("A: link naar bijlage 2", pg.locator('#kroTaken a[href="mdo-notitie.html"]').count() == 1)
     check("A: beide varianten zolang 'waar bekend' leeg is",
@@ -180,7 +180,7 @@ with sync_playwright() as p:
     check("A: afgevinkte taak verhuist", "Aangevraagd of geregeld:" in tx)
     kop = tx.split("Aangevraagd of geregeld:")[1].split("Nog te doen:")[0]
     check("A: de afgevinkte taak staat in het eerste blok",
-          "Revalidatiearts vraagt peroperatief MDO" in kop, "| " + kop.replace("\n", " / ")[:120])
+          "Revalidatiearts vraagt preoperatief MDO" in kop, "| " + kop.replace("\n", " / ")[:120])
 
     # ---------- route B ----------
     print("\n--- route B: mogelijk indicatie ---")
@@ -198,6 +198,14 @@ with sync_playwright() as p:
     check("B: noot over de ontbrekende variant",
           "zonder de variant" in pg.inner_text("#kroStapNoot"),
           "| " + pg.inner_text("#kroStapNoot")[:90])
+    stap("consult1a")
+    check("A: de tikfout peroperatief is gecorrigeerd",
+          "peroperatief" not in taken(), "| " + taken().replace("\n", " / ")[:140])
+    check("A: de noot vertelt dat de bron 'peroperatief' zei",
+          "peroperatief" in pg.inner_text("#kroStapNoot")
+          and "aanwijzing van de arts" in pg.inner_text("#kroStapNoot"),
+          "| " + pg.inner_text("#kroStapNoot")[:120])
+    stap("consult1b")
 
     # ---------- klinimetrie ----------
     print("\n--- klinimetrie ---")
@@ -225,6 +233,12 @@ with sync_playwright() as p:
     check("ouder dan 4: Pedi CAT, geen Pedi NL",
           "Pedi CAT" in lst and "Pedi NL" not in lst, "| " + lst.replace("\n", " / "))
     check("altijd-blok staat er ook", "GAS doelen" in lst and "GMFM" in lst)
+    check("de bovenste leeftijdsgroep heet '4 jaar of ouder'",
+          "4 jaar of ouder" in pg.inner_text("#kroLeeftijd"),
+          "| " + pg.inner_text("#kroLeeftijd").replace("\n", " / "))
+    kn0 = pg.inner_text("#kroKlinNoten").replace("\n", " ")
+    check("noot: precies 4 hoort bij de Pedi CAT",
+          "precies 4" in kn0 and "Pedi CAT" in kn0, "| " + kn0[:180])
     check("I-III heeft geen CP Child", "CP Child" not in lst)
 
     kies("gmfcs", "iv-v")
@@ -238,9 +252,13 @@ with sync_playwright() as p:
 
     kies("gmfcs", "geen")
     lst = pg.inner_text("#kroKlinLijst")
-    check("geen CP: alleen het altijd-blok",
-          "GAS doelen" in lst and "GMFM" in lst and "CP Child" not in lst
-          and "6 minuten looptest" not in lst, "| " + lst.replace("\n", " / "))
+    check("geen CP: wel GAS doelen",
+          "GAS doelen" in lst, "| " + lst.replace("\n", " / "))
+    check("geen CP: GEEN GMFM",
+          "GMFM" not in lst, "| " + lst.replace("\n", " / "))
+    check("geen CP: verder niets",
+          "CP Child" not in lst and "6 minuten looptest" not in lst and "Pedi" not in lst,
+          "| " + lst.replace("\n", " / "))
 
     kies("gmfcs", "i-iii"); kies("leeftijd", "oud"); waar("umcg")
     tx = T(); veilig(tx, "klinimetrie")
@@ -255,6 +273,8 @@ with sync_playwright() as p:
     print("\n--- bronnoten ---")
     kn = pg.inner_text("#kroKlinNoten")
     check("noot over de leeftijdsgrens van precies 4", "precies 4" in kn, "| " + kn[:120])
+    check("noot over de GMFM alleen bij CP",
+          "GMFM alleen bij CP" in kn or "GMFM" in kn and "alleen bij CP" in kn, "| " + kn[:200])
     check("noot over kinderen zonder CP", "zonder CP" in kn)
 
     # ---------- planning ----------
