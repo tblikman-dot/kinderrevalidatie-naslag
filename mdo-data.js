@@ -66,6 +66,63 @@
     ]
   };
 
+  // BIJLAGE 3: de taken van verpleging en paramedici in de klinische fase.
+  // Letterlijk overgenomen uit "Logistiek - Paramedische Disciplines", zoals
+  // aangeleverd. Tijdens het preoperatief MDO loop je deze lijst langs en vink
+  // je aan wat voor dit kind geldt; de discipline erboven is het antwoord op
+  // "wie doet wat".
+  var TAKEN = {
+    titel: 'LOGISTIEK - PARAMEDISCHE DISCIPLINES',
+    kop: 'Logistiek — Paramedische Disciplines',
+    inleiding: 'Er zijn afspraken mbt de taken van de verpleegkundige, fysiotherapeut, ergotherapeut in de postoperatieve begeleiding in de klinische fase.',
+    groepen: [
+      {
+        id: 't1', kop: 'Verpleegkundige:', soort: 'check',
+        opties: [
+          { id: 'voorz', tekst: 'Benodigde extra voorzieningen (t.a.v transfer, beleid bewegingsbeperkingen) zijn vooraf bekend en zijn georderd zodat deze op de opname-dag geleverd worden (tillift, passende tilmat, ad-matras, Rebacare kussens) Orthopedie zorg voor een opmerking in de opname-order waarin verwezen wordt naar een mdo-notitie van de revalidatie. In die notitie staat welke voorzieningen nodig zijn. De regieverpleegkundige ziet deze order voor opname en bestelt de voorzieningen bij MHM.' },
+          { id: 'adl', tekst: 'ADL-verzorging, wondverzorging' },
+          { id: 'pijn', tekst: 'Monitoren pijn/comfort' },
+          { id: 'instructie', tekst: 'Instructies m.b.t post-operatief beleid uitdragen aan ouders, zie beleid orthopedie.' },
+          { id: 'positie', tekst: 'Positioneren en start bewegen in bed .' },
+          { id: 'schema', tekst: 'Uitvoer mobiliseerschema. Fysiotherapie maakt het schema in overleg met verpleging, ouders, ergotherapie.' }
+        ]
+      },
+      {
+        id: 't2', kop: 'Ergotherapie:', soort: 'check',
+        opties: [
+          { id: 'check', tekst: 'Voorzieningen-check (zoals afgesproken in mdo met behandelend ergotherapeut)' },
+          { id: 'bed', tekst: 'Mobiliseren en positioneren in bed (Rebacare)' },
+          { id: 'transfer', tekst: 'Bij passieve transfer: oefenen eerste keer met tillift + instellen rolstoel' },
+          { id: 'schema', tekst: 'Mobiliseerschema afspreken, evaluatie mobiliseren' },
+          { id: 'rolstoel', tekst: 'Eventueel passing rolstoel met leverancier (orthese, aanpassen huidige voorziening)' }
+        ]
+      },
+      {
+        id: 't3', kop: 'Fysiotherapie:', soort: 'check',
+        opties: [
+          { id: 'bed', tekst: 'Mobiliseren in bed' },
+          { id: 'positie', tekst: 'Positioneren in bed (Rebacare)' },
+          { id: 'advies', tekst: 'Advies en instructies aan verpleging en ouders, opstarten oefenen volgens beleid orthopeed en revalidatiearts, ademhalingstherapie, mobiliseren (naar de rolstoel, eerste keer tillift), actieve transfer oefenen' }
+        ]
+      },
+      {
+        id: 't4', kop: 'Logopedie:', soort: 'check',
+        opties: [
+          { id: 'edacs', tekst: 'Edacs level (sondevoeding va level 3, alleen wanneer pt niet direct mag zitten, maar in lig zou moeten eten en drinken)' },
+          { id: 'veilig', tekst: 'Zo nodig tav veiligheid oraal eten/drinken' },
+          { id: 'comm', tekst: 'Communicatie ondersteuning?' }
+        ]
+      }
+    ],
+    noten: [
+      'De inleidende zin noemt drie disciplines (verpleegkundige, fysiotherapeut, ergotherapeut), terwijl het document er vier beschrijft: logopedie staat er ook in. Zo overgenomen.',
+      '"Communicatie ondersteuning?" staat met vraagteken in de bron; dat lijkt daar zelf nog een open punt.',
+      'Het eerste punt bij de verpleegkundige is in de bron één doorlopende alinea waarin twee dingen door elkaar staan: dat de voorzieningen vooraf besteld zijn, en de opdracht aan orthopedie om een opmerking in de opname-order te zetten. Niet gesplitst.',
+      '"Orthopedie zorg voor een opmerking" is vermoedelijk "zorgt"; "Positioneren en start bewegen in bed ." heeft een spatie voor de punt. Allebei zo gelaten.',
+      'Er wordt twee keer verwezen naar "beleid orthopedie". Dat document heb ik niet; die verwijzing staat er dus wel, de inhoud erachter niet.'
+    ]
+  };
+
   // Afgeleide tekst voor de arts die de patiënt opneemt op de orthopedie.
   // Niets nieuws: dezelfde antwoorden uit de negen punten, maar alleen die
   // welke tijdens de opname van belang zijn, met de twee regels erboven die
@@ -373,6 +430,7 @@
     aanhef: 'Richtlijnen ten aanzien van de nabehandeling werden besproken:',
     spreekkamer: SPREEKKAMER,
     bespreek: BESPREEK,
+    taken: TAKEN,
     ortho: ORTHO,
     punten: PUNTEN
   };

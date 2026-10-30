@@ -129,13 +129,21 @@ with sync_playwright() as p:
     check("titel van bijlage 1",
           "BIJLAGE 1: Tijdlijn Kinderrevalidatie Orthopedie spreekuur (KRO)"
           in pg.inner_text("#kroLijnKop"))
-    A = "alleen als de indicatie al gesteld is"
-    Bv = "alleen als de indicatie nog niet gesteld is"
+    Bv = "alleen als de indicatie bij het 1e consult nog niet gesteld is"
     check("de vage labels 'route A' en 'route B' zijn weg",
           "route A" not in lijn and "route B" not in lijn)
-    check("takken gemerkt met wat ze betekenen",
-          lijn.count(A) == 1 and lijn.count(Bv) == 3,
-          "| gesteld=%d nog niet=%d" % (lijn.count(A), lijn.count(Bv)))
+    # Het label gaat over het EERSTE consult. Alleen de twee stappen die
+    # uitsluitend in die tak zitten krijgen het: MDO klinimetrie en het 2e consult.
+    check("alleen de taksgebonden stappen dragen een label",
+          lijn.count(Bv) == 2, "| %d x" % lijn.count(Bv))
+    check("het label noemt het 1e consult, anders spreekt het zichzelf tegen",
+          "alleen als de indicatie nog niet gesteld is" not in lijn
+          and "alleen als de indicatie al gesteld is" not in lijn)
+    # de regressie die de arts vond: geen tegenspraak achter het 2e consult
+    tweede = [r for r in lijn.split("\n") if "KRO 2e consult" in r]
+    check("geen tegenspraak bij het 2e consult",
+          tweede and "indicatie nog niet gesteld)" not in tweede[0],
+          "| " + str(tweede))
 
     # de uitleg van de twee takken
     rt = pg.inner_text("#kroRoutes")
@@ -165,8 +173,14 @@ with sync_playwright() as p:
     check("stapkeuze zonder 'route A'/'route B'",
           "route A" not in keuze and "route B" not in keuze)
     check("stapkeuze zegt wat de tak betekent",
-          "(indicatie al gesteld)" in keuze and "(indicatie nog niet gesteld)" in keuze,
-          "| " + keuze.replace("\n", " / ")[:200])
+          "(indicatie bij het 1e consult nog niet gesteld)" in keuze,
+          "| " + keuze.replace("\n", " / ")[:240])
+    r2 = [r for r in keuze.split("\n") if "KRO 2e consult" in r]
+    check("stapkeuze: het 2e consult spreekt zichzelf niet tegen",
+          r2 and "gesteld (indicatie nog niet gesteld)" not in r2[0], "| " + str(r2))
+    r1 = [r for r in keuze.split("\n") if "KRO 1e consult" in r]
+    check("stapkeuze: de twee 1e consulten dragen geen label (hun naam zegt het al)",
+          len(r1) == 2 and all("(indicatie" not in r for r in r1), "| " + str(r1))
     check("leeg: klinimetriekaart verborgen", not pg.locator("#kroKlinKaart").is_visible())
 
     # ---------- route A ----------
@@ -190,8 +204,8 @@ with sync_playwright() as p:
 
     waar("friesland")
     t = taken()
-    check("A+elders: alleen de verwijzend-arts-variant",
-          "Via verwijzend revalidatiearts indien patiënt bekend bij Treant" in t
+    check("A+elders: alleen de verwijzend-arts-variant, met het centrum erbij",
+          "Via de verwijzend revalidatiearts bij Revalidatie Friesland." in t
           and "indien kind niet elders bekend" not in t, "| " + t.replace("\n", " / ")[-200:])
     check("A+elders: let-op verschijnt", pg.locator("#kroEldersLet").is_visible())
     check("A+elders: let-op noemt het CP register",
@@ -211,6 +225,58 @@ with sync_playwright() as p:
     kop = tx.split("Aangevraagd of geregeld:")[1].split("Nog te doen:")[0]
     check("A: de afgevinkte taak staat in het eerste blok",
           "Revalidatiearts vraagt preoperatief MDO" in kop, "| " + kop.replace("\n", " / ")[:120])
+
+    # ---------- het gekozen centrum wordt bij naam genoemd ----------
+    print("\n--- centrum bij naam ---")
+    ALGEMEEN = ("aan in het UMCG indien patiënt daar onder behandeling, anders dit in "
+                "eigen regio organiseren")
+    pg.reload(); pg.wait_for_timeout(600)      # een radioknop gaat niet meer uit
+    stap("opname")
+    check("zonder keuze staat de algemene zin uit het document er",
+          ALGEMEEN in taken(), "| " + taken().replace("\n", " / ")[:200])
+    waar("umcg")
+    t = taken()
+    check("UMCG: de opsomming is weg",
+          ALGEMEEN not in t and "(6 maanden post operatief) aan in het UMCG." in t,
+          "| " + t.replace("\n", " / ")[:220])
+    waar("friesland")
+    t = taken()
+    check("elders: het centrum staat er bij naam",
+          "organiseert de klinimetrie post operatief (6 maanden post operatief) bij "
+          "Revalidatie Friesland." in t, "| " + t.replace("\n", " / ")[:220])
+    check("elders: de algemene opsomming is weg", ALGEMEEN not in t)
+    check("het centrum staat ook in de Epic-tekst",
+          "bij Revalidatie Friesland." in T(), "| " + T().replace("\n", " / ")[:220])
+    waar("treant")
+    check("en verandert mee met de keuze",
+          "bij Treant." in taken() and "Revalidatie Friesland" not in taken(),
+          "| " + taken().replace("\n", " / ")[:200])
+
+    # ook op de andere plekken waar het document de centra opsomt
+    stap("poli"); waar("vogellanden")
+    check("poliklinische voorbereiding noemt het centrum",
+          "In de eigen regio organiseren indien nodig, bij de Vogellanden." in taken(),
+          "| " + taken().replace("\n", " / ")[:200])
+    stap("klinimetrie_pre"); waar("friesland")
+    check("klinimetrie pre operatief noemt het centrum",
+          "Klinimetrie verrichten bij Revalidatie Friesland." in taken(),
+          "| " + taken().replace("\n", " / ")[:200])
+    stap("klinimetrie_post")
+    check("klinimetrie post operatief ook",
+          "Klinimetrie verrichten bij Revalidatie Friesland." in taken())
+    stap("consult1a"); waar("treant")
+    check("het klinimetrieconsult loopt via de arts bij dat centrum",
+          "Via de verwijzend revalidatiearts bij Treant." in taken(),
+          "| " + taken().replace("\n", " / ")[:220])
+
+    # de bron zelf moet onveranderd zichtbaar blijven
+    pg.click("#kroTabLijn"); pg.wait_for_timeout(300)
+    lijn2 = pg.inner_text("#kroLijn")
+    check("de oorspronkelijke zin staat nog op de tijdlijn",
+          ALGEMEEN in lijn2, "| niet gevonden")
+    check("en de opsomming van de drie centra ook",
+          "Indien patiënt bekend is bij Treant, de Vogellanden of Revalidatie Friesland" in lijn2)
+    pg.click("#kroTabNu"); pg.wait_for_timeout(300)
 
     # ---------- route B ----------
     print("\n--- route B: mogelijk indicatie ---")

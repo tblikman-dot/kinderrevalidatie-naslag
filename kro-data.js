@@ -29,7 +29,12 @@
 //      "peroperatief" een tikfout is.
 //   2. De GMFM staat in de bron onder "Altijd", maar geldt alleen bij CP.
 //      Zonder CP blijft alleen GAS doelen over.
-//   3. Een kind van precies 4 jaar valt in de bron tussen "<4 jaar" en
+//   3. Zodra je aangeeft bij welk centrum het kind bekend is, noemen de taken
+//      dat centrum bij naam in plaats van de algemene opsomming uit het
+//      document ("indien patiënt daar onder behandeling, anders in eigen
+//      regio"). Zie 'variant' bij de taken. De oorspronkelijke zin blijft als
+//      'tekst' staan en is zichtbaar op het tabblad Tijdlijn.
+//   4. Een kind van precies 4 jaar valt in de bron tussen "<4 jaar" en
 //      "> 4 jaar" in. Dat telt als "> 4 jaar", dus de Pedi CAT.
 //
 // Een taak met 'bij' geldt alleen voor die situatie: 'umcg' = patient niet
@@ -40,13 +45,13 @@
   'use strict';
 
   var WAAR_BEKEND = [
-    { id: 'umcg', kort: 'Niet elders bekend', groep: 'umcg',
+    { id: 'umcg', kort: 'Niet elders bekend', groep: 'umcg', naam: '',
       zin: 'Patient is niet elders bekend.' },
-    { id: 'treant', kort: 'Bekend bij Treant', groep: 'elders',
+    { id: 'treant', kort: 'Bekend bij Treant', groep: 'elders', naam: 'Treant',
       zin: 'Patient is bekend bij Treant.' },
-    { id: 'vogellanden', kort: 'Bekend bij de Vogellanden', groep: 'elders',
+    { id: 'vogellanden', kort: 'Bekend bij de Vogellanden', groep: 'elders', naam: 'de Vogellanden',
       zin: 'Patient is bekend bij de Vogellanden.' },
-    { id: 'friesland', kort: 'Bekend bij Revalidatie Friesland', groep: 'elders',
+    { id: 'friesland', kort: 'Bekend bij Revalidatie Friesland', groep: 'elders', naam: 'Revalidatie Friesland',
       zin: 'Patient is bekend bij Revalidatie Friesland.' }
   ];
 
@@ -108,14 +113,15 @@
 
     {
       id: 'consult1a', naam: 'KRO 1e consult: indicatie chirurgische behandeling gesteld',
-      kort: 'KRO 1e consult',
+      kort: 'KRO 1e consult', geenMerk: true,
       route: 'a', fase: 'consult', volgende: 'klinimetrie_pre',
       taken: [
         { id: 'mdo', tekst: 'Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' },
         { id: 'checklist', tekst: 'Checklist invullen met ouders en orthopeed (zie bijlage 2)', bijlage2: true },
         { id: 'klin', tekst: 'Klinimetrie consult aanvragen door revalidatiearts:', onder: [
           { id: 'umcg', tekst: 'Via order UMCG CvR locatie Beatrixoord indien kind niet elders bekend.', bij: 'umcg' },
-          { id: 'elders', tekst: 'Via verwijzend revalidatiearts indien patiënt bekend bij Treant, de Vogellanden of revalidatie Friesland.', bij: 'elders' }
+          { id: 'elders', tekst: 'Via verwijzend revalidatiearts indien patiënt bekend bij Treant, de Vogellanden of revalidatie Friesland.', bij: 'elders',
+            variant: { elders: 'Via de verwijzend revalidatiearts bij {centrum}.' } }
         ] }
       ],
       noot: 'In de bron staat hier "peroperatief MDO"; elders in hetzelfde schema heet het "preoperatief MDO". Op aanwijzing van de arts is dat een tikfout en staat er hier "preoperatief". Dat is de enige plek waar de tekst van de bron afwijkt.'
@@ -123,7 +129,7 @@
 
     {
       id: 'consult1b', naam: 'KRO 1e consult: mogelijk indicatie chirurgische behandeling',
-      kort: 'KRO 1e consult',
+      kort: 'KRO 1e consult', geenMerk: true,
       route: 'b', fase: 'consult', volgende: 'klinimetrie_pre',
       taken: [
         { id: 'klin', tekst: 'Klinimetrie consult aanvragen door revalidatiearts:', onder: [
@@ -141,7 +147,8 @@
       fase: 'klinimetrie', klinimetrie: true,
       taken: [
         { id: 'umcg', bij: 'umcg', tekst: 'Uitvoeren in UMCG CvR locatie Beatrixoord indien patiënt niet elders bekend of wanneer specifieke informatie nodig is voor het bepalen van de juiste (chirurgische) behandeling. Fysiotherapeut en revalidatiearts noteren bevindingen in observatielijst EPIC' },
-        { id: 'elders', bij: 'elders', tekst: 'Indien patiënt bekend is bij Treant, de Vogellanden of Revalidatie Friesland, dit op de locatie waar patiënt bekend is verrichten. Revalidatiearts elders noteert gegevens in CP register' }
+        { id: 'elders', bij: 'elders', tekst: 'Indien patiënt bekend is bij Treant, de Vogellanden of Revalidatie Friesland, dit op de locatie waar patiënt bekend is verrichten. Revalidatiearts elders noteert gegevens in CP register',
+          variant: { elders: 'Klinimetrie verrichten bij {centrum}. De revalidatiearts daar noteert de gegevens in CP register' } }
       ]
     },
 
@@ -179,7 +186,11 @@
       route: 'beide', fase: 'voorbereiding', optioneel: true,
       taken: [
         { id: 'uitproberen', tekst: 'Uitproberen voorzieningen, hulpmiddelen en houdingen pre operatief' },
-        { id: 'waar', tekst: 'In het UMCG CvR locatie Beatrixoord indien patiënt hier bekend, indien patiënt al elders bekend dan in eigen regio organiseren indien nodig. Dit te bespreken tijdens het preoperatief MDO' }
+        { id: 'waar', tekst: 'In het UMCG CvR locatie Beatrixoord indien patiënt hier bekend, indien patiënt al elders bekend dan in eigen regio organiseren indien nodig. Dit te bespreken tijdens het preoperatief MDO',
+          variant: {
+            umcg: 'In het UMCG CvR locatie Beatrixoord organiseren indien nodig. Dit te bespreken tijdens het preoperatief MDO',
+            elders: 'In de eigen regio organiseren indien nodig, bij {centrum}. Dit te bespreken tijdens het preoperatief MDO'
+          } }
       ]
     },
 
@@ -189,7 +200,11 @@
       taken: [
         { id: 'consult', tekst: 'Paramedici UMCG worden in consult gevraagd door de zaalarts Orthopedie, conform MDO behandelplan brief' },
         { id: 'overdracht', tekst: 'Bij ontslag zorgen de paramedici UMCG voor een overdracht naar de behandelaren die de therapie overnemen zoals bij het preoperatief MDO afgesproken' },
-        { id: 'klinpost', tekst: 'De revalidatiearts vraagt de klinimetrie post operatief (6 maanden post operatief) aan in het UMCG indien patiënt daar onder behandeling, anders dit in eigen regio organiseren. Daarnaast zal een controle consult op het KRO worden aangevraagd nadat de klinimetrie verricht is' }
+        { id: 'klinpost', tekst: 'De revalidatiearts vraagt de klinimetrie post operatief (6 maanden post operatief) aan in het UMCG indien patiënt daar onder behandeling, anders dit in eigen regio organiseren. Daarnaast zal een controle consult op het KRO worden aangevraagd nadat de klinimetrie verricht is',
+          variant: {
+            umcg: 'De revalidatiearts vraagt de klinimetrie post operatief (6 maanden post operatief) aan in het UMCG. Daarnaast zal een controle consult op het KRO worden aangevraagd nadat de klinimetrie verricht is',
+            elders: 'De revalidatiearts organiseert de klinimetrie post operatief (6 maanden post operatief) bij {centrum}. Daarnaast zal een controle consult op het KRO worden aangevraagd nadat de klinimetrie verricht is'
+          } }
       ]
     },
 
@@ -199,7 +214,8 @@
       wanneer: '6 maanden post operatief',
       taken: [
         { id: 'umcg', bij: 'umcg', tekst: 'Uitvoeren in UMCG CvR locatie Beatrixoord indien patiënt niet elders bekend Fysiotherapeut en revalidatiearts noteren bevindingen in observatielijst EPIC' },
-        { id: 'elders', bij: 'elders', tekst: 'Indien patiënt bekend is bij Treant, de Vogellanden of Revalidatie Friesland, dit op de locatie waar patiënt bekend is verrichten. Revalidatiearts elders noteert gegevens in CP register' }
+        { id: 'elders', bij: 'elders', tekst: 'Indien patiënt bekend is bij Treant, de Vogellanden of Revalidatie Friesland, dit op de locatie waar patiënt bekend is verrichten. Revalidatiearts elders noteert gegevens in CP register',
+          variant: { elders: 'Klinimetrie verrichten bij {centrum}. De revalidatiearts daar noteert de gegevens in CP register' } }
       ],
       noot: 'In de bron ontbreekt hier een punt tussen "niet elders bekend" en "Fysiotherapeut"; bij de pre-operatieve klinimetrie staat die er wel. Zo overgenomen.'
     },
@@ -262,6 +278,11 @@
     klinimetrie: KLINIMETRIE,
     stappen: STAPPEN,
     termijnen: TERMIJNEN,
+    // Let op bij het label: het zegt iets over het EERSTE consult, niet over de
+    // stap waar het achter staat. Zonder "bij het 1e consult" erin leest
+    // "KRO 2e consult: indicatie gesteld (indicatie nog niet gesteld)" als een
+    // tegenspraak. Op de twee eerste consulten zelf staat geen label: hun naam
+    // zegt het al.
     // De twee takken van het schema. Het document geeft ze geen naam: het zet
     // alleen twee blokken naast elkaar met een pijl ernaartoe. De namen,
     // de korte labels en de ketens hieronder zijn van mij, afgeleid uit de
@@ -270,14 +291,14 @@
     routes: [
       { id: 'a',
         naam: 'De indicatie is bij het 1e consult al gesteld',
-        kort: 'indicatie al gesteld',
-        merk: 'alleen als de indicatie al gesteld is',
+        kort: 'indicatie bij het 1e consult al gesteld',
+        merk: 'alleen als de indicatie bij het 1e consult al gesteld is',
         keten: ['verwijzing', 'consult1a', 'klinimetrie_pre', 'mdo_pre'],
         wat: 'Je vraagt bij dat eerste consult meteen het preoperatief MDO aan, vult de checklist in met ouders en orthopeed, en vraagt het klinimetrieconsult aan.' },
       { id: 'b',
         naam: 'De indicatie is bij het 1e consult nog niet gesteld',
-        kort: 'indicatie nog niet gesteld',
-        merk: 'alleen als de indicatie nog niet gesteld is',
+        kort: 'indicatie bij het 1e consult nog niet gesteld',
+        merk: 'alleen als de indicatie bij het 1e consult nog niet gesteld is',
         keten: ['verwijzing', 'consult1b', 'klinimetrie_pre', 'mdo_klinimetrie_pre', 'consult2', 'mdo_pre'],
         wat: 'Je verzamelt eerst: klinimetrie, op indicatie een gangbeeldanalyse, en het MDO klinimetrie. Pas bij het tweede KRO-consult wordt de indicatie gesteld; dán pas de checklist en de MDO-aanvraag.' }
     ]

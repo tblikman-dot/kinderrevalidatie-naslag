@@ -211,6 +211,7 @@
   <div class="mdo-tabs">
     <button class="mdo-tab aan" id="mdoTabMdo" type="button">MDO-checklist</button>
     <button class="mdo-tab" id="mdoTabBespreek" type="button">Bespreekpunten</button>
+    <button class="mdo-tab" id="mdoTabTaken" type="button">Wie doet wat</button>
     <button class="mdo-tab" id="mdoTabOrtho" type="button">Orthopedie</button>
     <button class="mdo-tab" id="mdoTabSpreek" type="button">Spreekkamer</button>
   </div>
@@ -253,6 +254,29 @@
       <textarea class="mdo-epic" id="mdoBespreekEpic" spellcheck="false" readonly
         placeholder="Kruis hierboven aan wat besproken is."></textarea>
       <div class="mdo-noot" id="mdoBespreekNoten"></div>
+    </div>
+  </div>
+
+  <!-- ============ BIJLAGE 3: WIE DOET WAT ============ -->
+  <div id="mdoVlakTaken" hidden>
+    <p class="mdo-intro" id="mdoTakenKop"></p>
+    <form id="mdoTakenForm" autocomplete="off"></form>
+
+    <div class="mdo-uit">
+      <h2>Tekst voor Epic</h2>
+      <p class="mdo-uitleg">
+        De taken van verpleging en paramedici tijdens de opname, uit bijlage 3. Loop de lijst
+        langs in het preoperatief MDO en vink aan wat voor dit kind geldt; de discipline
+        erboven is het antwoord op wie het doet.
+      </p>
+      <div class="mdo-knoprij">
+        <button class="mdo-knop" id="mdoKopieerTaken" type="button">Kopiëren</button>
+        <button class="mdo-knop rustig" id="mdoWisTaken" type="button">Alles leegmaken</button>
+        <span class="mdo-melding" id="mdoMeldingTaken"></span>
+      </div>
+      <textarea class="mdo-epic" id="mdoTakenEpic" spellcheck="false" readonly
+        placeholder="Kruis hierboven aan wat voor dit kind geldt."></textarea>
+      <div class="mdo-noot" id="mdoTakenNoten"></div>
     </div>
   </div>
 
@@ -588,11 +612,38 @@
     document.getElementById('mdoMeldingBespreek')
   );
 
+  // ---------- tabblad: wie doet wat (bijlage 3) ----------
+
+  document.getElementById('mdoTakenKop').textContent =
+    D.taken.kop + ' \u2014 ' + D.taken.inleiding;
+
+  koppel(
+    document.getElementById('mdoTakenForm'),
+    D.taken.groepen,
+    document.getElementById('mdoTakenEpic'),
+    function (stand) {
+      var L = [];
+      D.taken.groepen.forEach(function (g) {
+        var uit = regelsVan(stand, g);
+        if (!uit.length) return;
+        L.push(g.kop);
+        uit.forEach(function (r) { L.push(r); });
+        L.push('');
+      });
+      if (!L.length) return '';
+      return naarAscii([D.taken.titel, '', D.taken.inleiding, ''].concat(L).join('\n'));
+    },
+    document.getElementById('mdoKopieerTaken'),
+    document.getElementById('mdoWisTaken'),
+    document.getElementById('mdoMeldingTaken')
+  );
+
   function notenHtml(lijst) {
     return '<strong>In de bron:</strong><br>' +
       lijst.map(function (n) { return '— ' + esc(n); }).join('<br>');
   }
   document.getElementById('mdoBespreekNoten').innerHTML = notenHtml(D.bespreek.noten);
+  document.getElementById('mdoTakenNoten').innerHTML = notenHtml(D.taken.noten);
   document.getElementById('mdoOrthoNoten').innerHTML = notenHtml(D.ortho.noten);
   document.getElementById('mdoKopieerOrtho').addEventListener('click', function () {
     kopieer(document.getElementById('mdoOrtho'), document.getElementById('mdoMeldingOrtho'));
@@ -613,6 +664,7 @@
   var TABS = [
     { knop: 'mdoTabMdo', vlak: 'mdoVlakMdo' },
     { knop: 'mdoTabBespreek', vlak: 'mdoVlakBespreek' },
+    { knop: 'mdoTabTaken', vlak: 'mdoVlakTaken' },
     { knop: 'mdoTabOrtho', vlak: 'mdoVlakOrtho' },
     { knop: 'mdoTabSpreek', vlak: 'mdoVlakSpreek' }
   ];

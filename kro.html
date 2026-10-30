@@ -285,6 +285,11 @@
           wordt en waar de bevindingen genoteerd worden.
         </p>
         <div class="kro-keuzes kro-rij" id="kroWaar"></div>
+        <p class="kro-uitleg" style="margin:8px 0 0">
+          Zodra je hier kiest, noemen de taken dat centrum bij naam in plaats van de algemene
+          opsomming uit het document. De oorspronkelijke zinnen staan op het tabblad
+          <strong>Tijdlijn</strong>.
+        </p>
         <div class="kro-let" id="kroEldersLet" hidden></div>
       </section>
 
@@ -430,7 +435,7 @@
       h += '<div class="kro-groepkop">' + esc(g.kop) + '</div>';
       rijen.forEach(function (s) {
         gedaan[s.id] = true;
-        var r = routeVan(s.route);
+        var r = s.geenMerk ? null : routeVan(s.route);
         h += keuzeHtml('stap', s.id, s.naam + (r ? ' (' + r.kort + ')' : ''));
       });
     });
@@ -470,6 +475,16 @@
   // Een regel met 'bij' geldt alleen voor die situatie. Is er nog niets
   // gekozen, dan tonen we ze allebei.
   function geldt(item, groep) { return !item.bij || !groep || item.bij === groep; }
+
+  // Is er een centrum gekozen, dan noemt de taak dat centrum bij naam in plaats
+  // van de algemene opsomming uit het document. De oorspronkelijke zin blijft
+  // op het tabblad Tijdlijn staan.
+  function tekstVan(item, waar) {
+    if (waar && item.variant && item.variant[waar.groep]) {
+      return item.variant[waar.groep].replace('{centrum}', waar.naam || '');
+    }
+    return item.tekst;
+  }
 
   function zichtbareTaken(stap, groep) {
     if (!stap) return [];
@@ -538,11 +553,11 @@
     taken.forEach(function (t) {
       h += '<div class="kro-taak">' +
         '<label class="kro-vink"><input type="checkbox" name="taak" value="' + esc(t.id) + '">' +
-        '<span>' + esc(t.tekst) + '</span></label>';
+        '<span>' + esc(tekstVan(t, waar)) + '</span></label>';
       var onder = (t.onder || []).filter(function (o) { return geldt(o, groep); });
       if (onder.length) {
         h += '<div class="kro-onder">' +
-          onder.map(function (o) { return '<div>' + esc(o.tekst) + '</div>'; }).join('') +
+          onder.map(function (o) { return '<div>' + esc(tekstVan(o, waar)) + '</div>'; }).join('') +
           '</div>';
       }
       if (t.bijlage2) {
@@ -601,9 +616,9 @@
       if (!rij.length) return;
       L.push(kop);
       rij.forEach(function (t) {
-        L.push(t.tekst);
+        L.push(tekstVan(t, waar));
         (t.onder || []).forEach(function (o) {
-          if (geldt(o, waar ? waar.groep : '')) L.push(o.tekst);
+          if (geldt(o, waar ? waar.groep : '')) L.push(tekstVan(o, waar));
         });
       });
       L.push('');
@@ -794,7 +809,7 @@
   (function tekenLijn () {
     el('kroLijnKop').textContent = D.titel;
     el('kroLijn').innerHTML = D.stappen.map(function (s) {
-      var r = routeVan(s.route);
+      var r = s.geenMerk ? null : routeVan(s.route);
       var merk = r ? '<span class="kro-merk">' + esc(r.merk) + '</span>' : '';
       var h = '<div class="kro-stap route-' + esc(s.route) + '">' +
         '<h3 class="kro-stapkop">' + merk + esc(s.naam) + '</h3>';

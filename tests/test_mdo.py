@@ -378,6 +378,75 @@ with sync_playwright() as p:
     check("bespreekpunten: leegmaken raakt de MDO-checklist niet",
           "NOG NIET INGEVULD" in T() and T().startswith("MDO-CHECKLIST"))
 
+    # ---------- wie doet wat (bijlage 3) ----------
+    print("\n--- wie doet wat ---")
+    TAKEN_ZINNEN = [
+        "Er zijn afspraken mbt de taken van de verpleegkundige, fysiotherapeut, "
+        "ergotherapeut in de postoperatieve begeleiding in de klinische fase.",
+        "ADL-verzorging, wondverzorging",
+        "Monitoren pijn/comfort",
+        "Instructies m.b.t post-operatief beleid uitdragen aan ouders, zie beleid orthopedie.",
+        "Positioneren en start bewegen in bed .",
+        "Uitvoer mobiliseerschema. Fysiotherapie maakt het schema in overleg met verpleging, "
+        "ouders, ergotherapie.",
+        "Voorzieningen-check (zoals afgesproken in mdo met behandelend ergotherapeut)",
+        "Mobiliseren en positioneren in bed (Rebacare)",
+        "Bij passieve transfer: oefenen eerste keer met tillift + instellen rolstoel",
+        "Mobiliseerschema afspreken, evaluatie mobiliseren",
+        "Eventueel passing rolstoel met leverancier (orthese, aanpassen huidige voorziening)",
+        "Mobiliseren in bed",
+        "Positioneren in bed (Rebacare)",
+        "Advies en instructies aan verpleging en ouders, opstarten oefenen volgens beleid "
+        "orthopeed en revalidatiearts, ademhalingstherapie, mobiliseren (naar de rolstoel, "
+        "eerste keer tillift), actieve transfer oefenen",
+        "Edacs level (sondevoeding va level 3, alleen wanneer pt niet direct mag zitten, "
+        "maar in lig zou moeten eten en drinken)",
+        "Zo nodig tav veiligheid oraal eten/drinken",
+        "Communicatie ondersteuning?",
+    ]
+    TAKEN_AAN = ["t1.voorz", "t1.adl", "t1.pijn", "t1.instructie", "t1.positie", "t1.schema",
+                 "t2.check", "t2.bed", "t2.transfer", "t2.schema", "t2.rolstoel",
+                 "t3.bed", "t3.positie", "t3.advies",
+                 "t4.edacs", "t4.veilig", "t4.comm"]
+    pg.reload(); pg.wait_for_timeout(600)
+    pg.click("#mdoTabTaken"); pg.wait_for_timeout(300)
+    check("taken: leeg zolang er niets aan staat",
+          pg.input_value("#mdoTakenEpic") == "", "| " + pg.input_value("#mdoTakenEpic")[:70])
+    check("taken: de inleidende zin staat op het scherm",
+          TAKEN_ZINNEN[0] in pg.inner_text("#mdoTakenKop"),
+          "| " + pg.inner_text("#mdoTakenKop")[:120])
+    for pad in TAKEN_AAN:
+        try:
+            vink(pad)
+        except Exception as e:
+            check("aanvinken lukt: " + pad, False, "| " + str(e)[:80])
+    pg.wait_for_timeout(400)
+    tt = pg.input_value("#mdoTakenEpic")
+    veilig(tt, "wie doet wat")
+    check("taken: eigen kop", tt.startswith("LOGISTIEK - PARAMEDISCHE DISCIPLINES"), "| " + tt[:60])
+    for kop in ["Verpleegkundige:", "Ergotherapie:", "Fysiotherapie:", "Logopedie:"]:
+        check("taken: discipline " + kop, kop in tt, "| " + tt.replace("\n", " / ")[:200])
+    for z in TAKEN_ZINNEN:
+        check("letterlijk: " + z[:56], z in tt)
+    check("taken: de MHM-regel staat er ook in", "bestelt de voorzieningen bij MHM." in tt)
+    pg.uncheck('input[data-pad="t4.comm"]:not([data-veld])'); pg.wait_for_timeout(300)
+    check("taken: uitgezet punt verdwijnt",
+          "Communicatie ondersteuning?" not in pg.input_value("#mdoTakenEpic"))
+    pg.uncheck('input[data-pad="t4.edacs"]:not([data-veld])')
+    pg.uncheck('input[data-pad="t4.veilig"]:not([data-veld])'); pg.wait_for_timeout(300)
+    check("taken: een lege discipline valt helemaal weg",
+          "Logopedie:" not in pg.input_value("#mdoTakenEpic"),
+          "| " + pg.input_value("#mdoTakenEpic").replace("\n", " / ")[-160:])
+    pg.click("#mdoKopieerTaken"); pg.wait_for_timeout(500)
+    check("taken kopieert", "Gekopieerd" in pg.inner_text("#mdoMeldingTaken"))
+    check("klembord taken",
+          pg.evaluate("navigator.clipboard.readText()") == pg.input_value("#mdoTakenEpic"))
+    nt = pg.inner_text("#mdoTakenNoten")
+    check("taken: noot over drie versus vier disciplines", "vier beschrijft" in nt, "| " + nt[:120])
+    check("taken: noot over het ontbrekende beleid orthopedie", "beleid orthopedie" in nt)
+    pg.click("#mdoWisTaken"); pg.wait_for_timeout(300)
+    check("taken: leegmaken", pg.input_value("#mdoTakenEpic") == "")
+
     # ---------- afgeleide tekst voor orthopedie ----------
     print("\n--- orthopedie ---")
     pg.reload(); pg.wait_for_timeout(600)
@@ -431,11 +500,13 @@ with sync_playwright() as p:
     print("\n--- tabbladen ---")
     for knop, vlak in [("#mdoTabMdo", "#mdoVlakMdo"),
                        ("#mdoTabBespreek", "#mdoVlakBespreek"),
+                       ("#mdoTabTaken", "#mdoVlakTaken"),
                        ("#mdoTabOrtho", "#mdoVlakOrtho"),
                        ("#mdoTabSpreek", "#mdoVlakSpreek")]:
         pg.click(knop); pg.wait_for_timeout(200)
-        zichtbaar = [v for v in ["#mdoVlakMdo", "#mdoVlakBespreek", "#mdoVlakOrtho",
-                                 "#mdoVlakSpreek"] if pg.locator(v).is_visible()]
+        zichtbaar = [v for v in ["#mdoVlakMdo", "#mdoVlakBespreek", "#mdoVlakTaken",
+                                 "#mdoVlakOrtho", "#mdoVlakSpreek"]
+                     if pg.locator(v).is_visible()]
         check("tab " + knop + " toont alleen " + vlak, zichtbaar == [vlak], "| " + str(zichtbaar))
 
     # ---------- niets bewaard ----------
