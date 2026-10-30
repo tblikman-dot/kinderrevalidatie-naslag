@@ -94,7 +94,7 @@
   // zit: 'a', 'b' of 'beide'.
   var STAPPEN = [
     {
-      id: 'verwijzing', naam: 'Verwijzing naar KRO spreekuur', route: 'beide',
+      id: 'verwijzing', naam: 'Verwijzing naar KRO spreekuur', kort: 'Verwijzing', route: 'beide',
       fase: 'start',
       context: [
         'Intern via een order',
@@ -108,6 +108,7 @@
 
     {
       id: 'consult1a', naam: 'KRO 1e consult: indicatie chirurgische behandeling gesteld',
+      kort: 'KRO 1e consult',
       route: 'a', fase: 'consult', volgende: 'klinimetrie_pre',
       taken: [
         { id: 'mdo', tekst: 'Revalidatiearts vraagt preoperatief MDO aan bij het secretariaat medische staf revalidatiegeneeskunde. Met betrokken revalidatiearts en paramedici' },
@@ -122,6 +123,7 @@
 
     {
       id: 'consult1b', naam: 'KRO 1e consult: mogelijk indicatie chirurgische behandeling',
+      kort: 'KRO 1e consult',
       route: 'b', fase: 'consult', volgende: 'klinimetrie_pre',
       taken: [
         { id: 'klin', tekst: 'Klinimetrie consult aanvragen door revalidatiearts:', onder: [
@@ -144,7 +146,7 @@
     },
 
     {
-      id: 'mdo_klinimetrie_pre', naam: 'MDO klinimetrie pre operatief', route: 'b',
+      id: 'mdo_klinimetrie_pre', naam: 'MDO klinimetrie pre operatief', kort: 'MDO klinimetrie', route: 'b',
       fase: 'mdo', volgende: 'consult2',
       wanneer: '1-2 weken na klinimetrie consult + gangbeeldanalyse',
       context: ['Aanwezig: revalidatiearts, orthopeed, fysiotherapeut en gangbeeldanalist'],
@@ -153,6 +155,7 @@
 
     {
       id: 'consult2', naam: 'KRO 2e consult: indicatie chirurgische behandeling gesteld',
+      kort: 'KRO 2e consult',
       route: 'b', fase: 'consult', volgende: 'mdo_pre',
       taken: [
         { id: 'checklist', tekst: 'Checklist invullen met ouders en orthopeed (zie bijlage 2)', bijlage2: true },
@@ -259,9 +262,24 @@
     klinimetrie: KLINIMETRIE,
     stappen: STAPPEN,
     termijnen: TERMIJNEN,
+    // De twee takken van het schema. Het document geeft ze geen naam: het zet
+    // alleen twee blokken naast elkaar met een pijl ernaartoe. De namen,
+    // de korte labels en de ketens hieronder zijn van mij, afgeleid uit de
+    // pijlen in het stroomschema. Dat staat ook op het scherm.
+    routesUitleg: 'Na de verwijzing splitst het schema in tweeën. Welke tak je volgt hangt van één ding af: is bij het eerste KRO-consult de indicatie voor een operatie al gesteld, of nog niet? Vanaf het preoperatief MDO lopen de twee weer gelijk. Het document geeft die takken geen naam — de namen hieronder zijn van mij, afgeleid uit de pijlen in het schema.',
     routes: [
-      { id: 'a', naam: 'Indicatie al gesteld bij het 1e consult' },
-      { id: 'b', naam: 'Mogelijk indicatie: eerst klinimetrie en MDO' }
+      { id: 'a',
+        naam: 'De indicatie is bij het 1e consult al gesteld',
+        kort: 'indicatie al gesteld',
+        merk: 'alleen als de indicatie al gesteld is',
+        keten: ['verwijzing', 'consult1a', 'klinimetrie_pre', 'mdo_pre'],
+        wat: 'Je vraagt bij dat eerste consult meteen het preoperatief MDO aan, vult de checklist in met ouders en orthopeed, en vraagt het klinimetrieconsult aan.' },
+      { id: 'b',
+        naam: 'De indicatie is bij het 1e consult nog niet gesteld',
+        kort: 'indicatie nog niet gesteld',
+        merk: 'alleen als de indicatie nog niet gesteld is',
+        keten: ['verwijzing', 'consult1b', 'klinimetrie_pre', 'mdo_klinimetrie_pre', 'consult2', 'mdo_pre'],
+        wat: 'Je verzamelt eerst: klinimetrie, op indicatie een gangbeeldanalyse, en het MDO klinimetrie. Pas bij het tweede KRO-consult wordt de indicatie gesteld; dán pas de checklist en de MDO-aanvraag.' }
     ]
   };
 })(typeof window !== 'undefined' ? window : this);

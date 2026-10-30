@@ -129,14 +129,44 @@ with sync_playwright() as p:
     check("titel van bijlage 1",
           "BIJLAGE 1: Tijdlijn Kinderrevalidatie Orthopedie spreekuur (KRO)"
           in pg.inner_text("#kroLijnKop"))
-    check("beide routes gemerkt", lijn.count("route A") >= 1 and lijn.count("route B") >= 3,
-          "| A=%d B=%d" % (lijn.count("route A"), lijn.count("route B")))
+    A = "alleen als de indicatie al gesteld is"
+    Bv = "alleen als de indicatie nog niet gesteld is"
+    check("de vage labels 'route A' en 'route B' zijn weg",
+          "route A" not in lijn and "route B" not in lijn)
+    check("takken gemerkt met wat ze betekenen",
+          lijn.count(A) == 1 and lijn.count(Bv) == 3,
+          "| gesteld=%d nog niet=%d" % (lijn.count(A), lijn.count(Bv)))
+
+    # de uitleg van de twee takken
+    rt = pg.inner_text("#kroRoutes")
+    check("uitleg: waar het van afhangt",
+          "is bij het eerste KRO-consult de indicatie voor een operatie al gesteld" in rt,
+          "| " + rt.replace("\n", " / ")[:160])
+    check("uitleg: zegt dat de namen van mij zijn",
+          "Het document geeft die takken geen naam" in rt)
+    check("uitleg: allebei de takken met naam",
+          "De indicatie is bij het 1e consult al gesteld" in rt
+          and "De indicatie is bij het 1e consult nog niet gesteld" in rt,
+          "| " + rt.replace("\n", " / ")[:200])
+    check("uitleg: de tak zonder indicatie heeft het 2e consult erin",
+          "KRO 2e consult" in rt)
+    check("uitleg: en de MDO klinimetrie", "MDO klinimetrie" in rt)
+    check("uitleg: zegt waar ze weer samenkomen",
+          "Vanaf het preoperatief MDO is er geen verschil meer" in rt)
+    check("uitleg staat ook bij de stapkeuze",
+          "De indicatie is bij het 1e consult al gesteld" in pg.inner_text("#kroRoutesKort"))
     pg.click("#kroTabNu"); pg.wait_for_timeout(300)
 
     # ---------- leeg ----------
     print("\n--- leeg ---")
     check("leeg: tekstvak leeg", T() == "", "| " + T()[:60])
     check("leeg: vraagt om een moment", "Kies hierboven waar je staat" in taken())
+    keuze = pg.inner_text("#kroStappen")
+    check("stapkeuze zonder 'route A'/'route B'",
+          "route A" not in keuze and "route B" not in keuze)
+    check("stapkeuze zegt wat de tak betekent",
+          "(indicatie al gesteld)" in keuze and "(indicatie nog niet gesteld)" in keuze,
+          "| " + keuze.replace("\n", " / ")[:200])
     check("leeg: klinimetriekaart verborgen", not pg.locator("#kroKlinKaart").is_visible())
 
     # ---------- route A ----------

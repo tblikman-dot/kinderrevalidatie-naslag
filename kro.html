@@ -164,6 +164,42 @@
     resize: vertical; white-space: pre;
   }
 
+  /* de twee takken van het schema */
+  .kro-route {
+    border: 1px solid var(--lijn); border-radius: 10px;
+    padding: 10px 12px; margin: 0 0 8px;
+  }
+  .kro-routenaam {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700; margin: 0 0 7px;
+  }
+  .kro-keten { font-family: system-ui, sans-serif; font-size: 12.5px; line-height: 2.1; }
+  .kro-schakel {
+    display: inline-block;
+    background: var(--accent-zacht); color: var(--accent);
+    border-radius: 6px; padding: 2px 8px; margin: 0 1px;
+  }
+  .kro-pijl { color: var(--muted); margin: 0 3px; }
+  .kro-routewat {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted); line-height: 1.6; margin: 7px 0 0;
+  }
+  .kro-routeuitleg {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted); line-height: 1.65; margin: 0 0 10px;
+  }
+  .kro-routesamen {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--inkt);
+    background: var(--accent-zacht); border-radius: 8px;
+    padding: 8px 10px; margin: 2px 0 0;
+  }
+  .kro-vouw > summary {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--accent);
+    cursor: pointer; padding: 8px 0 2px;
+  }
+
   /* tijdlijn */
   .kro-stap { border-left: 3px solid var(--accent-zacht); padding: 0 0 0 12px; margin: 0 0 16px; }
   .kro-stap.route-a { border-left-color: #8ab0bc; }
@@ -236,6 +272,10 @@
       <section class="kro-kaart">
         <h2>1. Waar sta je?</h2>
         <div class="kro-keuzes" id="kroStappen"></div>
+        <details class="kro-vouw">
+          <summary>Wat zijn die twee takken?</summary>
+          <div id="kroRoutesKort"></div>
+        </details>
       </section>
 
       <section class="kro-kaart">
@@ -325,9 +365,9 @@
   <div id="kroVlakLijn" hidden>
     <section class="kro-kaart">
       <h2 id="kroLijnKop"></h2>
-      <p class="kro-uitleg">
-        Het hele schema, in de volgorde van het document. Na de verwijzing splitst het in twee
-        routes; vanaf het preoperatief MDO lopen ze weer gelijk.
+      <div id="kroRoutes"></div>
+      <p class="kro-uitleg" style="margin-top:14px">
+        Hieronder het hele schema, in de volgorde van het document.
       </p>
       <div id="kroLijn"></div>
     </section>
@@ -390,8 +430,8 @@
       h += '<div class="kro-groepkop">' + esc(g.kop) + '</div>';
       rijen.forEach(function (s) {
         gedaan[s.id] = true;
-        var merk = s.route === 'a' ? ' (route A)' : (s.route === 'b' ? ' (route B)' : '');
-        h += keuzeHtml('stap', s.id, s.naam + merk);
+        var r = routeVan(s.route);
+        h += keuzeHtml('stap', s.id, s.naam + (r ? ' (' + r.kort + ')' : ''));
       });
     });
     el('kroStappen').innerHTML = h;
@@ -414,6 +454,10 @@
   function gekozen(naam) {
     var i = el('kroForm').querySelector('input[name="' + naam + '"]:checked');
     return i ? i.value : '';
+  }
+  function routeVan(id) {
+    for (var i = 0; i < D.routes.length; i++) if (D.routes[i].id === id) return D.routes[i];
+    return null;   // 'beide': geen label nodig
   }
   function stapVan(id) {
     for (var i = 0; i < D.stappen.length; i++) if (D.stappen[i].id === id) return D.stappen[i];
@@ -723,14 +767,35 @@
     el(id).addEventListener('change', tekenPlan);
   });
 
+  // ---------- de twee takken uitgelegd ----------
+
+  (function tekenRoutes () {
+    var h = '<p class="kro-routeuitleg">' + esc(D.routesUitleg) + '</p>';
+    h += D.routes.map(function (r) {
+      var keten = r.keten.map(function (id) {
+        var st = stapVan(id);
+        return '<span class="kro-schakel">' + esc(st ? (st.kort || st.naam) : id) + '</span>';
+      }).join('<span class="kro-pijl">&rarr;</span>');
+      return '<div class="kro-route">' +
+        '<div class="kro-routenaam">' + esc(r.naam) + '</div>' +
+        '<div class="kro-keten">' + keten + '</div>' +
+        '<p class="kro-routewat">' + esc(r.wat) + '</p>' +
+        '</div>';
+    }).join('');
+    h += '<div class="kro-routesamen">Vanaf het preoperatief MDO is er geen verschil meer: ' +
+         'opname, klinimetrie post operatief, MDO klinimetrie en het controleconsult zijn ' +
+         'voor allebei hetzelfde.</div>';
+    el('kroRoutes').innerHTML = h;
+    el('kroRoutesKort').innerHTML = h;
+  })();
+
   // ---------- tijdlijn ----------
 
   (function tekenLijn () {
     el('kroLijnKop').textContent = D.titel;
     el('kroLijn').innerHTML = D.stappen.map(function (s) {
-      var merk = s.route === 'a'
-        ? '<span class="kro-merk">route A</span>'
-        : (s.route === 'b' ? '<span class="kro-merk">route B</span>' : '');
+      var r = routeVan(s.route);
+      var merk = r ? '<span class="kro-merk">' + esc(r.merk) + '</span>' : '';
       var h = '<div class="kro-stap route-' + esc(s.route) + '">' +
         '<h3 class="kro-stapkop">' + merk + esc(s.naam) + '</h3>';
       if (s.wanneer) h += '<div class="kro-termijn">' + esc(s.wanneer) + '</div>';
