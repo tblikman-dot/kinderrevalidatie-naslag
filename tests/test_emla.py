@@ -90,7 +90,11 @@ with sync_playwright() as p:
               and pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 0)
         check(naam + ": beide zijden geeft één beeld, ongespiegeld",
               spiegelstand() == [False], "| " + str(spiegelstand()))
-        for knop, verwacht in (("Rechts", [False]), ("Links", [True])):
+        # Zeven foto's tonen de rechterkant, de voetzool de linker. Gespiegeld
+        # hoort dus zodra de gevraagde kant niet de kant van de foto is.
+        kant = pg.evaluate("""(n) => (EMLA.regios.find(r => r.titel === n) || {}).fotoKant""", naam)
+        for knop in ("Rechts", "Links"):
+            verwacht = [knop[0] != kant]
             pg.locator(".em-kaart", has_text=naam).first.locator(
                 ".em-kant", has_text=knop).click()
             pg.wait_for_timeout(150)
@@ -109,8 +113,28 @@ with sync_playwright() as p:
     check("de drie voeten hebben geen eigen schets meer",
           pg.evaluate("""() => EMLA.regios
               .filter(r => r.id.indexOf('voet') === 0 && r.tekening).length""") == 0)
-    check("alle acht tonen het rechterbeen, dus spiegelbaar naar links",
-          pg.evaluate("() => EMLA.regios.filter(r => r.fotoKant === 'R').length") == 8)
+    check("zeven beelden tonen de rechterkant",
+          pg.evaluate("() => EMLA.regios.filter(r => r.fotoKant === 'R').length") == 7,
+          "| " + str(pg.evaluate("() => EMLA.regios.filter(r => r.fotoKant === 'R').length")))
+    # Een zoolaanzicht is het spiegelbeeld van een bovenaanzicht; deze foto toont
+    # daardoor als enige de linkervoet. Gelijktrekken met de rest is een fout.
+    # Harde controle, niet afgeleid uit de data: de zoolfoto toont de linkervoet,
+    # dus bij de keuze "rechts" hoort hij gespiegeld op het briefje te staan en
+    # bij "links" juist niet. Precies andersom dan bij de andere zeven.
+    kies(pg, "Onderkant van de voet")
+    for knop, moet in (("Rechts", True), ("Links", False)):
+        pg.locator(".em-kaart", has_text="Onderkant van de voet").first.locator(
+            ".em-kant", has_text=knop).click()
+        pg.wait_for_timeout(180)
+        check("voetzool, " + knop.lower() + ": " + ("gespiegeld" if moet else "ongespiegeld"),
+              spiegelstand() == [moet], "| " + str(spiegelstand()))
+    kies(pg, "Onderkant van de voet")
+    pg.wait_for_timeout(100)
+
+    check("de voetzool is de enige linkervoet",
+          pg.evaluate("""() => EMLA.regios
+              .filter(r => r.fotoKant === 'L').map(r => r.id)""") == ["voetzool"],
+          "| " + str(pg.evaluate("() => EMLA.regios.filter(r => r.fotoKant === 'L').map(r => r.id)")))
 
     # Vroeger waren de voeten eigen schetsen zonder links/rechts. Sinds de arts
     # drie eigen voetbeelden aanleverde zijn het foto's van de rechtervoet, net

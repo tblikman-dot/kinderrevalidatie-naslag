@@ -35,7 +35,8 @@
 //
 // BRON VAN DE FOTO'S: aangeleverd door de gebruiker, eigen materiaal; het paarse
 // vlak zit al op de foto. De drie voetbeelden zijn renders, de vijf beenfoto's
-// zijn fotografie. De foto's gaan er ONBEWERKT in: alleen verkleind, niet
+// zijn fotografie. Zeven beelden tonen de RECHTERkant; de voetzool toont als
+// enige de LINKERvoet (zie de aantekening bij die regio). De foto's gaan er ONBEWERKT in: alleen verkleind, niet
 // bijgesneden. Bij de drie voetbeelden is alleen de witte rand eromheen
 // weggehaald - geen inhoud, geen been, geen voet. Dat
 // is een uitdrukkelijke afspraak — het hele been hoort in beeld te blijven, en
@@ -155,7 +156,12 @@
       sub: '',
       zin: 'Smeer de onderkant van de voet in, van de hiel tot aan de tenen.',
       foto: 'smeer-voet-zool.webp',
-      fotoKant: 'R',
+      // LET OP: dit is de enige foto van de LINKERvoet. Een zoolaanzicht is het
+      // spiegelbeeld van een bovenaanzicht; op het bovenaanzicht en op dit beeld
+      // staat de grote teen aan dezelfde kant van het plaatje, dus het kan niet
+      // dezelfde voet zijn. De arts heeft bevestigd dat deze de linker is en de
+      // andere zeven de rechter. Zet hem dus niet 'gelijk' met de rest.
+      fotoKant: 'L',
     },
   ];
 
