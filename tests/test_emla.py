@@ -20,10 +20,13 @@ ZINNEN = [
     "Smeer de voorzijde van het onderbeen in, over de volledige voorste onderbeenregio (van knie tot enkel).",
     "Smeer de binnenzijde van de voet in.",
     "Smeer de onderkant van de voet in, van de hiel tot aan de tenen.",
+    # Deze staat NIET op de poster: achtste regio, toegevoegd op aanwijzing van
+    # de arts, zin geschreven in dezelfde bewoording als de zeven andere.
+    "Smeer de bovenkant van de voet in, van de enkel tot aan de tenen.",
 ]
 ALLE = ["Voorzijde bovenbeen", "Binnenzijde bovenbeen", "Achterzijde bovenbeen",
-        "Kuitregio", "Voorzijde onderbeen", "Binnenzijde van de voet",
-        "Onderkant van de voet"]
+        "Kuitregio", "Voorzijde onderbeen", "Bovenkant van de voet",
+        "Binnenzijde van de voet", "Onderkant van de voet"]
 
 # Op verzoek van de gebruiker staat er geen spiernaam meer op het briefje. Deze
 # toets valt om zodra er toch weer een in de patiententekst sluipt.
@@ -54,7 +57,7 @@ with sync_playwright() as p:
     pg.goto(URL)
     pg.wait_for_timeout(500)
 
-    check("zeven regio's", pg.locator(".em-kaart").count() == 7,
+    check("acht regio's", pg.locator(".em-kaart").count() == 8,
           "| " + str(pg.locator(".em-kaart").count()))
     check("geen horizontale scroll", pg.evaluate("document.documentElement.scrollWidth") <= 390)
     check("leeg briefje legt uit wat te doen", "Kies hierboven" in pg.inner_text("#emBlad"))
@@ -72,7 +75,8 @@ with sync_playwright() as p:
     # makkelijk andersom te krijgen en een gespiegeld briefje is een echte fout,
     # dus dit wordt per regio en per kant nagemeten.
     MET_FOTO = ["Voorzijde bovenbeen", "Binnenzijde bovenbeen", "Achterzijde bovenbeen",
-                "Kuitregio", "Voorzijde onderbeen"]
+                "Kuitregio", "Voorzijde onderbeen", "Bovenkant van de voet",
+                "Binnenzijde van de voet", "Onderkant van de voet"]
 
     def spiegelstand():
         return pg.evaluate("""() => [...document.querySelectorAll('#emBlad .em-tekfoto')]
@@ -96,11 +100,24 @@ with sync_playwright() as p:
         kies(pg, naam)
         pg.wait_for_timeout(80)
 
-    check("vijf regio's hebben een meegeleverde foto",
-          pg.evaluate("() => EMLA.regios.filter(r => r.foto).length") == 5)
+    check("alle acht regio's hebben een meegeleverde foto",
+          pg.evaluate("() => EMLA.regios.filter(r => r.foto).length") == 8,
+          "| " + str(pg.evaluate("() => EMLA.regios.filter(r => r.foto).length")))
+    # De vijf beenregio's houden hun anatomische tekening als terugval; de foto
+    # wint. Voor de drie voeten is de tekening helemaal weg: die waren eigen
+    # schetsen en zijn vervangen.
+    check("de drie voeten hebben geen eigen schets meer",
+          pg.evaluate("""() => EMLA.regios
+              .filter(r => r.id.indexOf('voet') === 0 && r.tekening).length""") == 0)
+    check("alle acht tonen het rechterbeen, dus spiegelbaar naar links",
+          pg.evaluate("() => EMLA.regios.filter(r => r.fotoKant === 'R').length") == 8)
 
-    check("de voeten zijn een eigen schets zonder links/rechts",
-          pg.evaluate("() => EMLA.regios.filter(r => r.tekening.soort === 'schets').length") == 2)
+    # Vroeger waren de voeten eigen schetsen zonder links/rechts. Sinds de arts
+    # drie eigen voetbeelden aanleverde zijn het foto's van de rechtervoet, net
+    # als de vijf beenfoto's, en spiegelen ze dus mee.
+    check("er is geen eigen schets meer over",
+          pg.evaluate("""() => EMLA.regios
+              .filter(r => r.tekening && r.tekening.soort === 'schets').length""") == 0)
 
     # kiezen, kant wisselen
     kies(pg, "Voorzijde bovenbeen")
@@ -206,11 +223,11 @@ with sync_playwright() as p:
     pg.emulate_media(media="print")
     pg.wait_for_timeout(200)
     hoogte = pg.evaluate("document.body.scrollHeight")
-    check("zeven regio's én een tijd passen op één A4", hoogte <= 1123, "| " + str(hoogte) + " px")
+    check("acht regio's én een tijd passen op één A4", hoogte <= 1123, "| " + str(hoogte) + " px")
 
     # De foto's worden groter naarmate er minder regio's op het briefje staan.
     # Elk aantal moet op één A4 blijven passen; dat wordt hier allemaal gemeten.
-    for aantal in (1, 2, 3, 4, 5, 6):
+    for aantal in (1, 2, 3, 4, 5, 6, 7, 8):
         pg2 = b.new_context(viewport={"width": 794, "height": 1123}).new_page()
         pg2.goto(URL)
         pg2.wait_for_timeout(450)
@@ -227,6 +244,13 @@ with sync_playwright() as p:
         check(str(aantal) + " regio's passen op één A4 (foto " + fh + ")", h <= 1123,
               "| " + str(h) + " px")
         pg2.close()
+    # De binnenzijde van de voet is een liggend beeld; zonder breedtegrens duwt
+    # het de tekst ernaast in een smalle strook.
+    breedtes = pg.evaluate("""() => [...document.querySelectorAll('#emBlad .em-tekfoto')]
+        .map(i => i.getBoundingClientRect().width)""")
+    check("geen enkel beeld wordt breder dan de ruimte toelaat",
+          breedtes and max(breedtes) <= 120, "| " + str([round(x) for x in breedtes]))
+
     check("app-onderdelen staan niet op papier",
           not pg.locator(".topbar").is_visible()
           and not pg.locator("#emRaster").is_visible()
@@ -304,9 +328,12 @@ with sync_playwright() as p:
     pg.wait_for_timeout(400)
     pg.click("#emFotoWeg")
     pg.wait_for_timeout(900)
-    check("foto weghalen zet de tekening terug",
+    # Deze regio had vroeger een eigen schets als terugval; nu is dat de
+    # meegeleverde foto van de arts. De hele keten wordt hier nagelopen.
+    check("foto weghalen zet de meegeleverde foto terug",
           pg.locator("#emBlad .em-bfoto img").count() == 0
-          and pg.locator("#emBlad .em-bladregio svg.em-tek").count() == 1)
+          and pg.locator(
+              '#emBlad .em-bladregio img.em-tekfoto[src*="smeer-voet-binnen"]').count() == 1)
 
     check("de pagina haalt niets van buiten", not buiten, "| " + str(buiten)[:120])
     pg.close()

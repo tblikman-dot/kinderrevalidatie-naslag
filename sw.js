@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v92';
+const CACHE_VERSIE = 'krn-v93';
 
 const APP_BESTANDEN = [
   './',
@@ -24,6 +24,9 @@ const APP_BESTANDEN = [
   './emla.html',
   './emla-data.js',
   './smeer-onderbeen-voor.webp',
+  './smeer-voet-boven.webp',
+  './smeer-voet-binnen.webp',
+  './smeer-voet-zool.webp',
   './smeer-kuit.webp',
   './smeer-bovenbeen-binnen.webp',
   './smeer-bovenbeen-voor.webp',

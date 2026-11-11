@@ -27,8 +27,17 @@
 //    botulinetoxine vaak eenzijdig wordt gegeven. Het is een keuze van de arts,
 //    geen uitspraak uit de bron.
 //
-// BRON VAN DE FOTO'S: aangeleverd door de gebruiker; het paarse vlak zit al op de
-// foto. De foto's gaan er ONBEWERKT in: alleen verkleind, niet bijgesneden. Dat
+// EEN ACHTSTE REGIO IS TOEGEVOEGD, die niet op de poster staat: "Bovenkant van
+// de voet". Dat is een toevoeging van de gebruiker; de zin erbij is door mij
+// geschreven, op haar uitdrukkelijke aanwijzing ("die mag je zelf naar inzicht
+// invullen"), in dezelfde bewoording als de zeven posterregio's. Alles wat van
+// de poster komt staat er dus nog letterlijk; dit is het enige dat niet.
+//
+// BRON VAN DE FOTO'S: aangeleverd door de gebruiker, eigen materiaal; het paarse
+// vlak zit al op de foto. De drie voetbeelden zijn renders, de vijf beenfoto's
+// zijn fotografie. De foto's gaan er ONBEWERKT in: alleen verkleind, niet
+// bijgesneden. Bij de drie voetbeelden is alleen de witte rand eromheen
+// weggehaald - geen inhoud, geen been, geen voet. Dat
 // is een uitdrukkelijke afspraak — het hele been hoort in beeld te blijven, en
 // alle vijf de foto's hebben daardoor dezelfde uitsnede en schaal. Snijd er dus
 // niets af om een vlak groter te laten lijken. Een regio met een 'foto' toont die in plaats van de tekening. Zo'n foto
@@ -48,30 +57,6 @@
 
 (function (global) {
   'use strict';
-
-  // ---- de twee voeten: eigen schets, want voeten zitten niet in anatomie-data.js ----
-  var VOET_ZIJ = {
-    box: '0 0 170 100', breed: true,
-    omtrek: 'M42,4 C38,24 34,40 28,50 C18,58 16,76 26,84 C32,88 40,88 46,86 ' +
-      'C64,78 80,72 100,74 C120,76 140,80 154,80 C164,80 166,72 158,66 ' +
-      'C140,58 118,48 104,38 C90,28 82,16 78,4 Z',
-    extra: '<ellipse class="em-lijn2" cx="56" cy="36" rx="8" ry="9"/>',
-    zone: '<ellipse class="em-zone" cx="82" cy="74" rx="38" ry="10" transform="rotate(-6 82 74)"/>',
-  };
-
-  var VOET_ZOOL = {
-    box: '0 0 100 170', breed: false,
-    omtrek: 'M50,26 C68,26 79,41 79,60 C79,78 72,90 69,105 ' +
-      'C66,122 63,146 50,146 C37,146 34,122 31,105 C28,90 21,78 21,60 ' +
-      'C21,41 32,26 50,26 Z',
-    extra: '<ellipse class="em-huid" cx="29" cy="15" rx="8" ry="7"/>' +
-      '<ellipse class="em-huid" cx="44" cy="11" rx="5.5" ry="5.5"/>' +
-      '<ellipse class="em-huid" cx="55" cy="11" rx="5" ry="5"/>' +
-      '<ellipse class="em-huid" cx="65" cy="13" rx="4.5" ry="4.5"/>' +
-      '<ellipse class="em-huid" cx="73" cy="17" rx="4" ry="4"/>',
-    zone: '<path class="em-zone" d="M50,30 C67,30 76,44 76,61 C76,78 70,90 67,105 ' +
-      'C64,120 61,142 50,142 C39,142 36,120 33,105 C30,90 24,78 24,61 C24,44 33,30 50,30 Z"/>',
-  };
 
   // ---- uitsnedes uit het grote vlak ----
   var BOX_DIJ_VOOR   = '336 662 352 400';   // bovenbeen: heup tot net onder de knie
@@ -145,19 +130,32 @@
       },
     },
     {
+      // ACHTSTE REGIO, STAAT NIET OP DE POSTER. Toevoeging van de gebruiker;
+      // de zin hieronder is van mij, op haar aanwijzing geschreven in dezelfde
+      // bewoording als de andere zeven. Zie de kop van dit bestand.
+      id: 'voetrug',
+      titel: 'Bovenkant van de voet',
+      sub: '',
+      zin: 'Smeer de bovenkant van de voet in, van de enkel tot aan de tenen.',
+      foto: 'smeer-voet-boven.webp',
+      fotoKant: 'R',
+    },
+    {
       id: 'voetmediaal',
       titel: 'Binnenzijde van de voet',
       sub: '',
       zin: 'Smeer de binnenzijde van de voet in.',
       arts: 'Spierbuik van de abductor hallucis; zo stond het op de poster.',
-      tekening: { soort: 'schets', schets: VOET_ZIJ },
+      foto: 'smeer-voet-binnen.webp',
+      fotoKant: 'R',
     },
     {
       id: 'voetzool',
       titel: 'Onderkant van de voet',
       sub: '',
       zin: 'Smeer de onderkant van de voet in, van de hiel tot aan de tenen.',
-      tekening: { soort: 'schets', schets: VOET_ZOOL },
+      foto: 'smeer-voet-zool.webp',
+      fotoKant: 'R',
     },
   ];
 
