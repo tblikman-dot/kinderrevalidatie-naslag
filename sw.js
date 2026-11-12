@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v94';
+const CACHE_VERSIE = 'krn-v95';
 
 const APP_BESTANDEN = [
   './',
@@ -21,20 +21,9 @@ const APP_BESTANDEN = [
   './rcp-spieren.html',
   './rcp-data.js',
   './epictekst.js',
-  './emla.html',
-  './emla-data.js',
-  './smeer-onderbeen-voor.webp',
-  './smeer-voet-boven.webp',
-  './smeer-voet-binnen.webp',
-  './smeer-voet-zool.webp',
-  './smeer-kuit.webp',
-  './smeer-bovenbeen-binnen.webp',
-  './smeer-bovenbeen-voor.webp',
-  './smeer-bovenbeen-achter.webp',
   './echo-landmarks.html',
   './echo-heup-psoas.webp',
   './echo-semitendinosus.webp',
-  './anatomie-data.js',
   './myotomen.html',
   './tetheredcord.html',
   './mdo-notitie.html',

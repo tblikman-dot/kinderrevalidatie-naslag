@@ -11,7 +11,7 @@ PAGINAS=["index.html","dosering.html","rcp-spieren.html","rotatie.html",
          "beslisboom-heup.html","gmfcs.html","doelspieren.html","spasticiteit-dystonie.html",
          "myotomen.html","zenuwen.html","zenuwherstel.html","beenlengte.html","heupdysplasie.html",
          "hipscreen.html","tetheredcord.html","neurogene-blaas.html","ddh-stroomschema.html","claude-code.html",
-         "emla.html","echo-landmarks.html"]
+         "echo-landmarks.html"]
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path=B)
     fails=0
@@ -61,8 +61,17 @@ with sync_playwright() as p:
 
     # een knop in dit overzicht mag nooit naar een niet-bestaande pagina wijzen
     hrefs=[rijen.nth(i).get_attribute("href") for i in range(rijen.count())]
-    stuk=[h for h in hrefs if ctx.request.get("http://localhost:9052/"+h).status>=400]
-    check("geen dode links", not stuk, "| "+str(stuk))
+    eigen=[h for h in hrefs if not h.lower().startswith("http")]
+    extern=[h for h in hrefs if h.lower().startswith("http")]
+    stuk=[h for h in eigen if ctx.request.get("http://localhost:9052/"+h).status>=400]
+    check("geen dode links naar eigen pagina's", not stuk, "| "+str(stuk))
+    # De Emla-smeerinstructie is een losse app op github.io. Die is vanuit deze
+    # container niet bereikbaar, dus of hij echt leeft valt hier niet te meten;
+    # wel of de link goed geschreven is.
+    check("externe knoppen zijn volledige https-links",
+          all(h.startswith("https://") for h in extern), "| "+str(extern))
+    check("de Emla-app staat erbij",
+          any("emla-smeerinstructie" in h for h in extern), "| "+str(extern))
     check("geen dubbele", len(hrefs)==len(set(hrefs)), "| "+str(len(hrefs)-len(set(hrefs)))+" dubbel")
 
     pg.click("#tabOnder"); pg.wait_for_timeout(250)
@@ -86,6 +95,13 @@ with sync_playwright() as p:
     check("breed scherm: terugknop aanwezig", pg.locator("#backBtn").is_visible())
     pg.click("#backBtn"); pg.wait_for_timeout(250)
     check("breed scherm: terug op het overzicht", pg.locator("#hmStart .hm-rij").first.is_visible())
+
+    # fotos.js wordt gedeeld met de losse Emla-app; deze controle stond daar en
+    # hoort hier, want het gaat om de foto-knoppen op de startpagina.
+    pg.goto("http://localhost:9052/index.html"); pg.wait_for_timeout(700)
+    check("de fotoknoppen op index.html zijn aangesloten",
+          pg.evaluate("""() => typeof koppelFotoUi === 'function'
+            && !!document.getElementById('fotoAddBtn')"""))
 
     print("\nfails:",fails,"| errors:",errs)
     b.close()
