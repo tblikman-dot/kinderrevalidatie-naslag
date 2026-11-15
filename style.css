@@ -1327,4 +1327,6 @@ html.krn-palet-open { overflow: hidden; }
    balk overal een terugknop heeft. Links naar een andere pagina (metatarsus
    naar rotatie, epifysiodese naar groeisturing) blijven wel staan: die zeggen
    iets wat de balk niet zegt. */
-a[class$="-terug"][href="index.html"] { display: none; }
+/* .krn-terug is de knop in de balk zelf en eindigt ook op -terug: die moet
+   juist blijven. Zonder deze uitzondering was er nergens meer een weg terug. */
+a[class$="-terug"][href="index.html"]:not(.krn-terug) { display: none; }
