@@ -1,57 +1,91 @@
+/* ===== ONTWERPLAAG =====
+   De vormtaal is die van apple.com, dezelfde als de Emla-app: systeemletter,
+   veel wit, grijstinten en één blauw accent. Er is niets van die site
+   overgenomen; alleen de manier van vormgeven.
+
+   Alle pagina's lezen deze acht kleuren. Wie hier een kleur verandert,
+   verandert hem dus overal — dat is de bedoeling. Alleen licht: de pagina's
+   hebben eigen, vaste kleurvlakken (waarschuwingen, tekeningen) die op een
+   donkere achtergrond niet nagekeken zijn. */
 :root {
-  --inkt: #0f2733;
-  --papier: #FAFAF8;
-  --paneel: #FFFFFF;
-  --lijn: #E4E4E0;
-  --accent: #0f4c5c;
-  --accent-zacht: #e6eef0;
-  --muted: #6b7680;
-  --danger: #b3441e;
+  --inkt: #1d1d1f;
+  --papier: #fbfbfd;
+  --paneel: #ffffff;
+  --lijn: #e3e3e8;
+  --accent: #0066cc;
+  --accent-zacht: #e8f1fd;
+  --muted: #6e6e73;
+  --danger: #b3261e;
+
+  --balk-hoog: 52px;
+  --schaduw: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
+  --veer: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: 'Georgia', 'Iowan Old Style', serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+               system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--papier);
   color: var(--inkt);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
+h1, h2, h3 { letter-spacing: -0.02em; }
 
+/* De balk bovenaan: op elke pagina dezelfde. Doorschijnend met een vervaging
+   erachter; kern.js zet er de terugknop en de zoekknop in. Zonder vervaging
+   (oudere browser) is hij bijna dekkend, anders loopt tekst door de titel. */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 56px;
-  background: var(--accent);
-  color: #fff;
+  height: var(--balk-hoog);
+  background: color-mix(in srgb, var(--paneel) 94%, transparent);
+  color: var(--inkt);
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
   display: flex;
   align-items: center;
   padding: 0 8px;
-  gap: 8px;
-  font-family: system-ui, sans-serif;
+  gap: 4px;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .topbar {
+    background: color-mix(in srgb, var(--paneel) 72%, transparent);
+    backdrop-filter: saturate(180%) blur(22px);
+    -webkit-backdrop-filter: saturate(180%) blur(22px);
+  }
 }
 .add-cat-btn {
   background: none;
   border: none;
-  color: #fff;
-  font-size: 22px;
+  color: var(--inkt);
+  font-size: 20px;
   cursor: pointer;
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: 10px;
+  transition: background .15s;
 }
-.add-cat-btn:active { background: rgba(255,255,255,0.15); }
+.add-cat-btn:hover { background: rgba(0, 0, 0, .05); }
+.add-cat-btn:active { background: rgba(0, 0, 0, .09); }
 .topbar-title {
   flex: 1;
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .layout {
   display: flex;
-  height: calc(100vh - 56px);
+  height: calc(100vh - var(--balk-hoog));
   position: relative;
 }
 
@@ -74,13 +108,20 @@ body {
 .sidebar-search input {
   width: 100%;
   padding: 9px 12px;
-  border: 1.5px solid var(--lijn);
-  border-radius: 10px;
-  font-size: 14px;
-  font-family: system-ui, sans-serif;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: #ececf0;
+  font: inherit;
+  font-size: 15px;
+  color: var(--inkt);
   outline: none;
+  transition: background .2s, border-color .2s, box-shadow .2s;
 }
-.sidebar-search input:focus { border-color: var(--accent); }
+.sidebar-search input:focus {
+  background: var(--paneel);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, .14);
+}
 
 .sidebar-list { padding: 6px; }
 .cat-item {
@@ -99,7 +140,7 @@ body {
   font-weight: 600;
   color: var(--inkt);
 }
-.cat-item:hover { background: var(--accent-zacht); }
+.cat-item:hover { background: rgba(0, 0, 0, .04); }
 .cat-item.active { background: var(--accent); color: #fff; }
 .cat-item .cat-text { flex: 1; min-width: 0; }
 .cat-item .treffer {
@@ -163,10 +204,9 @@ body {
 .detail-content { max-width: 760px; }
 
 .detail-empty {
-  font-family: system-ui, sans-serif;
   color: var(--muted);
-  margin-top: 40px;
   line-height: 1.6;
+  max-width: 1080px;
 }
 .muted { color: var(--muted); font-size: 13px; }
 
@@ -269,7 +309,7 @@ body {
   padding: 16px 18px;
   border: 1.5px solid var(--lijn);
   border-radius: 12px;
-  font-family: 'Georgia', serif;
+  font-family: inherit;
   font-size: 15.5px;
   line-height: 1.7;
   color: var(--inkt);
@@ -879,29 +919,30 @@ body.viewer-open { overflow: hidden; }
 
 .tabs {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   margin-top: 10px;
-  background: #F0F0EC;
+  background: #ececf0;
   border-radius: 10px;
-  padding: 3px;
+  padding: 2px;
 }
 .tab {
   flex: 1;
   border: none;
   background: none;
   border-radius: 8px;
-  padding: 8px 6px;
-  font-family: system-ui, sans-serif;
+  padding: 7px 6px;
+  font: inherit;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--muted);
   cursor: pointer;
   line-height: 1.2;
+  transition: background .2s, color .2s, box-shadow .2s;
 }
 .tab[aria-selected="true"] {
   background: var(--paneel);
-  color: var(--accent);
-  box-shadow: 0 1px 3px rgba(15,39,51,0.13);
+  color: var(--inkt);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 2px 8px rgba(0, 0, 0, .06);
 }
 
 /* Het kopje boven een paneel is overbodig zolang het tabblad het al zegt —
@@ -923,40 +964,59 @@ body.viewer-open { overflow: hidden; }
 
 .hm-groep + .hm-groep { margin-top: 12px; }
 .hm-groepkop {
-  font-family: system-ui, sans-serif;
-  font-size: 11.5px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--accent);
-  padding: 0 8px 5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0 10px 5px;
 }
 
 .hm-rij {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: 12px;
   text-decoration: none;
   color: var(--inkt);
-  font-family: system-ui, sans-serif;
-  font-size: 14.5px;
-  font-weight: 600;
-}
-.hm-rij:hover { background: var(--accent-zacht); }
-.hm-rij:active { background: var(--accent-zacht); }
-
-.hm-icoon {
-  flex: none;
-  width: 30px; height: 30px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--accent-zacht);
-  border-radius: 9px;
   font-size: 15px;
-  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: background .15s, transform .15s;
 }
-.hm-naam { min-width: 0; }
+.hm-rij:hover { background: rgba(0, 0, 0, .04); }
+.hm-rij:active { background: rgba(0, 0, 0, .07); transform: scale(.985); }
+.hm-naam { min-width: 0; flex: 1; }
+/* een pijltje bij een knop die de app verlaat (de Emla-app) */
+.hm-extern { width: 15px; height: 15px; color: var(--muted); }
+
+/* ---- laatst geopend: een rij chips boven de hulpmiddelen ---- */
+.hm-recent { padding: 10px 12px 2px; }
+.hm-recentkop {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted);
+  padding: 0 4px 7px;
+}
+.hm-recentrij {
+  display: flex; gap: 8px;
+  overflow-x: auto; padding-bottom: 6px;
+  scrollbar-width: none;
+}
+.hm-recentrij::-webkit-scrollbar { display: none; }
+.hm-chip {
+  display: flex; align-items: center; gap: 9px; flex: none;
+  padding: 5px 13px 5px 5px;
+  background: var(--paneel);
+  border: 1px solid var(--lijn);
+  border-radius: 13px;
+  color: var(--inkt); text-decoration: none;
+  font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: transform .2s var(--veer), box-shadow .2s;
+}
+.hm-chip:hover { transform: translateY(-1px); box-shadow: var(--schaduw); }
+.hm-chip .krn-tegel { width: 28px; height: 28px; border-radius: 8px; font-size: 11.5px; }
 
 /* aantal eigen pagina's achter een onderwerp — rechts in de rij, zodat het de
    titel niet uit elkaar duwt */
@@ -974,17 +1034,78 @@ body.viewer-open { overflow: hidden; }
 }
 .cat-item.active .cat-telling { background: rgba(255,255,255,0.22); color: #fff; }
 
-/* ---- hetzelfde overzicht in het rechtervlak, dat anders leeg bleef ---- */
-.start-kop { font-size: 1.5rem; margin: 0 0 4px; }
-.start-uitleg {
-  font-family: system-ui, sans-serif;
-  font-size: 13.5px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin: 0 0 20px;
-  max-width: 54ch;
+/* ---- het startscherm in het rechtervlak ----
+   Grote kop, een zoekknop die het palet opent, wat je het laatst opende, en
+   daaronder alle hulpmiddelen in kaarten per groep. */
+.start-hero {
+  position: relative;
+  isolation: isolate;
+  padding: 34px 0 26px;
 }
-.start-uitleg em { font-style: normal; font-weight: 700; color: var(--inkt); }
+/* een zachte kleurgloed achter de kop die heel langzaam beweegt */
+.start-gloed {
+  position: absolute; z-index: -1;
+  inset: -50px -32px auto -32px; height: 300px;
+  pointer-events: none;
+  background:
+    radial-gradient(36% 58% at 14% 34%, rgba(0, 102, 204, .15), transparent 72%),
+    radial-gradient(32% 54% at 58% 16%, rgba(106, 63, 192, .12), transparent 72%),
+    radial-gradient(30% 50% at 90% 46%, rgba(24, 121, 78, .10), transparent 72%);
+  filter: blur(6px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .start-gloed { animation: start-gloed 18s ease-in-out infinite alternate; }
+}
+@keyframes start-gloed {
+  to { transform: translate3d(2.5%, 5%, 0) scale(1.07); }
+}
+.start-kop {
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--inkt);
+  margin: 0 0 10px;
+}
+.start-uitleg {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0 0 22px;
+  max-width: 56ch;
+}
+.start-uitleg em { font-style: normal; font-weight: 600; color: var(--inkt); }
+
+/* ziet eruit als een zoekveld, maar is een knop: hij opent het zoekpalet */
+.start-zoek {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; max-width: 560px; height: 52px;
+  padding: 0 14px 0 16px;
+  background: var(--paneel);
+  border: 1px solid var(--lijn);
+  border-radius: 16px;
+  box-shadow: var(--schaduw);
+  color: #8e8e93;
+  font: inherit; font-size: 16px; letter-spacing: -0.01em;
+  text-align: left; cursor: text;
+  transition: transform .25s var(--veer), box-shadow .25s, border-color .2s;
+}
+.start-zoek:hover {
+  transform: translateY(-1px);
+  border-color: #cfcfd6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .05), 0 14px 34px rgba(0, 0, 0, .10);
+}
+.start-zoek span { flex: 1; }
+.start-zoek kbd {
+  border: 1px solid var(--lijn); border-radius: 7px; background: var(--papier);
+  padding: 2px 8px; font: inherit; font-size: 12.5px; color: var(--muted);
+}
+.start-sectiekop {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted);
+  margin: 18px 4px 10px;
+}
+.detail-empty .hm-recent { padding: 0; }
 
 .hm-start {
   display: grid;
@@ -996,11 +1117,25 @@ body.viewer-open { overflow: hidden; }
   margin: 0;
   background: var(--paneel);
   border: 1px solid var(--lijn);
-  border-radius: 14px;
-  padding: 12px 10px 10px;
+  border-radius: 18px;
+  padding: 14px 8px 8px;
+  transition: box-shadow .3s, transform .3s var(--veer), border-color .3s;
 }
-.hm-start .hm-groepkop { padding-left: 10px; }
-.hm-start .hm-rij { font-size: 14px; }
+.hm-start .hm-groep:hover {
+  box-shadow: var(--schaduw);
+  border-color: #d6d6dc;
+  transform: translateY(-2px);
+}
+/* de kaarten komen een voor een binnen */
+@media (prefers-reduced-motion: no-preference) {
+  .hm-start .hm-groep { animation: krn-binnen .5s var(--veer) backwards; }
+  .hm-start .hm-groep:nth-child(2) { animation-delay: .05s; }
+  .hm-start .hm-groep:nth-child(3) { animation-delay: .10s; }
+  .hm-start .hm-groep:nth-child(4) { animation-delay: .15s; }
+  .hm-start .hm-groep:nth-child(5) { animation-delay: .20s; }
+  .hm-start .hm-groep:nth-child(6) { animation-delay: .25s; }
+}
+.hm-start .hm-groepkop { padding-left: 12px; }
 
 @media (max-width: 760px) {
   /* de zijbalk is op de telefoon het startscherm; iets meer lucht onderaan */
@@ -1018,3 +1153,178 @@ body.viewer-open { overflow: hidden; }
   .sidebar[data-tab][data-zoekt="0"] .paneel-onder { display: block; }
   .back-btn { display: inline-block; }
 }
+
+/* ===== GEDEELDE KERN: balk, iconen, zoekpalet (kern.js en palet.js) =====
+   Deze regels gelden op elke pagina. Prefix krn-, zodat ze nergens mee botsen. */
+
+.krn-icoon { width: 22px; height: 22px; display: block; flex: none; }
+
+/* terug naar het startscherm, links in de balk */
+.krn-terug {
+  display: flex; align-items: center; gap: 1px;
+  height: 40px; padding: 0 10px 0 4px; margin-right: auto;
+  border-radius: 10px;
+  color: var(--accent); text-decoration: none;
+  font-size: 15px; font-weight: 500; letter-spacing: -0.01em;
+  transition: background .15s;
+}
+.krn-terug:hover { background: rgba(0, 102, 204, .08); }
+.krn-zoekknop {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex: none;
+  border: none; border-radius: 10px; background: none;
+  color: var(--inkt); cursor: pointer;
+  transition: background .15s;
+}
+.krn-zoekknop:hover { background: rgba(0, 0, 0, .05); }
+.krn-zoekknop:active { background: rgba(0, 0, 0, .09); }
+.krn-zoekknop .krn-icoon { width: 20px; height: 20px; }
+
+/* Op de losse pagina's staat links de terugknop en rechts de zoekknop. De
+   titel is absoluut gecentreerd, zodat hij echt in het midden staat en niet
+   opschuift omdat links breder is dan rechts. */
+.krn-balk:not(.krn-balk-start) { position: sticky; }
+.krn-balk:not(.krn-balk-start) .topbar-title {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  max-width: calc(100% - 190px);
+  pointer-events: none;
+}
+.krn-balk:not(.krn-balk-start) .krn-zoekknop { margin-left: auto; }
+@media (max-width: 480px) {
+  .krn-terug span { display: none; }
+  .krn-terug { padding: 0 8px 0 4px; }
+  .krn-balk:not(.krn-balk-start) .topbar-title { max-width: calc(100% - 110px); }
+}
+
+/* een gekleurd tegeltje per groep hulpmiddelen */
+.krn-tegel {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex: none;
+  border-radius: 9px;
+  background: #eef0f3; color: #4a4f57;
+}
+.krn-tegel .krn-icoon { width: 20px; height: 20px; }
+.krn-tegel-cp    { background: #e9f0ff; color: #1f5fd0; }
+.krn-tegel-heup  { background: #e6f6ee; color: #18794e; }
+.krn-tegel-been  { background: #fff1e0; color: #a85a00; }
+.krn-tegel-zenuw { background: #f1eaff; color: #6a3fc0; }
+.krn-tegel-ok    { background: #ffe9ec; color: #b4233a; }
+.krn-tegel-app   { background: #eef0f3; color: #4a4f57; }
+.krn-tegel-onderwerp { background: #f0f0f3; color: #6e6e73; }
+
+/* ---- het zoekpalet ---- */
+html.krn-palet-open { overflow: hidden; }
+.krn-palet {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: min(14vh, 120px) 16px 16px;
+  background: rgba(20, 20, 25, 0);
+  transition: background .22s ease;
+}
+.krn-palet[hidden] { display: none; }
+.krn-palet.zichtbaar { background: rgba(20, 20, 25, .32); }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .krn-palet.zichtbaar { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+}
+.krn-palet-vlak {
+  width: 100%; max-width: 580px; max-height: min(70vh, 620px);
+  display: flex; flex-direction: column;
+  background: color-mix(in srgb, #fff 96%, transparent);
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .06), 0 24px 70px rgba(0, 0, 0, .28);
+  overflow: hidden;
+  opacity: 0; transform: translateY(-10px) scale(.98);
+  transition: opacity .2s ease, transform .32s var(--veer);
+}
+.krn-palet.zichtbaar .krn-palet-vlak { opacity: 1; transform: none; }
+.krn-palet-kop {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 12px 12px 16px;
+  border-bottom: 1px solid var(--lijn);
+  color: var(--muted);
+}
+.krn-palet-invoer {
+  flex: 1; min-width: 0;
+  border: none; outline: none; background: none;
+  font: inherit; font-size: 18px; letter-spacing: -0.01em;
+  color: var(--inkt);
+}
+.krn-palet-invoer::placeholder { color: #a1a1a6; }
+.krn-palet-sluit {
+  border: 1px solid var(--lijn); background: var(--papier);
+  border-radius: 7px; padding: 4px 8px;
+  font: inherit; font-size: 11.5px; color: var(--muted); cursor: pointer;
+}
+.krn-palet-lijst { overflow-y: auto; padding: 6px 8px 8px; overscroll-behavior: contain; }
+.krn-palet-sectie {
+  padding: 10px 10px 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted);
+}
+.krn-palet-rij {
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 10px; border-radius: 11px;
+  color: var(--inkt); text-decoration: none;
+}
+.krn-palet-rij.actief { background: var(--accent-zacht); }
+.krn-palet-tekst { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.krn-palet-titel { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.krn-palet-titel mark { background: none; color: var(--accent); }
+.krn-palet-sub {
+  font-size: 12.5px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.krn-palet-extern { width: 16px; height: 16px; color: var(--muted); }
+.krn-palet-leeg { padding: 26px 14px; text-align: center; color: var(--muted); font-size: 14.5px; }
+.krn-palet-voet {
+  display: flex; gap: 16px; padding: 8px 16px;
+  border-top: 1px solid var(--lijn);
+  font-size: 11.5px; color: var(--muted);
+}
+.krn-palet-voet kbd {
+  display: inline-block; min-width: 18px; padding: 1px 5px; margin-right: 3px;
+  border: 1px solid var(--lijn); border-radius: 5px; background: var(--papier);
+  font: inherit; font-size: 11px; text-align: center;
+}
+/* op een telefoon: van rand tot rand bovenaan, en geen toetsenuitleg */
+@media (max-width: 560px) {
+  .krn-palet { padding: 8px 8px 0; }
+  .krn-palet-vlak { max-height: 82vh; border-radius: 16px; }
+  .krn-palet-voet, .krn-palet-sluit { display: none; }
+  .krn-palet-rij { padding: 9px 10px; }
+}
+
+/* ---- beweging ----
+   Een pagina komt rustig binnen, en tussen twee pagina's vloeit het beeld over
+   (waar de browser dat kan). Wie beweging heeft uitgezet, krijgt niets. */
+@view-transition { navigation: auto; }
+@keyframes krn-binnen {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+/* 'backwards' en niet 'both': na afloop moet de eigen opmaak van het element
+   weer gelden. Met 'both' bleef de transform van de animatie staan, en dan
+   kwam de lege toastmelding — die juist met een transform verstopt zit — als
+   een zwarte pil in beeld. Zwevende lagen doen daarom helemaal niet mee. */
+@media (prefers-reduced-motion: no-preference) {
+  body > :not(.topbar):not(.offline-balk):not(.krn-palet):not(script):not(.toast):not(.modal-overlay):not(.foto-viewer) {
+    animation: krn-binnen .42s var(--veer) backwards;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .krn-palet, .krn-palet-vlak { transition: none; }
+}
+
+/* op papier hoort de balk en het palet er niet bij */
+@media print {
+  .krn-balk, .krn-palet, .krn-terug, .krn-zoekknop { display: none !important; }
+}
+/* het tweeletterige merkje op een tegeltje */
+.krn-tegel { font-size: 13px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+
+/* De eigen "Terug naar de naslag"-link bovenaan een pagina is dubbelop nu de
+   balk overal een terugknop heeft. Links naar een andere pagina (metatarsus
+   naar rotatie, epifysiodese naar groeisturing) blijven wel staan: die zeggen
+   iets wat de balk niet zegt. */
+a[class$="-terug"][href="index.html"] { display: none; }

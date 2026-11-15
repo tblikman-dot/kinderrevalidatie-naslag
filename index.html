@@ -5,7 +5,7 @@
 <title>Naslag Kinderrevalidatie</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0f4c5c">
+<meta name="theme-color" content="#fbfbfd">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -19,8 +19,8 @@
 
 <header class="topbar">
   <div class="topbar-title">Naslag Kinderrevalidatie</div>
-  <button class="add-cat-btn" id="backupBtn" title="Back-up maken of terugzetten">⤓</button>
-  <button class="add-cat-btn" id="addCatBtn" title="Nieuw aandachtsgebied toevoegen">＋</button>
+  <button class="add-cat-btn" id="backupBtn" title="Back-up maken of terugzetten" aria-label="Back-up maken of terugzetten"></button>
+  <button class="add-cat-btn" id="addCatBtn" title="Nieuw aandachtsgebied toevoegen" aria-label="Nieuw aandachtsgebied toevoegen"></button>
 </header>
 
 <div class="modal-overlay" id="backupOverlay" hidden>
@@ -104,6 +104,7 @@
     </div>
 
     <div class="paneel-hulp" id="panelHulp">
+      <div class="hm-recent" data-laatst-geopend hidden></div>
       <div class="paneel-kop">Hulpmiddelen</div>
       <div class="hm-lijst" id="hmLijst"></div>
     </div>
@@ -116,8 +117,18 @@
 
   <main class="detail" id="detail">
     <div class="detail-empty" id="detailEmpty">
-      <h2 class="start-kop">Hulpmiddelen</h2>
-      <p class="start-uitleg">De rekenhulpen, schema's en beslisbomen van deze app. Onder <em>Onderwerpen</em> links staan dezelfde pagina's per aandachtsgebied, met je eigen aantekeningen erbij.</p>
+      <section class="start-hero">
+        <div class="start-gloed" aria-hidden="true"></div>
+        <h2 class="start-kop">Naslag Kinderrevalidatie</h2>
+        <p class="start-uitleg">De rekenhulpen, schema's en beslisbomen van deze app. Onder <em>Onderwerpen</em> links staan dezelfde pagina's per aandachtsgebied, met je eigen aantekeningen erbij.</p>
+        <button type="button" class="start-zoek" id="startZoek">
+          <svg class="krn-icoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
+          <span>Zoek een hulpmiddel of onderwerp</span>
+          <kbd>/</kbd>
+        </button>
+      </section>
+      <div class="hm-recent" data-laatst-geopend hidden></div>
+      <div class="start-sectiekop">Hulpmiddelen</div>
       <div class="hm-start" id="hmStart"></div>
       <p class="muted">Alles wat je in de aantekeningen typt wordt bewaard in je browser (localStorage) — alleen op dit apparaat.</p>
     </div>
@@ -125,8 +136,8 @@
       <div class="detail-head">
         <button class="back-btn" id="backBtn">← Terug</button>
         <h1 id="detailTitle" title="Tik om de naam te wijzigen"></h1>
-        <button class="del-cat-btn" id="editCatBtn" title="Naam en omschrijving wijzigen">✏️</button>
-        <button class="del-cat-btn" id="delCatBtn" title="Aandachtsgebied verwijderen">🗑️</button>
+        <button class="del-cat-btn" id="editCatBtn" title="Naam en omschrijving wijzigen" aria-label="Naam en omschrijving wijzigen"></button>
+        <button class="del-cat-btn" id="delCatBtn" title="Aandachtsgebied verwijderen" aria-label="Aandachtsgebied verwijderen"></button>
       </div>
       <p class="detail-scope" id="detailScope" title="Tik om de omschrijving te wijzigen"></p>
       <div class="detail-links" id="detailLinks"></div>
@@ -179,7 +190,7 @@
         <div class="video-add">
           <input type="text" id="fotoTitel" placeholder="Titel (bijv. Gage — hamstring shift)" autocomplete="off">
           <input type="file" id="fotoInput" accept="image/*" multiple hidden>
-          <button id="fotoAddBtn">📷 Foto maken of kiezen</button>
+          <button id="fotoAddBtn">Foto maken of kiezen</button>
           <div class="foto-bezig" id="fotoBezig"></div>
           <div class="foto-status" id="fotoStatus"></div>
         </div>
@@ -212,8 +223,11 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="indeling.js"></script>
+<script src="kern.js"></script>
 <script src="app.js"></script>
 <script src="fotos.js"></script>
+<script src="palet.js"></script>
 <script>
 // service worker: app blijft werken zonder internet
 if ('serviceWorker' in navigator) {
