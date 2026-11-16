@@ -32,24 +32,41 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
 - **`CACHE_VERSIE` in `sw.js` omhoog.** Altijd. Anders blijven oude bestanden op de telefoon
   hangen en ziet de gebruiker zijn eigen wijziging niet. Dit is de fout die het vaakst gemaakt is.
 - **Tests draaien.** `python3 -m http.server 9052` in de map, dan
-  `cd tests && ./alles.sh test_rook.py test_dossier.py test_mdo.py test_kro.py`. `alles.sh` kijkt ook naar exitcode,
+  `cd tests && ./alles.sh test_rook.py test_dossier.py test_mdo.py test_kro.py test_start.py`. `alles.sh` kijkt ook naar exitcode,
   tracebacks en console-errors — niet alleen naar regels die met FAIL beginnen. Een suite die
   halverwege crasht gaf eerder "0 fails" en werd ten onrechte als groen gelezen.
 - **Een test die faalt na een bedoelde wijziging**: eerst nagaan of de code klopt, dan de
   verwachting bijwerken — en in het antwoord zeggen dat de test is aangepast, niet alleen dat
   alles groen is.
 - **Zelf nakijken op telefoonbreedte** (390 px). Geen horizontale scroll, geen afgesneden tabel.
-- **Nieuwe pagina?** Dan ook: opnemen in `APP_BESTANDEN` in `sw.js`, een knop in `app.js`, en
-  zoekwoorden zodat de pagina terug te vinden is. Geef die knop `kort`, `icoon` en `groep` mee,
-  anders staat de pagina niet in het hulpmiddelenoverzicht op het startscherm.
+- **Nieuwe pagina?** Dan ook: opnemen in `APP_BESTANDEN` in `sw.js`, een knop in `indeling.js`,
+  en zoekwoorden zodat de pagina terug te vinden is. Geef die knop `kort` en `groep` mee, anders
+  staat de pagina niet in het overzicht op het startscherm en niet in het zoekpalet. En zet
+  onderaan de pagina de vier scripts: `indeling.js`, `kern.js`, `palet.js`, `inhoud.js` — dan
+  krijgt hij vanzelf de balk, de zoekknop en 'op deze pagina'. `test_start.py` valt om als een
+  pagina de balk mist.
 
 ## Hoe de app in elkaar zit
 
-- `index.html` + `app.js`: de categorieën met zoekwoorden en `directLinks` naar de losse pagina's.
+- `index.html` + `app.js`: het startscherm met de onderwerpen en je eigen aantekeningen.
+- **`indeling.js` is de enige plek waar een hulpmiddel staat**: de onderwerpen met zoekwoorden en
+  `directLinks` naar de losse pagina's, plus de groepen. Het startscherm en het zoekpalet lezen
+  er allebei uit. Niet op een tweede plek bijhouden.
+- **De gedeelde kern**, op elke pagina geladen:
+  - `kern.js` — de balk bovenaan (terugknop, zoekknop), de lijniconen, de tweeletterige merkjes
+    op de tegeltjes en 'laatst geopend';
+  - `palet.js` — het zoekpalet (`/` of Ctrl+K): vanaf elke pagina naar een hulpmiddel of
+    onderwerp;
+  - `inhoud.js` — 'op deze pagina' (de h2-koppen van de pagina zelf) en de voortgangslijn.
+  De opmaak hiervan staat in `style.css`, prefix `krn-`.
+- **Een pagina bouwt zijn eigen balk niet meer.** `kern.js` vult de bestaande `header.topbar` aan,
+  of maakt er een als hij ontbreekt.
+- **Onderwerp openen via het adres:** `index.html#onderwerp=<id>`.
 - Eén pagina is één bestand: eigen `<style>`, eigen `<script>`, geen gedeelde JS-modules behalve
   de data-bestanden.
 - **CSS-prefix per pagina** om botsingen te voorkomen: `do-` (dosering), `rcp-`/`ro-`, `bd-`,
   `mdo-` (MDO-notitie), `kro-` (KRO-spreekuur), `cc-` (claude-code), `nb-` (neurogene blaas),
+  `krn-` (de gedeelde kern: balk, palet, inhoud),
   `mt-`. Nieuwe pagina:
   nieuwe prefix.
 - **Klinische getallen die twee pagina's gebruiken, staan in één bestand.** `rcp-data.js`
@@ -64,6 +81,24 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
   `tblikman-dot/emla-smeerinstructie`, live op https://tblikman-dot.github.io/emla-smeerinstructie/ .
   De knop in `app.js` wijst daarheen. Wijzig de tekst of de foto's dus daar, niet hier, en zet
   er geen tweede kopie terug.
+
+## Vormgeving
+
+De vormtaal is die van apple.com, dezelfde als de Emla-app: systeemletter, veel wit,
+grijstinten en één blauw accent. Niets van die site overgenomen; alleen de manier van vormgeven.
+
+- **Alle kleuren komen uit de acht variabelen bovenaan `style.css`.** Elke pagina leest ze. Geen
+  nieuwe vaste kleur voor iets wat een variabele kan zijn.
+- **Geen emoji in de bediening.** Lijniconen uit `kern.js` (`KRN.icoon`) of kale woorden. De
+  knopteksten in `indeling.js` beginnen nog met een emoji; `knopTekst()` haalt die er bij het
+  tonen af. De cijfers 1-4 bij de botulinestappen zijn een volgorde en blijven staan.
+- **Alleen licht.** De pagina's hebben eigen vaste kleurvlakken (waarschuwingen, tekeningen) die
+  op een donkere achtergrond niet nagekeken zijn. Een donkere stand is dus niet 'even aanzetten'.
+- **Beweging is bijzaak.** Alles achter `prefers-reduced-motion`. Een animatie op `body > *` met
+  `fill-mode: both` overschreef eerder de transform waarmee de toastmelding verstopt zit; daarom
+  `backwards`, en zwevende lagen doen niet mee.
+- **Let op met naampatronen.** De regel die de dubbele "Terug naar de naslag"-links verbergt
+  (`a[class$="-terug"]`) verborg eerst ook de terugknop in de balk zelf. Er zit nu een toets op.
 
 ## Tekst voor het dossier (Epic)
 

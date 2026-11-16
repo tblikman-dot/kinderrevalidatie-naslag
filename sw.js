@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v96';
+const CACHE_VERSIE = 'krn-v97';
 
 const APP_BESTANDEN = [
   './',
@@ -13,6 +13,7 @@ const APP_BESTANDEN = [
   './indeling.js',
   './kern.js',
   './palet.js',
+  './inhoud.js',
   './app.js',
   './fotos.js',
   './style.css',

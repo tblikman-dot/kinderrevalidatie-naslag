@@ -1169,16 +1169,16 @@ body.viewer-open { overflow: hidden; }
   transition: background .15s;
 }
 .krn-terug:hover { background: rgba(0, 102, 204, .08); }
-.krn-zoekknop {
+.krn-zoekknop, .krn-inhoudknop {
   display: flex; align-items: center; justify-content: center;
   width: 40px; height: 40px; flex: none;
   border: none; border-radius: 10px; background: none;
   color: var(--inkt); cursor: pointer;
   transition: background .15s;
 }
-.krn-zoekknop:hover { background: rgba(0, 0, 0, .05); }
-.krn-zoekknop:active { background: rgba(0, 0, 0, .09); }
-.krn-zoekknop .krn-icoon { width: 20px; height: 20px; }
+.krn-zoekknop:hover, .krn-inhoudknop:hover { background: rgba(0, 0, 0, .05); }
+.krn-zoekknop:active, .krn-inhoudknop:active { background: rgba(0, 0, 0, .09); }
+.krn-zoekknop .krn-icoon, .krn-inhoudknop .krn-icoon { width: 20px; height: 20px; }
 
 /* Op de losse pagina's staat links de terugknop en rechts de zoekknop. De
    titel is absoluut gecentreerd, zodat hij echt in het midden staat en niet
@@ -1193,7 +1193,57 @@ body.viewer-open { overflow: hidden; }
 @media (max-width: 480px) {
   .krn-terug span { display: none; }
   .krn-terug { padding: 0 8px 0 4px; }
-  .krn-balk:not(.krn-balk-start) .topbar-title { max-width: calc(100% - 110px); }
+  /* rechts staan twee knoppen; de titel houdt aan beide kanten evenveel vrij */
+  .krn-balk:not(.krn-balk-start) .topbar-title { max-width: calc(100% - 184px); }
+}
+
+/* ---- op deze pagina: de koppen van een lange pagina (inhoud.js) ---- */
+.krn-inhoudknop[hidden] { display: none; }
+.krn-balk:not(.krn-balk-start) .krn-inhoudknop { margin-left: auto; }
+.krn-balk:not(.krn-balk-start) .krn-inhoudknop:not([hidden]) + .krn-zoekknop { margin-left: 0; }
+.krn-inhoud {
+  position: fixed; z-index: 900;
+  top: calc(var(--balk-hoog) + 6px); right: 8px;
+  width: min(340px, calc(100vw - 16px));
+  max-height: min(70vh, 560px); overflow-y: auto;
+  padding: 6px;
+  background: color-mix(in srgb, #fff 97%, transparent);
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .06), 0 18px 50px rgba(0, 0, 0, .22);
+  animation: krn-inhoud-open .26s var(--veer) backwards;
+  transform-origin: top right;
+}
+@keyframes krn-inhoud-open {
+  from { opacity: 0; transform: translateY(-6px) scale(.96); }
+}
+.krn-inhoud-kop {
+  padding: 8px 10px 5px;
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted);
+}
+.krn-inhoud-rij {
+  display: flex; align-items: baseline; gap: 10px;
+  width: 100%; padding: 9px 10px;
+  border: none; border-radius: 10px; background: none;
+  font: inherit; font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em;
+  line-height: 1.3; color: var(--inkt); text-align: left; cursor: pointer;
+}
+.krn-inhoud-rij:hover { background: rgba(0, 0, 0, .045); }
+.krn-inhoud-nr {
+  flex: none; min-width: 1.4em;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* een kop waar je naartoe springt mag niet onder de balk verdwijnen */
+h2 { scroll-margin-top: calc(var(--balk-hoog) + 14px); }
+
+/* ---- voortgangslijn onder de balk ---- */
+.krn-voortgang {
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+  pointer-events: none;
 }
 
 /* een gekleurd tegeltje per groep hulpmiddelen */
@@ -1308,7 +1358,7 @@ html.krn-palet-open { overflow: hidden; }
    kwam de lege toastmelding — die juist met een transform verstopt zit — als
    een zwarte pil in beeld. Zwevende lagen doen daarom helemaal niet mee. */
 @media (prefers-reduced-motion: no-preference) {
-  body > :not(.topbar):not(.offline-balk):not(.krn-palet):not(script):not(.toast):not(.modal-overlay):not(.foto-viewer) {
+  body > :not(.topbar):not(.offline-balk):not(.krn-palet):not(.krn-inhoud):not(script):not(.toast):not(.modal-overlay):not(.foto-viewer) {
     animation: krn-binnen .42s var(--veer) backwards;
   }
 }
@@ -1318,7 +1368,7 @@ html.krn-palet-open { overflow: hidden; }
 
 /* op papier hoort de balk en het palet er niet bij */
 @media print {
-  .krn-balk, .krn-palet, .krn-terug, .krn-zoekknop { display: none !important; }
+  .krn-balk, .krn-palet, .krn-inhoud, .krn-terug, .krn-zoekknop, .krn-inhoudknop { display: none !important; }
 }
 /* het tweeletterige merkje op een tegeltje */
 .krn-tegel { font-size: 13px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }

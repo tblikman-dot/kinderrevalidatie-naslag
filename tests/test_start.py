@@ -256,6 +256,56 @@ with sync_playwright() as p:
           "| " + str(knoppen[:3]))
     ctx.close()
 
+    # ---------- op deze pagina: springen binnen een lange pagina ----------
+    pg = b.new_context(viewport={"width": 390, "height": 800}).new_page()
+    pg.on("pageerror", lambda e: errs.append(str(e)))
+    pg.goto(URL + "dosering.html")
+    pg.wait_for_timeout(600)
+    check("lange pagina: de knop 'op deze pagina' staat in de balk",
+          pg.locator(".krn-inhoudknop:not([hidden])").count() == 1)
+    pg.click(".krn-inhoudknop")
+    pg.wait_for_timeout(400)
+    rijen = pg.locator(".krn-inhoud-rij span:last-child").all_inner_texts()
+    koppen = pg.evaluate("""() => [...document.querySelectorAll('h2')]
+        .filter(h => h.offsetParent && !h.closest('.krn-palet, .krn-inhoud'))
+        .map(h => h.textContent.replace(/\\s+/g, ' ').trim())""")
+    check("de lijst is precies de koppen van de pagina zelf", rijen == koppen and len(rijen) >= 3,
+          "| %d rijen, %d koppen" % (len(rijen), len(koppen)))
+    doel = rijen[5]
+    pg.locator(".krn-inhoud-rij").nth(5).click()
+    pg.wait_for_timeout(1100)
+    plek = pg.evaluate("""(t) => { const h = [...document.querySelectorAll('h2')]
+        .find(x => x.textContent.replace(/\\s+/g, ' ').trim() === t);
+        return Math.round(h.getBoundingClientRect().top); }""", doel)
+    check("een tik springt naar die kop, vlak onder de balk", 52 <= plek <= 90,
+          "| '%s' staat op %d px" % (doel, plek))
+    check("en de lijst is weer dicht", pg.locator(".krn-inhoud").count() == 0)
+    lijn = pg.evaluate("""() => new DOMMatrix(getComputedStyle(
+        document.querySelector('.krn-voortgang')).transform).a""")
+    check("de voortgangslijn is meegegroeid", 0.05 < lijn < 1, "| " + str(round(lijn, 3)))
+    pg.click(".krn-inhoudknop")
+    pg.wait_for_timeout(300)
+    pg.keyboard.press("Escape")
+    pg.wait_for_timeout(250)
+    check("Escape sluit de lijst", pg.locator(".krn-inhoud").count() == 0)
+
+    # een korte pagina zonder koppen krijgt de knop niet
+    pg.goto(URL + "neurogene-blaas.html")
+    pg.wait_for_timeout(500)
+    check("pagina zonder koppen: geen knop 'op deze pagina'",
+          pg.locator(".krn-inhoudknop:not([hidden])").count() == 0)
+
+    # Een pagina met tabbladen toont alleen de koppen van het zichtbare tabblad.
+    pg.goto(URL + "kro.html")
+    pg.wait_for_timeout(600)
+    pg.click(".krn-inhoudknop")
+    pg.wait_for_timeout(300)
+    getoond = pg.locator(".krn-inhoud-rij").count()
+    alle_h2 = pg.locator("h2").count()
+    check("tabbladen: alleen zichtbare koppen in de lijst", 0 < getoond < alle_h2,
+          "| %d getoond van %d" % (getoond, alle_h2))
+    pg.close()
+
     # ---------- printen: de balk hoort niet op papier ----------
     pg = b.new_context(viewport={"width": 794, "height": 1123}).new_page()
     pg.goto(URL + "mdo-notitie.html")
