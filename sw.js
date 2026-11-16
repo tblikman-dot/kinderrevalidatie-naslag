@@ -4,7 +4,7 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v98';
+const CACHE_VERSIE = 'krn-v99';
 
 const APP_BESTANDEN = [
   './',
@@ -55,6 +55,8 @@ const APP_BESTANDEN = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png',
 ];
 
 self.addEventListener('install', event => {

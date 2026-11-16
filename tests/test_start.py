@@ -75,6 +75,34 @@ with sync_playwright() as p:
     pg.wait_for_timeout(500)
     check("de terugknop gaat naar het startscherm", pg.url.endswith("index.html"), "| " + pg.url)
 
+    # een tik op de titel in de balk doet hetzelfde, vanaf elke pagina
+    pg.goto(URL + "dosering.html")
+    pg.wait_for_timeout(400)
+    pg.click(".topbar-title")
+    pg.wait_for_timeout(500)
+    check("een tik op de titel gaat naar het startscherm", pg.url.endswith("index.html"),
+          "| " + pg.url)
+    # op het startscherm zelf sluit de titel een geopend onderwerp
+    pg.goto(URL + "index.html#onderwerp=heup")
+    pg.wait_for_timeout(600)
+    pg.click(".topbar-title")
+    pg.wait_for_timeout(400)
+    check("op het startscherm sluit de titel het geopende onderwerp",
+          pg.locator("#detailContent").is_hidden() and "#onderwerp" not in pg.url, "| " + pg.url)
+
+    # het app-icoon: de bestanden bestaan en hebben de beloofde maat
+    maten = pg.evaluate("""async () => { const uit = {};
+        for (const [n, px] of [['icon-192.png',192],['icon-512.png',512],
+                               ['icon-maskable-512.png',512],['apple-touch-icon.png',180]]) {
+          const i = new Image(); i.src = n + '?t=' + Date.now();
+          try { await i.decode(); uit[n] = i.naturalWidth === px && i.naturalHeight === px; }
+          catch (e) { uit[n] = false; } }
+        return uit; }""")
+    check("de vier icoonbestanden bestaan en hebben de goede maat",
+          all(maten.values()) and len(maten) == 4, "| " + str(maten))
+    check("de iPhone krijgt het eigen icoon",
+          pg.get_attribute("link[rel='apple-touch-icon']", "href") == "apple-touch-icon.png")
+
     # ---------- het zoekpalet ----------
     pg.goto(URL + "gmfcs.html")
     pg.wait_for_timeout(400)

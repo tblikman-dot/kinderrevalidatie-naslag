@@ -172,6 +172,28 @@
       if (eersteKnop) balk.insertBefore(zoek, eersteKnop); else balk.appendChild(zoek);
     }
 
+    // Een tik op de titel in de balk brengt je naar het startscherm, vanaf
+    // elke pagina. Op het startscherm zelf sluit hij een geopend onderwerp en
+    // gaat hij naar boven.
+    var titel = balk.querySelector('.topbar-title');
+    if (titel && !titel.dataset.krnThuis) {
+      titel.dataset.krnThuis = '1';
+      titel.setAttribute('role', 'link');
+      titel.setAttribute('tabindex', '0');
+      titel.title = 'Naar het startscherm';
+      var naarHuis = function () {
+        if (!isStart) { location.href = 'index.html'; return; }
+        if (typeof closeDetail === 'function') closeDetail();
+        var vlak = document.getElementById('detail');
+        if (vlak) vlak.scrollTop = 0;
+        window.scrollTo(0, 0);
+      };
+      titel.addEventListener('click', naarHuis);
+      titel.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); naarHuis(); }
+      });
+    }
+
     // de titel blijft in het midden: links en rechts even breed houden
     balk.classList.toggle('krn-balk-start', isStart);
   }

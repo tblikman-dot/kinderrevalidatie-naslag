@@ -62,6 +62,9 @@ framework: losse HTML-pagina's, één `style.css`, één `app.js`.
 - **Een pagina bouwt zijn eigen balk niet meer.** `kern.js` vult de bestaande `header.topbar` aan,
   of maakt er een als hij ontbreekt.
 - **Onderwerp openen via het adres:** `index.html#onderwerp=<id>`.
+- **De titel in de balk is een knop naar het startscherm**, op elke pagina (`kern.js`).
+- **Het app-icoon** komt uit `icoon-bron.svg` via `tests/maak-icoon.py`. Teken niet in de PNG's;
+  die worden overschreven.
 - Eén pagina is één bestand: eigen `<style>`, eigen `<script>`, geen gedeelde JS-modules behalve
   de data-bestanden.
 - **CSS-prefix per pagina** om botsingen te voorkomen: `do-` (dosering), `rcp-`/`ro-`, `bd-`,
