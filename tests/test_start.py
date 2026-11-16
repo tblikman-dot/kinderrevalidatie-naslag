@@ -174,6 +174,12 @@ with sync_playwright() as p:
     pg.click("#backBtn")
     pg.wait_for_timeout(300)
     check("terug haalt het onderwerp uit het adres", "#onderwerp" not in pg.url, "| " + pg.url)
+    # Het gesloten onderwerp bleef in de lijst gemarkeerd staan terwijl je al
+    # terug was op het overzicht.
+    pg.click("#tabOnder")
+    pg.wait_for_timeout(250)
+    check("na terug is er geen onderwerp meer gemarkeerd",
+          pg.locator(".cat-item.active").count() == 0)
     ctx.close()
 
     # ---------- laatst geopend ----------

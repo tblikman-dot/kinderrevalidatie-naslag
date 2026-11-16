@@ -1260,6 +1260,9 @@ function closeDetail() {
   document.getElementById('detailEmpty').hidden = false;
   document.getElementById('detailContent').hidden = true;
   document.getElementById('layout').classList.remove('detail-active');
+  // de lijst opnieuw tekenen: anders blijft het onderwerp dat je net sloot
+  // gemarkeerd staan terwijl je al terug bent op het overzicht
+  renderList(document.getElementById('zoek').value);
 }
 
 // ===== NOTITIES AUTOSAVE =====

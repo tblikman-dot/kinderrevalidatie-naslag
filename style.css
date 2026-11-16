@@ -141,7 +141,8 @@ h1, h2, h3 { letter-spacing: -0.02em; }
   color: var(--inkt);
 }
 .cat-item:hover { background: rgba(0, 0, 0, .04); }
-.cat-item.active { background: var(--accent); color: #fff; }
+/* het geopende onderwerp: een zachte tint, geen massief blok */
+.cat-item.active { background: var(--accent-zacht); color: var(--inkt); }
 .cat-item .cat-text { flex: 1; min-width: 0; }
 .cat-item .treffer {
   display: block;
@@ -155,7 +156,7 @@ h1, h2, h3 { letter-spacing: -0.02em; }
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
-.cat-item.active .treffer { background: rgba(255,255,255,0.22); color: #fff; }
+.cat-item.active .treffer { background: #FFF3A3; color: #5A4A33; }
 .cat-item .scope {
   display: block;
   font-weight: 400;
@@ -178,7 +179,7 @@ h1, h2, h3 { letter-spacing: -0.02em; }
 }
 .cat-grip:active { cursor: grabbing; }
 .cat-item:hover .cat-grip { color: var(--accent); }
-.cat-item.active .cat-grip { color: rgba(255,255,255,0.65); }
+.cat-item.active .cat-grip { color: var(--accent); }
 
 .cat-item.slepend {
   opacity: 0.9;
@@ -1032,7 +1033,7 @@ body.viewer-open { overflow: hidden; }
   font-weight: 700;
   white-space: nowrap;
 }
-.cat-item.active .cat-telling { background: rgba(255,255,255,0.22); color: #fff; }
+.cat-item.active .cat-telling { background: var(--paneel); color: var(--accent); }
 
 /* ---- het startscherm in het rechtervlak ----
    Grote kop, een zoekknop die het palet opent, wat je het laatst opende, en
