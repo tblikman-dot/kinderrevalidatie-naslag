@@ -1263,6 +1263,7 @@ h2 { scroll-margin-top: calc(var(--balk-hoog) + 14px); }
 .krn-tegel-been  { background: #fff1e0; color: #a85a00; }
 .krn-tegel-zenuw { background: #f1eaff; color: #6a3fc0; }
 .krn-tegel-ok    { background: #ffe9ec; color: #b4233a; }
+.krn-tegel-opleiden { background: #e4f4f5; color: #0f6b73; }
 .krn-tegel-app   { background: #eef0f3; color: #4a4f57; }
 .krn-tegel-onderwerp { background: #f0f0f3; color: #6e6e73; }
 

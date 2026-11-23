@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Feedback en coaching</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+
+  .fb-wrap { max-width: 780px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .fb-terug {
+    display: inline-block;
+    font-family: system-ui, sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .fb-terug:hover { text-decoration: underline; }
+
+  .fb-kop { font-size: 1.45rem; margin: 0 0 6px; }
+  .fb-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 13.5px; color: var(--muted);
+    line-height: 1.65; margin: 0 0 18px;
+  }
+
+  .fb-sectie { margin: 0 0 26px; }
+  .fb-sectie h2 { font-size: 1.12rem; margin: 0 0 10px; }
+  .fb-sectie h3 {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .04em;
+    margin: 16px 0 8px;
+  }
+
+  .fb-kaart {
+    background: var(--paneel);
+    border: 1px solid var(--lijn);
+    border-radius: 14px;
+    padding: 13px 15px;
+    font-size: 14px; line-height: 1.55;
+  }
+  .fb-kaart + .fb-kaart { margin-top: 10px; }
+  .fb-kaart b { font-weight: 650; }
+  .fb-kaart .fb-sub {
+    display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px;
+  }
+  .fb-accent { background: var(--accent-zacht); border-color: var(--accent); }
+  .fb-zorg {
+    background: color-mix(in srgb, var(--danger) 6%, var(--paneel));
+    border-color: var(--danger);
+  }
+
+  .fb-lijst { margin: 0; padding-left: 20px; }
+  .fb-lijst li { margin: 4px 0; }
+  .fb-lijst li::marker { color: var(--muted); }
+
+  /* Beslisboom: stappen onder elkaar, binnen een stap kaarten naast elkaar
+     als het past. Op telefoonbreedte gaat alles onder elkaar. */
+  .fb-stap {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .05em;
+    margin: 0 0 6px;
+  }
+  .fb-pijl {
+    text-align: center; color: var(--muted);
+    font-size: 18px; line-height: 1; margin: 8px 0;
+  }
+  .fb-rij { display: grid; gap: 10px; }
+  .fb-rij-2 { grid-template-columns: 1fr 1fr; }
+  .fb-rij-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .fb-rij-4 { grid-template-columns: repeat(4, 1fr); }
+  .fb-rij .fb-kaart + .fb-kaart { margin-top: 0; }
+  .fb-rij .fb-kaart { font-size: 13.5px; padding: 11px 12px; }
+  .fb-tak {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; color: var(--muted); margin: 10px 0 6px;
+  }
+  .fb-tak b { color: var(--inkt); }
+  .fb-pad {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted); margin: 6px 0 0;
+  }
+  @media (max-width: 640px) {
+    .fb-rij-3 { grid-template-columns: 1fr; }
+    .fb-rij-4 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .fb-rij-2 { grid-template-columns: 1fr; }
+  }
+
+  .fb-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fb-twee .fb-kaart + .fb-kaart { margin-top: 0; }
+  @media (max-width: 560px) { .fb-twee { grid-template-columns: 1fr; } }
+
+  .fb-zin {
+    font-size: 14px; line-height: 1.5;
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 11px; margin: 8px 0;
+  }
+
+  .fb-bron {
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px; line-height: 1.6; color: var(--muted);
+  }
+  .fb-bron li { margin: 5px 0; }
+  .fb-bron a { color: var(--accent); }
+  .fb-bron b { color: var(--inkt); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Feedback en coaching</div>
+</header>
+
+<div class="fb-wrap">
+  <a class="fb-terug" href="index.html">← Terug naar naslagwerk</a>
+
+  <h1 class="fb-kop">Feedback en coaching op de werkvloer</h1>
+  <p class="fb-intro">
+    Voor het begeleiden van aios en co-assistenten. Gebaseerd op eigen aantekeningen uit de
+    TOTR-cursus (november 2026), aangevuld met de literatuur onderaan. Het meeste hiervan is
+    expertopinie of kwalitatief onderzoek; per bron staat de zekerheid erbij.
+  </p>
+
+  <section class="fb-sectie">
+    <h2>Kern</h2>
+    <div class="fb-kaart">
+      <ol class="fb-lijst">
+        <li><b>Veilig is: je niet beoordeeld voelen.</b> Dat groeit uit een steunende relatie met
+          supervisor, mentoren en andere aios.</li>
+        <li><b>Wie zich veilig voelt, leert meer en spreekt zich eerder uit</b>: vragen, twijfel,
+          fouten.</li>
+        <li><b>Een goed opleidingsklimaat</b> gaat samen met meer bevlogenheid en minder burn-out.</li>
+        <li><b>Houd begeleiden en beoordelen gescheiden.</b> Dat maakt feedback effectiever.</li>
+        <li><b>Veilig is niet hetzelfde als gezellig.</b> Openhartig, eerlijk en soms kritisch.</li>
+        <li><b>Meet het klimaat</b> op drie domeinen: inhoud, sfeer en organisatie.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Beslisboom: stijl, doel, moment</h2>
+
+    <p class="fb-stap">Stap 1 — kies je stijl naar zelfstandigheid</p>
+    <div class="fb-rij fb-rij-4">
+      <div class="fb-kaart"><b>Instrueren</b><span class="fb-sub">Veel sturing, precieze
+        instructies, nauwlettend toezicht</span></div>
+      <div class="fb-kaart"><b>Begeleiden</b><span class="fb-sub">Wel sturing, maar
+        vragenderwijs; inspraak en ruimte</span></div>
+      <div class="fb-kaart fb-accent"><b>Ondersteunen (coachen)</b><span class="fb-sub">Weinig
+        sturing; lerende beslist, hulp op vraag</span></div>
+      <div class="fb-kaart"><b>Delegeren</b><span class="fb-sub">Zelfstandig; hulp op afroep,
+        evaluatie achteraf</span></div>
+    </div>
+    <p class="fb-pad">Het pad van een aios of co-assistent loopt van links naar rechts. Je stijl
+      schuift mee.</p>
+
+    <div class="fb-pijl" aria-hidden="true">↓</div>
+    <p class="fb-stap">Stap 2 — wie leert er mee?</p>
+
+    <div class="fb-rij fb-rij-2">
+      <div class="fb-kaart">
+        <b>Co-assistent</b><span class="fb-sub">Vooral instrueren en begeleiden</span>
+        <p class="fb-tak"><b>Tijdens poli of behandeling</b></p>
+        <ul class="fb-lijst">
+          <li>Kijkopdracht: "Let eens op hoe ik de tijd bewaak."</li>
+          <li>Of laat een stukje zelf doen.</li>
+        </ul>
+        <p class="fb-tak"><b>Na het consult, spiegelpoli</b></p>
+        <ul class="fb-lijst">
+          <li>Wat verraste je? Wat neem je over?</li>
+          <li>Wat ga je anders doen? Heb je een tip voor mij?</li>
+        </ul>
+      </div>
+      <div class="fb-kaart">
+        <b>Aios</b><span class="fb-sub">Van begeleiden naar coachen</span>
+        <p class="fb-tak"><b>Eerst: leren of beoordelen?</b></p>
+        <ul class="fb-lijst">
+          <li><b>Leren</b> is de standaard. Ga naar stap 3.</li>
+          <li><b>Beoordelen (KPB)</b>: benoem vooraf dat het telt (examenstand). Scoor hoe het nú
+            gaat, niet wat je voor later verwacht. Eén keer is geen meting. Nooit een
+            verrassing.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fb-pijl" aria-hidden="true">↓</div>
+    <p class="fb-stap">Stap 3 — leren: kies het moment</p>
+    <div class="fb-rij fb-rij-3">
+      <div class="fb-kaart fb-accent"><b>Kort moment</b><span class="fb-sub">Tussen patiënten,
+        gips, botox. Coaching in the moment: 1 tip en 1 top. Dagelijks, en leg het vast.</span></div>
+      <div class="fb-kaart"><b>Na het spreekuur</b><span class="fb-sub">Learning conversation of
+        de vaste volgorde (zie hieronder). De aios kiest de agenda.</span></div>
+      <div class="fb-kaart"><b>Elke 6–8 weken</b><span class="fb-sub">Coaching over time:
+        patronen bekijken, leerplan bijstellen.</span></div>
+    </div>
+
+    <div class="fb-pijl" aria-hidden="true">↓</div>
+    <div class="fb-kaart fb-zorg">
+      <b>Zorgen of niet-pluisgevoel? Altijd deze route.</b>
+      <ol class="fb-lijst" style="margin-top:6px">
+        <li>Onderzoek eerst wat er speelt, ook persoonlijk. Zo nodig persoonlijke coaching.</li>
+        <li>Bespreek: waar zit het in? Hoe kan het beter? Wat gaan <b>wij</b> doen? Noem concreet
+          gedrag. Benoem de spanning; dan ben je eerlijk.</li>
+        <li>Bespreek het vroeg met de COC. Het Leerhuis helpt met hoe je het gesprek voert.</li>
+        <li>Remediëring: 2–3 gedragsdoelen, evalueer na 4–6 weken met gerichte observaties. Het
+          meten is vaak het lastige deel.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Checklist bij supervisie</h2>
+    <h3>Vóór het consult</h3>
+    <div class="fb-kaart">
+      <ul class="fb-lijst">
+        <li>Korte check-in: hoe gaat het?</li>
+        <li>Vraag naar het leerdoel van vandaag.</li>
+        <li>Benoem de stand: leerstand (oefenen) of examenstand (telt mee).</li>
+      </ul>
+    </div>
+    <h3>Tijdens</h3>
+    <div class="fb-kaart">
+      <ul class="fb-lijst">
+        <li>Observeer; grijp alleen in als de patiënt het nodig heeft.</li>
+        <li>Geen kritiek in het bijzijn van patiënt of ouders.</li>
+      </ul>
+    </div>
+    <h3>Na het consult</h3>
+    <div class="fb-kaart">
+      <ul class="fb-lijst">
+        <li>Laat de lerende eerst zelf reflecteren.</li>
+        <li>Houd het klein: 1 tip en 1 top, concreet en op gedrag. Balans tussen tips en tops.</li>
+        <li>Deel waar het past je eigen fouten of twijfel.</li>
+        <li>Leg samen één actiepunt vast.</li>
+      </ul>
+    </div>
+    <h3>Over time</h3>
+    <div class="fb-kaart">
+      <ul class="fb-lijst">
+        <li>Leg de actiepunten naast elkaar; zoek patronen.</li>
+        <li>Stel samen het leerplan bij.</li>
+        <li>Vraag hoe de aios het klimaat ervaart: inhoud, sfeer, organisatie.</li>
+        <li>Check de relatie: "Durf je bij mij aan de bel te trekken?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Twee manieren om feedback te geven</h2>
+    <div class="fb-twee">
+      <div class="fb-kaart">
+        <b>Vaste volgorde</b>
+        <ol class="fb-lijst" style="margin-top:6px">
+          <li>Lerende: wat ging goed?</li>
+          <li>Supervisor: wat ging goed?</li>
+          <li>Lerende: wat kan beter?</li>
+          <li>Supervisor: wat kan beter?</li>
+          <li>Samen een actiepunt.</li>
+        </ol>
+      </div>
+      <div class="fb-kaart">
+        <b>Learning conversation</b>
+        <ol class="fb-lijst" style="margin-top:6px">
+          <li>Lerende: "Hoe ging het? Waar wil je het over hebben?"</li>
+          <li>Samen: "Wat gebeurde er? Wat had je anders kunnen doen?"</li>
+          <li>Supervisor vult aan: "Mij viel op dat…"</li>
+          <li>Afsluiten: "Wat neem je mee? Wat doe je de volgende keer?"</li>
+        </ol>
+      </div>
+    </div>
+    <div class="fb-kaart" style="margin-top:10px">
+      <b>Wat maakt het coachend?</b>
+      <ul class="fb-lijst" style="margin-top:4px">
+        <li>"Waar wil je dat ik je bij help?"</li>
+        <li>"Waar wil je naartoe?" (feed forward)</li>
+        <li>De lerende bepaalt de weg. Jij helpt, je stuurt niet.</li>
+      </ul>
+      <span class="fb-sub" style="margin-top:8px">Goede feedback: concreet, niet te veel, doel
+        duidelijk, op het juiste moment, in dialoog. Het werkt beter als de feedbackgever een
+        geloofwaardig rolmodel is.</span>
+    </div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Zinnen die helpen</h2>
+    <div class="fb-zin">"Ik kijk mee om je te helpen, niet om je te beoordelen."</div>
+    <div class="fb-zin">"We zijn hier voor jou en voor je ontwikkeling. Beoordelen doen we later,
+      en dat zal nooit als verrassing komen."</div>
+    <div class="fb-zin">"Wat wil je vandaag oefenen?"</div>
+    <div class="fb-zin">"Wat vond je zelf lastig?"</div>
+    <div class="fb-zin">"Dit heb ik zelf ook een keer fout gedaan."</div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Veilig opleidingsklimaat</h2>
+    <div class="fb-kaart">
+      <ul class="fb-lijst">
+        <li><b>Psychologische veiligheid</b>: niet gestraft of vernederd worden als je een idee,
+          vraag, zorg of fout inbrengt.</li>
+        <li><b>Leerstand of examenstand.</b> Veel lerenden ervaren elke beoordeling als een
+          mini-examen. Dan zoeken ze strategisch een goede beoordeling, en staan ze niet open voor
+          feedback.</li>
+        <li><b>Beoordelen is zwart-wit</b> (wel of niet bekwaam). <b>Begeleiden</b> gaat over
+          ontwikkeling, in the moment en over time.</li>
+        <li><b>De relatie met de supervisor</b> is de kern. Steunende relaties met mentoren en
+          andere aios versterken het gevoel van veiligheid.</li>
+        <li><b>Meten</b>: een korte lijst met 15 items, 5 per domein (inhoud, sfeer, organisatie),
+          in te vullen door de aios.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="fb-sectie">
+    <h2>Bronnen en zekerheid</h2>
+    <ul class="fb-bron">
+      <li><b>Coaching in the moment en over time</b> — Perspect Med Educ 2024;13:33–43,
+        <a href="https://doi.org/10.5334/pme.959" target="_blank" rel="noopener">doi</a>.
+        Onderwijsmodel (Royal College of Physicians and Surgeons of Canada). Model, geen
+        effectbewijs.</li>
+      <li><b>Psychologische veiligheid = je niet beoordeeld voelen; relaties en focus op leren</b>
+        — Acad Med 2019;94:S28–S35,
+        <a href="https://doi.org/10.1097/ACM.0000000000002897" target="_blank" rel="noopener">doi</a>.
+        Kwalitatief, 8 geneeskundestudenten. Zekerheid laag.</li>
+      <li><b>Definitie psychologische veiligheid</b> — Adm Sci Q 1999;44:350–383. Teamonderzoek
+        buiten de medische opleiding. Als definitie gangbaar.</li>
+      <li><b>Opleidingsklimaat en burn-out</b> — Perspect Med Educ 2018;7:120–125,
+        <a href="https://doi.org/10.1007/s40037-018-0405-1" target="_blank" rel="noopener">doi</a>.
+        Landelijk, 1.231 Nederlandse aios, cross-sectioneel. Zekerheid matig.</li>
+      <li><b>Opleidingsklimaat en bevlogenheid</b> — Adv Health Sci Educ 2019;24:317–330,
+        <a href="https://doi.org/10.1007/s10459-018-9868-4" target="_blank" rel="noopener">doi</a>.
+        144 aios, cross-sectioneel. Zekerheid matig tot laag.</li>
+      <li><b>Klimaat meten in drie domeinen (15 items)</b> — PLoS One 2015;10:e0137872,
+        <a href="https://doi.org/10.1371/journal.pone.0137872" target="_blank" rel="noopener">doi</a>.
+        Validatiestudie, 223 aios.</li>
+      <li><b>Beoordelingen als mini-examen</b> — Med Educ 2017;51:953–962
+        (<a href="https://doi.org/10.1111/medu.13380" target="_blank" rel="noopener">doi</a>) en
+        BMC Med Educ 2019;19:13
+        (<a href="https://doi.org/10.1186/s12909-018-1446-1" target="_blank" rel="noopener">doi</a>).
+        Kwalitatief. Zekerheid laag tot matig.</li>
+      <li><b>Feedback scheiden van beoordelen (rijles of rijexamen)</b> — Perspect Med Educ
+        2021;10:50–56,
+        <a href="https://doi.org/10.1007/s40037-020-00617-w" target="_blank" rel="noopener">doi</a>.
+        Opiniestuk.</li>
+      <li><b>Feedback geven</b> — Ned Tijdschr Geneeskd 2009;153:250–3. Overzichtsartikel; geen
+        samenvatting beschikbaar, zekerheid niet beoordeeld.</li>
+      <li><b>Learning conversation</b> — MedEdPublish 2017;6(3),
+        <a href="https://doi.org/10.15694/mep.2017.000156" target="_blank" rel="noopener">doi</a>
+        (Resuscitation Council UK). In een RCT bij 640 studenten vonden instructeurs het prettiger
+        dan de sandwichmethode; geen aantoonbaar verschil in slagen (Resuscitation 2015). De vier
+        stappen hierboven zijn uit eigen aantekeningen, niet uit het artikel overgenomen.</li>
+      <li><b>Vier stijlen naar zelfstandigheid</b> — situationeel leidinggeven, zoals op de
+        cursusdia (2001). Managementmodel; geen onderzoek in de medische opleiding gezien.</li>
+      <li>Checklists en zinnen: eigen vertaling naar de praktijk. Expertopinie.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(e => console.log('SW niet geregistreerd:', e));
+  });
+}
+function offlineStatus() {
+  document.body.classList.toggle('is-offline', !navigator.onLine);
+}
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+<script src="indeling.js"></script>
+<script src="kern.js"></script>
+<script src="palet.js"></script>
+<script src="inhoud.js"></script>
+</body>
+</html>

@@ -103,6 +103,11 @@ const DEFAULT_CATS = [
       { label: '🧭 KRO-spreekuur — wat moet ik nu regelen?', url: 'kro.html' },
       { label: '📋 MDO-notitie voor Epic — aankruisen en plakken', url: 'mdo-notitie.html' },
     ] },
+  { id: 'opleiden', label: 'Opleiden & feedback', scope: 'Begeleiden van aios en co-assistenten: coaching, feedback, opleidingsklimaat',
+    zoekwoorden: 'opleiden opleider supervisie supervisor aios co-assistent coassistent student feedback coaching coachen in the moment over time KPB korte praktijkbeoordeling beoordelen begeleiden leerstand examenstand tip top spiegelpoli kijkopdracht learning conversation vaste volgorde opleidingsklimaat leerklimaat psychologische veiligheid veilig not judged bevlogenheid burn-out SPEED D-RECT instrueren ondersteunen delegeren situationeel leidinggeven remediering niet pluis zorgen COC Leerhuis TOTR feed forward rolmodel',
+    directLinks: [
+      { label: '🎓 Feedback en coaching — beslisboom en checklist', url: 'feedback.html', kort: 'Feedback en coaching', icoon: '🎓', groep: 'opleiden' },
+    ] },
   { id: 'appzelf', label: 'De app zelf onderhouden', scope: "Claude Code-commando's en werkafspraken",
     zoekwoorden: 'claude code commando slash command init plan clear compact rewind diff resume model help CLAUDE.md projectcontext sessie geheugen samenvatten terugdraaien wijzigingen tonen hervatten model wisselen service worker cache versie ophogen sw.js app.js zoekwoorden tests alles.sh github repo commit push ontwikkelen onderhoud werkafspraken bron vermelden geen patientgegevens',
     directLinks: [
@@ -117,5 +122,6 @@ const HM_GROEPEN = [
   { id: 'been',  naam: 'Benen & stand' },
   { id: 'zenuw', naam: 'Zenuw & niveau' },
   { id: 'ok',    naam: 'Rondom een operatie' },
+  { id: 'opleiden', naam: 'Opleiden' },
   { id: 'app',   naam: 'De app zelf' },
 ];

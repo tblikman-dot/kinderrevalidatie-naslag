@@ -4,12 +4,13 @@
 // die je hebt gezien.
 //
 // Let op bij wijzigen: verhoog CACHE_VERSIE, anders blijven oude bestanden hangen.
-const CACHE_VERSIE = 'krn-v99';
+const CACHE_VERSIE = 'krn-v100';
 
 const APP_BESTANDEN = [
   './',
   './index.html',
   './claude-code.html',
+  './feedback.html',
   './indeling.js',
   './kern.js',
   './palet.js',

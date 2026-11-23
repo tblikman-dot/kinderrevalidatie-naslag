@@ -11,7 +11,7 @@ PAGINAS=["index.html","dosering.html","rcp-spieren.html","rotatie.html",
          "beslisboom-heup.html","gmfcs.html","doelspieren.html","spasticiteit-dystonie.html",
          "myotomen.html","zenuwen.html","zenuwherstel.html","beenlengte.html","heupdysplasie.html",
          "hipscreen.html","tetheredcord.html","neurogene-blaas.html","ddh-stroomschema.html","claude-code.html",
-         "echo-landmarks.html"]
+         "echo-landmarks.html","feedback.html"]
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path=B)
     fails=0
@@ -57,7 +57,7 @@ with sync_playwright() as p:
     pg.goto("http://localhost:9052/index.html"); pg.wait_for_timeout(600)
     rijen=pg.locator("#hmLijst .hm-rij")
     check("hulpmiddelen op het startscherm", rijen.count()>=23, "| "+str(rijen.count()))
-    check("in groepen", pg.locator("#hmLijst .hm-groep").count()==6)
+    check("in groepen", pg.locator("#hmLijst .hm-groep").count()==7)
 
     # een knop in dit overzicht mag nooit naar een niet-bestaande pagina wijzen
     hrefs=[rijen.nth(i).get_attribute("href") for i in range(rijen.count())]
