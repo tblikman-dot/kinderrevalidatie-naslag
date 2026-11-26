@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Controles bij cerebrale parese</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KR Naslag">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { background: var(--papier); }
+  .cpc-wrap { max-width: 800px; margin: 0 auto; padding: 22px 18px 70px; }
+
+  .cpc-label {
+    display: inline-block; margin: 0 0 12px;
+    font-family: system-ui, sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-zacht);
+    padding: 5px 11px; border-radius: 20px;
+  }
+  .cpc-wrap h1 { font-size: clamp(26px, 4.6vw, 36px); line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.03em; }
+  .cpc-intro { font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.55; color: var(--muted); margin: 0 0 22px; max-width: 60ch; }
+
+  .cpc-kaart {
+    background: var(--paneel); border: 1px solid var(--lijn); border-radius: 18px;
+    box-shadow: var(--schaduw); padding: 18px 12px 12px; margin-bottom: 18px;
+  }
+  .cpc-kaart svg { width: 100%; height: auto; display: block; }
+  .cpc-kaart text { font-family: system-ui, sans-serif; fill: var(--inkt); }
+  .cpc-zone-kop { font-size: 24px; font-weight: 700; fill: var(--accent); }
+  .cpc-zone-kop.zacht { fill: var(--muted); }
+  .cpc-rijnaam { font-size: 25px; font-weight: 600; }
+  .cpc-as { font-size: 22px; fill: var(--muted); }
+  .cpc-stip { fill: var(--accent); }
+  .cpc-stip.zacht { fill: #9aa3ab; }
+  .cpc-grens { stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .cpc-lijn { stroke: var(--lijn); stroke-width: 1; }
+  .cpc-zone-onder { fill: var(--accent-zacht); }
+  .cpc-zone-boven { fill: #f5f5f7; }
+
+  .cpc-regels { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .cpc-regel {
+    background: var(--paneel); border: 1px solid var(--lijn); border-radius: 16px; padding: 16px 16px 14px;
+    font-family: system-ui, sans-serif;
+  }
+  .cpc-regel h2 { font-size: 16px; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .cpc-rij { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding: 6px 0; border-top: 1px solid var(--lijn); }
+  .cpc-rij:first-of-type { border-top: none; }
+  .cpc-rij span:first-child { color: var(--muted); }
+  .cpc-rij b { font-weight: 700; white-space: nowrap; }
+
+  .cpc-let-op {
+    font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.55;
+    background: var(--vlag-vlak, #fdf3dd); color: var(--vlag-inkt, #6b4e06);
+    border-radius: 14px; padding: 13px 16px; margin-bottom: 14px;
+  }
+  .cpc-let-op strong { display: block; margin-bottom: 2px; }
+
+  .cpc-bron {
+    font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.55; color: var(--muted);
+    border-top: 1px solid var(--lijn); padding-top: 12px;
+  }
+  .cpc-bron strong { color: var(--inkt); }
+</style>
+</head>
+<body>
+<div class="offline-balk">Geen internet — deze pagina werkt gewoon door.</div>
+
+<header class="topbar">
+  <div class="topbar-title">Controles bij cerebrale parese</div>
+</header>
+
+<div class="cpc-wrap">
+  <span class="cpc-label">Verplicht · UMCG-richtlijn cerebrale parese</span>
+  <h1>Controles bij cerebrale parese</h1>
+  <p class="cpc-intro">De vaste metingen voor alle kinderen met CP, naar leeftijd. Onder de zes jaar vaker dan erna.</p>
+
+  <section class="cpc-kaart" aria-labelledby="cpcTitel">
+    <p class="cpc-as" style="margin:0 0 6px;font-family:system-ui,sans-serif;font-size:13px">Leeftijd in jaren</p>
+    <h2 id="cpcTitel" style="position:absolute;left:-9999px">Tijdlijn van de controles</h2>
+    <svg id="cpcLijn" viewBox="0 0 720 290" role="img"
+         aria-label="Tijdlijn van 0 tot 18 jaar: GMFCS en SLO twee keer per jaar en de handfunctietest één keer per jaar tot 6 jaar; daarna één keer per jaar tot 18 jaar."></svg>
+  </section>
+
+  <div class="cpc-regels" id="cpcRegels"></div>
+
+  <div class="cpc-let-op">
+    <strong>Grens bij 6 jaar</strong>
+    Precies 6 jaar valt onder "boven de 6 jaar". Dat is bewust zo gezet, zoals de 4-jaarsgrens
+    eerder ook is afgesproken. Controleer het tegen de richtlijn voordat je erop vertrouwt.
+  </div>
+
+  <div class="cpc-bron">
+    <strong>Bron:</strong> UMCG-richtlijn cerebrale parese, zoals de behandelend arts die heeft
+    aangeleverd. Dit is overgetypt uit dat gesprek, niet uit het richtliniedocument zelf.
+    De precieze tijdstippen van een meting staan hier niet; de stippen geven alleen de frequentie aan.
+    Geen patiëntgegevens op deze pagina.
+  </div>
+</div>
+
+<script src="indeling.js"></script>
+<script src="kern.js"></script>
+<script src="palet.js"></script>
+<script src="inhoud.js"></script>
+<script>
+(function () {
+  // Eén bron voor de schema-gegevens; de tijdlijn en de kaarten lezen hieruit.
+  // Frequenties zijn exact zoals aangeleverd. "SLO" en "handfunctietest" zijn
+  // de termen van de richtlijn en worden niet uitgeschreven.
+  var METINGEN = [
+    { naam: 'GMFCS',             onder: { per: 2, tekst: '2x per jaar' }, boven: { per: 1, tekst: '1x per jaar' } },
+    { naam: 'SLO',               onder: { per: 2, tekst: '2x per jaar' }, boven: { per: 1, tekst: '1x per jaar' } },
+    { naam: 'Handfunctietest',   onder: { per: 1, tekst: '1x per jaar' }, boven: { per: 1, tekst: '1x per jaar' } }
+  ];
+  var JAREN = 18, GRENS = 6;
+  var X0 = 22, X1 = 698, TOP = 96, RIJ = 60;
+  var stap = (X1 - X0) / JAREN;
+  function x(t) { return X0 + t * stap; }
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function el(naam, attr, tekst) {
+    var e = document.createElementNS(NS, naam);
+    Object.keys(attr || {}).forEach(function (k) { e.setAttribute(k, attr[k]); });
+    if (tekst) e.textContent = tekst;
+    return e;
+  }
+
+  var svg = document.getElementById('cpcLijn');
+  var onderBreed = x(GRENS) - X0;
+  var boven = x(JAREN) - x(GRENS);
+
+  // achtergrond: de twee leeftijdsgebieden
+  svg.appendChild(el('rect', { x: X0, y: 38, width: onderBreed, height: 210, rx: 12, class: 'cpc-zone-onder' }));
+  svg.appendChild(el('rect', { x: x(GRENS), y: 38, width: boven, height: 210, rx: 12, class: 'cpc-zone-boven' }));
+  svg.appendChild(el('text', { x: X0 + onderBreed / 2, y: 26, 'text-anchor': 'middle', class: 'cpc-zone-kop' }, 'Jonger dan 6 jaar'));
+  svg.appendChild(el('text', { x: x(GRENS) + boven / 2, y: 26, 'text-anchor': 'middle', class: 'cpc-zone-kop zacht' }, '6 tot 18 jaar'));
+
+  // de grens op 6 jaar
+  svg.appendChild(el('line', { x1: x(GRENS), y1: 38, x2: x(GRENS), y2: 248, class: 'cpc-grens' }));
+
+  METINGEN.forEach(function (m, i) {
+    var y = TOP + i * RIJ;
+    svg.appendChild(el('text', { x: X0, y: y - 22, class: 'cpc-rijnaam' }, m.naam));
+    svg.appendChild(el('line', { x1: X0, y1: y, x2: X1, y2: y, class: 'cpc-lijn' }));
+
+    // onder de 6: stippen op elke half jaar (2x) of elk jaar (1x)
+    var stappen = m.onder.per * GRENS;
+    for (var s = 1; s <= stappen; s++) {
+      var t = s / m.onder.per;
+      svg.appendChild(el('circle', { cx: x(t - 1 / m.onder.per), cy: y, r: 4.5, class: 'cpc-stip' }));
+    }
+    // boven de 6: elk jaar tot 18
+    for (var j = GRENS + 1; j <= JAREN; j++) {
+      svg.appendChild(el('circle', { cx: x(j), cy: y, r: 4.5, class: 'cpc-stip zacht' }));
+    }
+  });
+
+  // as met jaren
+  for (var a = 0; a <= JAREN; a += 2) {
+    svg.appendChild(el('text', { x: x(a), y: 282, 'text-anchor': 'middle', class: 'cpc-as' }, String(a)));
+  }
+
+  // de kaarten eronder, dezelfde gegevens in tekst
+  var kaarten = document.getElementById('cpcRegels');
+  kaarten.innerHTML = METINGEN.map(function (m) {
+    return '<div class="cpc-regel"><h2>' + m.naam + '</h2>' +
+      '<div class="cpc-rij"><span>Jonger dan 6 jaar</span><b>' + m.onder.tekst + '</b></div>' +
+      '<div class="cpc-rij"><span>6 tot 18 jaar</span><b>' + m.boven.tekst + '</b></div></div>';
+  }).join('');
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function (e) { console.log('SW niet geregistreerd:', e); });
+  });
+}
+function offlineStatus() { document.body.classList.toggle('is-offline', !navigator.onLine); }
+window.addEventListener('online', offlineStatus);
+window.addEventListener('offline', offlineStatus);
+offlineStatus();
+</script>
+</body>
+</html>

@@ -13,6 +13,8 @@ const DEFAULT_CATS = [
   { id: 'cp', label: 'Cerebrale parese & spasticiteit', scope: 'Classificatie (GMFCS/MACS), spasticiteitsmanagement, hulpmiddelen',
     directLinks: [
       { label: '🧒 GMFCS per leeftijdsband', url: 'gmfcs.html', kort: 'GMFCS per leeftijd', icoon: '🧒', groep: 'cp' },
+      { label: '📋 Controles bij CP — jaarlijkse metingen naar leeftijd (UMCG)', url: 'cp-controles.html', kort: 'Controles bij CP', icoon: '📋', groep: 'cp',
+        zoek: 'controle controles onderzoek jaarlijks per jaar tweemaal GMFM SLO handfunctie handfunctietest leeftijd 6 jaar 18 jaar cerebrale parese CP UMCG richtlijn verplicht schema' },
       { label: '📘 FMS-richtlijn: Cerebrale parese bij kinderen', url: 'https://richtlijnendatabase.nl/richtlijn/spastische_cerebrale_parese_bij_kinderen' },
     ] },
   { id: 'heup', label: 'Heupscreening bij CP', scope: 'Preventie heupluxatie — migratiepercentage, GMFCS-gebaseerd schema',
